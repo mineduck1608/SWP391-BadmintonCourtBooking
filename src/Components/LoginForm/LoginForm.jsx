@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import './LoginForm.css';
 import { FaUser, FaRegEyeSlash } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
+import SignIn from '../googleSignin/signIn';
 
 
 const LoginForm = () => {
-  const [profile, setProfile] = useState(null);
   return (
     <div className='wrapper'>
         <form action="">
@@ -19,7 +19,6 @@ const LoginForm = () => {
             <FaLock className='icon'/>
           </div>
           <div className="remember-forgot">
-            <label><input type="checkbox" />Remember me</label>
             <a href="#">Forgot password?</a>
           </div>
           <button type="submit">Login</button>
@@ -27,7 +26,7 @@ const LoginForm = () => {
             <p>Don't hava an account? <a href="#">Register</a></p>
           </div>
           <div>
-          
+             <SignIn/>
           </div>
         </form>
     </div>
