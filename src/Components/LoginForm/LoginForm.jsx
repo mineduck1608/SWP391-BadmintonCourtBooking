@@ -16,7 +16,7 @@ const LoginForm = () => {
           </div>
           <div className="input-box">
             <input type="Password" placeholder='Password' id='password' required/>
-            <FaRegEyeSlash className='icon' id='pass-icon'/>
+            <FaLock className='icon'/>
           </div>
           <div className="remember-forgot">
             <label><input type="checkbox" />Remember me</label>
