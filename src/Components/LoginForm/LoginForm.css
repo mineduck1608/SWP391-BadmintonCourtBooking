@@ -42,12 +42,22 @@
     transform: translateY(-50%);
     font-size: 25px;
 }
+.return .icon{
+    position: absolute;
+    right: 180px;
+    top: 91%;
+    transform: translateY(-50%);
+    font-size: 50px;
+}
+
+
 
 .wrapper .remember-forgot{
     display: flex;
     justify-content: space-between;
     font-size: 14.5px;
-    margin: -10px 0 15px;
+    margin: 10px 110px 15px;
+    text-align: center;
 }
 .remember-forgot label input {
     accent-color: #fff;
@@ -100,4 +110,19 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+}
+.wrapper .line{
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+.wrapper .or{
+    text-align: center;
+    margin-bottom: 10px;
+}
+button:hover{
+  background-color: lightblue;
+  color: #fff;
+}
+.wrapper .login-google{
+    padding-bottom: 40px;
 }
