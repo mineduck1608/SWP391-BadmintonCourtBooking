@@ -5,6 +5,7 @@ import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
 
 
+
 const LoginForm = () => {
   return (
     <div className='wrapper'>
@@ -25,7 +26,13 @@ const LoginForm = () => {
           <div className="register-link">
             <p>Don't hava an account? <a href="#">Register</a></p>
           </div>
-          <div>
+          <div className="line">
+            <a>_________________________________________</a>
+          </div>
+          <div class="or">
+          <a>or</a>
+          </div>
+          <div className='login-google'>
              <SignIn/>
           </div>
         </form>
