@@ -4,6 +4,7 @@ import { signInWithPopup } from "firebase/auth";
 import { useState } from "react";
 import { useEffect } from "react";
 import Home from "./home";
+import { FcGoogle } from "react-icons/fc";
 
 const SignIn = () =>{
     const [value, setValue] = useState('')
@@ -19,10 +20,11 @@ const SignIn = () =>{
     })
 
     return (
-        <div>
+        <div className='return'>
             {value ? <Home/>:
-            <button onClick={handleClick}>Signin With Google</button>
-            }
+            <div onClick={handleClick}><FcGoogle className='icon'/></div>
+            }      
+             
         </div>
     );
 }
