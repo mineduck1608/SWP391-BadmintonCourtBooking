@@ -1,17 +1,19 @@
+import React from 'react'
 import logo from './logo.svg';
 import './App.css';
 import LoginForm from './Components/LoginForm/LoginForm';
-import Register from './Components/register/register';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-function App() {
+import Navbar from './Components/Navbar/Navbar'
+import Home from './Components/Home/Home'
+import Footer from'./Components/Footer/Footer'
+import Popular from './Components/Popular/Popular'
+const App = () => {
   return (
     <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<LoginForm/>}></Route>
-          <Route path='/register' element={<Register/>}></Route>
-        </Routes>
-      </BrowserRouter>
+      <Navbar/>
+      <Home/> 
+      <Popular/>
+      <Footer/>
+      {/* <LoginForm/> */}
     </div>
   );
 }
