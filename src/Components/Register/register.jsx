@@ -3,21 +3,19 @@ import React from 'react';
 
 const Register = () => {
     return (
-        <div className='wrapper'>
+        <div className='wrapper-register'>
         <form action="">
-          <h1>User Registeration</h1>
+          <h1>Register</h1>
           <div  className="input-register">
-          <div>
-            <input type="text" placeholder="Username" required/>
-            <input type="Password" placeholder="Password" id="password" required/>
-            <input type="Password" placeholder="Confirm password" required/>
-          </div>
-          <div>
-            <input type="text" placeholder="First name" required/>
-            <input type="text" placeholder="Last name" required/>
-            <input type="email" placeholder="Email" required/>
-            <input type="phone" placeholder="Phone" required/>
-          </div>
+            <input className="input-box" type="text" placeholder="Username" required/><br></br>
+            <input className="input-box" type="Password" placeholder="Password" id="password" required/><br></br>
+            <input className="input-box" type="text" placeholder="First name" required/><br></br>
+            <input className="input-box" type="text" placeholder="Last name" required/><br></br>
+            <input className="input-box" type="email" placeholder="Email" required/><br></br>
+            <input className="input-box" type="phone" placeholder="Phone" required/><br></br>
+            <button type="submit">Register</button><br></br>
+            <p className="login-link">You already have an account?<a href="/login">Login</a></p>
+            
           </div>
          </form>
     </div>
