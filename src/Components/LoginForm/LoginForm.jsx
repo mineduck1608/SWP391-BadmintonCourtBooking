@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import './LoginForm.css';
+import React from 'react';
+import './login.css';
 import { FaUser, FaRegEyeSlash } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
+import { Link } from 'react-router-dom';
 
 
 
-const LoginForm = () => {
+const Login = () => {
   return (
     <div className='wrapper'>
         <form action="">
@@ -25,7 +26,8 @@ const LoginForm = () => {
             <a href="#">Forgot password?</a>
           </div>
           <div className="register-link">
-            <p>Don't hava an account? <a href="#">Register</a></p>
+            <p>Don't hava an account?</p>
+            
           </div>
           <div className="line">
             <a>_________________________________________</a>
@@ -42,4 +44,4 @@ const LoginForm = () => {
   );
 }
 
-export default LoginForm
+export default Login
