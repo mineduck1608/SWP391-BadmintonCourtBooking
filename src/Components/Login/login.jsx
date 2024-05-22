@@ -26,7 +26,7 @@ const Login = () => {
             <a href="#">Forgot password?</a>
           </div>
           <div className="register-link">
-            <p>Don't hava an account? <a href='#'>Register</a></p>
+            <p>Don't hava an account? <a href='./register'>Register</a></p>
           </div>
           <div className="line">
             <a>_________________________</a>
