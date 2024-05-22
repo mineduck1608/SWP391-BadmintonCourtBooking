@@ -26,11 +26,10 @@ const Login = () => {
             <a href="#">Forgot password?</a>
           </div>
           <div className="register-link">
-            <p>Don't hava an account?</p>
-            
+            <p>Don't hava an account? <a href='#'>Register</a></p>
           </div>
           <div className="line">
-            <a>_________________________________________</a>
+            <a>_________________________</a>
           </div>
           <div class="or">
           <a>or</a>
