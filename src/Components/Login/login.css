@@ -22,11 +22,11 @@
 }
 .input-box input{
     width: 100%;
-    width: 100%;
+    height: 100%;
     background: transparent;
     outline: none;
     border: 2px solid rgba(255, 255, 255, .2);
-    border-radius: 40px;
+    border-radius: 5px;
     font-size: 16px;
     color: rgb(246, 246, 246);
     padding: 20px 45px 20px 20px;
@@ -38,13 +38,13 @@
 .input-box .icon{
     position: absolute;
     right: 20px;
-    top: 60%;
+    top: 50%;
     transform: translateY(-50%);
     font-size: 25px;
 }
 .return .icon{
     position: absolute;
-    right: 180px;
+    right: 183px;
     top: 91%;
     transform: translateY(-50%);
     font-size: 50px;
@@ -56,7 +56,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 14.5px;
-    margin: 10px 110px 15px;
+    margin: 10px 100px;
     text-align: center;
 }
 .remember-forgot label input {
@@ -66,6 +66,8 @@
 .remember-forgot a{
     color: #fff;
     text-decoration: none;
+    margin-bottom: -10px;
+    margin-top: 5px;
 }
 .remember-forgot a:hover{
     text-decoration: underline;
@@ -76,7 +78,7 @@
     background: #fff;
     border: none;
     outline: none;
-    border-radius: 40px;
+    border-radius: 5px;
     cursor: pointer;
     font-size:  16px;
     color: #333;
@@ -106,7 +108,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url(https://i.pinimg.com/564x/40/a6/26/40a626e54853e7197076feedfdcc3cda.jpg);
+  background-color: #333;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -120,7 +122,7 @@ body {
     margin-bottom: 10px;
 }
 button:hover{
-  background-color: lightblue;
+  background-color: hsl(26, 93%, 50%);
   color: #fff;
 }
 .wrapper .login-google{
