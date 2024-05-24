@@ -4,12 +4,13 @@ import { FaUser, FaRegEyeSlash } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
 import { Link } from 'react-router-dom';
+import Navbar from '../Navbar/Navbar';
 
 
 
 const Login = () => {
   return (
-    <div className='wrapper'>
+      <div className='wrapper'>
         <form action="">
           <h1>Login</h1>
           <div className="input-box">
@@ -38,8 +39,7 @@ const Login = () => {
              <SignIn/>
           </div>
         </form>
-    </div>
-    
+    </div>  
   );
 }
 
