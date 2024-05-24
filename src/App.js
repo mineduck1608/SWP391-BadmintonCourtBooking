@@ -8,6 +8,7 @@ import Home from './Components/Home/Home';
 import Footer from'./Components/Footer/Footer';
 import Popular from './Components/Popular/Popular';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import SignInSignUp from './Components/SigninSignUp/signinsignup';
 
 const router = createBrowserRouter([
   {
@@ -15,12 +16,12 @@ const router = createBrowserRouter([
     element: <div><Navbar/><Home/><Popular/><Footer/></div>
   },
   {
-    path: '/login',
-    element: <div><Login/></div>
+    path: '/signin',
+    element: <div><SignInSignUp defaultLoginVisible={true} /></div>
   },
   {
-    path: '/register',
-    element: <div><Register/></div>
+    path: '/signup',
+    element: <div><SignInSignUp defaultLoginVisible={false} /></div>
   },
 ])
  
