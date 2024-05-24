@@ -37,7 +37,7 @@ const Navbar = () => {
                 <div className="logoDiv">
                     <a href="#" className="logo">
                         <h1 className='flex'><MdSportsTennis className="icon" />
-                            Dot
+                            BMTC
                         </h1>
                     </a>
                 </div>
