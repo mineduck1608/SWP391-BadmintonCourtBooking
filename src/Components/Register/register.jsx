@@ -1,10 +1,10 @@
 import './register.css';
-import React from 'react';
+import React, { useState } from 'react';
 
 const Register = () => {
     return (
         <div className='wrapper-register'>
-        <form action="">
+        <form action="" method='get'>
           <h1>Register</h1>
           <div  className="input-register">
             <input className="input-box" type="text" placeholder="Username" required/><br></br>
@@ -15,7 +15,6 @@ const Register = () => {
             <input className="input-box" type="phone" placeholder="Phone" required/><br></br>
             <button type="submit">Register</button><br></br>
             <p className="login-link">You already have an account?<a href="/login">Login</a></p>
-            
           </div>
          </form>
     </div>
