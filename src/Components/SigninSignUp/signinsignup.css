@@ -1,0 +1,38 @@
+.logo {
+    color: white;
+    font-weight: 500;
+    padding-top: 10px;
+}
+
+.logo .icon {
+    color: hsl(26, 93%, 50%);
+    font-size: 25px;
+    margin-right: 10px;
+}
+.body-element{
+    display: flex;
+    background-image: url('../../Assets/login.jpg');
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.body{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+}
+.login{
+    padding: 112px;
+    margin-left: 20px;
+}
+h1, h3, h4, h5, p, a{
+    color: #fff;
+}
+.text-element{
+    margin-left: 50px;
+    margin-top: 20px;
+}
+p{
+    text-align: justify;
+}
