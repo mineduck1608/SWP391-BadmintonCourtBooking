@@ -32,7 +32,7 @@
 
                 .icon {
                     color: var(--PrimaryColor);
-                    font-size: 25px;
+                    font-size: 35px;
                     margin-right: 10px;
                 }
             }
@@ -76,9 +76,15 @@
 
                         .btn {
                             margin-top: 1rem;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 110px;
+                            height: 35px;
 
                             a {
                                 font-weight: 600;
+                                font-size: 16px;
 
                                 &:hover {
                                     color: var(--whiteColor);
@@ -124,7 +130,7 @@
 
         .toggleNavbar{
             .icon{
-                font-size: 25px;
+                font-size: 30px;
                 color: var(--whiteColor);
                 &:hover{
                     color: var(--PrimaryColor)
@@ -134,7 +140,7 @@
     }
 
     .activeHeader{
-        background: var(--greyText);
+        background: black;
         box-shadow: 0 2px 8px 2px rgba(178,178,178,0.334);
     }
 }
@@ -171,12 +177,22 @@
 
                     }
 
+                    .headerBtns{
+                        margin-top: -12px;
+                    }
+
                     .btn{
                         margin-left: 1rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 110px;
+                        height: 35px;
 
                         a{
                             color: var(--whiteColor);
                             font-weight: 500;
+                            font-size: 15px;
                         }
                     }
 
