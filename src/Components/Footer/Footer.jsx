@@ -14,7 +14,7 @@ const Footer = () => {
                     <div className="footerLogo">
                         <a href="#" className="logo flex">
                             <h1 className='flex'><MdSportsTennis className="icon" />
-                                Dot</h1>
+                                BMTC</h1>
                         </a>
                     </div>
 

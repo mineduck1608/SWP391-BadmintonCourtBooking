@@ -20,6 +20,10 @@
 
         .footerLogo {
             padding-bottom: .5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 24px;
 
             .logo {
                 color: var(--blackColor);

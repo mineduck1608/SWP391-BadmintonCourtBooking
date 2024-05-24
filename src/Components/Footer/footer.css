@@ -20,6 +20,10 @@
 }
 .footer .secContainer .footerLogo {
   padding-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 24px;
 }
 .footer .secContainer .footerLogo .logo {
   color: var(--blackColor);
