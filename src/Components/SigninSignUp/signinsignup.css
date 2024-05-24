@@ -6,9 +6,13 @@
 
 .logo .icon {
     color: hsl(26, 93%, 50%);
-    font-size: 25px;
+    font-size: 50px;
     margin-right: 10px;
 }
+.logo h1{
+    font-size: 50px;
+}
+
 .body-element{
     display: flex;
     background-image: url('../../Assets/login.jpg');
@@ -30,9 +34,39 @@ h1, h3, h4, h5, p, a{
     color: #fff;
 }
 .text-element{
-    margin-left: 50px;
-    margin-top: 20px;
+    margin-left: 75px;
+    margin-top: 80px;
+    font-family: "Poetsen One", sans-serif;
 }
 p{
     text-align: justify;
+}
+.change-1{
+    display: inline-flex;
+    position: relative;
+    left: 267.7px;
+    top: 405px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14.5px;
+    z-index: 1;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.change-1:hover{
+    text-decoration: underline;
+}.change-2{
+    display: inline-flex;
+    position: relative;
+    left: 311px;
+    top: 518px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14.5px;
+    z-index: 1;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.change-2:hover{
+    text-decoration: underline;
 }
