@@ -101,6 +101,7 @@
                 padding: .6rem 1.5 rem;
                 color: var(--whiteColor);
                 font-weight: 600;
+                margin-top: -2px;
             }
         }
     }
@@ -172,7 +173,7 @@
 }
 
 @media screen and (min-width: 1024px) {
-    /home{
+    home{
         .secContainer{
             .homeText{
                 .subTitle{

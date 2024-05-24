@@ -104,6 +104,7 @@
   padding: 0.6rem 1.5 rem;
   color: var(--whiteColor);
   font-weight: 600;
+  margin-top: -2px;
 }
 
 @media screen and (min-width: 480px) {
@@ -140,6 +141,14 @@
     line-height: 4rem;
   }
   .home .secContainer .homeText .subTitle {
+    width: 70%;
+  }
+}
+@media screen and (min-width: 1024px) {
+  home .secContainer .homeText .subTitle {
+    font-size: 20px;
+  }
+  home .secContainer .homeCard {
     width: 70%;
   }
 }/*# sourceMappingURL=home.css.map */
