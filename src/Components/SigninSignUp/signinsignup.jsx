@@ -1,38 +1,68 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Login from "../Login/login";
+import Register from "../Register/register";
 import './signinsignup.css'
 import { MdSportsTennis } from "react-icons/md";
 
-const SignInSignUp = () => {
+const SignInSignUp = ({ defaultLoginVisible }) => {
+    const [isLoginVisible, setIsLoginVisible] = useState(defaultLoginVisible);
+
+    useEffect(() => {
+        setIsLoginVisible(defaultLoginVisible);
+    }, [defaultLoginVisible]);
+
+    const showLogin = () => {
+        setIsLoginVisible(true);
+    };
+
+    const showRegister = () => {
+        setIsLoginVisible(false);
+    };
     return (
         <div>
             <div className="body">
                 <div className="body-element">
                     <div className="text-element">
-                    <a href="./" className="logo">
-                        <h1><MdSportsTennis className="icon" />
-                            BMTC
+                        <a href="./" className="logo">
+                            <h1><MdSportsTennis className="icon" />
+                                BMTC
+                            </h1>
+                        </a>
+                        <h1>
+                            BMTC Badminton Court Chain System
                         </h1>
-                    </a>
-                    <h1>
-                        Hệ Thống Chuỗi Sân Cầu Lông BMTC
-                    </h1>
-                    <h3>Mô tả chung</h3>
-                    <p>Chào mừng bạn đến với hệ thống chuỗi sân cầu lông BMTC, nơi mang đến cho bạn những trải nghiệm thể thao đỉnh cao và không gian luyện tập thoải mái. Với ba chi nhánh tọa lạc tại những vị trí thuận lợi, chúng tôi tự hào là lựa chọn hàng đầu của cộng đồng yêu thích cầu lông trong khu vực.</p>
-                    <h4>Chi nhánh 1: </h4>
-                    <h5>Địa chỉ: </h5>
-                    <h4>Chi nhánh 2: </h4>
-                    <h5>Địa chỉ: </h5>
-                    <h4>Chi nhánh 3: </h4>
-                    <h5>Địa chỉ: </h5>
-                    <h3>Liên hệ</h3>
-                    <p>Hotline:</p>
-                    <p>Email:</p>
-                    <p>Website:</p>
+                        <h3>Description</h3>
+                        <p>Welcome to the BMTC badminton court chain system, which brings you top sports experiences and comfortable practice space. With three branches located in convenient locations, we are proud to be the top choice of the badminton-loving community in the area.</p>                        <br />
+                        <h4>Branch 1: </h4>
+                        <p>Address: </p>
+                        <p>Phone: </p>
+                        <h4>Branch 2: </h4>
+                        <p>Address: </p>
+                        <p>Phone: </p>
+                        <h4>Branch 3: </h4>
+                        <p>Address: </p>
+                        <p>Phone: </p>
+                        <br />
+                        <h3>Contact</h3>
+                        <p>Hotline:</p>
+                        <p>Email:</p>
+                        <p>Website:</p>
                     </div>
+
                     <div className="login">
-                        <Login/>
+                        {isLoginVisible ? (
+                            <>
+                                <a className="change-1" onClick={showRegister}>Register</a>
+                                <Login />
+                            </>
+                        ) : (
+                            <>
+                                <a className="change-2" onClick={showLogin}>Login</a>
+                                <Register />
+                            </>
+                        )}
                     </div>
+
                 </div>
             </div>
         </div>
