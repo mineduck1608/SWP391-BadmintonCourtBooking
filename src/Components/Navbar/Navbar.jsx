@@ -59,10 +59,10 @@ const Navbar = () => {
 
                         <div className="headerBtns flex">
                             <button className='btn loginBtn'>
-                                <a href="">Login</a>
+                                <a href="/signin">Login</a>
                             </button>
                             <button className='btn '>
-                                <a href="">Sign Up</a>
+                                <a href="/signup">Sign Up</a>
                             </button>
                         </div>
 
