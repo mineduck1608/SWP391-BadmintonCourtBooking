@@ -11,7 +11,7 @@
 }
 
 .footer {
-  background: var(--greyBg);
+  background: black;
   padding: 2rem 0;
 }
 .footer .secContainer {
@@ -26,7 +26,7 @@
   margin-right: 22px;
 }
 .footer .secContainer .footerLogo .logo {
-  color: var(--blackColor);
+  color: var(--whiteColor);
   font-weight: 500;
   cursor: pointer;
   align-items: center;
@@ -58,7 +58,7 @@
 }
 .footer .secContainer .footerLinks .linkTitle {
   padding-bottom: 0.5rem;
-  color: var(--blackColor);
+  color: var(--whiteColor);
   font-weight: 700;
 }
 .footer .secContainer .footerLinks li:hover {
@@ -68,7 +68,7 @@
   color: var(--PrimaryColor);
 }
 .footer .secContainer .footerLinks a, .footer .secContainer .footerLinks .phone, .footer .secContainer .footerLinks .email {
-  color: var(--textColor);
+  color: var(--whiteColor);
   font-size: 13px;
   font-weight: 500;
 }
