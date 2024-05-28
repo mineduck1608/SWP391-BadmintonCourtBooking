@@ -1,14 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Login from './Components/Login/login';
-import Register from './Components/Register/register';
+
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Components/Home/Home';
 import Footer from'./Components/Footer/Footer';
 import Popular from './Components/Popular/Popular';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SignInSignUp from './Components/SigninSignUp/signinsignup';
+import ViewCourtInfo from './Components/ViewCourtInfo/viewCourtInfo';
+
 
 const router = createBrowserRouter([
   {
@@ -22,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <div><SignInSignUp defaultLoginVisible={false} /></div>
+  },
+  {
+    path: '/viewCourtInfo',
+    element: <div><ViewCourtInfo/></div>
   },
 ])
  

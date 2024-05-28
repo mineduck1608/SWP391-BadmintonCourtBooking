@@ -11,6 +11,7 @@
 }
 .logo h1{
     font-size: 50px;
+    color: #fff;
 }
 
 .body-element{
@@ -37,6 +38,9 @@ h1, h3, h4, h5, p, a{
     margin-left: 75px;
     margin-top: 80px;
     font-family: "Poetsen One", sans-serif;
+}
+.text-element h1{
+    color: #fff;
 }
 p{
     text-align: justify;
