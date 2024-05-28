@@ -55,7 +55,7 @@ export default function ViewInfo() {
             </div>
           </div>
           <div className="button-container">
-            <button className="button">Edit</button>
+            <button className="button"><a href='./editInfo'>Edit</a></button>
           </div>
         </div>
         <div className="history-box">

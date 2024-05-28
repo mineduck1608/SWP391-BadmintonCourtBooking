@@ -8,6 +8,8 @@ import Popular from './Components/Popular/Popular';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SignInSignUp from './Components/SigninSignUp/signinsignup';
 import ViewCourtInfo from './Components/ViewCourtInfo/viewCourtInfo';
+import ViewInfo from './Components/ViewInfo/ViewInfo';
+import EditInfo from './Components/EditInfo/EditInfo';
 
 
 const router = createBrowserRouter([
@@ -26,6 +28,14 @@ const router = createBrowserRouter([
   {
     path: '/viewCourtInfo',
     element: <div><ViewCourtInfo/></div>
+  },
+  {
+    path: '/editInfo',
+    element: <div><EditInfo/></div>
+  },
+  {
+    path: '/viewInfo',
+    element: <div><ViewInfo/></div>
   },
 ])
  
