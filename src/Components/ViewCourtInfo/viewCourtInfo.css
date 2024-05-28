@@ -1,12 +1,56 @@
-.viewcourtinfo-body{
-    position: relative;
-    top: 40px;
-    left: 0px;
+.viewcourtinfo-body {
     z-index: -1;
-    width: 100%;
+    margin: 15px;
+    border: 1px solid #d4af37;
+    /* Màu vàng gold */
+    border-radius: 15px;
+    /* Góc bo tròn */
+    padding: 15px;
+    /* Khoảng cách giữa khung và ảnh */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    /* Hiệu ứng bóng đổ */
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    /* Hiệu ứng nền gradient nhẹ */
 }
-.viewcourtinfo-footer{
-    position: relative;
-    left: 0px;
-    width: 1523px;
+
+.viewcourtinfo-body-pic {
+    display: flex;
+}
+
+.viewcourtinfo-body-des {
+    display: block;
+    color: black;
+    margin-left: 50px;
+}
+.viewcourtinfo-info {
+    margin-top: 10px;
+}
+p {
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.viewcourtinfo-body-des h1 {
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.viewcourtinfo-footer {}
+
+.viewcourtinfo-img {
+    width: 500px;
+    height: 400px;
+    margin-right: 10px;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    /* Góc bo tròn cho ảnh */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Hiệu ứng bóng đổ cho ảnh */
+
+}
+
+.viewcourtinfo {
+    display: inline;
 }
