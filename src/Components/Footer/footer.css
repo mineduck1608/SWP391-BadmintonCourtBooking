@@ -12,10 +12,10 @@
 
 .footer {
   background: black;
-  padding: 2rem 0;
+  padding: .5rem 0;
 }
 .footer .secContainer {
-  gap: 1.5rem;
+  gap: 1rem;
   text-align: center;
 }
 .footer .secContainer .footerLogo {
@@ -92,4 +92,5 @@
   .secContainer {
     padding: 2rem;
   }
+  
 }/*# sourceMappingURL=footer.css.map */
