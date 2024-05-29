@@ -1,11 +1,12 @@
 .viewcourtinfo-body {
     z-index: -1;
-    margin: 15px;
+    margin: 20px;
+    margin-left: 40px;
     border: 1px solid #d4af37;
     /* Màu vàng gold */
     border-radius: 15px;
     /* Góc bo tròn */
-    padding: 15px 0px;
+    padding: 15px;
     /* Khoảng cách giữa khung và ảnh */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     /* Hiệu ứng bóng đổ */
