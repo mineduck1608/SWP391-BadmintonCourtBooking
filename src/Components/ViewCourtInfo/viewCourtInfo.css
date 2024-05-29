@@ -5,7 +5,7 @@
     /* Màu vàng gold */
     border-radius: 15px;
     /* Góc bo tròn */
-    padding: 15px;
+    padding: 15px 0px;
     /* Khoảng cách giữa khung và ảnh */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     /* Hiệu ứng bóng đổ */
@@ -15,15 +15,17 @@
 
 .viewcourtinfo-body-pic {
     display: flex;
+    margin-left: 15px;
 }
 
-.viewcourtinfo-body-des {
+.viewcourtinfo-info {  
     display: block;
     color: black;
     margin-left: 50px;
 }
-.viewcourtinfo-info {
+.viewcourtinfo-body-des {
     margin-top: 10px;
+    margin-left: 15px; 
 }
 p {
     color: black;
@@ -35,7 +37,9 @@ p {
     font-family: 'Times New Roman', Times, serif;
 }
 
-.viewcourtinfo-footer {}
+.viewcourtinfo-footer {
+    
+}
 
 .viewcourtinfo-img {
     width: 500px;
