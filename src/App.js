@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Components/Home/Home';
 import Footer from'./Components/Footer/Footer';
@@ -10,7 +9,7 @@ import SignInSignUp from './Components/SigninSignUp/signinsignup';
 import ViewCourtInfo from './Components/ViewCourtInfo/viewCourtInfo';
 import ViewInfo from './Components/ViewInfo/ViewInfo';
 import EditInfo from './Components/EditInfo/EditInfo';
-
+import FindCourt from './Components/findCourt/findCourt';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: '/viewInfo',
     element: <div><ViewInfo/></div>
+  },
+  {
+    path: '/findcourt',
+    element: <div><Navbar/><FindCourt/></div>
   },
 ])
  
