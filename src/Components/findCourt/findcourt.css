@@ -1,0 +1,45 @@
+/* :root {
+    --PrimaryColor: hsl(26, 93%, 50%);
+    --HoverColor: hsl(26, 90%, 42%);
+    --whiteColor: hsl(0, 0%, 100%);
+    --blackColor: hsl(0%, 0%, 18%);
+    --textColor: hsl(240, 1%, 48%);
+    --whiteColorDeam: hsl(0, 0%, 93%);
+    --greyBg: hsl(0, 0%, 96%);
+    --greyText: rgb(190, 190, 190);
+    --inputColor: hsl(330, 12%, 97%);
+}
+
+select{
+    width: 100%;
+    background: var(--inputColor);
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+::placeholder{
+    font-size: 13px;
+    opacity: .5;
+    font-weight: 400;
+}
+&:focus{
+    outline: none;
+}
+ */
+
+ .find{
+    padding: 20px 170px 20px 170px;
+    background-color: #f9f9f9;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45); 
+}
+
+ .secContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ }
+
