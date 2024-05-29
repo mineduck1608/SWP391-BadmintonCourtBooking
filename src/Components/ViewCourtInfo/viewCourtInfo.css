@@ -1,8 +1,9 @@
 .viewcourtinfo-body {
-    width: 200%;
+    display: inline-block;
+    width: 1460px;
     position: relative;
-    left: -370px;
-    top: 70px;
+    top: 50px;
+    left: 20px;
     z-index: 1;
     margin: 10px;
     border: 1px solid #d4af37;
@@ -19,13 +20,17 @@
 
 .viewcourtinfo-body-pic {
     display: flex;
-    margin-left: 15px;
+    margin-left: 10px;
+    margin-top: 10px;
 }
 
 .viewcourtinfo-info {  
     display: block;
     color: black;
     margin-left: 50px;
+}
+.viewcourtinfo-info p {  
+    color: black;
 }
 .viewcourtinfo-body-des {
     margin-top: 10px;
@@ -37,11 +42,15 @@
     color: black;
     font-family: 'Times New Roman', Times, serif;
 }
+.viewcourtinfo-body-des p {
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+}
 
 .viewcourtinfo-footer {
-    width: 200%;
+    width: 1523px;
     position: relative;
-    left: -370px;
+    bottom: -63px;
 }
 
 .viewcourtinfo-img {
