@@ -3,7 +3,7 @@ import './findcourt.css';
 import {TimePicker} from 'antd';
 
 
-const FindCourt = () => {
+const findCourt = () => {
     return (
         <section className='find'>
             <div className="secContainer container">
@@ -53,6 +53,10 @@ const FindCourt = () => {
                         <TimePicker.RangePicker/>
                     </div>
 
+                    <button className='Btn'>
+                        <a href="#">Book Now!</a>
+                    </button>
+
 
                 </div>
 
@@ -62,4 +66,4 @@ const FindCourt = () => {
     )
 }
 
-export default FindCourt
+export default findCourt

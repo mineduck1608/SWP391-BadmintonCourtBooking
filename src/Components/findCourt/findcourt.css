@@ -1,4 +1,4 @@
-/* :root {
+:root {
     --PrimaryColor: hsl(26, 93%, 50%);
     --HoverColor: hsl(26, 90%, 42%);
     --whiteColor: hsl(0, 0%, 100%);
@@ -10,29 +10,9 @@
     --inputColor: hsl(330, 12%, 97%);
 }
 
-select{
-    width: 100%;
-    background: var(--inputColor);
-    border-radius: 10px;
-    border: none;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-::placeholder{
-    font-size: 13px;
-    opacity: .5;
-    font-weight: 400;
-}
-&:focus{
-    outline: none;
-} */
-
-
 .find{
     padding: 20px 170px 20px 170px;
-    background-color: #f9f9f9;
+    background-color: ;
     border-radius: 50px;
     box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45); 
 }
@@ -56,6 +36,7 @@ select{
     width: 100%;
     max-width: 800px;
     gap: 50px;
+    height: 80px;
  }
 
  .branchDiv, .courtDiv, .dateDiv, .custom-time-picker{
@@ -74,6 +55,8 @@ select{
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
  }
 
  .custom-time-picker .ant-picker {
@@ -90,6 +73,16 @@ select{
 .custom-time-picker .ant-picker-input {
     color: #333;
     font-weight: bold;
+}
+
+.Btn{
+    padding: .000001rem 4rem .000001rem 4rem;
+    
+}
+
+button{
+    background-color: var(--PrimaryColor);
+    border-radius: 50px;
 }
  
 
