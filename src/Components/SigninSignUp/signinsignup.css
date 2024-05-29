@@ -31,15 +31,12 @@
     padding: 112px;
     margin-left: 20px;
 }
-h1, h3, h4, h5, p, a{
-    color: #fff;
-}
 .text-element{
     margin-left: 75px;
     margin-top: 80px;
     font-family: "Poetsen One", sans-serif;
 }
-.text-element h1{
+.text-element h1, h3, h4, h5, p, a{
     color: #fff;
 }
 p{

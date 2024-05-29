@@ -1,7 +1,10 @@
 .viewcourtinfo-body {
-    z-index: -1;
-    margin: 20px;
-    margin-left: 40px;
+    width: 200%;
+    position: relative;
+    left: -370px;
+    top: 70px;
+    z-index: 1;
+    margin: 10px;
     border: 1px solid #d4af37;
     /* Màu vàng gold */
     border-radius: 15px;
@@ -28,10 +31,7 @@
     margin-top: 10px;
     margin-left: 15px; 
 }
-p {
-    color: black;
-    font-family: 'Times New Roman', Times, serif;
-}
+
 
 .viewcourtinfo-body-des h1 {
     color: black;
@@ -39,7 +39,9 @@ p {
 }
 
 .viewcourtinfo-footer {
-    
+    width: 200%;
+    position: relative;
+    left: -370px;
 }
 
 .viewcourtinfo-img {
@@ -57,5 +59,6 @@ p {
 }
 
 .viewcourtinfo {
+    width: 100%;
     display: inline;
 }
