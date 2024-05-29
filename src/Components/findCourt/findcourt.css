@@ -27,10 +27,10 @@ select{
 }
 &:focus{
     outline: none;
-}
- */
+} */
 
- .find{
+
+.find{
     padding: 20px 170px 20px 170px;
     background-color: #f9f9f9;
     border-radius: 50px;
@@ -42,4 +42,54 @@ select{
     flex-direction: column;
     align-items: center;
  }
+
+ .homeText .title{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+ }
+
+ .searchCard{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    gap: 50px;
+ }
+
+ .branchDiv, .courtDiv, .dateDiv, .custom-time-picker{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+ }
+
+ label{
+    font-weight: bold;
+    margin-bottom: 5px;
+ }
+
+ select, input[type="date"], .custom-time-picker .ant-picker{
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+ }
+
+ .custom-time-picker .ant-picker {
+    border-radius: 8px;
+    border: 2px solid #1890ff;
+}
+
+.custom-time-picker .ant-picker:hover,
+.custom-time-picker .ant-picker-focused {
+    border-color: #40a9ff;
+    box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
+}
+
+.custom-time-picker .ant-picker-input {
+    color: #333;
+    font-weight: bold;
+}
+ 
 
