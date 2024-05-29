@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     element: <div><ViewInfo/></div>
   },
   {
-    path: '/findcourt',
+    path: '/findCourt',
     element: <div><Navbar/><FindCourt/></div>
   },
 ])

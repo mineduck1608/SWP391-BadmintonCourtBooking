@@ -3,7 +3,7 @@ import './findcourt.css';
 import {TimePicker} from 'antd';
 
 
-const findCourt = () => {
+const FindCourt = () => {
     return (
         <section className='find'>
             <div className="secContainer container">
@@ -62,4 +62,4 @@ const findCourt = () => {
     )
 }
 
-export default findCourt
+export default FindCourt
