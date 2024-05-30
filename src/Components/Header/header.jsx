@@ -11,7 +11,7 @@ const Header = () => {
                 <h1 className='logo-header'><MdSportsTennis className="icon" />BMTC</h1>
             </Link>
             <a href="./viewInfo" className="user-pic">
-                <img src={user} alt="Error" />
+                <img src={user} alt="" />
             </a>
             <div className="text-header">
                 <a href="./">Home</a>
