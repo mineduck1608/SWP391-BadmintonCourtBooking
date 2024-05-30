@@ -10,8 +10,10 @@ const Header = () => {
             <Link to={'/'}>
                 <h1 className='logo-header'><MdSportsTennis className="icon" />BMTC</h1>
             </Link>
-            <a href="./viewInfo" className="user-pic">
+            <a href="" className="user-pic">
+                <Link to={'/viewInfo'}>
                 <img src={user} alt="" />
+                </Link>
             </a>
             <div className="text-header">
                 <a href="./">Home</a>

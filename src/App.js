@@ -10,6 +10,7 @@ import ViewCourtInfo from './Components/ViewCourtInfo/viewCourtInfo';
 import ViewInfo from './Components/ViewInfo/ViewInfo';
 import EditInfo from './Components/EditInfo/EditInfo';
 import FindCourt from './Components/findCourt/findCourt';
+import Header from './Components/Header/header';
 
 
  
@@ -18,6 +19,7 @@ const App = () => {
     <>
     <Routes>
         <Route path="/" element={<div><Navbar/><Home/><Popular/><Footer/></div>}></Route>
+        <Route path="/home" element={<div><Header/><Home/><Popular/><Footer/></div>}></Route>
         <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true}/>}></Route>
         <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false}/>}></Route>
         <Route path="/viewCourtInfo" element={<ViewCourtInfo/>}></Route>

@@ -37,11 +37,11 @@ const Login = () => {
   return (
     <div className='wrapper'>
       <h1>Login</h1>
-      <div className="input-box">
+      <div className="input-login-box">
         <input type="text" id='username' name='username' value={username} onChange={handleUsernameChange} placeholder='Username' required />
         <FaUser className='icon' />
       </div>
-      <div className="input-box">
+      <div className="input-login-box">
         <input type="password" id="password" name="password" value={password} onChange={handlePasswordChange} placeholder='Password' required />
         <FaLock className='icon' />
       </div>
