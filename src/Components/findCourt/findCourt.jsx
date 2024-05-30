@@ -9,7 +9,7 @@ const findCourt = () => {
             <div className="secContainer container">
 
                 <div className="homeText">
-                    <h1 className='title'>
+                    <h1 className='Title'>
                         Find Your Court
                     </h1>
                 </div>
@@ -44,17 +44,17 @@ const findCourt = () => {
                     </div>
 
                     <div className="dateDiv">
-                        <label htmlFor="date">Choose Date</label><br />
-                        <input type="date" />
+                        <label htmlFor="date">Choose Date</label>
+                        <input type="date"/>
                     </div>
 
                     <div className='custom-time-picker'>
-                    <label htmlFor="date">Choose Time Range</label><br />
-                        <TimePicker.RangePicker/>
+                    <label htmlFor="date">Choose Time Range</label>
+                        <TimePicker.RangePicker className='input-box'/>
                     </div>
 
                     <button className='Btn'>
-                        <a href="#">Book Now!</a>
+                        <a href="#">Search</a>
                     </button>
 
 
