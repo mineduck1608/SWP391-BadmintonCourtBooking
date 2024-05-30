@@ -2,13 +2,14 @@ import React from "react";
 import { MdSportsTennis } from "react-icons/md";
 import './header.css';
 import user from '../../Assets/user.jpg';
+import { Link } from "react-router-dom";
 
 const Header = () => {
     return (
         <div className="header">
-            <a href="./">
+            <Link to={'/'}>
                 <h1 className='logo-header'><MdSportsTennis className="icon" />BMTC</h1>
-            </a>
+            </Link>
             <a href="./viewInfo" className="user-pic">
                 <img src={user} alt="Error" />
             </a>

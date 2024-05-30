@@ -3,7 +3,8 @@ import Login from "../Login/login";
 import Register from "../Register/register";
 import './signinsignup.css'
 import { MdSportsTennis } from "react-icons/md";
-
+import { Link } from 'react-router-dom';
+ 
 const SignInSignUp = ({ defaultLoginVisible }) => {
     const [isLoginVisible, setIsLoginVisible] = useState(defaultLoginVisible);
 
@@ -23,10 +24,11 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
             <div className="body">
                 <div className="body-element">
                     <div className="text-element">
-                        <a href="./" className="logo">
+                        <a href="" className="logo">
+                            <Link to={'/'}>                            
                             <h1><MdSportsTennis className="icon" />
                                 BMTC
-                            </h1>
+                            </h1></Link>
                         </a>
                         <h1>
                             BMTC Badminton Court Chain System
@@ -52,12 +54,12 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
                     <div className="login">
                         {isLoginVisible ? (
                             <>
-                                <a className="change-1" onClick={showRegister}>Register</a>
+                                <a className="change-1" onClick={showRegister}></a>
                                 <Login />
                             </>
                         ) : (
                             <>
-                                <a className="change-2" onClick={showLogin}>Login</a>
+                                <a className="change-2" onClick={showLogin}></a>
                                 <Register />
                             </>
                         )}

@@ -20,6 +20,7 @@
     background-position: center;
     background-size: 100%;
     background-repeat: no-repeat;
+    padding-bottom: 13px;
 }
 .body{
     position: fixed;
@@ -42,32 +43,4 @@
 p{
     text-align: justify;
 }
-.change-1{
-    display: inline-flex;
-    position: relative;
-    left: 267.7px;
-    top: 405px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14.5px;
-    z-index: 1;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-.change-1:hover{
-    text-decoration: underline;
-}.change-2{
-    display: inline-flex;
-    position: relative;
-    left: 311px;
-    top: 518px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14.5px;
-    z-index: 1;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-.change-2:hover{
-    text-decoration: underline;
-}
+

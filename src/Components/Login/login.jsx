@@ -3,6 +3,7 @@ import './login.css';
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
+import { Link } from 'react-router-dom';
 
 
 
@@ -50,7 +51,7 @@ const Login = () => {
         <a href="#">Forgot password?</a>
       </div>
       <div className="register-link">
-        <p>Don't hava an account? <a href='./register' >Register</a></p>
+        <p>Don't hava an account? <a href='' ><Link to={'/signup'}>Register</Link></a></p>
       </div>
       <div className="line">
         <a>_________________________</a>

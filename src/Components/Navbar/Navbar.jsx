@@ -3,6 +3,7 @@ import './navbar.css'
 import { MdSportsTennis } from "react-icons/md";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { TbGridDots } from "react-icons/tb";
+import { Link } from "react-router-dom";
 
 
 const Navbar = () => {
@@ -35,11 +36,11 @@ const Navbar = () => {
             <div className={transparent}>
 
                 <div className="logoDiv">
-                    <a href="#" className="logo">
+                    <Link to={'/'} className="logo">
                         <h1 className='flex'><MdSportsTennis className="icon" />
                             BMTC
                         </h1>
-                    </a>
+                    </Link>
                 </div>
 
                 <div className={active}>
@@ -59,10 +60,10 @@ const Navbar = () => {
 
                         <div className="headerBtns flex">
                             <button className='btn loginBtn'>
-                                <a href="/signin">Login</a>
+                                <Link to={'/signin'}>Login</Link>
                             </button>
                             <button className='btn '>
-                                <a href="/signup">Sign Up</a>
+                                <Link to={'/signup'}>Sign Up</Link>
                             </button>
                         </div>
 
