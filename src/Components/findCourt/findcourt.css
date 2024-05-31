@@ -35,7 +35,7 @@
 }
 
 .searchCard {
-    width: 80vw;
+    width: 95vw;
     border-radius: 1rem;
     padding: 2rem;
     background: var(--whiteColor);
@@ -117,8 +117,30 @@ button {
 }
 
 .custom-time-picker-dropdown {
+    position: absolute;
     top: 100% !important;
-    /* Đặt top là 100% để bảng chọn giờ nằm dưới input */
     left: 0 !important;
-    /* Đặt left là 0 để bảng chọn giờ căn lề trái với input */
 }
+
+.ant-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--PrimaryColor);
+    padding: 8px 1px !important;
+    min-width: 30px !important
+}
+
+.ant-picker{
+    border: none;
+    background-color: var(--inputColor);
+    border-radius: 10px;
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    
+}
+
+  
+

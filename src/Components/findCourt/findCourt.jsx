@@ -24,7 +24,7 @@ const FindCourt = () => {
           
                <div className="searchCard grid">
                   <div className="branchDiv">
-                        <label htmlFor='branch'>Choose Branch</label>
+                        <label htmlFor='branch'>Branch</label>
                         <select required>
                               <option value="0">Branch</option>
                               <option value="1">San Cau Kho</option>
@@ -38,7 +38,7 @@ const FindCourt = () => {
                   </div>
           
                   <div className="courtDiv">
-                        <label htmlFor="court">Choose Court</label>
+                        <label htmlFor="court">Court</label>
                         <select >
                               <option value="0" disabled selected hidden>Court Number</option>
                               <option value="1">Court 1</option>
@@ -52,14 +52,15 @@ const FindCourt = () => {
                   </div>
           
                   <div className="dateDiv">
-                        <label htmlFor="date">Choose Date</label>
+                        <label htmlFor="date">Date</label>
                         <input type="date"/>
                   </div>
 
                   <div className='custom-time-picker'>
-                        <label htmlFor="date">Choose Time Range</label>
+                        <label htmlFor="date">Time Range</label>
                         <TimePicker.RangePicker
                         popupClassName='custom-time-picker-dropdown'
+                        getPopupContainer={trigger => trigger.parentNode}
                         />
                   </div>
           
