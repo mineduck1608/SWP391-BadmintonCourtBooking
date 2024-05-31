@@ -10,82 +10,6 @@
     --inputColor: hsl(330, 12%, 97%);
 }
 
-/* .find {
-    padding: 15px 170px 15px 170px;
-
-    border-radius: 50px;
-    box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
-}
-
-.secContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-
-}
-
-.homeText .title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.branchDiv,
-.courtDiv,
-.dateDiv,
-.custom-time-picker {
-    flex: 1;
-    display: inline-flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.custom-time-picker {
-    padding-left: 50px;
-    padding-right: 50px;
-}
-
-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-select,
-input[type="date"],
-.custom-time-picker .ant-picker {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.custom-time-picker .ant-picker {
-    border-radius: 8px;
-    border: 2px solid #1890ff;
-}
-
-.custom-time-picker .ant-picker:hover,
-.custom-time-picker .ant-picker-focused {
-    border-color: #40a9ff;
-    box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
-}
-
-.custom-time-picker .ant-picker-input {
-    color: #333;
-    font-weight: bold;
-}
-
-.Btn {
-    padding: .000001rem 3em .000001rem 3rem;
-
-}
-
-button {
-    background-color: var(--PrimaryColor);
-    border-radius: 50px;
-} */
 
 .find {
     height: 80vh;
@@ -136,11 +60,11 @@ button {
     justify-content: space-between;
 }
 
-.custom-time-picker{
+.custom-time-picker {
     position: relative;
 }
 
-.custom-time-picker input{
+.custom-time-picker input {
     width: calc(100% - 20px);
 }
 
@@ -166,7 +90,7 @@ select,
 
 }
 
-button{
+button {
     margin-top: 2.2%;
 }
 
@@ -188,7 +112,13 @@ button{
     color: var(--whiteColor);
 }
 
-.Btn:hover{
+.Btn:hover {
     background: var(--HoverColor);
-  }
+}
 
+.custom-time-picker-dropdown {
+    top: 100% !important;
+    /* Đặt top là 100% để bảng chọn giờ nằm dưới input */
+    left: 0 !important;
+    /* Đặt left là 0 để bảng chọn giờ căn lề trái với input */
+}
