@@ -4,7 +4,6 @@ import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 
 
@@ -19,26 +18,24 @@ const Login = () => {
     if (validate()) {
       ///implentation
       ///console.log('proceed');
-      fetch("http://localhost:3004/useraccount/" + username).then((res) => {
+      fetch("http://localhost:3005/useraccount/" + username).then((res) => {
         return res.json();
       }).then((resp) => {
-        console.log(resp)
-        if (Object.keys(resp).length == 0) {
-          console.log('1');
+        if (Object.keys(resp).length === 0) {
+          alert('Please Enter valid username')
         }
         else {
           if (resp.password === password) {
-            console.log('2');
+            sessionStorage.setItem('username', username);
+            alert('Login Success');
             usenavigate('/');
           } else {
-                    toast.warning('error');
+            alert('Wrong password');
 
           }
         }
       }).catch((err) => {
-        console.log('4');
-
-        toast.warning('error');
+        alert('Login Failed');
       })
     }
   }
