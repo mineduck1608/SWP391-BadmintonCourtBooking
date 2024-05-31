@@ -10,82 +10,6 @@
     --inputColor: hsl(330, 12%, 97%);
 }
 
-/* .find {
-    padding: 15px 170px 15px 170px;
-
-    border-radius: 50px;
-    box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
-}
-
-.secContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-
-}
-
-.homeText .title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.branchDiv,
-.courtDiv,
-.dateDiv,
-.custom-time-picker {
-    flex: 1;
-    display: inline-flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.custom-time-picker {
-    padding-left: 50px;
-    padding-right: 50px;
-}
-
-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-select,
-input[type="date"],
-.custom-time-picker .ant-picker {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.custom-time-picker .ant-picker {
-    border-radius: 8px;
-    border: 2px solid #1890ff;
-}
-
-.custom-time-picker .ant-picker:hover,
-.custom-time-picker .ant-picker-focused {
-    border-color: #40a9ff;
-    box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
-}
-
-.custom-time-picker .ant-picker-input {
-    color: #333;
-    font-weight: bold;
-}
-
-.Btn {
-    padding: .000001rem 3em .000001rem 3rem;
-
-}
-
-button {
-    background-color: var(--PrimaryColor);
-    border-radius: 50px;
-} */
 
 .find {
     height: 80vh;
@@ -94,7 +18,7 @@ button {
     justify-content: center;
     margin: auto;
     position: relative;
-    top: -200px;
+    top: -150;
 }
 
 .secContainer .homeText {
@@ -111,7 +35,7 @@ button {
 }
 
 .searchCard {
-    width: 80vw;
+    width: 95vw;
     border-radius: 1rem;
     padding: 2rem;
     background: var(--whiteColor);
@@ -129,18 +53,18 @@ button {
 .courtDiv,
 .dateDiv,
 .custom-time-picker {
-    width: 50%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
 }
 
-.custom-time-picker{
+.custom-time-picker {
     position: relative;
 }
 
-.custom-time-picker input{
+.custom-time-picker input {
     width: calc(100% - 20px);
 }
 
@@ -166,8 +90,8 @@ select,
 
 }
 
-button{
-    margin-top: 2.2%;
+button {
+    margin-top: 2.1%;
 }
 
 .Btn {
@@ -188,7 +112,35 @@ button{
     color: var(--whiteColor);
 }
 
-.Btn:hover{
+.Btn:hover {
     background: var(--HoverColor);
-  }
+}
+
+.custom-time-picker-dropdown {
+    position: absolute;
+    top: 100% !important;
+    left: 0 !important;
+}
+
+.ant-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--PrimaryColor);
+    padding: 8px 1px !important;
+    min-width: 30px !important
+}
+
+.ant-picker{
+    border: none;
+    background-color: var(--inputColor);
+    border-radius: 10px;
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    
+}
+
+  
 

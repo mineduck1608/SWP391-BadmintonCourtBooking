@@ -1,69 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './findcourt.css';
-import {TimePicker} from 'antd';
+import { TimePicker } from 'antd';
+
+const { RangePicker } = TimePicker; // Import RangePicker
 
 
-const findCourt = () => {
-    return (
-        <section className='find'>
-            <div className="secContainer container">
+const FindCourt = () => {
+  const [timeRange, setTimeRange] = useState([null, null]);
 
-                <div className="homeText">
-                    <h1 className='Title'>
+  const onChange = (time) => {
+    setTimeRange(time);
+  };
+
+  return (
+  <section className='find'>
+          <div className="secContainer container">
+          
+               <div className="homeText">
+                  <h1 className='Title'>
                         Find Your Court
-                    </h1>
-                </div>
-
-                <div className="searchCard grid">
-                    <div className="branchDiv">
-                        <label htmlFor='branch'>Choose Branch</label>
+                  </h1>
+               </div>
+          
+               <div className="searchCard grid">
+                  <div className="branchDiv">
+                        <label htmlFor='branch'>Branch</label>
                         <select required>
-                            <option value="0">Branch</option>
-                            <option value="1">San Cau Kho</option>
-                            <option value="2">San Lao Dong</option>
-                            <option value="3">San Bo Cong An</option>
-                            <option value="4">San Hien Hoa</option>
-                            <option value="5">San Tran Nao</option>
-                            <option value="6">San Dong Phuong</option>
-                            <option value="7">San Luong Dinh Cua</option>
+                              <option value="0">Branch</option>
+                              <option value="1">San Cau Kho</option>
+                              <option value="2">San Lao Dong</option>
+                              <option value="3">San Bo Cong An</option>
+                              <option value="4">San Hien Hoa</option>
+                              <option value="5">San Tran Nao</option>
+                              <option value="6">San Dong Phuong</option>
+                              <option value="7">San Luong Dinh Cua</option>
                         </select>
-                    </div>
-
-                    <div className="courtDiv">
-                        <label htmlFor="court">Choose Court</label>
+                  </div>
+          
+                  <div className="courtDiv">
+                        <label htmlFor="court">Court</label>
                         <select >
-                            <option value="0" disabled selected hidden>Court Number</option>
-                            <option value="1">Court 1</option>
-                            <option value="2">Court 2</option>
-                            <option value="3">Court 3</option>
-                            <option value="4">Court 4</option>
-                            <option value="5">Court 5</option>
-                            <option value="6">Court 6</option>
-                            <option value="7">Court 7</option>
+                              <option value="0" disabled selected hidden>Court Number</option>
+                              <option value="1">Court 1</option>
+                              <option value="2">Court 2</option>
+                              <option value="3">Court 3</option>
+                              <option value="4">Court 4</option>
+                              <option value="5">Court 5</option>
+                              <option value="6">Court 6</option>
+                              <option value="7">Court 7</option>
                         </select>
-                    </div>
-
-                    <div className="dateDiv">
-                        <label htmlFor="date">Choose Date</label>
+                  </div>
+          
+                  <div className="dateDiv">
+                        <label htmlFor="date">Date</label>
                         <input type="date"/>
-                    </div>
+                  </div>
 
-                    <div className='custom-time-picker'>
-                    <label htmlFor="date">Choose Time Range</label>
-                        <TimePicker.RangePicker className='input-box'/>
-                    </div>
-
-                    <button className='Btn'>
+                  <div className='custom-time-picker'>
+                        <label htmlFor="date">Time Range</label>
+                        <TimePicker.RangePicker
+                        popupClassName='custom-time-picker-dropdown'
+                        getPopupContainer={trigger => trigger.parentNode}
+                        />
+                  </div>
+          
+                  <button className='Btn'>
                         <a href="#">Search</a>
-                    </button>
+                  </button>
+          
+          
+               </div>
+          
+          </div>
+          
+   </section>
+);
+};
 
-
-                </div>
-
-            </div>
-
-        </section>
-    )
-}
-
-export default findCourt
+export default FindCourt
