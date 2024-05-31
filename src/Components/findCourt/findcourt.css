@@ -18,7 +18,7 @@
     justify-content: center;
     margin: auto;
     position: relative;
-    top: -200px;
+    top: -150;
 }
 
 .secContainer .homeText {
@@ -53,7 +53,7 @@
 .courtDiv,
 .dateDiv,
 .custom-time-picker {
-    width: 50%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,7 +91,7 @@ select,
 }
 
 button {
-    margin-top: 2.2%;
+    margin-top: 2.1%;
 }
 
 .Btn {
