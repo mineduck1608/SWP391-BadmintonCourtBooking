@@ -24,12 +24,10 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
             <div className="body">
                 <div className="body-element">
                     <div className="text-element">
-                        <a href="" className="logo">
-                            <Link to={'/'}>                            
+                            <Link to={'/'} className="logo">                            
                             <h1><MdSportsTennis className="icon" />
                                 BMTC
                             </h1></Link>
-                        </a>
                         <h1>
                             BMTC Badminton Court Chain System
                         </h1>

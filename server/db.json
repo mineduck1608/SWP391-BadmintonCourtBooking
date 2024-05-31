@@ -1,0 +1,29 @@
+{
+    "useraccount": [
+        {
+            "id": "minhduc",
+            "userName": "minhduc",
+            "userID": 1,
+            "password": "123",
+            "branchID": null,
+            "roldID": 1,
+            "balance": 0
+        },
+        {
+            "id": "phuclinh",
+            "password": "123",
+            "userID": 2,
+            "branchID": null,
+            "roldID": 1,
+            "balance": 10
+        },{
+            
+            "id": "thanhngoc",
+            "password": "123",
+            "userID": 3,
+            "branchID": 1,
+            "roldID": 2,
+            "balance": 0
+        }
+    ]
+}

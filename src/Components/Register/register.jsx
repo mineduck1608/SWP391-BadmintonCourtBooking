@@ -15,7 +15,7 @@ const Register = () => {
             <input className="input-box" type="email" placeholder="Email" required/><br></br>
             <input className="input-box" type="phone" placeholder="Phone" required/><br></br>
             <button type="submit">Register</button><br></br>
-            <p className="login-link">You already have an account?<a><Link to={'/signin'}>Login</Link></a></p>
+            <p className="login-link">You already have an account?<Link to={'/signin'}>Login</Link></p>
           </div>
          </form>
     </div>

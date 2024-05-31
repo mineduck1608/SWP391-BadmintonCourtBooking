@@ -3,7 +3,8 @@ import './login.css';
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 
@@ -11,57 +12,77 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+  const usenavigate = useNavigate();
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-  const login = () => {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    var data = new FormData();
-    data.append("username", username);
-    data.append("password", password);
-    fetch("https://localhost:7011/api/Badminton/Authorize", {
-      method: "POST",
-      body: data
-    }).then(res => res.json())
-      .then(data => {
-        alert(data["UserName"]);
-        // code de redirect
-        //data["RoleID"]
-      });
+  const ProceedLogin = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      ///implentation
+      ///console.log('proceed');
+      fetch("http://localhost:3004/useraccount/" + username).then((res) => {
+        return res.json();
+      }).then((resp) => {
+        console.log(resp)
+        if (Object.keys(resp).length == 0) {
+          console.log('1');
+        }
+        else {
+          if (resp.password === password) {
+            console.log('2');
+            usenavigate('/');
+          } else {
+                    toast.warning('error');
+
+          }
+        }
+      }).catch((err) => {
+        console.log('4');
+
+        toast.warning('error');
+      })
+    }
+  }
+  const validate = () => {
+    let result = true;
+    if (username == '' || username == null) {
+      result = false;
+    }
+    if (password == '' || password == null) {
+      result = false;
+    }
+    return result;
   }
   return (
     <div className='wrapper'>
       <h1>Login</h1>
-      <div className="input-login-box">
-        <input type="text" id='username' name='username' value={username} onChange={handleUsernameChange} placeholder='Username' required />
-        <FaUser className='icon' />
-      </div>
-      <div className="input-login-box">
-        <input type="password" id="password" name="password" value={password} onChange={handlePasswordChange} placeholder='Password' required />
-        <FaLock className='icon' />
-      </div>
+      <form onSubmit={ProceedLogin}>
+        <div className="input-login-box">
+          <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder='Username' required />
+          <FaUser className='icon' />
+        </div>
+        <div className="input-login-box">
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Password' required />
+          <FaLock className='icon' />
+        </div>
 
-      <button type="submit" onClick={login}>Login</button>
+        <button type="submit">Login</button>
+      </form>
       <div className="remember-forgot">
         <a href="#">Forgot password?</a>
       </div>
       <div className="register-link">
-        <p>Don't hava an account? <a href='' ><Link to={'/signup'}>Register</Link></a></p>
+        <p>Don't hava an account? <Link to={'/signup'}>Register</Link></p>
       </div>
       <div className="line">
         <a>_________________________</a>
       </div>
-      <div class="or">
+      <div className="or">
         <a>or</a>
       </div>
       <div className='login-google'>
         <SignIn />
       </div>
+
     </div>
   );
 }
