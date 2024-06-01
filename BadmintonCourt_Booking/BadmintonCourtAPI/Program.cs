@@ -1,6 +1,9 @@
-
+﻿
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BadmintonCourtAPI
 {
@@ -14,6 +17,20 @@ namespace BadmintonCourtAPI
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            // Thêm dịch vụ CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost3000",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
+
+         
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -33,6 +50,9 @@ namespace BadmintonCourtAPI
             });
 
             var app = builder.Build();
+
+            // Sử dụng dịch vụ CORS
+            app.UseCors("AllowLocalhost3000");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

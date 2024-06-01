@@ -21,10 +21,21 @@ const Login = () => {
 
   const ProceedLogin = (e) => {
     e.preventDefault();
+
+    const loginData = {
+      username: username,
+      password: password
+    };
+
     if (validate()) {
       ///implentation
-      ///console.log('proceed');
-      fetch("http://localhost:3006/useraccount/" + username).then((res) => {
+      fetch("http://localhost:5266/User/LoginAuth?id=" + username + '&password=' + password, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+      }).then((res) => {
         return res.json();
       }).then((resp) => {
         if (Object.keys(resp).length === 0) {
@@ -35,13 +46,17 @@ const Login = () => {
             sessionStorage.setItem('username', username);
             toast.success("Success");
             usenavigate('/home');
-            sessionStorage.setItem('username', username);
           } else {
             toast.error("Wrong username or password.");
+            console.log('2');
+            console.log(resp.password);
           }
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         toast.error('Wrong username or password.');
+        console.log('1');
+
       })
     }
   }

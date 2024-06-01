@@ -44,30 +44,20 @@ namespace BadmintonCourtAPI.Controllers
 
         /*service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(email).UserId).RoleId.ToString();*/
 
-        [HttpGet]
+        [HttpPost]
         [Route("User/LoginAuth")]
-        public async Task<ActionResult<string>> LoginAuth(string email, string userName, string password)
+        public IActionResult LoginAuth(string id, string password) => service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(id) && x.Password.Equals(password)) != null ? Json(new
         {
-            User user = service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(userName) && x.Password.Equals(password));
-            if (user == null)
-                return "";
-            UserDetail userInfo = service.userDetailService.GetUserDetailByMail(email);
-            if (userInfo == null)
-                return "";
-            else
-            {
-                if (user.UserId != userInfo.UserId)
-                    return "";
-                return $"{user.RoleId}";
-            }
-        }
-            
-            
-            /* $"{service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(userName) && x.Password.Equals(userName) && x.UserDetail.Email.Equals(email))}";*/
+            service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(id) && x.Password.Equals(password)).RoleId,
+            id,
+            password
+        }) : Json("0");
+
+        /* $"{service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(userName) && x.Password.Equals(userName) && x.UserDetail.Email.Equals(email))}";*/
 
 
 
-		[HttpPut]
+        [HttpPut]
         [Route("User/Update")]
         public async Task<IActionResult> UpdateUser(int id, string username, string password, int? branchId, int? roleId, int? balence, string firstName, string lastName, string phone, string email)
         {

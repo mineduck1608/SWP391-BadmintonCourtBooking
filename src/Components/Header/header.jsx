@@ -12,6 +12,11 @@ const Header = () => {
             usenavigate('/signin');
         }
     }, []);
+
+    const handleLogout = () => {
+        sessionStorage.removeItem('username');
+        usenavigate('/');
+    }
     return (
         <div className="header">
             <Link to={'/'}>
@@ -26,7 +31,7 @@ const Header = () => {
                 <a href="./">Home</a>
                 <a href="">Booking</a>
                 <a className="long" href="">Time Balance</a>
-                <a href="">Logout</a>
+                <a href="" onClick={handleLogout} >Logout</a>
             </div>
         </div>
     );
