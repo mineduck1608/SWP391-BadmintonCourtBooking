@@ -1,0 +1,17 @@
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.csproj.AssemblyReference.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.GeneratedMSBuildEditorConfig.editorconfig
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.AssemblyInfoInputs.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.AssemblyInfo.cs
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.csproj.CoreCompileInputs.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtServices.deps.json
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtServices.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtServices.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtBusinessObjects.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtDAOs.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtDAOs.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\bin\Debug\net8.0\BadmintonCourtBusinessObjects.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\Badminto.CAFB7D74.Up2Date
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\refint\BadmintonCourtServices.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\BadmintonCourtServices.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtRepositories\obj\Debug\net8.0\ref\BadmintonCourtServices.dll
