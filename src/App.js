@@ -11,6 +11,8 @@ import ViewInfo from './Components/ViewInfo/ViewInfo';
 import EditInfo from './Components/EditInfo/EditInfo';
 import FindCourt from './Components/findCourt/findCourt';
 import Header from './Components/Header/header';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
  
 const App = () => {
@@ -24,8 +26,9 @@ const App = () => {
         <Route path="/viewCourtInfo" element={<ViewCourtInfo/>}></Route>
         <Route path="/editInfo" element={<EditInfo/>}></Route>
         <Route path="/viewInfo" element={<ViewInfo/>}></Route>
-        <Route path="/finCourt" element={<FindCourt/>}></Route>
+        <Route path="/findCourt" element={<FindCourt/>}></Route>
     </Routes>
+    <ToastContainer theme='colored'/>
     </>
   );
 }

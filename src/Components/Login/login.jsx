@@ -4,6 +4,8 @@ import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 
 
 
@@ -18,24 +20,24 @@ const Login = () => {
     if (validate()) {
       ///implentation
       ///console.log('proceed');
-      fetch("http://localhost:3005/useraccount/" + username).then((res) => {
+      fetch("http://localhost:3006/useraccount/" + username).then((res) => {
         return res.json();
       }).then((resp) => {
         if (Object.keys(resp).length === 0) {
-          alert('Please Enter valid username')
+          toast.error('Please enter valid username.');
         }
         else {
           if (resp.password === password) {
             sessionStorage.setItem('username', username);
-            alert('Login Success');
-            usenavigate('/');
+            toast.success("Success");
+            usenavigate('/home');
+            sessionStorage.setItem('username', username);
           } else {
-            alert('Wrong password');
-
+            toast.error("Wrong password or password.");
           }
         }
       }).catch((err) => {
-        alert('Login Failed');
+        toast.error('Wrong username or password.');
       })
     }
   }
@@ -68,7 +70,7 @@ const Login = () => {
         <a href="#">Forgot password?</a>
       </div>
       <div className="register-link">
-        <p>Don't hava an account? <Link to={'/signup'}>Register</Link></p>
+        <p>Don't have an account? <Link to={'/signup'}>Register</Link></p>
       </div>
       <div className="line">
         <a>_________________________</a>
@@ -79,7 +81,6 @@ const Login = () => {
       <div className='login-google'>
         <SignIn />
       </div>
-
     </div>
   );
 }
