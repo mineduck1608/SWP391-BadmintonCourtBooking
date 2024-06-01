@@ -1,3 +1,19 @@
+/* Apply the background image to the body */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../../Assets/image1.jpg'); /* Ensure this path is correct */
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px); /* Adjust the blur radius as needed */
+  z-index: -1; /* Ensure it stays behind the content */
+  opacity: 0.6; /* Optional: Adjust opacity for a subtle effect */
+}
+
 /* Container for the whole profile section */
 .profile-container {
   display: flex;
@@ -5,11 +21,13 @@
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for the profile box */
   max-width: 1000px;
-  margin: 20px auto;
+  margin: 50px auto 20px; /* Adjusted margin to push it lower */
   color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 /* Sidebar for profile picture and user details */
@@ -21,6 +39,8 @@
   text-align: center;
   margin-right: 20px;
   padding-top: 10%;
+  position: relative;
+  z-index: 2; /* Ensure content is above the blurred background */
 }
 
 /* Profile avatar image */
@@ -31,7 +51,6 @@
   object-fit: cover;
   margin-bottom: 10px;
   border: 2px solid #ccc;
-
 }
 
 .profile-sidebar p {
@@ -43,6 +62,8 @@
 /* Content section for form fields */
 .profile-content {
   flex: 2;
+  position: relative;
+  z-index: 2; /* Ensure content is above the blurred background */
 }
 
 .profile-content h2 {

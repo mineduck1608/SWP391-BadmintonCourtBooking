@@ -39,7 +39,7 @@ export default function EditInfo() {
         <h2>Profile Settings</h2>
         <div className="info-items">
           <div className="info-item">
-            <label htmlFor="first-name">Name</label>
+            <label htmlFor="first-name">First Name</label>
             <input
               type="text"
               id="first-name"
@@ -50,7 +50,7 @@ export default function EditInfo() {
             />
           </div>
           <div className="info-item">
-            <label htmlFor="last-name">Surname</label>
+            <label htmlFor="last-name">Last Name</label>
             <input
               type="text"
               id="last-name"
