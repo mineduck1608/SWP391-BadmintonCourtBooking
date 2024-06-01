@@ -1,0 +1,139 @@
+/* Apply the background image to the body */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../../Assets/image1.jpg'); /* Ensure this path is correct */
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px); /* Adjust the blur radius as needed */
+  z-index: -1; /* Ensure it stays behind the content */
+  opacity: 0.6; /* Optional: Adjust opacity for a subtle effect */
+}
+
+/* Container for the whole profile section */
+.profile-container {
+  display: flex;
+  align-items: flex-start;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for the profile box */
+  max-width: 1000px;
+  margin: 50px auto 20px; /* Adjusted margin to push it lower */
+  color: #333;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Sidebar for profile picture and user details */
+.profile-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-right: 20px;
+  padding-top: 10%;
+  position: relative;
+  z-index: 2; /* Ensure content is above the blurred background */
+}
+
+/* Profile avatar image */
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+}
+
+.profile-sidebar p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #777;
+}
+
+/* Content section for form fields */
+.profile-content {
+  flex: 2;
+  position: relative;
+  z-index: 2; /* Ensure content is above the blurred background */
+}
+
+.profile-content h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Info items container */
+.info-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Each info item */
+.info-item {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels for each field */
+.info-item label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Input fields */
+.info-item input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #fff;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Button container for save profile button */
+.button-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #6f42c1;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button.upload {
+  background-color: #28a745;
+  margin-bottom: 10px;
+}
+
+.button.upload:hover {
+  background-color: #218838;
+}
+
+.button:hover {
+  background-color: #5a32a8;
+}
