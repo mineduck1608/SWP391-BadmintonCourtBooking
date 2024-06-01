@@ -1,0 +1,6 @@
+@BadmintonCourtAPI_HostAddress = http://localhost:5266
+
+GET {{BadmintonCourtAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
