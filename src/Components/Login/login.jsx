@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './login.css';
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
@@ -14,6 +14,10 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const usenavigate = useNavigate();
+
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
 
   const ProceedLogin = (e) => {
     e.preventDefault();
@@ -33,7 +37,7 @@ const Login = () => {
             usenavigate('/home');
             sessionStorage.setItem('username', username);
           } else {
-            toast.error("Wrong password or password.");
+            toast.error("Wrong username or password.");
           }
         }
       }).catch((err) => {
