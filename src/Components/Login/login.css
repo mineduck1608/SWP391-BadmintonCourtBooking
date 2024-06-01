@@ -1,3 +1,15 @@
+:root {
+    --PrimaryColor: hsl(26, 93%, 50%);
+    --HoverColor: hsl(26, 90%, 42%);
+    --whiteColor: hsl(0, 0%, 100%);
+    --blackColor: hsl(0%, 0%, 18%);
+    --textColor: hsl(240, 1%, 48%);
+    --whiteColorDeam: hsl(0, 0%, 93%);
+    --greyBg: hsl(0, 0%, 96%);
+    --greyText: rgb(190, 190, 190);
+    --inputColor: hsl(330, 12%, 97%);
+  }
+
 .wrapper {
     width: 420px;
     background: transparent;
@@ -58,19 +70,21 @@
     font-size: 14.5px;
     margin: 10px 100px;
     text-align: center;
+    width: 100%;
 }
 .remember-forgot label input {
     accent-color: #fff;
     margin-right: 4px;
 }
-.remember-forgot a{
+.remember-forgot label{
     color: #fff;
     text-decoration: none;
     margin-bottom: -10px;
     margin-top: 5px;
+    cursor: pointer;
 }
-.remember-forgot a:hover{
-    text-decoration: underline;
+.remember-forgot label:hover{
+    color: var(--PrimaryColor)
 }
 .wrapper button{
     width: 100%;
@@ -96,7 +110,7 @@
     font-weight: 600;
 }
 .register-link p a:hover{
-    text-decoration: underline;
+    color: var(--PrimaryColor)
 }
 body {
   margin: 0;
