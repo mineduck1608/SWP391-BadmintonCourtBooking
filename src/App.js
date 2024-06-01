@@ -26,7 +26,8 @@ const App = () => {
         <Route path="/viewCourtInfo" element={<ViewCourtInfo/>}></Route>
         <Route path="/editInfo" element={<EditInfo/>}></Route>
         <Route path="/viewInfo" element={<ViewInfo/>}></Route>
-        <Route path="/finCourt" element={<FindCourt/>}></Route>
+        <Route path="/findCourt" element={<FindCourt/>}></Route>
+        <Route path="/home" element={<div><Header/><Home/><Popular/><Footer/></div>}></Route>
     </Routes>
     <ToastContainer theme='colored'/>
     </>
