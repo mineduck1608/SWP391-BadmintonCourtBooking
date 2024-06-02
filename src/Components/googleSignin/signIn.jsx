@@ -3,17 +3,31 @@ import { auth, provider } from "./config"; // Ensure this is the correct path to
 import { signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const [value, setValue] = useState('');
   const navigate = useNavigate();
 
-  const handleClick = async () => {
+  const handleClick = async (e) => {
+    const result = await signInWithPopup(auth, provider);
+    e.preventDefault();
+    fetch("http://localhost:5266/User/ExternalLogAuth?email=" + result.user.email, {
+        method: "POST",
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(result.user.email),
+      }).then((res) => {
+        toast.success('Login successfuly.');
+        console.log(result.user.email);
+      }).catch((err) => {
+        toast.error('Failed: ' + err.message);
+      })
+
     try {
-      const result = await signInWithPopup(auth, provider);
+     
       setValue(result.user.email);
       sessionStorage.setItem("email", result.user.email);
-      navigate('/'); // Navigate to /home after successful sign-in
+      navigate('/home'); // Navigate to /home after successful sign-in
     } catch (error) {
     }
   };
@@ -22,6 +36,7 @@ const SignIn = () => {
     const storedEmail = sessionStorage.getItem('email');
     if (storedEmail) {
       setValue(storedEmail);
+      navigate('/home');
     } else {
     }
   }, []);

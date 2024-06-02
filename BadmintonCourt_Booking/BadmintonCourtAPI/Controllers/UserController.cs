@@ -10,7 +10,7 @@ namespace BadmintonCourtAPI.Controllers
     {
         private readonly BadmintonCourtService service = null;
 
-		public UserController()
+        public UserController()
         {
             if (service == null)
             {
@@ -18,6 +18,7 @@ namespace BadmintonCourtAPI.Controllers
             }
         }
 
+        public bool IsPasswordSecure(string password) => new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password);
         public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
 
         [HttpGet]
@@ -37,7 +38,7 @@ namespace BadmintonCourtAPI.Controllers
         public async Task<ActionResult<User>> GetUserByUserId(int id) => service.userService.GetUserById(id);
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("User/ExternalLogAuth")]
         public async Task<ActionResult<string>> ExternalAuth(string email) => service.userDetailService.GetUserDetailByMail(email) != null ? $"{service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(email).UserId).RoleId}" : "";
 
@@ -97,12 +98,20 @@ namespace BadmintonCourtAPI.Controllers
         {
             if (IsPhoneFormatted(phone))
             {
-                service.userService.AddUser(new User(username, password, null, 3, 0));
-                service.userDetailService.AddUserDetail(new UserDetail(service.userService.GetRecentAddedUser().UserId, firstName, lastName, email, phone));
-				return Ok();
-                //return RedirectToAction("AddUserDetail", "UserDetail", new UserDetail(service.userService.GetRecentAddedUser().UserId + 1, firstName, lastName, email, phone));
+                UserDetail infoStorage = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
+                if (infoStorage == null)
+                {
+                    service.userService.AddUser(new User(username, password, null, 3, 0));
+                    service.userDetailService.AddUserDetail(new UserDetail(service.userService.GetRecentAddedUser().UserId, firstName, lastName, email, phone));
+                    return Json(new
+                    {
+                        service.userService.GetRecentAddedUser().RoleId
+                    });
+
+                }
+                return Json("0");
             }
-            return BadRequest("The phone is not properly formatted");
+            return Json("The phone number is not properly formatted");
         }
 
 
@@ -112,9 +121,28 @@ namespace BadmintonCourtAPI.Controllers
         [Route("User/Delete")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            service.userService.DeleteUser(id);   
+            service.userService.DeleteUser(id);
             return Ok();
         }
 
+        [HttpPost]
+        [Route("User/ForgetPassword")]
+        public IActionResult ResetPass(string newPass, string mail)
+        {
+            User user = service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(mail).UserId);
+            if (!newPass.Equals(user.Password))
+            {
+                bool status = IsPasswordSecure(newPass);
+                if (status)
+                {
+                    user.Password = newPass;
+                    service.userService.UpdateUser(user, user.UserId);
+                    return Json("");
+                }
+                return Json("");
+            }
+            return Json("");
+
+        }
     }
 }

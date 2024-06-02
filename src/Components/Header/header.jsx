@@ -8,13 +8,15 @@ const Header = () => {
     const usenavigate = useNavigate();
     useEffect(() => {
         let username = sessionStorage.getItem('username');
-        if(username === '' || username === null){
+        let email = sessionStorage.getItem('email');
+        if((username === '' || username === null) && (email === '' || email === null)){
             usenavigate('/signin');
         }
     }, []);
 
     const handleLogout = () => {
         sessionStorage.removeItem('username');
+        sessionStorage.removeItem('email');
         usenavigate('/');
     }
     return (
