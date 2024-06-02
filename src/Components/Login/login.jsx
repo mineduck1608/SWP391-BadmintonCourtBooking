@@ -1,69 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './login.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import SignIn from '../googleSignin/signIn';
 import { Link, useNavigate } from 'react-router-dom';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../../firebase.js'; // Adjust the import path as necessary
+import { toast } from 'react-toastify';
+
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [resetEmail, setResetEmail] = useState('');
-  const [message, setMessage] = useState('');
+  
+  const usenavigate = useNavigate();
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
+
 
   const ProceedLogin = (e) => {
     e.preventDefault();
-    if (validate()) {
-      fetch("http://localhost:3005/useraccount/" + username)
-        .then((res) => res.json())
-        .then((resp) => {
-          if (Object.keys(resp).length === 0) {
-            alert('Please enter a valid username');
-          } else {
-            if (resp.password === password) {
-              sessionStorage.setItem('username', username);
-              alert('Login Success');
-              navigate('/');
-            } else {
-              alert('Wrong password');
-            }
-          }
-        })
-        .catch((err) => {
-          alert('Login Failed');
-        });
-    }
-  };
 
+    const loginData = {
+      username: username,
+      password: password
+    };
+
+    if (validate()) {
+      ///implentation
+      fetch("http://localhost:5266/User/LoginAuth?id=" + username + '&password=' + password, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+      }).then((res) => {
+        return res.json();
+      }).then((resp) => {
+        if (Object.keys(resp).length === 0) {
+          toast.error('Please enter valid username.');
+        }
+        else {
+          if (resp.password === password) {
+            sessionStorage.setItem('username', username);
+            toast.success("Success");
+            usenavigate('/home');
+          } else {
+            toast.error("Wrong username or password.");
+            console.log('2');
+            console.log(resp.password);
+          }
+        }
+      })
+      .catch((err) => {
+        toast.error('Wrong username or password.');
+        console.log('1');
+
+      })
+    }
+  }
   const validate = () => {
     let result = true;
-    if (!username) {
+    if (username == '' || username == null) {
       result = false;
     }
-    if (!password) {
+    if (password == '' || password == null) {
       result = false;
     }
     return result;
-  };
-
-  const handlePasswordReset = () => {
-    if (!resetEmail) {
-      alert('Please enter your email to reset password');
-      return;
-    }
-    sendPasswordResetEmail(auth, resetEmail)
-      .then(() => {
-        setMessage('Password reset email sent successfully');
-        console.log('Password reset email sent successfully');
-      })
-      .catch((error) => {
-        setMessage('Error sending password reset email: ' + error.message);
-        console.error('Error sending password reset email:', error);
-      });
-  };
+  }
+  
 
   return (
     <div className='wrapper'>
@@ -80,13 +85,7 @@ const Login = () => {
         <button type="submit">Login</button>
       </form>
       <div className="remember-forgot">
-        <label style={{ cursor: 'pointer', color: 'blue' }}>
-          Forgot password?
-        </label>
-        <div className="input-reset-box">
-          <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} placeholder='Enter email to reset password' />
-          <button type="button" onClick={handlePasswordReset}>Reset Password</button>
-        </div>
+      <a href="#">Forgot password?</a>
       </div>
       <div className="register-link">
         <p>Don't have an account? <Link to={'/signup'}>Register</Link></p>
@@ -100,9 +99,7 @@ const Login = () => {
       <div className='login-google'>
         <SignIn />
       </div>
-      {message && <p>{message}</p>}
     </div>
   );
-};
-
-export default Login;
+}
+export default Login
