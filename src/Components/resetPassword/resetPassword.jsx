@@ -1,6 +1,7 @@
 import { sendPasswordResetEmail } from "firebase/auth";
 import React from "react";
 import { auth } from "../googleSignin/config";
+import { toast } from "react-toastify";
 
 const ResetPassword = () => {
 
@@ -8,10 +9,10 @@ const ResetPassword = () => {
         e.preventDefault();
         const emailVal = e.target.email.value;
         sendPasswordResetEmail(auth, emailVal).then(data => {
-            alert("Check your gmail");
+            toast.success("Check your gmail to reset password.");
+            console.log(emailVal);
         }).catch(err => {
-            alert(err.code);
-            console.log(err)
+            toast.warning("Unsuccess.")
         })
     }
     return(
