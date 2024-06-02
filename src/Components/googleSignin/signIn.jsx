@@ -1,31 +1,40 @@
-import React from "react";
-import {auth, provider} from "./config"
+import React, { useState, useEffect } from "react";
+import { auth, provider } from "./config"; // Ensure this is the correct path to your Firebase config
 import { signInWithPopup } from "firebase/auth";
-import { useState } from "react";
-import { useEffect } from "react";
-import Home from "./home";
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from 'react-router-dom';
 
-const SignIn = () =>{
-    const [value, setValue] = useState('')
-    const handleClick =() => {
-        signInWithPopup(auth, provider).then((data) => {
-            setValue(data.user.email)
-            localStorage.setItem("email", data.user.email)
-        })
+const SignIn = () => {
+  const [value, setValue] = useState('');
+  const navigate = useNavigate();
+
+  const handleClick = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      setValue(result.user.email);
+      sessionStorage.setItem("email", result.user.email);
+      navigate('/'); // Navigate to /home after successful sign-in
+    } catch (error) {
     }
+  };
 
-    useEffect(() => {
-        setValue(localStorage.getItem('email'))
-    })
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem('email');
+    if (storedEmail) {
+      setValue(storedEmail);
+    } else {
+    }
+  }, []);
 
-    return (
-        <div className='return'>
-            {value ? <Home/>:
-            <div onClick={handleClick}><FcGoogle className='icon'/></div>
-            }      
-             
+  return (
+    <div className='return'>
+      {!value && (
+        <div onClick={handleClick}>
+          <FcGoogle className='icon' />
         </div>
-    );
-}
+      )}
+    </div>
+  );
+};
+
 export default SignIn;

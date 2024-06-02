@@ -15,13 +15,21 @@ const Register = () => {
   const usenavigate = useNavigate();
 
   const isValidate = () => {
-    let isproceed = true;
-    if(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)){
-    }else{
-      isproceed =false;
-      toast.warning('Please enter the valid email');
+    let isProceed = true;
+  
+    // Kiểm tra tính hợp lệ của email
+    if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)) {
+      isProceed = false;
+      toast.warning('Please enter a valid email');
     }
-    return isproceed;
+  
+    // Kiểm tra tính hợp lệ của số điện thoại
+    if (!/^\d{10}$/.test(phone)) {
+      isProceed = false;
+      toast.warning('Please enter a valid phone number');
+    }
+  
+    return isProceed;
   }
 
   const handleSubmit = (e) => {
