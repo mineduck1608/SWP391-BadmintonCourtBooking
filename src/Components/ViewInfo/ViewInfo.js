@@ -14,7 +14,7 @@ export default function ViewInfo() {
   });
 
   useEffect(() => {
-    // Uncomment and replace the URL below with your actual API endpoint
+    //  API 
     // const apiEndpoint = 'https://api.example.com/user-info';
 
     // Fetch user information from the API
