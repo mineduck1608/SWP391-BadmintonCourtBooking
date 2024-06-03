@@ -3,7 +3,6 @@ import { MdSportsTennis } from "react-icons/md";
 import './header.css';
 import user from '../../Assets/user.jpg';
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
 
 const Header = () => {
     const usenavigate = useNavigate();
@@ -18,7 +17,6 @@ const Header = () => {
     const handleLogout = () => {
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('email');
-        toast.success('Logout success.')
         usenavigate('/');
     }
     return (

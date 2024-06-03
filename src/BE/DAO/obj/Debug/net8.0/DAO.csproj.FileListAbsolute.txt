@@ -1,0 +1,17 @@
+D:\dotnet\other\SWP391\DAO\bin\Debug\net8.0\DAO.deps.json
+D:\dotnet\other\SWP391\DAO\bin\Debug\net8.0\DAO.dll
+D:\dotnet\other\SWP391\DAO\bin\Debug\net8.0\DAO.pdb
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.GeneratedMSBuildEditorConfig.editorconfig
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.AssemblyInfoInputs.cache
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.AssemblyInfo.cs
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.csproj.CoreCompileInputs.cache
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.dll
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\refint\DAO.dll
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.pdb
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\ref\DAO.dll
+D:\dotnet\other\SWP391\DAO\bin\Debug\net8.0\DAO.runtimeconfig.json
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.csproj.AssemblyReference.cache
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.genruntimeconfig.cache
+D:\dotnet\other\SWP391\DAO\bin\Debug\net8.0\BusinessObj.dll
+D:\dotnet\other\SWP391\DAO\bin\Debug\net8.0\BusinessObj.pdb
+D:\dotnet\other\SWP391\DAO\obj\Debug\net8.0\DAO.csproj.Up2Date

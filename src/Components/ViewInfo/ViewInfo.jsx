@@ -4,32 +4,23 @@ import { Link } from 'react-router-dom';
 
 export default function ViewInfo() {
   const [userInfo, setUserInfo] = useState({
-    userId: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    user: ''
+    firstName: 'Quynh',
+    lastName: 'Tran',
+    birthDate: '1990-01-01',
+    email: 'quynh@123.com',
+    phone: '123456789',
+    avatar: 'path'
   });
 
   useEffect(() => {
-    fetch("http://localhost:5266/UserDetail/GetAll", {
-        method: "GET",
-        headers: { 'Content-Type': 'application/json' },
-      })
-      .then(response => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          // Assuming we need to handle an array of users and find the specific user
-          const user = data.find(user => user.userId === 3);
-          if (user) {
-            setUserInfo(user);
-          }
-        } else {
-          setUserInfo(data);
-        }
-      })
-      .catch(error => console.error('Error fetching user info:', error));
+    // Uncomment and replace the URL below with your actual API endpoint
+    // const apiEndpoint = 'https://api.example.com/user-info';
+
+    // Fetch user information from the API
+    // fetch(apiEndpoint)
+    //   .then(response => response.json())
+    //   .then(data => setUserInfo(data))
+    //   .catch(error => console.error('Error fetching user info:', error));
   }, []);
 
   return (
@@ -52,6 +43,10 @@ export default function ViewInfo() {
               <div>{userInfo.lastName}</div>
             </div>
             <div className="info-item">
+              <label>Birth Date</label>
+              <div>{userInfo.birthDate}</div>
+            </div>
+            <div className="info-item">
               <label>Email</label>
               <div>{userInfo.email}</div>
             </div>
@@ -60,8 +55,13 @@ export default function ViewInfo() {
               <div>{userInfo.phone}</div>
             </div>
           </div>
-          <div className="button-container">
-            <button className="button">Edit</button>
+          <div className="button-container">  
+            <button className="button"><Link to={'/editInfo'}>Edit</Link></button>     
+          </div>
+        </div>
+        <div className="history-box">
+          <div className="black-box">
+            <p className="history-text">History</p>
           </div>
         </div>
       </div>
