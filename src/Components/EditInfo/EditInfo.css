@@ -1,5 +1,5 @@
 /* Apply the background image to the body */
-body::before {
+.profile-content::before  {
   content: '';
   position: fixed;
   top: 0;
