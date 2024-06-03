@@ -199,7 +199,7 @@ public partial class BadmintonCourtContext : DbContext
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.UserName, "UQ__User__66DCF95C44190B5A").IsUnique();
+            entity.HasIndex(e => e.UserName, "UQ__User__66DCF95CDA289017").HasDatabaseName("Badminton");
 
             entity.Property(e => e.UserId).HasColumnName("userID");
             entity.Property(e => e.Balance).HasColumnName("balance");

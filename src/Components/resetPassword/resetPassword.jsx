@@ -1,16 +1,16 @@
 import { sendPasswordResetEmail } from "firebase/auth";
-import React from "react";
+import React, { useState } from "react";
 import { auth } from "../googleSignin/config";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
+    const [email, emailChange] = useState("");
 
     const handleSubmit = async(e) => {
         e.preventDefault();
-        const emailVal = e.target.email.value;
-        sendPasswordResetEmail(auth, emailVal).then(data => {
+        sendPasswordResetEmail(auth, email).then(data => {
             toast.success("Check your gmail to reset password.");
-            console.log(emailVal);
+            console.log(email);
         }).catch(err => {
             toast.warning("Unsuccess.")
         })
@@ -18,8 +18,8 @@ const ResetPassword = () => {
     return(
         <div>
             <h1>Reset Password</h1>
-            <form onSubmit={(e) => handleSubmit(e)}>
-                <input name="email"/>
+            <form onSubmit={handleSubmit}>
+            <input value={email} onChange={e => emailChange(e.target.value)} type="email" placeholder="Email" required />
                 <button>Reset</button>
             </form>
         </div>
