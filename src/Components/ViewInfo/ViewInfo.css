@@ -1,3 +1,4 @@
+
 .profile-container {
   display: flex;
   align-items: flex-start;
@@ -115,17 +116,3 @@
   background-color: #5a32a8;
 }
 
-/* History box */
-.history-box {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.history-text {
-  margin: 0;
-  font-size: 24px;
-  color: #333;
-}
