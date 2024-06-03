@@ -13,7 +13,7 @@ import FindCourt from './Components/findCourt/findCourt';
 import Header from './Components/Header/header';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import ResetPassword from './Components/resetPassword/resetPassword';
+import ForgetPassword from './Components/ForgetPassword/forgetPassword';
 
  
 const App = () => {
@@ -29,7 +29,7 @@ const App = () => {
         <Route path="/viewInfo" element={<ViewInfo/>}></Route>
         <Route path="/findCourt" element={<FindCourt/>}></Route>
         <Route path="/home" element={<div><Header/><Home/><Popular/><Footer/></div>}></Route>
-        <Route path="/reset" element={<ResetPassword/>}></Route>
+        <Route path="/forget" element={<ForgetPassword/>}></Route>
     </Routes>
     <ToastContainer theme='colored'/>
     </>
