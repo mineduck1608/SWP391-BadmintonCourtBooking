@@ -21,7 +21,6 @@ const SignIn = () => {
         console.log(result.user.email);
       }).catch((err) => {
         toast.error('Failed: ' + err.message);
-        console.log(result.user.email);
       })
 
     try {

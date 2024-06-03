@@ -40,16 +40,7 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpPost]
         [Route("User/ExternalLogAuth")]
-        public async Task<IActionResult> ExternalAuth(string email)
-        {
-            UserDetail info = service.userDetailService.GetUserDetailByMail(email);
-            if (info == null)
-            {
-                service.userService.AddUser(new User("", "", null, 3, 0));
-                service.userDetailService.AddUserDetail(new UserDetail(service.userService.GetRecentAddedUser().UserId, "", "", email, ""));
-            }
-            return Ok(new { roleId = 3 });
-        }
+        public async Task<ActionResult<string>> ExternalAuth(string email) => service.userDetailService.GetUserDetailByMail(email) != null ? $"{service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(email).UserId).RoleId}" : "";
 
 
         /*service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(email).UserId).RoleId.ToString();*/
