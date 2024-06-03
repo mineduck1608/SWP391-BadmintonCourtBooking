@@ -5,71 +5,86 @@ import './forgetpassword.css';
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const [otpError, setOtpError] = useState('');
-  const [resetError, setResetError] = useState('');
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSendOtp = async () => {
     try {
       const response = await axios.post('http://localhost:3005/send-otp', { email });
-      setOtpSent(true);
-      alert(response.data.message);
+      if (response.status === 200) {
+        setOtpSent(true);
+        setMessage('OTP sent successfully. Check your email.');
+      }
     } catch (error) {
-      setOtpError('Error sending OTP. Please try again.');
+      setMessage('Error sending OTP');
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      const response = await axios.post('http://localhost:3005/verify-otp', { email, otp });
+      if (response.status === 200) {
+        setOtpVerified(true);
+        setMessage('OTP verified successfully. You can now reset your password.');
+      }
+    } catch (error) {
+      setMessage('Invalid OTP');
     }
   };
 
   const handleResetPassword = async () => {
     try {
-      const response = await axios.post('http://localhost:3005/reset-password', {
-        email,
-        otp,
-        newPassword,
-      });
-      alert(response.data.message);
-      if (response.data.message === 'Password reset successful') {
-        // Redirect or perform any further action after successful password reset
+      const response = await axios.post('http://localhost:3005/reset-password', { email, newPassword });
+      if (response.status === 200) {
+        setMessage('Password updated successfully. You can now log in with your new password.');
       }
     } catch (error) {
-      setResetError('Error resetting password. Please try again.');
+      setMessage('Error updating password');
     }
   };
 
   return (
-    <div className="forget-password-wrapper">
-      <h2>Forget Password</h2>
-      {!otpSent ? (
-        <>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button onClick={handleSendOtp}>Send OTP</button>
-          {otpError && <p className="error-message">{otpError}</p>}
-        </>
-      ) : (
-        <>
+    <div className='forget-password-wrapper'>
+      <h1>Forget Password</h1>
+      <div className="input-box">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder='Enter your email'
+          required
+        />
+      </div>
+      <button onClick={handleSendOtp}>Send OTP</button>
+      {otpSent && !otpVerified && (
+        <div className="otp-box">
           <input
             type="text"
-            placeholder="Enter OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
+            placeholder='Enter OTP'
+            required
           />
+          <button onClick={handleVerifyOtp}>Verify OTP</button>
+        </div>
+      )}
+      {otpVerified && (
+        <div className="reset-password-box">
           <input
             type="password"
-            placeholder="Enter new password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            placeholder='Enter new password'
+            required
           />
           <button onClick={handleResetPassword}>Reset Password</button>
-          {resetError && <p className="error-message">{resetError}</p>}
-        </>
+        </div>
       )}
+      {message && <p>{message}</p>}
     </div>
   );
-};
+}
 
 export default ForgetPassword;

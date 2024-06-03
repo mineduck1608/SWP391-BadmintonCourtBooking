@@ -10,7 +10,6 @@
     "antd": "^5.17.4",
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.2",
-    "cors": "^2.8.5",
     "express": "^4.19.2",
     "firebase": "^10.12.2",
     "framer-motion": "^11.2.9",
