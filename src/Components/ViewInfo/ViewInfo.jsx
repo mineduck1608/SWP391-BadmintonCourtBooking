@@ -22,7 +22,6 @@ export default function ViewInfo() {
       if (Array.isArray(data)) {
         // Assuming we need to handle an array of users and find the specific user
         const useridsession = sessionStorage.getItem('userId');
-        console.log(useridsession);
         const user = data.find(user => user.userId == useridsession);
         if (user) {
           setUserInfo(user);

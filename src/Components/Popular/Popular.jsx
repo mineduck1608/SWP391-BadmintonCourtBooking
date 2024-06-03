@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './popular.css'
 import { BsArrowLeftShort } from 'react-icons/bs'
 import { BsArrowRightShort } from 'react-icons/bs'
@@ -17,13 +17,21 @@ import img9 from '../../Assets/image4.jpg'
 
 
 const Popular = () => {
-    const [courtBranch, setCourtBranch] = useState({
-        id: '',
-        imgSrc: '',
-        destTitle: '',
-        location: '',
-        grade: ''
-    });
+    const [courtBranches, setCourtBranches] = useState([]);
+
+    useEffect(() => {
+        fetch("http://localhost:5266/Branch/GetAll", {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then((data) => {
+                setCourtBranches(data);
+                console.log(data);
+            })
+            .catch(error => console.error('Error fetching user info:', error));
+    }, []);
+
     return (
         <section className='popular section container'>
             <div className="secContainer">
@@ -46,39 +54,28 @@ const Popular = () => {
                 </div>
 
                 <div className="mainContent grid">
-                                <div className="singleDestination">
-                                    <div className="destImage">
-
-                                        <img src={courtBranch.imgSrc} alt="Image title" />
-
-                                        <div className="overlayInfo">
-                                            <h3>{courtBranch.destTitle}</h3>
-                                            <p>
-                                                {courtBranch.location}
-                                            </p>
-
-                                            <BsArrowRightShort className='icon' />
-                                        </div>
-
-                                    </div>
-
-                                    <div className="destFooter">
-                                        <div className="number">
-                                            0{courtBranch.id}
-                                        </div>
-
-                                        <div className="destText flex">
-                                            <h6>
-                                                {courtBranch.location}
-                                            </h6>
-                                            <span className='flex'>
-                                                <span className="dot">
-                                                    <BsDot className="icon" />
-                                                </span>
-                                            </span>
-                                        </div>
-                                    </div>
+                    {courtBranches.map(branch => (
+                        <div className="singleDestination" key={branch.branchId}>
+                            <div className="destImage">
+                                <img src={img2} alt="Image title" />
+                                <div className="overlayInfo">
+                                    <p>{branch.location}</p>
+                                    <BsArrowRightShort className='icon' />
                                 </div>
+                            </div>
+                            <div className="destFooter">
+                                <div className="number">0{branch.branchId}</div>
+                                <div className="destText flex">
+                                    <h6>{branch.location}</h6>
+                                    <span className='flex'>
+                                        <span className="dot">
+                                            <BsDot className="icon" />
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
             </div>
