@@ -42,12 +42,11 @@ const Login = () => {
         else {
           if (resp.password === password) {
             sessionStorage.setItem('username', username);
+            sessionStorage.setItem('userId', resp.userId);
             toast.success("Success");
             usenavigate('/home');
           } else {
             toast.error("Wrong username or password.");
-            console.log('2');
-            console.log(resp.password);
           }
         }
       })

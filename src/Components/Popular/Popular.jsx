@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './popular.css'
 import { BsArrowLeftShort } from 'react-icons/bs'
 import { BsArrowRightShort } from 'react-icons/bs'
@@ -13,41 +13,17 @@ import img9 from '../../Assets/image4.jpg'
 
 //Use high order array method to display all the destination
 
-const Data = [
-    {
-        id: 1,
-        imgSrc: img2,
-        destTitle: 'San1',
-        location: '1',
-        grade: 'CULTURAL RELAX '
-    },
 
-    {
-        id: 2,
-        imgSrc: img2,
-        destTitle: 'San2',
-        location: '2',
-        grade: 'CULTURAL RELAX '
-    },
 
-    {
-        id: 3,
-        imgSrc: img7,
-        destTitle: 'San2',
-        location: '2',
-        grade: 'CULTURAL RELAX '
-    },
-
-    {
-        id: 4,
-        imgSrc: img9,
-        destTitle: 'San2',
-        location: '2',
-        grade: 'CULTURAL RELAX '
-    },
-]
 
 const Popular = () => {
+    const [courtBranch, setCourtBranch] = useState({
+        id: '',
+        imgSrc: '',
+        destTitle: '',
+        location: '',
+        grade: ''
+    });
     return (
         <section className='popular section container'>
             <div className="secContainer">
@@ -70,18 +46,15 @@ const Popular = () => {
                 </div>
 
                 <div className="mainContent grid">
-                    {
-                        Data.map(({id, imgSrc, destTitle, location, grade}) => {
-                            return (
                                 <div className="singleDestination">
                                     <div className="destImage">
 
-                                        <img src={imgSrc} alt="Image title" />
+                                        <img src={courtBranch.imgSrc} alt="Image title" />
 
                                         <div className="overlayInfo">
-                                            <h3>{destTitle}</h3>
+                                            <h3>{courtBranch.destTitle}</h3>
                                             <p>
-                                                {location}
+                                                {courtBranch.location}
                                             </p>
 
                                             <BsArrowRightShort className='icon' />
@@ -91,25 +64,21 @@ const Popular = () => {
 
                                     <div className="destFooter">
                                         <div className="number">
-                                            0{id}
+                                            0{courtBranch.id}
                                         </div>
 
                                         <div className="destText flex">
                                             <h6>
-                                                {location}
+                                                {courtBranch.location}
                                             </h6>
                                             <span className='flex'>
                                                 <span className="dot">
                                                     <BsDot className="icon" />
                                                 </span>
-                                                Dot
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                            )
-                        })
-                    }
                 </div>
 
             </div>

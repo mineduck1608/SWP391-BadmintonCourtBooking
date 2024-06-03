@@ -10,14 +10,14 @@ const Header = () => {
     useEffect(() => {
         let username = sessionStorage.getItem('username');
         let email = sessionStorage.getItem('email');
-        if((username === '' || username === null) && (email === '' || email === null)){
+        let userid = sessionStorage.getItem('userId');
+        if((username === '' || username === null) && (email === '' || email === null) && (userid === '' || userid === null)){
             usenavigate('/signin');
         }
     }, []);
 
     const handleLogout = () => {
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('email');
+        sessionStorage.clear();
         toast.success('Logout success.');
         usenavigate('/');
     }
