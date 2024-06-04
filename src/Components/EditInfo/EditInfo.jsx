@@ -68,6 +68,19 @@ export default function EditInfo() {
                     onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
                   />
                 </div>
+
+                <div className="info-item">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={userInfo.email}
+                    placeholder="Enter Email"
+                    onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+                  />
+                </div>
+
                 <div className="info-item">
                   <label htmlFor="phone">Phone Number</label>
                   <input
@@ -79,28 +92,7 @@ export default function EditInfo() {
                     onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
                   />
                 </div>
-                <div className="info-item">
-                  <label htmlFor="email">Email ID</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={userInfo.email}
-                    placeholder="Enter Email"
-                    onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
-                  />
-                </div>
-                <div className="info-item">
-                  <label htmlFor="address">Address</label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={userInfo.address}
-                    placeholder="Enter Address"
-                    onChange={(e) => setUserInfo({ ...userInfo, address: e.target.value })}
-                  />
-                </div>
+                
                 <div className="button-container">
                   <button className="button">Save Profile</button>
                 </div>
