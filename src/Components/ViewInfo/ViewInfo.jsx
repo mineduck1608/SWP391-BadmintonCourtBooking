@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './ViewInfo.css';
 import { Link } from 'react-router-dom';
+import Header from '../Header/header';
+import Footer from '../Footer/Footer';
 
 export default function ViewInfo() {
   const [userInfo, setUserInfo] = useState({
@@ -34,37 +36,45 @@ export default function ViewInfo() {
   }, []);
 
   return (
-    <div className="profile-container">
-      <div className="profile-sidebar">
-        <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
-        <h2>{userInfo.firstName} {userInfo.lastName}</h2>
-        <p>{userInfo.email}</p>
+    <div className='viewinfo'>
+      <div>
+        <Header />
       </div>
-      <div className="profile-content">
-        <h2>Profile Settings</h2>
-        <div className="info-box">
-          <div className="info-items">
-            <div className="info-item">
-              <label>First Name</label>
-              <div>{userInfo.firstName}</div>
+      <div className="profile-container">
+        <div className="profile-sidebar">
+          <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
+          <h2>{userInfo.firstName} {userInfo.lastName}</h2>
+          <p>{userInfo.email}</p>
+        </div>
+        <div className="profile-content">
+          <h2>Profile Settings</h2>
+          <div className="info-box">
+            <div className="info-items">
+              <div className="info-item">
+                <label>First Name</label>
+                <div>{userInfo.firstName}</div>
+              </div>
+              <div className="info-item">
+                <label>Last Name</label>
+                <div>{userInfo.lastName}</div>
+              </div>
+              <div className="info-item">
+                <label>Email</label>
+                <div>{userInfo.email}</div>
+              </div>
+              <div className="info-item">
+                <label>Phone</label>
+                <div>{userInfo.phone}</div>
+              </div>
             </div>
-            <div className="info-item">
-              <label>Last Name</label>
-              <div>{userInfo.lastName}</div>
+            <div className="button-container">  
+              <button className="button"><Link to={'/editInfo'}>Edit</Link></button>     
             </div>
-            <div className="info-item">
-              <label>Email</label>
-              <div>{userInfo.email}</div>
-            </div>
-            <div className="info-item">
-              <label>Phone</label>
-              <div>{userInfo.phone}</div>
-            </div>
-          </div>
-          <div className="button-container">  
-            <button className="button"><Link to={'/editInfo'}>Edit</Link></button>     
           </div>
         </div>
+      </div>
+      <div>
+        <Footer />
       </div>
     </div>
   );
