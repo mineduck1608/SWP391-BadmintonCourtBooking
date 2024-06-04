@@ -41,43 +41,43 @@ export default function ViewInfo() {
         <div>
           <Header />
         </div>
-        <div className='view-info-wrapper'>
-          <div className='background'>
-            <div className="profile-container1">
-              <div className="profile-sidebar">
-                <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
-                <h2>{userInfo.firstName} {userInfo.lastName}</h2>
-                <p>{userInfo.email}</p>
-              </div>
-              <div className="profile-content">
-                <h2>Profile Settings</h2>
-                <div className="info-box">
-                  <div className="info-items">
-                    <div className="info-item">
-                      <label>First Name</label>
-                      <div>{userInfo.firstName}</div>
-                    </div>
-                    <div className="info-item">
-                      <label>Last Name</label>
-                      <div>{userInfo.lastName}</div>
-                    </div>
-                    <div className="info-item">
-                      <label>Email</label>
-                      <div>{userInfo.email}</div>
-                    </div>
-                    <div className="info-item">
-                      <label>Phone</label>
-                      <div>{userInfo.phone}</div>
-                    </div>
-                  </div>
-                  <div className="button-container">
-                    <button className="button"><Link to={'/editInfo'}>Edit</Link></button>
-                  </div>
+        <div className='edit-info-wrapper'>
+        <div className='background'>
+        <div className="profile-container">
+          <div className="profile-sidebar">
+            <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
+            <h2>{userInfo.firstName} {userInfo.lastName}</h2>
+            <p>{userInfo.email}</p>
+          </div>
+          <div className="profile-content">
+            <h2>Profile Settings</h2>
+            <div className="info-box">
+              <div className="info-items">
+                <div className="info-item">
+                  <label>First Name</label>
+                  <div>{userInfo.firstName}</div>
                 </div>
+                <div className="info-item">
+                  <label>Last Name</label>
+                  <div>{userInfo.lastName}</div>
+                </div>
+                <div className="info-item">
+                  <label>Email</label>
+                  <div>{userInfo.email}</div>
+                </div>
+                <div className="info-item">
+                  <label>Phone</label>
+                  <div>{userInfo.phone}</div>
+                </div>
+              </div>
+              <div className="button-container">  
+                <button className="button"><Link to={'/editInfo'}>Edit</Link></button>     
               </div>
             </div>
           </div>
+          </div>
         </div>
+       </div>
         <div className='view-info-footer'>
           <Footer />
         </div>
