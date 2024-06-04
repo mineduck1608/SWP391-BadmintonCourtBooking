@@ -41,7 +41,7 @@ export default function ViewInfo() {
         <div>
           <Header />
         </div>
-        <div className='edit-info-wrapper'>
+        <div className='view-info-wrapper'>
         <div className='background'>
         <div className="profile-container">
           <div className="profile-sidebar">
