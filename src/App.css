@@ -8,6 +8,11 @@
   transition: .3s ease;
 }
 
+html, body, #root, .app, .content {
+  height: 100%;
+  width: 100%;
+}
+
 /* Color */
 :root{
   --PrimaryColor: hsl(26, 93%, 50%);
