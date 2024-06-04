@@ -1,5 +1,6 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -17,7 +18,11 @@ namespace BadmintonCourtAPI.Controllers
         }
 
         public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
-                    
+
+        [HttpPost]
+        [Route("Branch/Add")]
+        //[Authorize(Roles = "Admin,Staff")]
+
         public async Task<ActionResult<CourtBranch>> AddBranch(CourtBranch courtBranch)
         {
             bool status = IsPhoneFormatted(courtBranch.BranchPhone);
@@ -29,18 +34,32 @@ namespace BadmintonCourtAPI.Controllers
             return BadRequest("Phone number is not properly formatted");
         }
 
-        //[Route("Branch/Delete/id")]
+        [HttpDelete]
+        [Route("Branch/Delete")]
+        //[Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<CourtBranch>> DeleteBranch(int id)
         {
             service.courtBranchService.DeleteBranch(id);
             return NoContent();
         }
 
-        //[Route("Branch/GetAll")]
+        [HttpGet]
+        [Route("Branch/GetAll")]
+        //[Authorize]
+
         public async Task<IEnumerable<CourtBranch>> GetAllBranches() => service.courtBranchService.GetAllCourtBranches().ToList();
 
-        
+
+        [HttpGet]
+        [Route("Branch/GetBySearch")]
+        //[Authorize]
+
         public async Task<IEnumerable<CourtBranch>> GetBranchesBySearchResult(string search) => service.courtBranchService.GetBranchesBySearchResult(search);
+
+        [HttpPut]
+        [Route("Branch/Update")]
+        //[Authorize(Roles = "Admin")]
 
         public async Task<ActionResult<CourtBranch>> UpdateBranch(CourtBranch newBranch, int id)
         {

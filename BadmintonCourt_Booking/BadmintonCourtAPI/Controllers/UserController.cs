@@ -50,9 +50,11 @@ namespace BadmintonCourtAPI.Controllers
         public IActionResult LoginAuth(string id, string password) => service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(id) && x.Password.Equals(password)) != null ? Json(new
         {
             service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(id) && x.Password.Equals(password)).RoleId,
+            service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(id) && x.Password.Equals(password)).UserId,
             id,
-            password
+            password,
         }) : Json("0");
+
 
         /* $"{service.userService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(userName) && x.Password.Equals(userName) && x.UserDetail.Email.Equals(email))}";*/
 
@@ -60,7 +62,7 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpPut]
         [Route("User/Update")]
-        public async Task<IActionResult> UpdateUser(int id, string username, string password, int? branchId, int? roleId, int? balence, string firstName, string lastName, string phone, string email)
+        public async Task<IActionResult> UpdateUser(int id, string username, string password, int? branchId, int? roleId, string firstName, string lastName, string phone, string email)
         {
             User tmp = service.userService.GetUserById(id);
             if (!username.IsNullOrEmpty())
@@ -69,7 +71,7 @@ namespace BadmintonCourtAPI.Controllers
                 tmp.Password = password;
 
             // Check role phân quyền đc update những info nào
-            if (roleId != null) // Chỉ staff/Admin mới đc update role và chi nhánh
+            if (roleId != null) // Chỉ staff/Admin mới đc update role và chi
             {
                 if (roleId == 2) // Nếu đc update thành Staff
                 {
@@ -84,12 +86,14 @@ namespace BadmintonCourtAPI.Controllers
             }
             service.userService.UpdateUser(tmp, id);
             // Update xong user chuyển tiếp qua detail
-            service.userDetailService.UpdateUserDetail(new UserDetail(id, firstName, lastName, email, phone), id);
+            service.userDetailService.
+        UpdateUserDetail(new UserDetail(id, firstName, lastName, email, phone), id);
             return Ok();
 
-
-            //return RedirectToAction("UpdateUserDetail", "UserDetail", new UserDetail(id, firstName, lastName, email, phone));
         }
+
+
+        //return RedirectToAction("UpdateUserDetail", "UserDetail", new UserDetail(id, firstName, lastName, email, phone));
 
 
         [HttpPost]
