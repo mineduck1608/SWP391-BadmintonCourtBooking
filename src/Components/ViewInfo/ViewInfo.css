@@ -1,4 +1,20 @@
+.view-info-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../../Assets/image2.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px); 
+  z-index: -1; 
+  opacity: 0.6; 
+}
+
 .profile-container {
+  margin-top: 10px;
   display: flex;
   align-items: flex-start;
   padding: 20px;
@@ -6,7 +22,7 @@
   border-radius: 8px;
   background-color: #f9f9f9;
   max-width: 1000px;
-  margin: 20px auto;
+  margin: 20px ;
   color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
