@@ -5,18 +5,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('../../Assets/image2.jpg');
+  background-image: url('../../Assets/image1.jpg');
   background-size: cover;
   background-position: center;
   filter: blur(10px); 
   z-index: -1; 
   opacity: 0.6; 
+  align-items: center;
 }
 
-.profile-container {
-  margin-top: 10px;
+.profile-container1 {
   display: flex;
-  align-items: flex-start;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -25,6 +24,9 @@
   margin: 20px ;
   color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 120px;
+  margin-bottom: 30px;
+  margin-left: 250px;
 }
 
 .profile-sidebar {
