@@ -49,7 +49,7 @@ const Calendar = () => {
 
   return (
     <Box m="20px">
-      <Head title="Calendar" subtitle="Full Calendar Interactive Page" />
+      <Head title="CALENDAR" subtitle="Full Calendar Interactive Page" />
 
       <Box display="flex" justifyContent="space-between">
         {/* CALENDAR SIDEBAR */}
@@ -112,12 +112,12 @@ const Calendar = () => {
             eventsSet={(events) => setCurrentEvents(events)}
             initialEvents={[
               {
-                id: "12315",
+                id: "12345",
                 title: "All-day event",
                 date: "2022-09-14",
               },
               {
-                id: "5123",
+                id: "4321",
                 title: "Timed event",
                 date: "2022-09-28",
               },

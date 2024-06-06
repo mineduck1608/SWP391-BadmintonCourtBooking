@@ -14,19 +14,23 @@ export default function EditInfo() {
   });
 
   useEffect(() => {
-    fetch('/api/user/123')
+    fetch("http://localhost:5266/UserDetail/GetAll", {
+      method: "GET",
+      headers: { 'Content-Type': 'application/json' },
+    })
       .then(response => response.json())
-      .then(data => {
-        setUserInfo({
-          firstName: data.firstName,
-          lastName: data.lastName,
-          birthDate: data.birthDate,
-          email: data.email,
-          phone: data.phone,
-          avatar: data.avatar
-        });
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const useridsession = sessionStorage.getItem('userId');
+          const user = data.find(user => user.userId == useridsession);
+          if (user) {
+            setUserInfo(user);
+          }
+        } else {
+          setUserInfo(data);
+        }
       })
-      .catch(error => console.error('Error fetching user data:', error));
+      .catch(error => console.error('Error fetching user info:', error));
   }, []);
 
   return (
@@ -47,7 +51,7 @@ export default function EditInfo() {
               <h2>Profile Settings</h2>
               <div className="info-items">
                 <div className="info-item">
-                  <label htmlFor="first-name">First Name</label>
+                  <label htmlFor="first-name">Enter New First Name</label>
                   <input
                     type="text"
                     id="first-name"
@@ -58,7 +62,7 @@ export default function EditInfo() {
                   />
                 </div>
                 <div className="info-item">
-                  <label htmlFor="last-name">Last Name</label>
+                  <label htmlFor="last-name">Enter New Last Name</label>
                   <input
                     type="text"
                     id="last-name"
@@ -70,7 +74,7 @@ export default function EditInfo() {
                 </div>
 
                 <div className="info-item">
-                  <label htmlFor="email">Email</label>
+                  <label htmlFor="email">Enter New Email</label>
                   <input
                     type="email"
                     id="email"
@@ -82,7 +86,7 @@ export default function EditInfo() {
                 </div>
 
                 <div className="info-item">
-                  <label htmlFor="phone">Phone Number</label>
+                  <label htmlFor="phone">Enter New Phone Number</label>
                   <input
                     type="tel"
                     id="phone"
@@ -100,7 +104,7 @@ export default function EditInfo() {
             </div>
           </div>
         </div>
-        </div>
+      </div>
       <div className='edit-info-footer'>
         <Footer />
       </div>
