@@ -27,6 +27,7 @@ import FAQ from "./Scene/faq"
 import Bar from "./Scene/bar"
 import Pie from "./Scene/pie"
 import Line from "./Scene/line"
+import Geography from './Scene/geography';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -58,6 +59,7 @@ const App = () => {
           <Route path="/bar" element={<Bar />}></Route>
           <Route path="/pie" element={<Pie />}></Route>
           <Route path="/line" element={<Line />}></Route>
+          <Route path="/geography" element={<Geography />}></Route>
 
 
 
