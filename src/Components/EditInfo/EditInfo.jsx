@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './EditInfo.css';
-import Header from "../Header/header";
+import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 
 export default function EditInfo() {
   const [userInfo, setUserInfo] = useState({
+    userId: '',
     firstName: '',
     lastName: '',
-    birthDate: '',
     email: '',
     phone: '',
     avatar: ''
@@ -21,8 +21,8 @@ export default function EditInfo() {
       .then(response => response.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const useridsession = sessionStorage.getItem('userId');
-          const user = data.find(user => user.userId == useridsession);
+          const userIdSession = sessionStorage.getItem('userId');
+          const user = data.find(user => user.userId === userIdSession);
           if (user) {
             setUserInfo(user);
           }
@@ -32,6 +32,21 @@ export default function EditInfo() {
       })
       .catch(error => console.error('Error fetching user info:', error));
   }, []);
+
+  const handleSave = () => {
+    fetch(`http://localhost:5266/UserDetail/Update/${userInfo.userId}`, {
+      method: "PUT",
+      headers: { 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(userInfo) // Send updated userInfo as the body
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('User info updated successfully:', data);
+      })
+      .catch(error => console.error('Error updating user info:', error));
+  };
 
   return (
     <div className='edit-info'>
@@ -72,7 +87,6 @@ export default function EditInfo() {
                     onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
                   />
                 </div>
-
                 <div className="info-item">
                   <label htmlFor="email">Enter New Email</label>
                   <input
@@ -84,7 +98,6 @@ export default function EditInfo() {
                     onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
                   />
                 </div>
-
                 <div className="info-item">
                   <label htmlFor="phone">Enter New Phone Number</label>
                   <input
@@ -96,9 +109,8 @@ export default function EditInfo() {
                     onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
                   />
                 </div>
-                
                 <div className="button-container">
-                  <button className="button">Save Profile</button>
+                  <button className="button" onClick={handleSave}>Save Profile</button>
                 </div>
               </div>
             </div>
