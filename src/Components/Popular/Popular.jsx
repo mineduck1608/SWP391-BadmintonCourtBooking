@@ -27,7 +27,6 @@ const Popular = () => {
             .then(response => response.json())
             .then((data) => {
                 setCourtBranches(data);
-                console.log(data);
             })
             .catch(error => console.error('Error fetching user info:', error));
     }, []);

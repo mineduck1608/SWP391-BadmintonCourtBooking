@@ -7,6 +7,8 @@ import image2 from '../../Assets/image2.jpg';
 const ViewCourtInfo = () => {
     const [branch, setBranch] = useState(null);
     const [court, setCourt] = useState(null);
+    const [branchlist, setBranchList] = useState(null);
+    const [courtlist, setCourtList] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -36,13 +38,12 @@ const ViewCourtInfo = () => {
                 //console.log('Branch Data:', branchData);
                 //console.log('Court Data:', courtData);
 
-                // Assuming the API returns arrays, we'll just take the first element
-                if (branchData.length > 0) {
-                    setBranch(branchData[0]);
-                }
-                if (courtData.length > 0) {
-                    setCourt(courtData[0]);
-                }
+            
+                setBranch(branchData);
+                setCourt(courtData);
+
+                setBranchList(branchData);
+                setCourtList(courtData);
 
             } catch (error) {
                 setError(error.message);
@@ -66,24 +67,45 @@ const ViewCourtInfo = () => {
                 <div className="viewcourtinfo-body-pic">
                     <img className="viewcourtinfo-img" src={image2} alt="" />
                     <div className="viewcourtinfo-info">
-
-                        <h2>Court no: {court.courtId}</h2>
+                        <h2>Court No: {court.courtId}</h2>
                         <p>Address: {branch.location}</p>
                         <p>Time: AAAAA</p>
                         <p>Branch: {branch.branchName}</p>
                         <p>Status: FREE</p>
+                        <div className="viewcourtinfo-body-des">
+                            <h1>Description:</h1>
+                            <p>{court.description}</p>
+                        </div>
                     </div>
                 </div>
-                <div className="viewcourtinfo-body-des">
-                    <h1>Description:</h1>
-                    <p>{court.description}</p>
-                </div>
+
             </div>
 
 
             <div className="viewcourtinfo-feedback">
 
             </div>
+            <div className='viewcourtinfo-othercourts'>
+                <h1>OTHER COURTS</h1>
+                <div>
+                    <div className="viewcourtinfo-other-pic">
+                        <img className="viewcourtinfo-other-img" src={image2} alt="" />
+                        <div className="viewcourtinfo-other-info">
+
+                            <h2>Court No: {court.courtId}</h2>
+                            <p>Address: {branch.location}</p>
+                            <p>Time: AAAAA</p>
+                            <p>Branch: {branch.branchName}</p>
+                            <p>Status: FREE</p>
+                            <div className="viewcourtinfo-other-des">
+                                <h1>Description:</h1>
+                                <p>{court.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="viewcourtinfo-footer">
                 <Footer />
             </div>

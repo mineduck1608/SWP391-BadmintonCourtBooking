@@ -2,7 +2,7 @@
     display: inline-block;
     width: 1460px;
     position: relative;
-    top: 100px;
+    top: 20px;
     left: 20px;
     z-index: 1;
     margin: 10px;
@@ -28,13 +28,13 @@
     display: block;
     color: black;
     margin-left: 50px;
+    font-size: larger;
 }
 .viewcourtinfo-info p {  
     color: black;
 }
 .viewcourtinfo-body-des {
     margin-top: 10px;
-    margin-left: 15px; 
 }
 
 
@@ -50,7 +50,7 @@
 .viewcourtinfo-footer {
     width: 100%;
     position: relative;
-    bottom: -110px;
+    margin-top: 50px;
 }
 
 .viewcourtinfo-img {
@@ -70,4 +70,18 @@
 .viewcourtinfo {
     width: 100%;
     display: inline;
+}
+.viewcourtinfo-othercourts{
+    position: relative;
+    margin-top: 50px;
+    margin-left: 30px;
+}
+.viewcourtinfo-other-pic{
+    width: 30%;
+    height: 30%;
+    display: flex;
+    margin-top: 20px;
+}
+.viewcourtinfo-other-info{
+    margin-left: 20px;
 }

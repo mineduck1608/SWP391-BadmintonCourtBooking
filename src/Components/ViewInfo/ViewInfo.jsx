@@ -41,9 +41,9 @@ export default function ViewInfo() {
         <div>
           <Header />
         </div>
-        <div className='edit-info-wrapper'>
+        <div className='view-info-wrapper'>
         <div className='background'>
-        <div className="profile-container">
+        <div className="profile-container1">
           <div className="profile-sidebar">
             <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
             <h2>{userInfo.firstName} {userInfo.lastName}</h2>

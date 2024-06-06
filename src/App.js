@@ -47,15 +47,12 @@ const App = () => {
           <Route path="/findCourt" element={<FindCourt />}></Route>
           <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
           <Route path="/forget" element={<ForgetPassword />}></Route>
-          <Route path="/admin" element={<div><Topbar/><Sidebar/></div>}></Route>
+          <Route path="/admin" element={<div className='test'><Topbar/><Sidebar/></div>}></Route>
           <Route path="/team" element={<Team />}></Route>
           <Route path="/contacts" element={<Contacts />}></Route>
           <Route path="/invoices" element={<Invoices />}></Route>
           <Route path="/form" element={<Form />}></Route>
           <Route path="/calendar" element={<Calendar />}></Route>
-
-
-
         </Routes>
         <ToastContainer theme='colored' />
         </main>
