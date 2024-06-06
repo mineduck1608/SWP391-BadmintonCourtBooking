@@ -34,6 +34,8 @@ namespace BadmintonCourtServices
 
 		public User GetUserByEmail(string email) => userDAO.GetUserByEmail(email);
 
+		public User GetUserByLogin(string username, string password) => userDAO.GetUserByLogin(username, password);
+
 
 		public List<User> GetUsersByRole(int id) => userDAO.GetUsersByRole(id);
 

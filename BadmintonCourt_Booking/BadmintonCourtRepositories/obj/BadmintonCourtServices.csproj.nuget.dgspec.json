@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {}
+    "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {}
   },
   "projects": {
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
+    "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
+        "projectUniqueName": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
         "projectName": "BadmintonCourtBusinessObjects",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\obj\\",
+        "projectPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
+        "packagesPath": "C:\\Users\\pc\\.nuget\\packages\\",
+        "outputPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -86,21 +86,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
+    "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
+        "projectUniqueName": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
         "projectName": "BadmintonCourtDAOs",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\obj\\",
+        "projectPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
+        "packagesPath": "C:\\Users\\pc\\.nuget\\packages\\",
+        "outputPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -114,8 +114,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
-                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj"
+              "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
+                "projectPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj"
               }
             }
           }
@@ -160,21 +160,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
+    "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
+        "projectUniqueName": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
         "projectName": "BadmintonCourtServices",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\obj\\",
+        "projectPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
+        "packagesPath": "C:\\Users\\pc\\.nuget\\packages\\",
+        "outputPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -188,8 +188,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
-                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj"
+              "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
+                "projectPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj"
               }
             }
           }
@@ -224,7 +224,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -18,6 +18,7 @@ namespace BadmintonCourtServices.IService
 
         public User GetUserByEmail(string email);
 
+        public User GetUserByLogin(string username, string password);
 
 		public List<User> GetUsersByRole(int id);
 
