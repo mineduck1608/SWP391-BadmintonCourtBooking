@@ -33,6 +33,9 @@ namespace BadmintonCourtDAOs
         public User GetUserByEmail(string email) => _dbContext.Users.FirstOrDefault(x => x.UserDetail.Email == email);
 
         public User GetRecentAddedUser() => _dbContext.Users.OrderBy(x => x.UserId).LastOrDefault();
+
+        public User GetUserByLogin(string username, string password) => _dbContext.Users.FirstOrDefault(x => x.UserName == username && x.Password == password);
+
         public void UpdateUser(User newUser, int id)
         {
             User tmp = GetUserById(id);
@@ -43,6 +46,8 @@ namespace BadmintonCourtDAOs
                 tmp.Password = newUser.Password;
                 tmp.BranchId = newUser.BranchId;
                 tmp.Balance = newUser.Balance;
+                tmp.AccessFail = newUser.AccessFail;
+                tmp.LastFail = newUser.LastFail;
                 _dbContext.Users.Update(tmp);
                 _dbContext.SaveChanges();
             }

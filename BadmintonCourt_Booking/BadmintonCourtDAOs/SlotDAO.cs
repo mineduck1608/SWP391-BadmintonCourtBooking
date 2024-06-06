@@ -54,7 +54,7 @@ namespace BadmintonCourtDAOs
                 List<Slot> temporaryList = GetA_CourtSlotsInDay(start, end, id);
                 if (temporaryList == null || temporaryList.Count == 0)
                 {
-                    result.Add(new Slot(count, start, end, true, id, null));
+                    result.Add(new Slot(start, end, true, id, null));
                     // Check thử nếu list rỗng tức là hôm đó vào thời khoảng giữa start và end chưa có ai đặt thì cho vào List result để trả về cho user xem để xác nhận sau
                     count++;
                     // Thêm vào result thành công thì mới tăng count
