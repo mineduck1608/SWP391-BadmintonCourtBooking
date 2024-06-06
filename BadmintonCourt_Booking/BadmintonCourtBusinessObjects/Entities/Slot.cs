@@ -21,9 +21,8 @@ public partial class Slot
 
     public virtual Court Court { get; set; } = null!;
 
-    public Slot(int slotId, DateTime startTime, DateTime endTime, bool status, int courtId, int? bookingId)
+    public Slot(DateTime startTime, DateTime endTime, bool status, int courtId, int? bookingId)
     {
-        this.SlotId = slotId;
         StartTime = startTime;
         EndTime = endTime;
         Status = status;

@@ -11,9 +11,8 @@ public partial class Role
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 
-    public Role(int roleId, string roleName)
+    public Role(string roleName)
     {
-        this.RoleId = roleId;
         RoleName = roleName;
     }
 }

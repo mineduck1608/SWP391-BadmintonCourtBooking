@@ -13,6 +13,8 @@ public partial class CourtBranch
 
     public string BranchPhone { get; set; } = null!;
 
+    public bool BranchStatus { get; set; }
+
     public string? BranchImg { get; set; }
 
     public virtual ICollection<Court> Courts { get; set; } = new List<Court>();

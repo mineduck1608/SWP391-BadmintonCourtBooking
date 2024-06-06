@@ -17,7 +17,13 @@ public partial class User
 
     public double? Balance { get; set; }
 
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public bool ActiveStatus { get; set; }
+
+	public int? AccessFail { get; set; }
+
+	public DateTime? LastFail { get; set; }
+
+	public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     public virtual CourtBranch? Branch { get; set; }
 
@@ -29,13 +35,15 @@ public partial class User
 
     public virtual UserDetail? UserDetail { get; set; }
 
-    public User(string userName, string password, int? branchId, int roleId, double? balance)
-    {
-        UserName = userName;
-        Password = password;
-        BranchId = branchId;
-        RoleId = roleId;
-        Balance = balance;
-    }
-
+	public User(string userName, string password, int? branchId, int roleId, double? balance, bool activeStatus, int? accessFail, DateTime? lastFail)
+	{
+		UserName = userName;
+		Password = password;
+		BranchId = branchId;
+		RoleId = roleId;
+		Balance = balance;
+		ActiveStatus = activeStatus;
+		AccessFail = accessFail;
+		LastFail = lastFail;
+	}
 }

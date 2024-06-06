@@ -13,15 +13,16 @@ public partial class Court
 
     public double Price { get; set; }
 
+    public bool CourtStatus { get; set; }
+
     public string Description { get; set; } = null!;
 
     public virtual CourtBranch Branch { get; set; } = null!;
 
     public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
 
-    public Court(int courtId, string? courtImg, int branchId, double price, string description)
+    public Court(string? courtImg, int branchId, double price, string description)
     {
-        this.CourtId = courtId;
         CourtImg = courtImg;
         BranchId = branchId;
         Price = price;
