@@ -22,7 +22,7 @@ namespace BadmintonCourtAPI.Controllers
         public async Task<ActionResult<IEnumerable<UserDetail>>> GetALlUsers() => Ok(service.userDetailService.GetAllUserDetails());
 
         [HttpGet]
-        [Route("UserDetail/GetByName")]
+        [Route("UserDetail/GetByName")]n
         public async Task<IEnumerable<UserDetail>> GetUserDetailsByName(string name) =>
 			service.userDetailService.GetUserDetailsByName(name);
 
