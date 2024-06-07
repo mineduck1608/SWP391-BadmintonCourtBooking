@@ -28,6 +28,7 @@ import Bar from "./Scene/bar"
 import Pie from "./Scene/pie"
 import Line from "./Scene/line"
 import Geography from './Scene/geography';
+import BookCourt from './Components/bookCourt/bookCourt';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -61,6 +62,7 @@ const App = () => {
               <Route path="/pie" element={<Pie />}></Route>
               <Route path="/line" element={<Line />}></Route>
               <Route path="/geography" element={<Geography />}></Route>
+              <Route path="/bookCourt" element={<><Header/><BookCourt/></>}></Route>
 
 
 
