@@ -35,32 +35,40 @@ const App = () => {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <CssBaseline/>
+        <CssBaseline />
         <div className='app'>
           <main className='content'>
-        <Routes>
-          <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>}></Route>
-          <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
-          <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />}></Route>
-          <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false} />}></Route>
-          <Route path="/viewCourtInfo" element={<ViewCourtInfo />}></Route>
-          <Route path="/editInfo" element={<EditInfo />}></Route>
-          <Route path="/viewInfo" element={<ViewInfo />}></Route>
-          <Route path="/findCourt" element={<FindCourt />}></Route>
-          <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
-          <Route path="/forget" element={<ForgetPassword />}></Route>
-          <Route path="/admin" element={<div className='test'><Topbar/><Sidebar/></div>}></Route>
-          <Route path="/team" element={<Team />}></Route>
-          <Route path="/contacts" element={<Contacts />}></Route>
-          <Route path="/invoices" element={<Invoices />}></Route>
-          <Route path="/form" element={<Form />}></Route>
-          <Route path="/calendar" element={<Calendar />}></Route>
+            <Routes>
+              <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>}></Route>
+              <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
+              <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />}></Route>
+              <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false} />}></Route>
+              <Route path="/viewCourtInfo" element={<ViewCourtInfo />}></Route>
+              <Route path="/editInfo" element={<EditInfo />}></Route>
+              <Route path="/viewInfo" element={<ViewInfo />}></Route>
+              <Route path="/findCourt" element={<FindCourt />}></Route>
+              <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
+              <Route path="/forget" element={<ForgetPassword />}></Route>
+              <Route path="/admin" element={<div className='test'><Topbar /><Sidebar /></div>}></Route>
+              <Route path="/team" element={<Team />}></Route>
+              <Route path="/contacts" element={<Contacts />}></Route>
+              <Route path="/invoices" element={<Invoices />}></Route>
+              <Route path="/form" element={<Form />}></Route>
+              <Route path="/calendar" element={<Calendar />}></Route>
+              <Route path="/faq" element={<FAQ />}></Route>
+              <Route path="/bar" element={<Bar />}></Route>
+              <Route path="/form" element={<Form />}></Route>
+              <Route path="/pie" element={<Pie />}></Route>
+              <Route path="/line" element={<Line />}></Route>
+              <Route path="/geography" element={<Geography />}></Route>
 
 
 
-        </Routes>
-        <ToastContainer theme='colored' />
-        </main>
+
+
+            </Routes>
+            <ToastContainer theme='colored' />
+          </main>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
