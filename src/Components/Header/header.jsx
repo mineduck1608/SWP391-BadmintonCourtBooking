@@ -11,9 +11,9 @@ const Header = () => {
         let username = sessionStorage.getItem('username');
         let email = sessionStorage.getItem('email');
         let userid = sessionStorage.getItem('userId');
-        if((username === '' || username === null) && (email === '' || email === null) && (userid === '' || userid === null)){
-            usenavigate('/signin');
-        }
+        // if((username === '' || username === null) && (email === '' || email === null) && (userid === '' || userid === null)){
+        //     usenavigate('/signin');
+        // }
     }, []);
 
     const handleLogout = () => {

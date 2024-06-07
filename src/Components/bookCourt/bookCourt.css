@@ -1,0 +1,80 @@
+/* Styles for the bookCourt container */
+.bookCourt-container {
+    width: 80%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Styles for the title */
+  .bookCourt-title {
+    text-align: center;
+  }
+  
+  /* Styles for the body */
+  .bookCourt-body {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Styles for left and right sections */
+  .bookCourt-section {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  /* Styles for form groups */
+  .bookCourt-form-group {
+    margin-bottom: 10px;
+  }
+ .inputradio{
+  position: fixed;
+  left: -600px;
+  margin-top: 5px;
+ }
+  /* Styles for radio buttons */
+  .bookCourt-radio-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Styles for the submit button */
+  .bookCourt-complete-booking-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Hover effect for the submit button */
+  .bookCourt-complete-booking-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styles for select inputs */
+  select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Styles for textareas */
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Styles for hidden elements */
+  [hidden] {
+    display: none;
+  }
+
+  .bookCourt-form-subgroup{
+    display: flex;
+  }
