@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './EditInfo.css';
 import Header from "../Header/header";
-import Footer from "../Footer/Footer";
+
 
 export default function EditInfo() {
   const [userInfo, setUserInfo] = useState({
