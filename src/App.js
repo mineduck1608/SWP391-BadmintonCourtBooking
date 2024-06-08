@@ -30,6 +30,8 @@ import Line from "./Scene/line"
 import Geography from './Scene/geography';
 import Dashboard from './Scene/dashboard'
 import { useState } from 'react';
+import BookCourt from './Components/bookCourt/bookCourt';
+
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -39,6 +41,7 @@ const App = () => {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+
 
         <Routes>
           <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>}></Route>
@@ -51,6 +54,7 @@ const App = () => {
           <Route path="/findCourt" element={<FindCourt />}></Route>
           <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
           <Route path="/forget" element={<ForgetPassword />}></Route>
+          <Route path="/bookCourt" element={<><Header/><BookCourt/></>}></Route>
 
           <Route path="/admin" element={
             <div className="app">
@@ -74,9 +78,6 @@ const App = () => {
               </main>
             </div>}>
           </Route>
-
-
-
         </Routes>
         <ToastContainer theme='colored' />
       </ThemeProvider>

@@ -1,0 +1,12 @@
+C:\Users\PC\source\repos\Mama\MoMo\bin\Debug\net8.0\MoMo.deps.json
+C:\Users\PC\source\repos\Mama\MoMo\bin\Debug\net8.0\MoMo.dll
+C:\Users\PC\source\repos\Mama\MoMo\bin\Debug\net8.0\MoMo.pdb
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.csproj.AssemblyReference.cache
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.AssemblyInfoInputs.cache
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.AssemblyInfo.cs
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.csproj.CoreCompileInputs.cache
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.dll
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\refint\MoMo.dll
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\MoMo.pdb
+C:\Users\PC\source\repos\Mama\MoMo\obj\Debug\net8.0\ref\MoMo.dll
