@@ -61,8 +61,12 @@ namespace BadmintonCourtDAOs
 
         public void DeleteUser(int uId)
         {
-            _dbContext.Users.Remove(GetUserById((uId)));
-            _dbContext.SaveChanges();
+            User user = GetUserById(uId);
+            if (user != null)
+            {
+                user.ActiveStatus = false;
+                UpdateUser(user, uId);
+            }
         }
     }
 }

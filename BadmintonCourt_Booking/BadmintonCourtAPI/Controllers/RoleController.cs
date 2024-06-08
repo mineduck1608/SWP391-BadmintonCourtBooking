@@ -1,5 +1,6 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,7 +20,9 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpGet]
         [Route("Role/GetAll")]
-        public async Task<IEnumerable<Role>> GetAllRoles() => service.roleService.GetAllRoles().ToList();
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles() =>
+            Ok(service.roleService.GetAllRoles());
 
         [HttpGet]
         [Route("Role/GetByName")]
@@ -33,7 +36,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Role/AddRole")]
 		public async Task<IActionResult> AddRole(string roleName)
         {
-            service.roleService.AddRole(new Role(1, roleName));
+            service.roleService.AddRole(new Role(roleName));
             return Ok();
         }
 

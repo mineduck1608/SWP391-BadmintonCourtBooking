@@ -17,12 +17,24 @@ public partial class UserDetail
 
     public virtual User User { get; set; } = null!;
 
-    public UserDetail(int userId, string firstName, string lastName, string email, string phone)
-    {
-        this.UserId = userId;
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
-        Phone = phone;
-    }
+	public UserDetail(int userId, string firstName, string lastName, string email, string phone, User user)
+	{
+		UserId = userId;
+		FirstName = firstName;
+		LastName = lastName;
+		Email = email;
+		Phone = phone;
+		User = user;
+	}
+
+	public UserDetail(int userId, string firstName, string lastName, string email, string phone)
+	{
+		this.UserId = userId;
+		FirstName = firstName;
+		LastName = lastName;
+		Email = email;
+		Phone = phone;
+	}
+
+
 }

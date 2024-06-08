@@ -1,0 +1,14 @@
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.deps.json
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.GeneratedMSBuildEditorConfig.editorconfig
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.AssemblyInfoInputs.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.AssemblyInfo.cs
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.csproj.CoreCompileInputs.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\refint\ClassLibrary1.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ref\ClassLibrary1.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.runtimeconfig.json
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.csproj.AssemblyReference.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.genruntimeconfig.cache

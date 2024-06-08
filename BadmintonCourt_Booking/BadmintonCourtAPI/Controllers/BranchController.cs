@@ -19,10 +19,10 @@ namespace BadmintonCourtAPI.Controllers
 
         public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
 
+
         [HttpPost]
         [Route("Branch/Add")]
-        //[Authorize(Roles = "Admin,Staff")]
-
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<CourtBranch>> AddBranch(CourtBranch courtBranch)
         {
             bool status = IsPhoneFormatted(courtBranch.BranchPhone);
@@ -34,34 +34,33 @@ namespace BadmintonCourtAPI.Controllers
             return BadRequest("Phone number is not properly formatted");
         }
 
+
         [HttpDelete]
         [Route("Branch/Delete")]
-        //[Authorize(Roles = "Admin")]
-
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CourtBranch>> DeleteBranch(int id)
         {
             service.courtBranchService.DeleteBranch(id);
             return NoContent();
         }
 
+
         [HttpGet]
         [Route("Branch/GetAll")]
-        //[Authorize]
-
+        [Authorize]
         public async Task<IEnumerable<CourtBranch>> GetAllBranches() => service.courtBranchService.GetAllCourtBranches().ToList();
 
 
         [HttpGet]
-        [Route("Branch/GetBySearch")]
-        //[Authorize]
+		[Route("Branch/GetBySearch")]
+		[Authorize]
+		public async Task<IEnumerable<CourtBranch>> GetBranchesBySearchResult(string search) => service.courtBranchService.GetBranchesBySearchResult(search);
 
-        public async Task<IEnumerable<CourtBranch>> GetBranchesBySearchResult(string search) => service.courtBranchService.GetBranchesBySearchResult(search);
 
-        [HttpPut]
-        [Route("Branch/Update")]
-        //[Authorize(Roles = "Admin")]
-
-        public async Task<ActionResult<CourtBranch>> UpdateBranch(CourtBranch newBranch, int id)
+		[HttpPut]
+		[Route("Branch/Update")]
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<CourtBranch>> UpdateBranch(CourtBranch newBranch, int id)
         {
             bool status = IsPhoneFormatted(newBranch.BranchPhone);
             if (status)

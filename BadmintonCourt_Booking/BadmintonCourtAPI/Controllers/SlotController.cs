@@ -1,5 +1,6 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BadmintonCourtAPI.Controllers
@@ -16,23 +17,24 @@ namespace BadmintonCourtAPI.Controllers
             }
         }
 
-        public DateTime CustomizeDate(int period) => new DateTime(1, 1, 1, period, 0, 0);
+        public DateTime CustomizeDate(int period) => new DateTime(1900, 1, 1, period, 0, 0);
 
 
-		[HttpPost]
-		[Route("Slot/AddDefault")]
-		public async Task<IActionResult> AddDefaultSlot(Slot slot)
-        {
-            service.slotService.AddSlot(slot);
-            return Ok();
-        }
+		//[HttpPost]
+		//[Route("Slot/AddDefault")]
+		//public async Task<IActionResult> AddDefaultSlot(Slot slot)
+  //      {
+  //          service.slotService.AddSlot(slot);
+  //          return Ok();
+  //      }
 
 
 		[HttpPost]
 		[Route("Slot/AddBooked")]
+        //[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> AddBookedSLot(DateTime date, int start, int end, int bookingId, int courtId, int id)
         {
-			service.slotService.AddSlot(new Slot(1, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
+			service.slotService.AddSlot(new Slot(new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
             return Ok();
         }
 
@@ -44,7 +46,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Slot/GetBeforeConfirm")]
-		public async Task<IEnumerable<Slot>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, int id) => service.slotService.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList();
+		public async Task<ActionResult<IEnumerable<Slot>>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, int id) => Ok(service.slotService.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList());
 
 
 		// Update thời gian hoạt động của sân đồng thời update toàn bộ các sân
@@ -53,6 +55,7 @@ namespace BadmintonCourtAPI.Controllers
 		
         [HttpPut]
 		[Route("Slot/UpdateOfficeHours")]
+        //[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateOfficeHours(int start, int end)
         {
             int oldStart = service.slotService.GetSlotById(1).StartTime.Hour;
@@ -70,6 +73,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpDelete]
 		[Route("Slot/Delete")]
+        //[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteSlot(int id)
         {
             service.slotService.DeleteSlot(id);

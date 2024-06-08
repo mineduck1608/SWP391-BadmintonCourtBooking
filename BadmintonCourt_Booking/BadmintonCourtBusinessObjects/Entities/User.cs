@@ -46,4 +46,17 @@ public partial class User
 		AccessFail = accessFail;
 		LastFail = lastFail;
 	}
+
+	public User(string userName, string password, int? branchId, int roleId, double? balance, bool activeStatus, int? accessFail, DateTime? lastFail, UserDetail userDetail)
+	{
+		UserName = userName;
+		Password = password;
+		BranchId = branchId;
+		RoleId = roleId;
+		Balance = balance;
+		ActiveStatus = activeStatus;
+		AccessFail = accessFail;
+		LastFail = lastFail;
+		UserDetail = userDetail;
+	}
 }
