@@ -27,10 +27,10 @@ const BookCourt = () => {
                                 <option value="2">Court 2</option>
                             </select>
                         </div>
-                        <h2>2. TYPE OF BOOKING</h2>
+                        <h2 className="notes">2. TYPE OF BOOKING</h2>
                         <p>SELECT ONE TYPE OF BOOKING:</p>
                         <div className="bookCourt-radio-group">
-                            <div className="bookCourt-form-group">
+                            <div className="bookCourt-form-group1">
                                 <input className="inputradio" type="radio" id="fixed-time" name="booking-type" value="fixed-time" onChange={() => setBookingType('fixed-time')} />
                                 <label htmlFor="fixed-time">Fixed Time (reserves at the specified time for the entire months)</label>
                                 {bookingType === 'fixed-time' && (
@@ -42,15 +42,15 @@ const BookCourt = () => {
                                             <option value="3">3 months</option>
                                             {/* Add more options as needed */}
                                         </select>
-                                        <span> month(s)</span>
+                                        <span>month(s)</span>
                                     </div>
                                 )}
                             </div>
-                            <div className="bookCourt-form-group">
+                            <div className="bookCourt-form-group2">
                                 <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => setBookingType('once')} />
                                 <label htmlFor="once">Once (reserves at the specified time and date)</label>
                             </div>
-                            <div className="bookCourt-form-group">
+                            <div className="bookCourt-form-group3">
                                 <input className="inputradio" type="radio" id="flexible-time" name="booking-type" value="flexible-time" onChange={() => setBookingType('flexible-time')} />
                                 <label htmlFor="flexible-time">Flexible Time (reserves for the entire month, custom time)</label>
                                 {bookingType === 'flexible-time' && (
@@ -65,7 +65,7 @@ const BookCourt = () => {
                     </div>
                     <div className="bookCourt-section bookCourt-right-section">
                         <h2>3. TIME AND DATE</h2>
-                        <div className="bookCourt-form-group">
+                        <div className="bookCourt-form-group4">
                             <label htmlFor="time-start">Time:</label>
                             <select id="time-start" name="time-start">
                                 <option value="">Select Time</option>
@@ -77,14 +77,14 @@ const BookCourt = () => {
                                 {/* Add time options here */}
                             </select>
                         </div>
-                        <div className="bookCourt-form-group">
+                        <div className="bookCourt-form-group5">
                             <label htmlFor="day">Day:</label>
                             <select id="day" name="day">
                                 <option value="">Select Day</option>
                                 {/* Add day options here */}
                             </select>
                         </div>
-                        <h2>4. NOTES</h2>
+                        <h2 className="notes">4. NOTES</h2>
                         <textarea id="notes" name="notes" placeholder="Enter your notes here"></textarea>
                     </div>
                 </div>

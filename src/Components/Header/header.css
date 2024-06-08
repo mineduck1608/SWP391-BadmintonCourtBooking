@@ -36,7 +36,6 @@
     font-size: 20px;
     margin-right: 20px;
     display: inline;
-
 } 
 .text-header{
     margin-left: 250px;
@@ -47,5 +46,5 @@
     color: var(--PrimaryColor);
 }
 .long{
-    width: 138px;
+    width: 145px;
 }
