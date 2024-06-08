@@ -47,7 +47,7 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpGet]
         [Route("Branch/GetAll")]
-        [Authorize]
+        //[Authorize]
         public async Task<IEnumerable<CourtBranch>> GetAllBranches() => service.courtBranchService.GetAllCourtBranches().ToList();
 
 

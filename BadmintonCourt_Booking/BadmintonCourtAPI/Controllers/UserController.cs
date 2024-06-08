@@ -264,14 +264,11 @@ namespace BadmintonCourtAPI.Controllers
             {
                 if (IsPhoneFormatted(phone))
                 {
-                    if (IsPasswordSecure(password))
-                    {
                         //Hash pass
-                        service.userService.AddUser(new User(username, ToHashString(password), null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
+                        service.userService.AddUser(new User(username, password, null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
                         User user = service.userService.GetRecentAddedUser();
                         service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
                         return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-                    }
                     return Json("Password is not properly secured");
                 }
                 return Json("Phone number is not properly formatted");

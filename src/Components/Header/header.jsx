@@ -8,9 +8,7 @@ import { toast } from "react-toastify";
 const Header = () => {
     const usenavigate = useNavigate();
     useEffect(() => {
-        let username = sessionStorage.getItem('username');
-        let email = sessionStorage.getItem('email');
-        let userid = sessionStorage.getItem('userId');
+        let token= sessionStorage.getItem('token');
         // if((username === '' || username === null) && (email === '' || email === null) && (userid === '' || userid === null)){
         //     usenavigate('/signin');
         // }
