@@ -28,48 +28,57 @@ import Bar from "./Scene/bar"
 import Pie from "./Scene/pie"
 import Line from "./Scene/line"
 import Geography from './Scene/geography';
+import Dashboard from './Scene/dashboard'
+import { useState } from 'react';
 
 const App = () => {
   const [theme, colorMode] = useMode();
+  const [isSidebar, setIsSidebar] = useState(true)
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className='app'>
-          <main className='content'>
-            <Routes>
-              <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>}></Route>
-              <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
-              <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />}></Route>
-              <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false} />}></Route>
-              <Route path="/viewCourtInfo" element={<ViewCourtInfo />}></Route>
-              <Route path="/editInfo" element={<EditInfo />}></Route>
-              <Route path="/viewInfo" element={<ViewInfo />}></Route>
-              <Route path="/findCourt" element={<FindCourt />}></Route>
-              <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
-              <Route path="/forget" element={<ForgetPassword />}></Route>
-              <Route path="/admin" element={<div className='test'><Topbar /><Sidebar /></div>}></Route>
-              <Route path="/team" element={<Team />}></Route>
-              <Route path="/contacts" element={<Contacts />}></Route>
-              <Route path="/invoices" element={<Invoices />}></Route>
-              <Route path="/form" element={<Form />}></Route>
-              <Route path="/calendar" element={<Calendar />}></Route>
-              <Route path="/faq" element={<FAQ />}></Route>
-              <Route path="/bar" element={<Bar />}></Route>
-              <Route path="/form" element={<Form />}></Route>
-              <Route path="/pie" element={<Pie />}></Route>
-              <Route path="/line" element={<Line />}></Route>
-              <Route path="/geography" element={<Geography />}></Route>
+
+        <Routes>
+          <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>}></Route>
+          <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
+          <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />}></Route>
+          <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false} />}></Route>
+          <Route path="/viewCourtInfo" element={<ViewCourtInfo />}></Route>
+          <Route path="/editInfo" element={<EditInfo />}></Route>
+          <Route path="/viewInfo" element={<ViewInfo />}></Route>
+          <Route path="/findCourt" element={<FindCourt />}></Route>
+          <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>}></Route>
+          <Route path="/forget" element={<ForgetPassword />}></Route>
+
+          <Route path="/admin" element={
+            <div className="app">
+              <Sidebar isSidebar={isSidebar} />
+              <main className="content">
+                <Topbar setIsSidebar={setIsSidebar} />
+                <Routes>
+                  <Route path="/" element={<Dashboard />}></Route>
+                  <Route path="/team" element={<Team />}></Route>
+                  <Route path="/contacts" element={<Contacts />}></Route>
+                  <Route path="/invoices" element={<Invoices />}></Route>
+                  <Route path="/form" element={<Form />}></Route>
+                  <Route path="/calendar" element={<Calendar />}></Route>
+                  <Route path="/faq" element={<FAQ />}></Route>
+                  <Route path="/bar" element={<Bar />}></Route>
+                  <Route path="/form" element={<Form />}></Route>
+                  <Route path="/pie" element={<Pie />}></Route>
+                  <Route path="/line" element={<Line />}></Route>
+                  <Route path="/geography" element={<Geography />}></Route>
+                </Routes>
+              </main>
+            </div>}>
+          </Route>
 
 
 
-
-
-            </Routes>
-            <ToastContainer theme='colored' />
-          </main>
-        </div>
+        </Routes>
+        <ToastContainer theme='colored' />
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
