@@ -16,7 +16,7 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlined"
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined"
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined"
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined"
-import './topbar.css'
+import './sidebar.css'
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
     const theme = useTheme();
@@ -77,7 +77,7 @@ const Sidebar = () => {
                                 alignItems="center"
                                 ml="15px"
                             >
-                                <Typography variant="h3" color={colors.grey[100]}>
+                                <Typography className="webName" variant="h3" color={colors.grey[100]}>
                                     ADMINIS
                                 </Typography>
                                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -93,6 +93,7 @@ const Sidebar = () => {
                             
                             <Box textAlign="center">
                                 <Typography
+                                    className="adminName"
                                     variant="h2"
                                     color={colors.grey[100]}
                                     fontWeight="bold"
@@ -100,7 +101,7 @@ const Sidebar = () => {
                                 >
                                     Minh Duc
                                 </Typography>
-                                <Typography variant="h5" color={colors.greenAccent[500]}>
+                                <Typography className="role" variant="h5" color={colors.greenAccent[500]}>
                                     VP Fancy Admin
                                 </Typography>
                             </Box>
@@ -133,14 +134,14 @@ const Sidebar = () => {
                         />
                         <Item className="menu-item"
                             title="Contacts Information"
-                            to="/contacts"
+                            to="contacts"
                             icon={<ContactsOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
                             title="Invoices Balances"
-                            to="/invoices"
+                            to="invoices"
                             icon={<ReceiptOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
@@ -156,21 +157,21 @@ const Sidebar = () => {
 
                         <Item className="menu-item"
                             title="Profile Form"
-                            to="/form"
+                            to="form"
                             icon={<PersonOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
                             title="Calendar"
-                            to="/calendar"
+                            to="calendar"
                             icon={<CalendarTodayOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
                             title="FAQ Page"
-                            to="/faq"
+                            to="faq"
                             icon={<HelpOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
@@ -186,28 +187,28 @@ const Sidebar = () => {
 
                         <Item className="menu-item"
                             title="Bar Chart"
-                            to="/bar"
+                            to="bar"
                             icon={<BarChartOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
                             title="Pie Chart"
-                            to="/pie"
+                            to="pie"
                             icon={<PieChartOutlineOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
                             title="Line Chart"
-                            to="/line"
+                            to="line"
                             icon={<TimelineOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
                             title="Geography Chart"
-                            to="/geography"
+                            to="geography"
                             icon={<MapOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}

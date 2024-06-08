@@ -1,0 +1,18 @@
+/* Sidebar.css */
+
+.sidebar {
+    height: 100vh !important;  /* Full height of the viewport */ 
+}
+  
+  .webName {
+    font-size: 24px !important;
+  }
+  
+  .adminName{
+  font-size: 32px !important;
+  }
+
+  .role{
+    font-size: 16px !important;
+  }
+  
