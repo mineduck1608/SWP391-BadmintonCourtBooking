@@ -13,6 +13,8 @@ export default function EditInfo() {
     avatar: ''
   });
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     fetch("http://localhost:5266/UserDetail/GetAll", {
       method: "GET",
@@ -21,8 +23,9 @@ export default function EditInfo() {
       .then(response => response.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const userIdSession = sessionStorage.getItem('userId');
-          const user = data.find(user => user.userId === userIdSession);
+          // Assuming we need to handle an array of users and find the specific user
+          const useridsession = sessionStorage.getItem('userId');
+          const user = data.find(user => user.userId == useridsession);
           if (user) {
             setUserInfo(user);
           }
@@ -48,6 +51,7 @@ export default function EditInfo() {
       .catch(error => console.error('Error updating user info:', error));
   };
 
+  
   return (
     <div className='edit-info'>
       <div className='edit-info-header'>
@@ -57,7 +61,7 @@ export default function EditInfo() {
         <div className="background"> 
           <div className="profile-container">
             <div className="profile-sidebar">
-              <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
+              {isLoaded && <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />}
               <h2>{userInfo.firstName} {userInfo.lastName}</h2>
               <p>{userInfo.email}</p>
               <button className="button upload">Upload</button>
@@ -72,7 +76,7 @@ export default function EditInfo() {
                     id="first-name"
                     name="first-name"
                     value={userInfo.firstName}
-                    placeholder="Enter First Name"
+                    placeholder={isLoaded ? userInfo.firstName : 'Enter First Name'}
                     onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
                   />
                 </div>
@@ -83,7 +87,7 @@ export default function EditInfo() {
                     id="last-name"
                     name="last-name"
                     value={userInfo.lastName}
-                    placeholder="Enter Last Name"
+                    placeholder={isLoaded ? userInfo.lastName : 'Enter Last Name'}
                     onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
                   />
                 </div>
@@ -94,7 +98,7 @@ export default function EditInfo() {
                     id="email"
                     name="email"
                     value={userInfo.email}
-                    placeholder="Enter Email"
+                    placeholder={isLoaded ? userInfo.email : 'Enter Email'}
                     onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
                   />
                 </div>
@@ -105,7 +109,7 @@ export default function EditInfo() {
                     id="phone"
                     name="phone"
                     value={userInfo.phone}
-                    placeholder="Enter Phone Number"
+                    placeholder={isLoaded ? userInfo.phone : 'Enter Phone Number'}
                     onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
                   />
                 </div>
