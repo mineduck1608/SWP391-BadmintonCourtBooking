@@ -1,78 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './login.css';
 import { FaUser, FaLock } from "react-icons/fa";
-import SignIn from '../googleSignin/signIn';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import SignIn from '../googleSignin/signIn';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
-  const usenavigate = useNavigate();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    sessionStorage.clear();
-  }, []);
-
-
-  const ProceedLogin = (e) => {
+  const proceedLogin = (e) => {
     e.preventDefault();
 
-    const loginData = {
-      username: username,
-      password: password
-    };
+    const loginData = { username, password };
 
     if (validate()) {
-      ///implentation
-      fetch("http://localhost:5266/User/LoginAuth?id=" + username + '&password=' + password, {
+      fetch("http://localhost:5266/User/LoginAuth?username=" + username + '&password=' + password, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(loginData)
-      }).then((res) => {
-        return res.json();
-      }).then((resp) => {
-        if (Object.keys(resp).length === 0) {
-          toast.error('Please enter valid username.');
-        }
-        else {
-          if (resp.password === password) {
-            sessionStorage.setItem('username', username);
-            sessionStorage.setItem('userId', resp.userId);
-            toast.success("Success");
-            usenavigate('/home');
+      }).then((res) => res.json())
+        .then((resp) => {
+          if (resp.token) {
+            sessionStorage.setItem('token', resp.token);
+            toast.success("Login successful!");
+            navigate('/home');
           } else {
-            toast.error("Wrong username or password.");
+            toast.error('Invalid username or password.');
           }
-        }
-      })
-      .catch((err) => {
-        toast.error('Wrong username or password.');
-        console.log('1');
+        }).catch((err) => {
+          toast.error('Login failed. Please try again.');
+          console.log(err);
+        });
+    } else {
+      toast.error('Please fill in all fields.');
+    }
+  };
 
-      })
-    }
-  }
   const validate = () => {
-    let result = true;
-    if (username == '' || username == null) {
-      result = false;
-    }
-    if (password == '' || password == null) {
-      result = false;
-    }
-    return result;
-  }
-  
+    return username && password;
+  };
 
   return (
     <div className='wrapper'>
       <h1>Login</h1>
-      <form onSubmit={ProceedLogin}>
+      <form onSubmit={proceedLogin}>
         <div className="input-login-box">
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder='Username' required />
           <FaUser className='icon' />
@@ -84,16 +59,16 @@ const Login = () => {
         <button type="submit">Login</button>
       </form>
       <div className="remember-forgot">
-         <a>  <Link to={'/forget'}>Forgot password?</Link></a>
+        <Link to={'/forget'}>Forgot password?</Link>
       </div>
       <div className="register-link">
         <p>Don't have an account? <Link to={'/signup'}>Register</Link></p>
       </div>
       <div className="line">
-        <a>_________________________</a>
+        <span>_________________________</span>
       </div>
       <div className="or">
-        <a>or</a>
+        <span>or</span>
       </div>
       <div className='login-google'>
         <SignIn />
@@ -101,4 +76,7 @@ const Login = () => {
     </div>
   );
 }
-export default Login
+
+export default Login;
+
+

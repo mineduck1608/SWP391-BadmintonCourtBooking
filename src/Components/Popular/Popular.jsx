@@ -18,11 +18,15 @@ import img9 from '../../Assets/image4.jpg'
 
 const Popular = () => {
     const [courtBranches, setCourtBranches] = useState([]);
+    const token = sessionStorage.getItem('token');
 
     useEffect(() => {
         fetch("http://localhost:5266/Branch/GetAll", {
             method: "GET",
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Authorization': `Bearer ${token}`,  // Attach token to Authorization header
+                'Content-Type': 'application/json'
+            }
         })
             .then(response => response.json())
             .then((data) => {
