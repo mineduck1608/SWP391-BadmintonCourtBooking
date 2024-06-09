@@ -231,7 +231,7 @@ namespace BadmintonCourtAPI.Controllers
             if (!username.IsNullOrEmpty())
                 tmp.UserName = username;
             if (IsPasswordSecure(password))
-                tmp.Password = ToHashString(password);
+                tmp.Password = password;
 
             // Check role phân quyền đc update những info nào
             if (roleId != null) // Chỉ staff/Admin mới đc update role và chi nhánh

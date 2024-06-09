@@ -27,7 +27,7 @@ const Login = () => {
           if (resp.token) {
             sessionStorage.setItem('token', resp.token);
             toast.success("Login successful!");
-            navigate('/home');
+            navigate('/admin');
           } else {
             toast.error('Invalid username or password.');
           }

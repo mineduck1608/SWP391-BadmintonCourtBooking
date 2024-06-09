@@ -11,14 +11,29 @@ import React, { useState, useEffect } from "react";
 
 
 const Team = () => {
-  const [userDetail, setUserDetail] = useState({
-    userId: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    user: ''
-  });
+  const [userDetail] = [
+    {
+      id: 2,
+      firstName: 'duc',
+      lastName: 'minh',
+      email: '22',
+      phone: '222'
+    },
+    {
+      id: 3,
+      firstName: 'duc2',
+      lastName: 'minh232',
+      email: '22323',
+      phone: '2223232'
+    },
+    {
+      id: 4,
+      firstName: 'duc3',
+      lastName: 'minh232322',
+      email: '22322323',
+      phone: '22223233232'
+    },
+  ];
 
   const token = sessionStorage.getItem('token');
 
@@ -30,6 +45,7 @@ const Team = () => {
 
     const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
     const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
+    console.log(decodedToken)
 
 
     fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
@@ -39,26 +55,30 @@ const Team = () => {
         'Content-Type': 'application/json'
       }
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch user info');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // Find user with matching userId
-      const matchingUser = data.find(user => user.userId == userIdToken);
-      if (matchingUser) {
-        setUserDetail(matchingUser);
-      }
-    })
-    .catch(error => console.error('Error fetching user info:', error));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch user info');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Find user with matching userId
+        const matchingUser = data.find(user => user.userId == userIdToken);
+        if (matchingUser) {
+          matchingUser.id = matchingUser.userId; // Set id to userId
+          //setUserDetail(matchingUser);
+        }
+      })
+      .catch(error => console.error('Error fetching user info:', error));
   }, [token]);
-
+  console.log(userDetail)
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
-    { field: "userId", headerName: "UserID" },
+    {
+      field: "id",
+      headerName: "UserID"
+    },
     {
       field: "firstName",
       headerName: "First Name",
@@ -79,47 +99,8 @@ const Team = () => {
       headerName: "Phone",
       flex: 1,
     },
-
-    {
-      field: "role",
-      headerName: "Role",
-      flex: 1,
-      renderCell: ({ row: { access } }) => {
-        return (
-          <Box
-            width="60%"
-            m="0 -10 0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              access === "admin"
-                ? colors.greenAccent[600]
-                : access === "manager"
-                ? colors.greenAccent[700]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
-          >
-            {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
-            {access === "manager" && <SecurityOutlinedIcon />}
-            {access === "user" && <LockOpenOutlinedIcon />}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {access}
-            </Typography>
-          </Box>
-        );
-      },
-    },
-    {
-      field: "edit",
-      headerName: "Edit",
-    },
-    {
-      field: "ban",
-      headerName: "Ban",
-    },
   ];
+
 
   return (
     <Box m="20px">
@@ -153,7 +134,7 @@ const Team = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={userDetail} columns={columns} />
+        <DataGrid checkboxSelection rows={[userDetail]} columns={columns} />
       </Box>
     </Box>
   );
