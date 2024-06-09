@@ -29,7 +29,7 @@ namespace BadmintonCourtAPI.Controllers
 
         public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
 
-        public bool IsPasswordSecure(string password) => new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password);
+        private bool IsPasswordSecure(string password) => password != null ? new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password) : false;
 
         public string GenerateToken(int id, string lastName, string username, string roleName)
         {
@@ -230,8 +230,8 @@ namespace BadmintonCourtAPI.Controllers
             User tmp = service.userService.GetUserById(id);
             if (!username.IsNullOrEmpty())
                 tmp.UserName = username;
-            if (IsPasswordSecure(password))
-                tmp.Password = password;
+            if (IsPasswordSecure(password)) // Pass k secure = cook
+                tmp.Password = (password); // Lay lai pass cu
 
             // Check role phân quyền đc update những info nào
             if (roleId != null) // Chỉ staff/Admin mới đc update role và chi nhánh
@@ -248,10 +248,21 @@ namespace BadmintonCourtAPI.Controllers
                 }
             }
             service.userService.UpdateUser(tmp, id);
-            // Update xong user chuyển tiếp qua detail
-            service.userDetailService.UpdateUserDetail(new UserDetail(id, firstName, lastName, email, phone), id);
-            return Ok();
 
+
+            // Update xong user chuyển tiếp qua detail
+            UserDetail info = service.userDetailService.GetUserDetailById(id);
+            if (!firstName.IsNullOrEmpty())
+                info.FirstName = firstName;
+            if (!lastName.IsNullOrEmpty())
+                info.LastName = lastName;
+            if (!email.IsNullOrEmpty())
+                info.Email = email;
+            if (!phone.IsNullOrEmpty())
+                if (IsPhoneFormatted(phone))
+                    info.Phone = phone;
+            service.userDetailService.UpdateUserDetail(info, id);
+            return Ok();
         }
 
 

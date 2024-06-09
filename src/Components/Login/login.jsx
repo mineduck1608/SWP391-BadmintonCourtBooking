@@ -4,6 +4,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SignIn from '../googleSignin/signIn';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -26,6 +27,8 @@ const Login = () => {
         .then((resp) => {
           if (resp.token) {
             sessionStorage.setItem('token', resp.token);
+            const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
+            const roleToken = decodedToken.UserId; // Extract userId from the decoded token
             toast.success("Login successful!");
             navigate('/admin');
           } else {
