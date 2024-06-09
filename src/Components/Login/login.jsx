@@ -30,7 +30,7 @@ const Login = () => {
             const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
             const roleToken = decodedToken.UserId; // Extract userId from the decoded token
             toast.success("Login successful!");
-            navigate('/admin');
+            navigate('/home');
           } else {
             toast.error('Invalid username or password.');
           }

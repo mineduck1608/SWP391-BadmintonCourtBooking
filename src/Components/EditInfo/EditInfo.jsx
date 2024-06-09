@@ -3,6 +3,7 @@ import './EditInfo.css';
 import Header from "../Header/header";
 import Footer from "../Footer/Footer";
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 export default function EditInfo() {
   const [userInfo, setUserInfo] = useState({
@@ -44,7 +45,7 @@ export default function EditInfo() {
   }, [token]);
 
   const handleSave = () => {
-    fetch(`http://localhost:5266/UserDetail/Update/${userInfo.userId}`, {
+    fetch(`http://localhost:5266/User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}`, {
       method: "PUT",
       headers: { 
         'Content-Type': 'application/json' 
@@ -53,9 +54,9 @@ export default function EditInfo() {
     })
       .then(response => response.json())
       .then(data => {
-        console.log('User info updated successfully:', data);
+        toast.success('Update info success.');
       })
-      .catch(error => console.error('Error updating user info:', error));
+      .catch(error => toast.waring('Update info failed,'));
   };
 
   

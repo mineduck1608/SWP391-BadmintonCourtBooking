@@ -27,6 +27,12 @@ namespace BadmintonCourtAPI.Controllers
             _config = config;
         }
 
+        private string GetMailFromToken(string token)
+        {
+            var jwtToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            return jwtToken.Claims.FirstOrDefault(claim => claim.Type == "email").Value;
+        }
+
         public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
 
         private bool IsPasswordSecure(string password) => password != null ? new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password) : false;
@@ -94,15 +100,22 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpPost]
         [Route("User/ExternalLogAuth")]
-        public async Task<IActionResult> ExternalAuth(string email)
+        public async Task<IActionResult> ExternalAuth(string token)
         {
+            string email = GetMailFromToken(token);
             UserDetail info = service.userDetailService.GetUserDetailByMail(email);
-            if (info == null)
+
+            if (info == null) // Chua co acc
             {
                 service.userService.AddUser(new User("", "", null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
                 service.userDetailService.AddUserDetail(new UserDetail(service.userService.GetRecentAddedUser().UserId, "", "", email, ""));
+                int id = service.userService.GetRecentAddedUser().UserId;
+                return Ok(new { token = GenerateToken(id, "", "", "Customer") });
             }
-            return Ok(new { roleId = 3 });
+
+            // Co acc
+            User user = service.userService.GetUserById(info.UserId);
+            return Ok(new { token = GenerateToken(info.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
         }
 
         [HttpPost]
@@ -262,7 +275,16 @@ namespace BadmintonCourtAPI.Controllers
                 if (IsPhoneFormatted(phone))
                     info.Phone = phone;
             service.userDetailService.UpdateUserDetail(info, id);
-            return Ok();
+            return Ok(new
+            {
+                Username = tmp.UserName,
+                Password = tmp.Password,
+                FirstName = info.FirstName,
+                LastName = info.LastName,
+                Email = info.Email,
+                Phone = info.Phone
+            }
+  );
         }
 
 
