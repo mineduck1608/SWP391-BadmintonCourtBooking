@@ -78,7 +78,7 @@ const Sidebar = () => {
                                 ml="15px"
                             >
                                 <Typography className="webName" variant="h3" color={colors.grey[100]}>
-                                    ADMINIS
+                                    BMTC
                                 </Typography>
                                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                                     <MenuOutlinedIcon />
