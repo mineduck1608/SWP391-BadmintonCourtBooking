@@ -51,7 +51,7 @@ const Sidebar = () => {
                     backgroundColor: "transparent !important",
                 },
                 "& .pro-inner-item": {
-                    padding: "5px 35px 5px 20px !important",
+                    padding: "10px 35px 10px 20px !important",
                 },
                 "& .pro-inner-item:hover": {
                     color: " #868dfb !important",
@@ -68,7 +68,7 @@ const Sidebar = () => {
                         icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
                         style={{
                             margin: "10px 0 20px 0",
-                            color: colors.grey[100],
+                            color: colors.grey[400],
                         }}>
                         {!isCollapsed && (
                             <Box
@@ -116,6 +116,7 @@ const Sidebar = () => {
                             icon={<HomeOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
+                            color={colors.grey[400]}
                         />
 
                         <Typography
