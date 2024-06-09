@@ -23,7 +23,8 @@ export default function ViewInfo() {
     }
 
     const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
-    const userId = decodedToken.userId; // Extract userId from the decoded token
+    const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
+
 
     fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
       method: "GET",
@@ -40,7 +41,7 @@ export default function ViewInfo() {
     })
     .then((data) => {
       // Find user with matching userId
-      const matchingUser = data.find(user => user.userId === userId);
+      const matchingUser = data.find(user => user.userId == userIdToken);
       if (matchingUser) {
         setUserInfo(matchingUser);
       }

@@ -11,23 +11,26 @@ const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "id", headerName: "UserID" },
     {
-      field: "name",
-      headerName: "Name",
+      field: "username",
+      headerName: "User Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: "password",
+      headerName: "Password",
+      flex: 1,
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
+      field: "firstname",
+      headerName: "First Name",
+      flex: 1,
+    },
+    {
+      field: "lastname",
+      headerName: "Last Name",
       flex: 1,
     },
     {
@@ -36,14 +39,24 @@ const Team = () => {
       flex: 1,
     },
     {
-      field: "accessLevel",
-      headerName: "Access Level",
+      field: "phone",
+      headerName: "Phone",
+      flex: 1,
+    },
+    {
+      field: "courtbranch",
+      headerName: "Court Branch",
+      flex: 1,
+    },
+    {
+      field: "role",
+      headerName: "Role",
       flex: 1,
       renderCell: ({ row: { access } }) => {
         return (
           <Box
             width="60%"
-            m="0 auto"
+            m="0 -10 0 auto"
             p="5px"
             display="flex"
             justifyContent="center"
@@ -65,6 +78,11 @@ const Team = () => {
           </Box>
         );
       },
+    },
+    {
+      field: "edit",
+      headerName: "Edit",
+      flex: 1,
     },
   ];
 

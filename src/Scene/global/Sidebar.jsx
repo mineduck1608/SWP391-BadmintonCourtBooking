@@ -124,24 +124,24 @@ const Sidebar = () => {
                             color={colors.grey[300]}
                             sx={{ m: "15px 0 5px 20px" }}
                         >
-                            Data
+                            Manage
                         </Typography>
                         <Item className="menu-item"
-                            title="Manage Team"
+                            title="User"
                             to="/admin/team"
                             icon={<PeopleOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
-                            title="Contacts Information"
+                            title="Court Branch"
                             to="contacts"
                             icon={<ContactsOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
-                            title="Invoices Balances"
+                            title="Court"
                             to="invoices"
                             icon={<ReceiptOutlinedIcon />}
                             selected={selected}

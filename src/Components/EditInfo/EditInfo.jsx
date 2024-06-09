@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './EditInfo.css';
 import Header from "../Header/header";
 import Footer from "../Footer/Footer";
+import { jwtDecode } from 'jwt-decode';
 
 export default function EditInfo() {
   const [userInfo, setUserInfo] = useState({
@@ -14,27 +15,33 @@ export default function EditInfo() {
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const token = sessionStorage.getItem('token');
+  const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
+  const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
 
   useEffect(() => {
-    fetch("http://localhost:5266/UserDetail/GetAll", {
+    fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
       method: "GET",
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     })
-      .then(response => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          // Assuming we need to handle an array of users and find the specific user
-          const useridsession = sessionStorage.getItem('userId');
-          const user = data.find(user => user.userId == useridsession);
-          if (user) {
-            setUserInfo(user);
-          }
-        } else {
-          setUserInfo(data);
-        }
-      })
-      .catch(error => console.error('Error fetching user info:', error));
-  }, []);
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Find user with matching userId
+      const matchingUser = data.find(user => user.userId == userIdToken);
+      if (matchingUser) {
+        setUserInfo(matchingUser);
+      }
+    })
+    .catch(error => console.error('Error fetching user info:', error));
+  }, [token]);
 
   const handleSave = () => {
     fetch(`http://localhost:5266/UserDetail/Update/${userInfo.userId}`, {
