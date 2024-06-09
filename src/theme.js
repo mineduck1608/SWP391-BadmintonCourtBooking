@@ -60,7 +60,7 @@ export const tokens = (mode) => ({
         800: "#c3c6fd",
         900: "#e1e2fe",
       },
-      }
+    }
     : {
       grey: {
         100: "#e0e0e0",
@@ -117,7 +117,7 @@ export const tokens = (mode) => ({
         800: "#2a2d64",
         900: "#151632",
       },
-      }),
+    }),
 });
 
 // mui theme settings
@@ -128,47 +128,47 @@ export const themeSettings = (mode) => {
       mode: mode,
       ...(mode === "light"
         ? {
-            // palette values for dark mode
-            primary: {
-              main: colors.primary[500],
-            },
-            secondary: {
-              main: colors.greenAccent[500],
-            },
-            neutral: {
-              dark: colors.grey[300],
-              main: colors.grey[500],
-              light: colors.grey[900],
-            },
-            background: {
-              default:  "#fcfcfc",
-            },
-          }
+          // palette values for dark mode
+          primary: {
+            main: colors.primary[500],
+          },
+          secondary: {
+            main: colors.greenAccent[500],
+          },
+          neutral: {
+            dark: colors.grey[300],
+            main: colors.grey[500],
+            light: colors.grey[900],
+          },
+          background: {
+            default: "#fcfcfc",
+          },
+        }
         : {
-            // palette values for light mode
-            primary: {
-              main: colors.primary[900],
-            },
-            secondary: {
-              main: colors.greenAccent[500],
-            },
-            neutral: {
-              dark: colors.grey[300],
-              main: colors.grey[500],
-              light: colors.grey[900],
-            },
-            background: {
-              default: colors.primary[500],
-            },
-          }),
+          // palette values for light mode
+          primary: {
+            main: colors.primary[900],
+          },
+          secondary: {
+            main: colors.greenAccent[500],
+          },
+          neutral: {
+            dark: colors.grey[300],
+            main: colors.grey[500],
+            light: colors.grey[900],
+          },
+          background: {
+            default: colors.primary[500],
+          },
+        }),
     },
-    
+
   };
 };
 
 // context for color mode
 export const ColorModeContext = createContext({
-  toggleColorMode: () => {},
+  toggleColorMode: () => { },
 });
 
 export const useMode = () => {
