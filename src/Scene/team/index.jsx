@@ -6,30 +6,66 @@ import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettin
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Head from "../../Components/Head";
+import { jwtDecode } from 'jwt-decode';
+import React, { useState, useEffect } from "react";
+
 
 const Team = () => {
+  const [userDetail, setUserDetail] = useState({
+    userId: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    user: ''
+  });
+
+  const token = sessionStorage.getItem('token');
+
+  useEffect(() => {
+    if (!token) {
+      console.error('Token not found. Please log in.');
+      return;
+    }
+
+    const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
+    const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
+
+
+    fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
+      method: "GET",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Find user with matching userId
+      const matchingUser = data.find(user => user.userId == userIdToken);
+      if (matchingUser) {
+        setUserDetail(matchingUser);
+      }
+    })
+    .catch(error => console.error('Error fetching user info:', error));
+  }, [token]);
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
-    { field: "id", headerName: "UserID" },
+    { field: "userId", headerName: "UserID" },
     {
-      field: "username",
-      headerName: "User Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "password",
-      headerName: "Password",
-      flex: 1,
-    },
-    {
-      field: "firstname",
+      field: "firstName",
       headerName: "First Name",
       flex: 1,
     },
     {
-      field: "lastname",
+      field: "lastName",
       headerName: "Last Name",
       flex: 1,
     },
@@ -43,11 +79,7 @@ const Team = () => {
       headerName: "Phone",
       flex: 1,
     },
-    {
-      field: "courtbranch",
-      headerName: "Court Branch",
-      flex: 1,
-    },
+
     {
       field: "role",
       headerName: "Role",
@@ -82,7 +114,10 @@ const Team = () => {
     {
       field: "edit",
       headerName: "Edit",
-      flex: 1,
+    },
+    {
+      field: "ban",
+      headerName: "Ban",
     },
   ];
 
@@ -118,7 +153,7 @@ const Team = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid checkboxSelection rows={userDetail} columns={columns} />
       </Box>
     </Box>
   );

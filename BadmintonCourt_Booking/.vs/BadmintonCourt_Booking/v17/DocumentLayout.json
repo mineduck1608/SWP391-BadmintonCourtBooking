@@ -80,7 +80,7 @@
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\BranchController.cs",
               "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BranchController.cs",
               "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\BranchController.cs",
-              "ViewState": "AQIAACMAAAAAAAAAAAAgwDIAAAA3AAAA",
+              "ViewState": "AQIAABoAAAAAAAAAAAAgwDEAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-08T18:50:00.564Z",
               "EditorCaption": ""
@@ -95,8 +95,7 @@
               "RelativeToolTip": "BadmintonCourtAPI\\Properties\\launchSettings.json",
               "ViewState": "AQIAAAoAAAAAAAAAAAAmwBcAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-06-08T14:56:18.694Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:56:18.694Z"
             },
             {
               "$type": "Document",
@@ -108,8 +107,7 @@
               "RelativeToolTip": "BadmintonCourtAPI\\WeatherForecast.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-08T15:48:12.237Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T15:48:12.237Z"
             },
             {
               "$type": "Document",
@@ -121,8 +119,7 @@
               "RelativeToolTip": "ClassLibrary3\\BadmintonCourtContext.cs",
               "ViewState": "AQIAABoAAAAAAAAAAAAywAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-08T14:57:56.715Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:57:56.715Z"
             },
             {
               "$type": "Document",
@@ -130,12 +127,11 @@
               "Title": "UserController.cs",
               "DocumentMoniker": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\UserController.cs",
-              "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\UserController.cs*",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\UserController.cs*",
+              "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\UserController.cs",
+              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\UserController.cs",
               "ViewState": "AQIAADUAAAAAAAAAAAArwBMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-06T07:31:08.849Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-06T07:31:08.849Z"
             },
             {
               "$type": "Document",
@@ -147,8 +143,7 @@
               "RelativeToolTip": "BadmintonCourtAPI\\Program.cs",
               "ViewState": "AQIAAEMAAAAAAAAAAAAawEwAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-08T15:47:17.726Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T15:47:17.726Z"
             },
             {
               "$type": "Document",
@@ -160,21 +155,19 @@
               "RelativeToolTip": "BadmintonCourtAPI\\appsettings.json",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-06-08T14:56:56.143Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:56:56.143Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "BadmintonCourtAPI",
+              "Title": "BadmintonCourtAPI.csproj",
               "DocumentMoniker": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "RelativeToolTip": "BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-06-08T14:56:00.629Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:56:00.629Z"
             },
             {
               "$type": "Document",
@@ -186,21 +179,19 @@
               "RelativeToolTip": "BadmintonCourtAPI\\BadmintonCourtAPI.http",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2024-06-08T14:56:49.502Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:56:49.502Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "BadmintonCourtBusinessObjects",
+              "Title": "BadmintonCourtBusinessObjects.csproj",
               "DocumentMoniker": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
               "RelativeDocumentMoniker": "BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
               "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
               "RelativeToolTip": "BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-06-08T14:55:40.455Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:55:40.455Z"
             },
             {
               "$type": "Document",
@@ -212,8 +203,7 @@
               "RelativeToolTip": "BadmintonCourtBusinessObjects\\Entities\\User.cs",
               "ViewState": "AQIAAB4AAAAAAAAAAAAAAC8AAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-06T08:55:22.207Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-06T08:55:22.207Z"
             },
             {
               "$type": "Document",
@@ -225,8 +215,7 @@
               "RelativeToolTip": "BadmintonCourtDAOs\\UserDAO.cs",
               "ViewState": "AQIAACEAAAAAAAAAAAAUwBgAAAAlAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-06T10:50:35.044Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-06T10:50:35.044Z"
             },
             {
               "$type": "Document",
@@ -238,8 +227,7 @@
               "RelativeToolTip": "BadmintonCourtBusinessObjects\\Entities\\Feedback.cs",
               "ViewState": "AQIAAAwAAAAAAAAAAAAowA4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-06T09:43:21.797Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-06T09:43:21.797Z"
             },
             {
               "$type": "Document",
@@ -251,8 +239,7 @@
               "RelativeToolTip": "BadmintonCourtBusinessObjects\\Entities\\UserDetail.cs",
               "ViewState": "AQIAABIAAAAAAAAAAAAMwBwAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-06T08:55:34.992Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-06T08:55:34.992Z"
             },
             {
               "$type": "Document",
@@ -263,8 +250,7 @@
               "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "RelativeToolTip": "BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-06-08T14:58:36.087Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-08T14:58:36.087Z"
             }
           ]
         }
