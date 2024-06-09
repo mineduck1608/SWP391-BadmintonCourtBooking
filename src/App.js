@@ -17,7 +17,7 @@ import ForgetPassword from './Components/ForgetPassword/forgetPassword';
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Team from "./Scene/team";
-import Contacts from "./Scene/contacts";
+import Branch from "./Scene/courtBranch";
 import Invoices from "./Scene/invoices";
 import Form from "./Scene/form";
 import Calendar from "./Scene/calendar";
@@ -54,7 +54,7 @@ const App = () => {
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="team" element={<Team />} />
-            <Route path="contacts" element={<Contacts />} />
+            <Route path="branch" element={<Branch />} />
             <Route path="invoices" element={<Invoices />} />
             <Route path="form" element={<Form />} />
             <Route path="calendar" element={<Calendar />} />

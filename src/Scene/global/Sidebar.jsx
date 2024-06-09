@@ -135,7 +135,7 @@ const Sidebar = () => {
                         />
                         <Item className="menu-item"
                             title="Court Branch"
-                            to="contacts"
+                            to="branch"
                             icon={<ContactsOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
