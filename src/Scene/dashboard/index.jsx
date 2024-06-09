@@ -1,3 +1,5 @@
+// Dashboard.jsx
+import React from "react";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
@@ -12,6 +14,7 @@ import GeographyChart from "../../Components/GeographyChart";
 import BarChart from "../../Components/BarChart";
 import StatBox from "../../Components/StatBox";
 import ProgressCircle from "../../Components/ProgressCircle";
+import './dashboard.css';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -21,7 +24,12 @@ const Dashboard = () => {
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Head title="DASHBOARD" subtitle="Welcome to your dashboard" />
+        <Head 
+          title="DASHBOARD" 
+          subtitle="Welcome to your dashboard" 
+          titleClass="head-title" 
+          subtitleClass="head-subtitle" 
+        />
 
         <Box>
           <Button
