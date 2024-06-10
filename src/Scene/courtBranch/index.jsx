@@ -1,15 +1,15 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import { useTheme } from "@mui/material";
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Branch = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const[data, setData] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,8 +22,8 @@ const Branch = () => {
         }
         const jsonData = await response.json();
 
-        //Add a unique id to each row
-        const newData = jsonData.map((row,index) => ({
+        // Add a unique id to each row
+        const newData = jsonData.map((row, index) => ({
           ...row,
           id: index + 1
         }));
@@ -39,72 +39,65 @@ const Branch = () => {
     fetchData();
   }, []);
 
+  const handleViewInfo = (id) => {
+    console.log(`View info for row with id: ${id}`);
+    // Implement the logic for viewing info here
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete row with id: ${id}`);
+    // Implement the logic for deleting a row here
+  };
+
   const columns = [
-    { field: "branchId", 
-      headerName: "Branch ID", 
-      flex: 0.5,
-      align: "center",
-      headerAlign: "center",
-    },
-    { field: "location", 
-      headerName: "Location",
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "branchName",
-      headerName: "Branch Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "branchPhone",
-      headerName: "Phone",
-      type: "number",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "branchImg",
-      headerName: "Image",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-    },
+    { field: "branchId", headerName: "Branch ID", flex: 0.5, align: "center", headerAlign: "center" },
+    { field: "location", headerName: "Location", align: "center", headerAlign: "center" },
+    { field: "branchName", headerName: "Branch Name", flex: 1, cellClassName: "name-column--cell", align: "center", headerAlign: "center" },
+    { field: "branchPhone", headerName: "Phone", type: "number", headerAlign: "center", align: "center", flex: 1 },
+    { field: "branchImg", headerName: "Image", flex: 1, align: "center", headerAlign: "center" },
     {
       field: "branchStatus",
       headerName: "Status",
       flex: 1,
       align: "center",
       headerAlign: "center",
+      renderCell: (params) => (
+        <Box color={params.value ? 'green' : 'red'}>
+          {params.value ? 'true' : 'false'}
+        </Box>
+      )
     },
+    { field: "courts", headerName: "Courts", flex: 1, align: "center", headerAlign: "center" },
+    { field: "feedbacks", headerName: "Feedbacks", flex: 1, align: "center", headerAlign: "center" },
+    { field: "users", headerName: "Users", flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "courts",
-      headerName: "Courts",
+      field: "actions",
+      headerName: "Actions",
       flex: 1,
       align: "center",
       headerAlign: "center",
-    },
-    {
-      field: "feedbacks",
-      headerName: "Feedbacks",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "users",
-      headerName: "Users",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-    },
+      renderCell: (params) => (
+        <Box display="flex" justifyContent="center" alignItems="center" gap="10px" height="100%">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleViewInfo(params.row.id)}
+          >
+            View Info
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
+          </Button>
+        </Box>
+      )
+    }
   ];
 
-  if(loading) {
+  if (loading) {
     return <Box m="20px">Loading...</Box>
   }
 
@@ -114,10 +107,7 @@ const Branch = () => {
 
   return (
     <Box m="20px">
-      <Head
-        title="CONTACTS"
-        subtitle="List of Contacts for Future Reference"
-      />
+      <Head title="BRANCHES" subtitle="List of Branches for Future Reference" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -156,7 +146,7 @@ const Branch = () => {
           components={{ Toolbar: GridToolbar }}
           pagination
           pageSize={10}
-          rowsPerPageOptions={[5,10,20]}
+          rowsPerPageOptions={[5, 10, 20]}
         />
       </Box>
     </Box>

@@ -2,65 +2,125 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 
 const Court = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    const[data, setData] = useState([]);
-    const[loading, setLoading] = useState(true);
-    const[error, setError] = useState(null);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:5266/Court/GetAll');
-                if(!response.ok) {
+                if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
                 const jsonData = await response.json();
+                const newData = jsonData.map((row, index) => ({
+                    ...row,
+                    id: index + 1
+                }));
+                setData(newData);
+                setLoading(false);
             } catch (error) {
                 setError(error.message);
                 setLoading(false);
             }
         };
-        
+
         fetchData();
     }, []);
 
     const columns = [
-        { field: "courtId", headerName: "Court ID" },
+        {
+            field: "courtId",
+            headerName: "Court ID",
+            align: "center",
+      headerAlign: "center",
+        },
 
         {
             field: "courtImg",
             headerName: "Img",
             flex: 1,
-            cellClassName: "name-column--cell",
+            align: "center",
+      headerAlign: "center",
         },
 
         {
             field: "branchId",
             headerName: "Branch ID",
             flex: 1,
+            align: "center",
+      headerAlign: "center",
         },
         {
             field: "price",
             headerName: "Price",
             flex: 1,
+            align: "center",
+      headerAlign: "center",
         },
         {
             field: "courtStatus",
             headerName: "Status",
             flex: 1,
-            renderCell: (params) => (
-                <Typography color={colors.greenAccent[500]}>
-                    ${params.row.cost}
-                </Typography>
-            )
+            align: "center",
+      headerAlign: "center",
         },
+        {
+            field: "description",
+            headerName: "description",
+            flex: 1,
+            align: "center",
+      headerAlign: "center",
+        },
+        {
+            field: "Branch",
+            headerName: "Branch",
+            flex: 1,
+            align: "center",
+      headerAlign: "center",
+        },
+        {
+            field: "slots",
+            headerName: "Slots",
+            flex: 1,
+            align: "center",
+      headerAlign: "center",
+        },
+        {
+            field: "actions",
+            headerName: "Actions",
+            flex: 1,
+            align: "center",
+            headerAlign: "center",
+            renderCell: (params) => (
+                <Box display="flex" justifyContent="center" alignItems="center" gap="10px" height="100%">
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => handleDelete(params.row.id)}
+                    >
+                        Delete
+                    </Button>
+                </Box>
+            )
+        }
     ];
+
+    if(loading) {
+        return <Box m="20px">Loading...</Box>
+    }
+
+    if (error) {
+        
+    }
 
     return (
         <Box m="20px">
