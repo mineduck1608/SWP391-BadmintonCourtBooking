@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, useTheme, Button } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
@@ -36,12 +36,20 @@ const Court = () => {
         fetchData();
     }, []);
 
+    const handleViewInfo = (id) => {
+        console.log('View info for row with id: ${id}');
+    }
+
+    const handleDelete = (id) => {
+        console.log('Delete row with id: ${id}');
+    }
+
     const columns = [
         {
             field: "courtId",
             headerName: "Court ID",
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
 
         {
@@ -49,7 +57,7 @@ const Court = () => {
             headerName: "Img",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
 
         {
@@ -57,42 +65,47 @@ const Court = () => {
             headerName: "Branch ID",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
         {
             field: "price",
             headerName: "Price",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
         {
             field: "courtStatus",
             headerName: "Status",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
+            renderCell: (params) => (
+                <Box color={params.value ? 'green' : 'red'}>
+                    {params.value ? 'true' : 'false'}
+                </Box>
+            )
         },
         {
             field: "description",
             headerName: "description",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
         {
             field: "Branch",
             headerName: "Branch",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
         {
             field: "slots",
             headerName: "Slots",
             flex: 1,
             align: "center",
-      headerAlign: "center",
+            headerAlign: "center",
         },
         {
             field: "actions",
@@ -114,12 +127,12 @@ const Court = () => {
         }
     ];
 
-    if(loading) {
+    if (loading) {
         return <Box m="20px">Loading...</Box>
     }
 
     if (error) {
-        
+
     }
 
     return (
