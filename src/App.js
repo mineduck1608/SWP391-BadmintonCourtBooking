@@ -18,7 +18,7 @@ import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Team from "./Scene/team";
 import Branch from "./Scene/courtBranch";
-import Invoices from "./Scene/invoices";
+import Court from "./Scene/court";
 import Form from "./Scene/form";
 import Calendar from "./Scene/calendar";
 import FAQ from "./Scene/faq";
@@ -55,7 +55,7 @@ const App = () => {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="team" element={<Team />} />
             <Route path="branch" element={<Branch />} />
-            <Route path="invoices" element={<Invoices />} />
+            <Route path="court" element={<Court />} />
             <Route path="form" element={<Form />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="faq" element={<FAQ />} />

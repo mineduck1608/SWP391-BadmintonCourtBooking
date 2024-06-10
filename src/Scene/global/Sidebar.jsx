@@ -142,7 +142,7 @@ const Sidebar = () => {
                         />
                         <Item className="menu-item"
                             title="Court"
-                            to="invoices"
+                            to="court"
                             icon={<ReceiptOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
