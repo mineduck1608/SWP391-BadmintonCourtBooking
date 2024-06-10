@@ -118,6 +118,13 @@ const Court = () => {
                     <Button
                         variant="contained"
                         color="secondary"
+                        onClick={() => handleViewInfo(params.row.id)}
+                    >
+                        View Info
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
                         onClick={() => handleDelete(params.row.id)}
                     >
                         Delete
