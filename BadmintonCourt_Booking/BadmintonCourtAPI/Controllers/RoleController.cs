@@ -20,7 +20,7 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpGet]
         [Route("Role/GetAll")]
-        [Authorize(Roles = "Admin,Staff")]
+        //[Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles() =>
             Ok(service.roleService.GetAllRoles());
 
