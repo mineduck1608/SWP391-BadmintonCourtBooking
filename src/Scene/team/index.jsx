@@ -1,12 +1,43 @@
 import { Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import jwtDecode from 'jwt-decode';
 import React, { useState, useEffect } from "react";
 import Head from "../../Components/Head";
+import { Modal } from 'antd';
+import './team.css'; // Import the custom CSS
 
 const Team = () => {
   const [rows, setRows] = useState([]);
   const token = sessionStorage.getItem('token');
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  //view user info
+  const [username, usernameChange] = useState("");
+  const [password, passwordChange] = useState("");
+  const [branchID, branchIDChange] = useState("");
+  const [balance, balanceChange] = useState("");
+  const [activeStatus, activeStatusChange] = useState("");
+  const [firstName, firstNameChange] = useState("");
+  const [lastName, lastNameChange] = useState("");
+  const [email, emailChange] = useState("");
+  const [phone, phoneChange] = useState("");
+  const [role, roleChange] = useState("");
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(false);
+    }, 3000);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     if (!token) {
@@ -50,14 +81,12 @@ const Team = () => {
           usersRes.json()
         ]);
 
-        // Check if roleId and roleName exist in roles
         roles.forEach(role => {
           if (!role.roleId || !role.roleName) {
             throw new Error(`Role data is missing roleId or roleName: ${JSON.stringify(role)}`);
           }
         });
 
-        // Merge userDetails with users based on userId
         const mergedData = userDetails.map(userDetail => {
           const user = users.find(u => u.userId === userDetail.userId);
           if (user) {
@@ -66,7 +95,6 @@ const Team = () => {
           return userDetail;
         });
 
-        // Process merged data to add unique id and role names
         const formattedData = mergedData.map((row, index) => {
           const role = roles.find(r => r.roleId === row.roleId);
           return { id: index + 1, ...row, role: role ? role.roleName : 'Unknown' };
@@ -78,39 +106,35 @@ const Team = () => {
       }
     };
 
-    // Initial fetch
     fetchData();
 
-    // Set interval for continuous fetching
-    const intervalId = setInterval(fetchData, 1000); // Fetch every 1 seconds
+    const intervalId = setInterval(fetchData, 1000);
 
-    // Clean up function to clear interval
     return () => clearInterval(intervalId);
   }, [token]);
 
   const handleDelete = (id) => {
     console.log(`Delete user with id: ${id}`);
     fetch(`http://localhost:5266/User/Delete?id=${id}`, {
-        method: "DELETE",
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
+      method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     })
-    .then(response => {
+      .then(response => {
         if (!response.ok) {
-            throw new Error('Failed to delete user');
+          throw new Error('Failed to delete user');
         }
         return response.json();
-    })
-    .then(data => {
+      })
+      .then(data => {
         console.log('User deleted successfully:', data);
-        // Remove deleted user from rows
         setRows(prevRows => prevRows.filter(row => row.id !== id));
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error('Error deleting user:', error);
-    });
+      });
   };
 
   const columns = [
@@ -130,21 +154,77 @@ const Team = () => {
       headerAlign: "center",
       renderCell: (params) => (
         <Box>
-          <Button
+          <Button type="primary" onClick={showModal}
             variant="contained"
             color="primary"
             size="small"
           >
             View Info
           </Button>
+          <Modal
+            width={1000}
+            open={open}
+            title="User Information"
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={[
+              <Button key="back" onClick={handleCancel}>
+                Return
+              </Button>,
+              <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                Submit
+              </Button>
+            ]}
+            centered
+          >
+            <form action="">
+              <div className="user-modal">
+                <div className="user-modal-left">
+                  <div className="user-modal-item">
+                    <div className="user-modal-item-text1">
+                      <p>Username:</p>
+                      <p>First Name:</p>
+                      <p>Email:</p>
+                      <p>Role:</p>
+                      <p>Active Status:</p>
+                    </div>
+                    <div className="user-modal-item-value">
+                      <input value={username} onChange={e => usernameChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={firstName} onChange={e => firstNameChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={email} onChange={e => emailChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={role} onChange={e => roleChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={activeStatus} onChange={e => activeStatusChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                    </div>
+                  </div>
+                </div>
+                <div className="user-modal-right">
+                  <div className="user-modal-item">
+                    <div className="user-modal-item-text2">
+                      <p>Password:</p>
+                      <p>Last Name:</p>
+                      <p> Branch:</p>
+                      <p>Phone:</p>
+                      <p>Balance:</p>
+                    </div>
+                    <div className="user-modal-item-value">
+                      <input value={password} onChange={e => passwordChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={lastName} onChange={e => lastNameChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={branchID} onChange={e => branchIDChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={phone} onChange={e => phoneChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={balance} onChange={e => balanceChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </Modal>
           <Button
             variant="contained"
-            color="secondary"
             size="small"
             onClick={() => handleDelete(params.id)}
-            style={{ marginLeft: 8 }}
+            style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
           >
-            Delete
+            Ban
           </Button>
         </Box>
       )
@@ -154,6 +234,7 @@ const Team = () => {
   return (
     <Box m="20px">
       <Head title="TEAM" subtitle="Managing the Team Members" />
+
       <Box m="40px 0 0 0" height="75vh">
         <DataGrid
           rows={rows}
