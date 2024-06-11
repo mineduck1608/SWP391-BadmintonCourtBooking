@@ -167,6 +167,7 @@ const Team = () => {
             title="User Information"
             onOk={handleOk}
             onCancel={handleCancel}
+            className="custom-modal"
             footer={[
               <Button key="back" onClick={handleCancel}>
                 Return

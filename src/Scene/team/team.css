@@ -4,6 +4,10 @@
     backdrop-filter: blur(0.5px);
     /* Điều chỉnh độ mờ */
 }
+.custom-modal .ant-modal-title {
+    text-align: center; /* Để căn giữa tiêu đề */
+    font-size: 30px; /* Kích thước của tiêu đề */
+  }
 
 .input-box-modal {
     margin: 15px;
@@ -13,6 +17,7 @@
 
 .user-modal {
     display: flex;
+    margin-top: 2%;
 }
 
 .user-modal-left {
