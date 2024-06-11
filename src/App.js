@@ -37,7 +37,7 @@ const App = () => {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
+        <CssBaseline/>
         <Routes>
           <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>} />
           <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>} />

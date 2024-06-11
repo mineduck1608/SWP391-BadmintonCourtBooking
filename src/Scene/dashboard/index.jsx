@@ -27,8 +27,6 @@ const Dashboard = () => {
         <Head 
           title="DASHBOARD" 
           subtitle="Welcome to your dashboard" 
-          titleClass="head-title" 
-          subtitleClass="head-subtitle" 
         />
 
         <Box>
@@ -52,7 +50,7 @@ const Dashboard = () => {
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
         gridAutoRows="140px"
-        gap="20px"
+        gap="17px"
       >
         {/* ROW 1 */}
         <Box

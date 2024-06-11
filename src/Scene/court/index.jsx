@@ -117,7 +117,7 @@ const Court = () => {
                 <Box display="flex" justifyContent="center" alignItems="center" gap="10px" height="100%">
                     <Button
                         variant="contained"
-                        color="secondary"
+                        color="primary"
                         onClick={() => handleViewInfo(params.row.id)}
                     >
                         View Info
@@ -139,14 +139,14 @@ const Court = () => {
     }
 
     if (error) {
-
+        return <Box m="20px">Error: {error}</Box>
     }
 
     return (
         <Box m="20px">
             <Head
-                title="INVOICES"
-                subtitle="List of Invoice Balances"
+                title="COURTS"
+                subtitle="List of Badminton Courts"
             />
             <Box
                 m="40px 0 0 0"
@@ -175,10 +175,12 @@ const Court = () => {
                     "& .MuiCheckbox-root": {
                         color: `${colors.greenAccent[200]} !important`,
                     },
+                    "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                        color: `${colors.grey[100]} !important`,
+                    },
                 }}
             >
                 <DataGrid
-                    checkboxSelection
                     rows={data}
                     columns={columns}
                 />
