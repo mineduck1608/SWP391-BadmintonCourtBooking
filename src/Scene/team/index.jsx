@@ -10,11 +10,11 @@ const Team = () => {
   const token = sessionStorage.getItem('token');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
-  //view user info
   const [username, usernameChange] = useState("");
   const [password, passwordChange] = useState("");
-  const [branchID, branchIDChange] = useState("");
+  const [branch, branchChange] = useState("");
   const [balance, balanceChange] = useState("");
   const [activeStatus, activeStatusChange] = useState("");
   const [firstName, firstNameChange] = useState("");
@@ -23,7 +23,9 @@ const Team = () => {
   const [phone, phoneChange] = useState("");
   const [role, roleChange] = useState("");
 
-  const showModal = () => {
+
+  const showModal = (row) => { // Nhận hàng được chọn làm đối số
+    setSelectedRow(row); // Cập nhật selectedRow với hàng được chọn
     setOpen(true);
   };
 
@@ -47,7 +49,7 @@ const Team = () => {
 
     const fetchData = async () => {
       try {
-        const [userDetailsRes, rolesRes, usersRes] = await Promise.all([
+        const [userDetailsRes, rolesRes, usersRes, branchesRes] = await Promise.all([
           fetch(`http://localhost:5266/UserDetail/GetAll`, {
             method: "GET",
             headers: {
@@ -68,17 +70,25 @@ const Team = () => {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
+          }),
+          fetch(`http://localhost:5266/Branch/GetAll`, {
+            method: "GET",
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
           })
         ]);
 
-        if (!userDetailsRes.ok || !rolesRes.ok || !usersRes.ok) {
+        if (!userDetailsRes.ok || !rolesRes.ok || !usersRes.ok || !branchesRes.ok) {
           throw new Error('Failed to fetch data');
         }
 
-        const [userDetails, roles, users] = await Promise.all([
+        const [userDetails, roles, users, branches] = await Promise.all([
           userDetailsRes.json(),
           rolesRes.json(),
-          usersRes.json()
+          usersRes.json(),
+          branchesRes.json()
         ]);
 
         roles.forEach(role => {
@@ -87,7 +97,7 @@ const Team = () => {
           }
         });
 
-        const mergedData = userDetails.map(userDetail => {
+        const mergedData1 = userDetails.map(userDetail => {
           const user = users.find(u => u.userId === userDetail.userId);
           if (user) {
             return { ...userDetail, ...user };
@@ -95,12 +105,22 @@ const Team = () => {
           return userDetail;
         });
 
-        const formattedData = mergedData.map((row, index) => {
+        const mergedData2 = mergedData1.map(userDetail => {
+          const branch = branches.find(b => b.branchId === userDetail.branchId);
+          if (branch) {
+            return { ...userDetail, branchName: branch.branchName };
+          }
+          return userDetail;
+        });
+
+        const formattedData = mergedData2.map((row, index) => {
           const role = roles.find(r => r.roleId === row.roleId);
           return { id: index + 1, ...row, role: role ? role.roleName : 'Unknown' };
         });
 
+
         setRows(formattedData);
+        console.log(formattedData)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -137,6 +157,8 @@ const Team = () => {
       });
   };
 
+
+
   const columns = [
     { field: "userId", headerName: "UserID", align: "center", headerAlign: "center" },
     { field: "firstName", headerName: "First Name", flex: 1, align: "center", headerAlign: "center" },
@@ -154,7 +176,7 @@ const Team = () => {
       headerAlign: "center",
       renderCell: (params) => (
         <Box>
-          <Button type="primary" onClick={showModal}
+          <Button type="primary" onClick={() => showModal(params.row)}
             variant="contained"
             color="primary"
             size="small"
@@ -190,11 +212,17 @@ const Team = () => {
                       <p>Active Status:</p>
                     </div>
                     <div className="user-modal-item-value">
-                      <input value={username} onChange={e => usernameChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={firstName} onChange={e => firstNameChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={email} onChange={e => emailChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={role} onChange={e => roleChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={activeStatus} onChange={e => activeStatusChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={username} placeholder={selectedRow ? selectedRow.userName : ''} onChange={e => usernameChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={firstName} placeholder={selectedRow ? selectedRow.firstName : ''} onChange={e => firstNameChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={email} placeholder={selectedRow ? selectedRow.email : ''} onChange={e => emailChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={role} placeholder={selectedRow ? selectedRow.role : ''} onChange={e => roleChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input
+                        value={activeStatus}
+                        placeholder={selectedRow ? selectedRow.activeStatus.toString() : ''}
+                        onChange={e => activeStatusChange(e.target.value)}
+                        className="input-box-modal"
+                        type="text"
+                      />
                     </div>
                   </div>
                 </div>
@@ -208,11 +236,11 @@ const Team = () => {
                       <p>Balance:</p>
                     </div>
                     <div className="user-modal-item-value">
-                      <input value={password} onChange={e => passwordChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={lastName} onChange={e => lastNameChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={branchID} onChange={e => branchIDChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={phone} onChange={e => phoneChange(e.target.value)} className="input-box-modal" type="text" ></input>
-                      <input value={balance} onChange={e => balanceChange(e.target.value)} className="input-box-modal" type="text" ></input>
+                      <input value={password} placeholder={selectedRow ? selectedRow.password : ''} onChange={e => passwordChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={lastName} placeholder={selectedRow ? selectedRow.lastName : ''} onChange={e => lastNameChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={branch} placeholder={selectedRow ? selectedRow.branchName : ''} onChange={e => branchChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={phone} placeholder={selectedRow ? selectedRow.phone : ''} onChange={e => phoneChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={balance} placeholder={selectedRow ? selectedRow.balance : ''} onChange={e => balanceChange(e.target.value)} className="input-box-modal" type="text" />
                     </div>
                   </div>
                 </div>
@@ -222,7 +250,7 @@ const Team = () => {
           <Button
             variant="contained"
             size="small"
-            onClick={() => handleDelete(params.id)}
+            onClick={() => handleDelete(params.row.userId)}
             style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
           >
             Ban
@@ -231,6 +259,7 @@ const Team = () => {
       )
     }
   ];
+
 
   return (
     <Box m="20px">
