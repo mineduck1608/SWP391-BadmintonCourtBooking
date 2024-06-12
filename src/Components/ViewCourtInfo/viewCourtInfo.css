@@ -6,42 +6,42 @@
     left: 20px;
     z-index: 1;
     margin: 10px;
-    border: 1px solid #d4af37;
-    /* Màu vàng gold */
-    border-radius: 15px;
-    /* Góc bo tròn */
-    padding: 15px;
-    /* Khoảng cách giữa khung và ảnh */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    /* Hiệu ứng bóng đổ */
-    background: linear-gradient(145deg, #ffffff, #e6e6e6);
-    /* Hiệu ứng nền gradient nhẹ */
+    border: 1px solid #d4af37; /* Màu vàng gold */
+    border-radius: 15px; /* Góc bo tròn */
+    padding: 15px; /* Khoảng cách giữa khung và ảnh */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng đổ */
+    background: linear-gradient(145deg, #ffffff, #e6e6e6); /* Hiệu ứng nền gradient nhẹ */
 }
 
 .viewcourtinfo-body-pic {
     display: flex;
-    margin-left: 10px;
+    margin-left: px;
     margin-top: 10px;
+    margin-left: 20px;
 }
 
-.viewcourtinfo-info {  
+.viewcourtinfo-info {
     display: block;
     color: black;
     margin-left: 50px;
     font-size: larger;
-}
-.viewcourtinfo-info p {  
-    color: black;
-}
-.viewcourtinfo-body-des {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
+.viewcourtinfo-info p {
+    color: black;
+}
+
+.viewcourtinfo-body-des {
+    margin-top: 10px;
+    margin-left: 50px;
+}
 
 .viewcourtinfo-body-des h1 {
     color: black;
     font-family: 'Times New Roman', Times, serif;
 }
+
 .viewcourtinfo-body-des p {
     color: black;
     font-family: 'Times New Roman', Times, serif;
@@ -55,33 +55,72 @@
 
 .viewcourtinfo-img {
     width: 500px;
-    height: 400px;
+    height: auto; /* Maintain aspect ratio */
     margin-right: 10px;
     display: block;
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
-    /* Góc bo tròn cho ảnh */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Hiệu ứng bóng đổ cho ảnh */
-
+    border-radius: 10px; /* Góc bo tròn cho ảnh */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng đổ cho ảnh */
 }
 
 .viewcourtinfo {
     width: 100%;
     display: inline;
 }
-.viewcourtinfo-othercourts{
+
+.viewcourtinfo-othercourts {
     position: relative;
     margin-top: 50px;
     margin-left: 30px;
 }
-.viewcourtinfo-other-pic{
+
+.viewcourtinfo-other-pic {
     width: 30%;
-    height: 30%;
     display: flex;
     margin-top: 20px;
 }
-.viewcourtinfo-other-info{
+
+.viewcourtinfo-other-info {
     margin-left: 20px;
+}
+
+.viewcourtinfo-other-info h2,p{
+    color: black;
+}
+.courtList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); 
+    gap: 40px; 
+    margin-top: 20px; 
+    width: 95%; 
+    max-width: 1400px; 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+
+.courtCard {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    background-color: #d4af37; 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+button:hover {
+    background-color: #c89e33; 
 }

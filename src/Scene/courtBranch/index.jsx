@@ -5,8 +5,8 @@ import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import { useTheme } from "@mui/material";
 import { Modal, Spin, ConfigProvider } from 'antd';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { css } from '@ant-design/cssinjs';
+import './branch.css'
+
 
 const Branch = () => {
   const theme = useTheme();
@@ -101,6 +101,7 @@ const Branch = () => {
       )
     }
   ];
+  
 
   if (loading) {
     return <Box m="20px">Loading...</Box>
@@ -165,7 +166,7 @@ const Branch = () => {
         </Box>
 
         <Modal
-          title="Branch Info"
+          title={<span style={{ fontSize: '32px' }}>Branch Info</span>}
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={null}
