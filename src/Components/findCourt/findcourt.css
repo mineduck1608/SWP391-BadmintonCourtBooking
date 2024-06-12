@@ -10,15 +10,15 @@
     --inputColor: hsl(330, 12%, 97%);
 }
 
-
 .find {
-    height: 80vh;
+    height: auto;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     margin: auto;
     position: relative;
-    top: -150;
+    top: -50px;
+    padding-bottom: 50px;
 }
 
 .secContainer .homeText {
@@ -47,6 +47,7 @@
     display: flex;
     flex-direction: row;
     box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
+    margin-top: 40px; /* Added margin-top */
 }
 
 .branchDiv,
@@ -76,7 +77,6 @@ label {
     padding-bottom: .2rem;
 }
 
-
 input,
 select,
 .input-box {
@@ -87,7 +87,6 @@ select,
     padding: 10px;
     font-size: 13px;
     font-weight: 500;
-
 }
 
 button {
@@ -122,16 +121,16 @@ button {
     left: 0 !important;
 }
 
-.ant-btn{
+.ant-btn {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--PrimaryColor);
     padding: 8px 1px !important;
-    min-width: 30px !important
+    min-width: 30px !important;
 }
 
-.ant-picker{
+.ant-picker {
     border: none;
     background-color: var(--inputColor);
     border-radius: 10px;
@@ -139,8 +138,67 @@ button {
     padding: 10px;
     font-size: 13px;
     font-weight: 500;
-    
 }
 
-  
+.courtList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); /* Adjusted grid columns */
+    gap: 40px; /* Increased gap between items */
+    margin-top: 20%; /* Adjusted margin-top */
+    width: 95%; /* Increased width */
+    max-width: 1400px; /* Set a maximum width */
+    margin-left: auto; /* Push it to the center */
+    margin-right: auto; /* Push it to the center */
+    margin-bottom: auto;
+}
+
+.courtCard {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    background: var(--whiteColor);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.courtImage img {
+    max-width: 150px;
+    height: auto;
+    margin-right: 20px;
+    border-radius: 8px;
+}
+
+.courtInfo {
+    flex: 1; 
+    padding: 20px;
+    margin-left: auto; 
+}
+
+.courtInfo h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--blackColor);
+}
+
+.courtInfo p {
+    margin: 5px 0;
+    color: var(--textColor);
+}
+
+.bookBtn {
+    align-self: flex-start;
+    padding: 15px 20px; 
+    background-color: var(--PrimaryColor);
+    color: var(--whiteColor);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px; 
+}
+
+.bookBtn:hover {
+    background-color: var(--HoverColor);
+}
 
