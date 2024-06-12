@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './findcourt.css';
 import { TimePicker } from 'antd';
 import Header from '../Header/header';
+import Footer from '../Footer/Footer'
 
 const { RangePicker } = TimePicker; // Import RangePicker
 
@@ -116,6 +117,9 @@ const FindCourt = () => {
             </div>
           </div>
         </section>
+      </div>
+      <div className="findCourtFooter">
+        <Footer />
       </div>
     </div>
   );
