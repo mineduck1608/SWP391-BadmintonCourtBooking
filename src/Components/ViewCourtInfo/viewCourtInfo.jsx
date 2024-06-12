@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Header from "../Header/header";
-import './viewCourtInfo.css'
+import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
 import image2 from '../../Assets/image2.jpg';
 
 const ViewCourtInfo = () => {
+    const [mainCourt, setMainCourt] = useState(null);
+    const [recommendedCourts, setRecommendedCourts] = useState([]);
     const [branch, setBranch] = useState(null);
-    const [court, setCourt] = useState(null);
-    const [branchlist, setBranchList] = useState(null);
-    const [courtlist, setCourtList] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -34,16 +33,18 @@ const ViewCourtInfo = () => {
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
 
-                // Log the data to see its structure
-                //console.log('Branch Data:', branchData);
-                //console.log('Court Data:', courtData);
+                console.log('Branch Data:', branchData);
+                console.log('Court Data:', courtData);
 
-            
-                setBranch(branchData);
-                setCourt(courtData);
+                const mainCourtData = courtData[0];
 
-                setBranchList(branchData);
-                setCourtList(courtData);
+                const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
+
+                const recommendedCourtsData = courtData.filter(court => court.branchId === mainCourtData.branchId && court.courtId !== mainCourtData.courtId).slice(0, 2);
+
+                setBranch(mainBranchData);
+                setMainCourt(mainCourtData);
+                setRecommendedCourts(recommendedCourtsData);
 
             } catch (error) {
                 setError(error.message);
@@ -55,43 +56,42 @@ const ViewCourtInfo = () => {
         fetchData();
     }, []);
 
+    const handleBookCourt = (courtId) => {
+        // Handle the booking logic here
+        console.log(`Booking court with ID: ${courtId}`);
+        alert(`Court No: ${courtId} booked successfully!`);
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="viewcourtinfo">
-            <div>
-                <Header />
-            </div>
+            <Header />
             <div className="viewcourtinfo-body">
                 <div className="viewcourtinfo-body-pic">
                     <img className="viewcourtinfo-img" src={image2} alt="" />
-                    <div className="viewcourtinfo-info">
-                        <h2>Court No: {court.courtId}</h2>
-                        <p>Address: {branch.location}</p>
-                        <p>Time: AAAAA</p>
-                        <p>Branch: {branch.branchName}</p>
-                        <p>Status: FREE</p>
-                        <div className="viewcourtinfo-body-des">
-                            <h1>Description:</h1>
-                            <p>{court.description}</p>
-                        </div>
+                    <div className="viewcourtinfo-body-des">
+                        <h1>Description:</h1>
+                        <p>{mainCourt.description}</p>
                     </div>
                 </div>
-
+                <div className="viewcourtinfo-info">
+                    <h2>Court No: {mainCourt.courtId}</h2>
+                    <p>Address: {branch.location}</p>
+                    <p>Time: AAAAA</p>
+                    <p>Branch: {branch.branchName}</p>
+                    <p>Status: FREE</p>
+                    <button onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
+                </div>
             </div>
 
-
-            <div className="viewcourtinfo-feedback">
-
-            </div>
             <div className='viewcourtinfo-othercourts'>
                 <h1>OTHER COURTS</h1>
-                <div>
-                    <div className="viewcourtinfo-other-pic">
+                {recommendedCourts.map((court, index) => (
+                    <div key={index} className="viewcourtinfo-other-pic">
                         <img className="viewcourtinfo-other-img" src={image2} alt="" />
                         <div className="viewcourtinfo-other-info">
-
                             <h2>Court No: {court.courtId}</h2>
                             <p>Address: {branch.location}</p>
                             <p>Time: AAAAA</p>
@@ -101,16 +101,15 @@ const ViewCourtInfo = () => {
                                 <h1>Description:</h1>
                                 <p>{court.description}</p>
                             </div>
+                            <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
                         </div>
                     </div>
-                </div>
+                ))}
             </div>
 
-            <div className="viewcourtinfo-footer">
-                <Footer />
-            </div>
+            <Footer />
         </div>
     );
 }
 
-export default ViewCourtInfo
+export default ViewCourtInfo;
