@@ -11,34 +11,131 @@ const Team = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [roles, setRoles] = useState([]); // State to store roles
+  const [branches, setBranches] = useState([]);
+  const [addFormState, setAddFormState] = useState();
+  const [addOpen, setAddOpen] = useState(false);
 
-  const [username, usernameChange] = useState("");
-  const [password, passwordChange] = useState("");
-  const [branch, branchChange] = useState("");
-  const [balance, balanceChange] = useState("");
-  const [activeStatus, activeStatusChange] = useState("");
-  const [firstName, firstNameChange] = useState("");
-  const [lastName, lastNameChange] = useState("");
-  const [email, emailChange] = useState("");
-  const [phone, phoneChange] = useState("");
-  const [role, roleChange] = useState("");
+
+  // Define initial state values
+  const initialState = {
+    username: '',
+    password: '',
+    branch: '',
+    balance: '',
+    activeStatus: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    role: ''
+  };
+
+  // Use a single state object to manage form fields
+  const [formState, setFormState] = useState(initialState);
 
 
   const showModal = (row) => { // Nhận hàng được chọn làm đối số
     setSelectedRow(row); // Cập nhật selectedRow với hàng được chọn
+    // Set form state based on selectedRow values
+    setFormState({
+      username: row.userName || '',
+      password: row.password || '',
+      branch: row.branchName || '',
+      balance: row.balance || '',
+      activeStatus: row.activeStatus !== null ? row.activeStatus.toString() : '',
+      firstName: row.firstName || '',
+      lastName: row.lastName || '',
+      email: row.email || '',
+      phone: row.phone || '',
+      role: row.role || ''
+    });
     setOpen(true);
   };
 
   const handleOk = () => {
+    const userData = formState;
+
+    // Gửi yêu cầu cập nhật cho bảng User
+    fetch(`http://localhost:5266/User/Update`, {
+      method: "PUT",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+      .then(response => {
+        // Xử lý kết quả trả về từ bảng User
+      })
+      .catch(error => {
+        console.error('Error updating user:', error);
+      });
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setOpen(false);
-    }, 3000);
+    }, 2000);
   };
 
   const handleCancel = () => {
     setOpen(false);
+    setFormState(initialState); // Reset form state to initial values
+  };
+
+  const handleAddOk = () => {
+    // Construct the data for the new user
+    const newUser = {
+      username: formState.username,
+      password: formState.password,
+      branch: formState.branch,
+      balance: formState.balance,
+      activeStatus: formState.activeStatus,
+      firstName: formState.firstName,
+      lastName: formState.lastName,
+      email: formState.email,
+      phone: formState.phone,
+      role: formState.role
+    };
+  
+    // Send a POST request to the API endpoint to add the new user
+    fetch('http://localhost:5266/User/Add', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newUser)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to add user');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('User added successfully:', data);
+      // Optionally, you can update the UI to reflect the new user
+    })
+    .catch(error => {
+      console.error('Error adding user:', error);
+      // Handle errors, such as displaying an error message to the user
+    });
+  
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setAddOpen(false);
+    }, 2000);
+  };
+
+  const handleAddCancel = () => {
+    setAddOpen(false);
+    setAddFormState(initialState); // Reset form state to initial values
+  };
+
+  const addUser = () => {
+    setAddOpen(true);
   };
 
   useEffect(() => {
@@ -97,6 +194,10 @@ const Team = () => {
           }
         });
 
+        setRoles(roles); // Store roles in state
+
+        setBranches(branches); // Store branches in state
+
         const mergedData1 = userDetails.map(userDetail => {
           const user = users.find(u => u.userId === userDetail.userId);
           if (user) {
@@ -118,9 +219,7 @@ const Team = () => {
           return { id: index + 1, ...row, role: role ? role.roleName : 'Unknown' };
         });
 
-
         setRows(formattedData);
-        console.log(formattedData)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -153,11 +252,8 @@ const Team = () => {
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
-        console.error('Error deleting user:', error);
       });
   };
-
-
 
   const columns = [
     { field: "userId", headerName: "UserID", align: "center", headerAlign: "center" },
@@ -166,7 +262,13 @@ const Team = () => {
     { field: "email", headerName: "Email", flex: 1, align: "center", headerAlign: "center" },
     { field: "phone", headerName: "Phone", flex: 1, align: "center", headerAlign: "center" },
     { field: "role", headerName: "Role", flex: 1, align: "center", headerAlign: "center" },
-    { field: "activeStatus", headerName: "Active Status", flex: 1, align: "center", headerAlign: "center" },
+    {
+      field: "activeStatus", headerName: "Active Status", flex: 1, align: "center", headerAlign: "center", renderCell: (params) => (
+        <Box color={params.value ? 'lightgreen' : 'red'}>
+          {params.value ? 'true' : 'false'}
+        </Box>
+      )
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -181,7 +283,7 @@ const Team = () => {
             color="primary"
             size="small"
           >
-            View Info
+            Edit Info
           </Button>
           <Modal
             width={1000}
@@ -191,10 +293,10 @@ const Team = () => {
             onCancel={handleCancel}
             className="custom-modal"
             footer={[
-              <Button key="back" onClick={handleCancel}>
+              <Button key="back" onClick={handleCancel} className="button-hover-black">
                 Return
               </Button>,
-              <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+              <Button key="submit" type="primary" loading={loading} onClick={handleOk} className="button-hover-black">
                 Submit
               </Button>
             ]}
@@ -212,17 +314,20 @@ const Team = () => {
                       <p>Active Status:</p>
                     </div>
                     <div className="user-modal-item-value">
-                      <input value={username} placeholder={selectedRow ? selectedRow.userName : ''} onChange={e => usernameChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={firstName} placeholder={selectedRow ? selectedRow.firstName : ''} onChange={e => firstNameChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={email} placeholder={selectedRow ? selectedRow.email : ''} onChange={e => emailChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={role} placeholder={selectedRow ? selectedRow.role : ''} onChange={e => roleChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input
-                        value={activeStatus}
-                        placeholder={selectedRow ? selectedRow.activeStatus.toString() : ''}
-                        onChange={e => activeStatusChange(e.target.value)}
-                        className="input-box-modal"
-                        type="text"
-                      />
+                      <input value={formState.username} placeholder={selectedRow ? selectedRow.userName : ''} onChange={e => setFormState({ ...formState, username: e.target.value })} className="input-box-modal" type="text" />
+                      <input value={formState.firstName} placeholder={selectedRow ? selectedRow.firstName : ''} onChange={e => setFormState({ ...formState, firstName: e.target.value })} className="input-box-modal" type="text" />
+                      <input value={formState.email} placeholder={selectedRow ? selectedRow.email : ''} onChange={e => setFormState({ ...formState, email: e.target.value })} className="input-box-modal" type="text" />
+                      <select value={formState.role} onChange={(e) => setFormState({ ...formState, role: e.target.value })} className="input-box-modal">
+                        <option disabled selected hidden value={selectedRow ? selectedRow.role : ''}>{selectedRow ? selectedRow.role : ''}</option>
+                        {roles.map(role => (
+                          <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                        ))}
+                      </select>
+                      <select value={formState.activeStatus} onChange={e => setFormState({ ...formState, activeStatus: e.target.value })} className="input-box-modal" type="text" >
+                        <option value="0" hidden>{selectedRow ? selectedRow.activeStatus.toString() : ''}</option>
+                        <option value="1">true</option>
+                        <option value="2">false</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -236,11 +341,16 @@ const Team = () => {
                       <p>Balance:</p>
                     </div>
                     <div className="user-modal-item-value">
-                      <input value={password} placeholder={selectedRow ? selectedRow.password : ''} onChange={e => passwordChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={lastName} placeholder={selectedRow ? selectedRow.lastName : ''} onChange={e => lastNameChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={branch} placeholder={selectedRow ? selectedRow.branchName : ''} onChange={e => branchChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={phone} placeholder={selectedRow ? selectedRow.phone : ''} onChange={e => phoneChange(e.target.value)} className="input-box-modal" type="text" />
-                      <input value={balance} placeholder={selectedRow ? selectedRow.balance : ''} onChange={e => balanceChange(e.target.value)} className="input-box-modal" type="text" />
+                      <input value={formState.password} placeholder={selectedRow ? selectedRow.password : ''} onChange={e => setFormState({ ...formState, password: e.target.value })} className="input-box-modal" type="text" />
+                      <input value={formState.lastName} placeholder={selectedRow ? selectedRow.lastName : ''} onChange={e => setFormState({ ...formState, lastName: e.target.value })} className="input-box-modal" type="text" />
+                      <select value={formState.branch} onChange={(e) => setFormState({ ...formState, branch: e.target.value })} className="input-box-modal">
+                        <option disabled selected hidden value={selectedRow ? selectedRow.branchName : ''}>{selectedRow ? selectedRow.branchName : ''}</option>
+                        {branches.map(branch => (
+                          <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
+                        ))}
+                      </select>
+                      <input value={formState.phone} placeholder={selectedRow ? selectedRow.phone : ''} onChange={e => setFormState({ ...formState, phone: e.target.value })} className="input-box-modal" type="text" />
+                      <input value={formState.balance} placeholder={selectedRow ? selectedRow.balance : ''} onChange={e => setFormState({ ...formState, balance: e.target.value })} className="input-box-modal" type="number" min="0" />
                     </div>
                   </div>
                 </div>
@@ -260,11 +370,74 @@ const Team = () => {
     }
   ];
 
-
   return (
     <Box m="20px">
-      <Head title="TEAM" subtitle="Managing the Team Members" />
-
+      <Head title="User" subtitle="Managing the User Accounts" />
+      <Box>
+        <Button type="primary" onClick={addUser} variant="contained" color="primary" size="small">
+          Add User
+        </Button>
+        <Modal
+          width={1000}
+          open={addOpen}
+          title="Register New User"
+          onOk={handleAddOk}
+          onCancel={handleAddCancel}
+          className="custom-modal"
+          footer={[
+            <Button key="back" onClick={handleAddCancel} className="button-hover-black">
+              Return
+            </Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={handleAddOk} className="button-hover-black">
+              Submit
+            </Button>
+          ]}
+          centered
+        >
+          <form>
+            <div className="user-modal">
+              <div className="user-modal-left">
+                <div className="user-modal-item">
+                  <div className="user-modal-item-text1">
+                    <p>Username:</p>
+                    <p>Password:</p>
+                    <p>First Name:</p>
+                    <p>Last Name:</p>
+                    <p>Role:</p>
+                    <p>Branch:</p>
+                    <p>Balance:</p>
+                    <p>Active Status:</p>
+                    <p>Email:</p>
+                    <p>Phone:</p>
+                    
+                  </div>
+                  <div className="user-modal-item-valu1">
+                    <input value={formState.username} onChange={(e) => setFormState({ ...formState, username: e.target.value })} className="input-box-modal" type="text" required/>
+                    <input value={formState.password} onChange={(e) => setFormState({ ...formState, password: e.target.value })} className="input-box-modal" type="password" required />
+                    <input value={formState.firstName} onChange={(e) => setFormState({ ...formState, firstName: e.target.value })} className="input-box-modal" type="text" required />
+                    <input value={formState.lastName} onChange={(e) => setFormState({ ...formState, lastName: e.target.value })} className="input-box-modal" type="text"  required/>
+                    <select value={formState.role} onChange={(e) => setFormState({ ...formState, role: e.target.value })} className="input-box-modal" required>
+                      <option value="" hidden>Select role</option>
+                      {roles.map(role => (
+                          <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                        ))}
+                    </select>
+                    <select value={formState.branch} onChange={(e) => setFormState({ ...formState, branch: e.target.value })} className="input-box-modal">
+                      <option disabled selected hidden value="">Please select branch</option>
+                      {branches.map(branch => (
+                        <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
+                      ))}
+                    </select>                         
+                    <input value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} className="input-box-modal" type="email" />
+                    <input value={formState.phone} onChange={(e) => setFormState({ ...formState, phone: e.target.value })} className="input-box-modal" type="text" />
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </Modal>
+      </Box>
       <Box m="40px 0 0 0" height="75vh">
         <DataGrid
           rows={rows}
