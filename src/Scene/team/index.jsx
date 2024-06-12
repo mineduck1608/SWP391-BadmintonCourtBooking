@@ -427,13 +427,7 @@ const Team = () => {
                       {branches.map(branch => (
                         <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
                       ))}
-                    </select>          <input value={formState.balance} onChange={(e) => setFormState({ ...formState, balance: e.target.value })} className="input-box-modal" type="number" min="0" />
-                    <select value={formState.activeStatus} onChange={(e) => setFormState({ ...formState, activeStatus: e.target.value })} className="input-box-modal" required>
-                      <option value="" hidden>Select active status</option>
-                      <option value="true">True</option>
-                      <option value="false">False</option>
-                    </select>
-                    
+                    </select>                         
                     <input value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} className="input-box-modal" type="email" />
                     <input value={formState.phone} onChange={(e) => setFormState({ ...formState, phone: e.target.value })} className="input-box-modal" type="text" />
                     
