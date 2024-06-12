@@ -68,43 +68,49 @@ const ViewCourtInfo = () => {
     return (
         <div className="viewcourtinfo">
             <Header />
-            <div className="viewcourtinfo-body">
-                <div className="viewcourtinfo-body-pic">
-                    <img className="viewcourtinfo-img" src={image2} alt="" />
-                    <div className="viewcourtinfo-body-des">
-                        <h1>Description:</h1>
-                        <p>{mainCourt.description}</p>
-                    </div>
-                </div>
-                <div className="viewcourtinfo-info">
-                    <h2>Court No: {mainCourt.courtId}</h2>
-                    <p>Address: {branch.location}</p>
-                    <p>Time: AAAAA</p>
-                    <p>Branch: {branch.branchName}</p>
-                    <p>Status: FREE</p>
-                    <button onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
-                </div>
-            </div>
-
-            <div className='viewcourtinfo-othercourts'>
-                <h1>OTHER COURTS</h1>
-                {recommendedCourts.map((court, index) => (
-                    <div key={index} className="viewcourtinfo-other-pic">
-                        <img className="viewcourtinfo-other-img" src={image2} alt="" />
-                        <div className="viewcourtinfo-other-info">
-                            <h2>Court No: {court.courtId}</h2>
+            <div className="viewCourtInfo-wrapper">
+                <div className="background">
+                    <div className="viewcourtinfo-body">
+                        <div className="viewcourtinfo-body-pic">
+                            <img className="viewcourtinfo-img" src={image2} alt="" />
+                            <div className="viewcourtinfo-body-des">
+                                <h1>Description:</h1>
+                                <p>{mainCourt.description}</p>
+                            </div>
+                        </div>
+                        <div className="viewcourtinfo-info">
+                            <h2>Court No: {mainCourt.courtId}</h2>
                             <p>Address: {branch.location}</p>
                             <p>Time: AAAAA</p>
                             <p>Branch: {branch.branchName}</p>
                             <p>Status: FREE</p>
-                            <div className="viewcourtinfo-other-des">
-                                <h1>Description:</h1>
-                                <p>{court.description}</p>
-                            </div>
-                            <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                            <button onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
                         </div>
                     </div>
-                ))}
+
+                    <div className="viewcourtinfo-othercourts">
+                        <h1>OTHER COURTS</h1>
+                        <div className="viewcourtinfo-othercourts-content">
+                            {recommendedCourts.map((court, index) => (
+                                <div key={index} className="viewcourtinfo-other-pic">
+                                    <img className="viewcourtinfo-other-img" src={image2} alt="" />
+                                    <div className="viewcourtinfo-other-info">
+                                        <h2>Court No: {court.courtId}</h2>
+                                        <p>Address: {branch.location}</p>
+                                        <p>Time: AAAAA</p>
+                                        <p>Branch: {branch.branchName}</p>
+                                        <p>Status: FREE</p>
+                                        <div className="viewcourtinfo-other-des">
+                                            <h1>Description:</h1>
+                                            <p>{court.description}</p>
+                                        </div>
+                                        <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <Footer />
