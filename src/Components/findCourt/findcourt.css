@@ -1,3 +1,18 @@
+.findCourt-wrapper::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../../Assets/image3.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px); 
+    z-index: -1; 
+    opacity: 0.6; 
+  }
+
 :root {
     --PrimaryColor: hsl(26, 93%, 50%);
     --HoverColor: hsl(26, 90%, 42%);
