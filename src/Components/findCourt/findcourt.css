@@ -11,7 +11,7 @@
     filter: blur(10px); 
     z-index: -1; 
     opacity: 0.6; 
-  }
+}
 
 :root {
     --PrimaryColor: hsl(26, 93%, 50%);
@@ -157,13 +157,13 @@ button {
 
 .courtList {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); /* Adjusted grid columns */
-    gap: 40px; /* Increased gap between items */
-    margin-top: 20%; /* Adjusted margin-top */
-    width: 95%; /* Increased width */
-    max-width: 1400px; /* Set a maximum width */
-    margin-left: auto; /* Push it to the center */
-    margin-right: auto; /* Push it to the center */
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); 
+    gap: 40px; 
+    margin-top: 20%;
+    width: 95%; 
+    max-width: 1400px; 
+    margin-left: auto; 
+    margin-right: auto; 
     margin-bottom: auto;
 }
 
@@ -178,7 +178,7 @@ button {
 }
 
 .courtImage img {
-    max-width: 150px;
+    max-width: 300px; 
     height: auto;
     margin-right: 20px;
     border-radius: 8px;
@@ -216,4 +216,3 @@ button {
 .bookBtn:hover {
     background-color: var(--HoverColor);
 }
-
