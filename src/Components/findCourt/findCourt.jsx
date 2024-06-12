@@ -42,6 +42,8 @@ const FindCourt = () => {
       <div className="findCourtHeader">
         <Header />
       </div>
+      <div className="findCourt-wrapper">
+          <div className="background">
       <div>
         <section className="find">
           <div className="secContainer container">
@@ -117,6 +119,8 @@ const FindCourt = () => {
             </div>
           </div>
         </section>
+      </div>
+      </div>
       </div>
       <div className="findCourtFooter">
         <Footer />
