@@ -16,23 +16,23 @@ const BuyBalance = () => {
   }
   return (
     <div className='buyBalance'>
-      <h1 className='title'>Buy more time for a flexible plan</h1>
-      <div className='bodyContainer'>
-        <aside>
-          <h2>Buying more time for...</h2>
+      <h1 className='buyBalance_title'>Buy more time for a flexible plan</h1>
+      <div className='buyBalance_bodyContainer'>
+        <aside className='buyBalance_aside'>
+          <h2 className='buyBalance_title'>Buying more time for...</h2>
           <p>Booking ID: {bookingID}</p>
           <p>Remaining time: {getRemainingTime(userID, bookingID)}</p>
         </aside>
-        <article>
-          <h2 className='buyMoreTime'>Buy more time</h2>
-          <div className='centerDiv'>
-            <button className='adjustHour' onClick={() => adjustHour(-1)}>-</button>
-            <input className='counter' type='number' value={buyHour} readOnly />
-            <button className='adjustHour' onClick={() => adjustHour(1)}>+</button>
+        <article className='buyBalance_article'>
+          <h2 className='buyBalance_title'>Buy more time</h2>
+          <div className='buyBalance_centerDiv'>
+            <button className='buyBalance_btn' onClick={() => adjustHour(-1)}>-</button>
+            <input className='buyBalance_counter1' type='number' value={buyHour} readOnly />
+            <button className='buyBalance_btn' onClick={() => adjustHour(1)}>+</button>
           </div>
-          <div className='centerDiv'>
-            <button onClick={() => window.history.back()}>Cancel</button>
-            <button>Confirm</button>
+          <div className='buyBalance_centerDiv'>
+            <button className='buyBalance_btn' onClick={() => window.history.back()}>Cancel</button>
+            <button className='buyBalance_btn'>Confirm</button>
           </div>
         </article>
       </div>

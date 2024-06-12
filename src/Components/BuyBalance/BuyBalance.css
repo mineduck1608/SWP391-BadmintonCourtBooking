@@ -1,27 +1,19 @@
-*{
-    /* border: 1px black solid; */
-}
 .buyBalance{
     background-image: url('../../Assets/login.jpg');
     background-repeat: no-repeat;
     background-size: 100%;
     height: 100vh;
 }
-h1, h2{
-    color: #fff;
-}
-.title {
+.buyBalance_title {
     display: flexbox;
     text-align: center;
+    color: #ffffff;
 }
-.buyMoreTime{
-    text-align: center;
-}
-.centerDiv{
+.buyBalance_centerDiv{
     display: flex;
     justify-content: center;
 }
-button {
+.buyBalance_btn {
     padding: 1%;
     margin: 1%;
     background: #fff;
@@ -29,29 +21,30 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
-input{
-    width: 10%;
-}
-button:hover {
+.buyBalance_btn:hover {
     background-color: hsl(26, 93%, 50%);
     color: #fff;
 }
-aside{
+.buyBalance_aside{
     display: inline-flexbox;
     width: 30%;
     float: left;
     margin: 1%;
     padding: 2%;
 }
-article{
+.buyBalance_article{
     margin: 1%;
     padding: 2%;
     display: flexbox;
     width: 60%;
     float: right;
 }
-.bodyContainer{
+.buyBalance_bodyContainer{
     overflow: hidden;
     border-radius: 5px;
     margin: 2%;
+}
+.buyBalance_counter1{
+    text-align: center;
+    width: 100px;
 }
