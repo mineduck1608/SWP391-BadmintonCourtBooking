@@ -309,6 +309,27 @@ namespace BadmintonCourtAPI.Controllers
             return Json("User has already existed");
         }
 
+        [HttpPost]
+        [Route("User/RegisterAdmin")]
+        public async Task<IActionResult> AddUser(string username, string password, string firstName, string lastName, int roleId, int branchId, double balance, bool activeStatus, string email, string phone)
+        {
+        	UserDetail info = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
+        	if (info == null)
+        	{
+        		if (IsPhoneFormatted(phone))
+        		{
+        			//Hash pass
+        			service.userService.AddUser(new User(username, password, branchId, roleId, balance, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
+        			User user = service.userService.GetRecentAddedUser();
+        			service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
+        			return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
+        			return Json("Password is not properly secured");
+        		}
+        		return Json("Phone number is not properly formatted");
+        	}
+        	return Json("User has already existed");
+        }
+
 
         // Xóa account
         // Xóa userdetail -> xóa user: Set ActiveStatus = false

@@ -1,0 +1,57 @@
+*{
+    /* border: 1px black solid; */
+}
+.buyBalance{
+    background-image: url('../../Assets/login.jpg');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    height: 100vh;
+}
+h1, h2{
+    color: #fff;
+}
+.title {
+    display: flexbox;
+    text-align: center;
+}
+.buyMoreTime{
+    text-align: center;
+}
+.centerDiv{
+    display: flex;
+    justify-content: center;
+}
+button {
+    padding: 1%;
+    margin: 1%;
+    background: #fff;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+input{
+    width: 10%;
+}
+button:hover {
+    background-color: hsl(26, 93%, 50%);
+    color: #fff;
+}
+aside{
+    display: inline-flexbox;
+    width: 30%;
+    float: left;
+    margin: 1%;
+    padding: 2%;
+}
+article{
+    margin: 1%;
+    padding: 2%;
+    display: flexbox;
+    width: 60%;
+    float: right;
+}
+.bodyContainer{
+    overflow: hidden;
+    border-radius: 5px;
+    margin: 2%;
+}

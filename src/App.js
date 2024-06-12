@@ -49,6 +49,7 @@ const App = () => {
           <Route path="/findCourt" element={<FindCourt />} />
           <Route path="/forget" element={<ForgetPassword />} />
           <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
+          <Route path="/buyTime" element={<div><Header/><BuyBalance/><Footer/></div>}/>
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
