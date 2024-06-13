@@ -72,9 +72,7 @@ const Branch = () => {
         </Box>
       )
     },
-    { field: "courts", headerName: "Courts", flex: 1, align: "center", headerAlign: "center" },
     { field: "feedbacks", headerName: "Feedbacks", flex: 1, align: "center", headerAlign: "center" },
-    { field: "users", headerName: "Users", flex: 1, align: "center", headerAlign: "center" },
     {
       field: "actions",
       headerName: "Actions",
@@ -179,9 +177,7 @@ const Branch = () => {
               <p><strong>Phone:</strong> {selectedBranch.branchPhone}</p>
               <p><strong>Image:</strong> {selectedBranch.branchImg}</p>
               <p><strong>Status:</strong> {selectedBranch.branchStatus ? 'true' : 'false'}</p>
-              <p><strong>Courts:</strong> {selectedBranch.courts}</p>
               <p><strong>Feedbacks:</strong> {selectedBranch.feedbacks}</p>
-              <p><strong>Users:</strong> {selectedBranch.users}</p>
             </Box>
           ) : (
             <Spin />
