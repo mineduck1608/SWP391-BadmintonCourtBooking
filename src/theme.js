@@ -160,6 +160,7 @@ export const themeSettings = (mode) => {
             background: {
               default: "#fcfcfc",
             },
+            
           }),
     },
 
