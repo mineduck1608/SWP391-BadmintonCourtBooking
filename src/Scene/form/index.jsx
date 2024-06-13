@@ -1,154 +1,141 @@
-import { Box, Button, TextField } from "@mui/material";
-import { Formik } from "formik";
+import { useState, useEffect } from "react";
+import { Box, Button } from "@mui/material";
+import { Formik, Form, Field } from "formik";
 import * as yup from "yup";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Head from "../../Components/Head";
+//import './timeslot.css';
 
-const Form = () => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
+const validationSchema = yup.object().shape({
+  branch: yup.string().required("Branch is required"),
+  court: yup.string().required("Court is required"),
+});
+
+const generateTimeSlots = (startHour, endHour) => {
+  const timeSlots = [];
+  for (let hour = startHour; hour < endHour; hour++) {
+    const nextHour = hour + 1;
+    timeSlots.push(`${hour}:00 - ${nextHour}:00`);
+  }
+  return timeSlots;
+};
+
+const CourtForm = () => {
+  const [branches, setBranches] = useState([]);
+  const [courts, setCourts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [timeSlots, setTimeSlots] = useState(generateTimeSlots(7, 24));
+
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const branchResponse = await fetch("API_URL_FOR_BRANCHES");
+        const courtResponse = await fetch("API_URL_FOR_COURTS");
+
+        if (!branchResponse.ok || !courtResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const branchData = await branchResponse.json();
+        const courtData = await courtResponse.json();
+
+        setBranches(branchData);
+        setCourts(courtData);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleFormSubmit = (values) => {
     console.log(values);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Box m="20px">
-      <Head title="CREATE USER" subtitle="Create a New User Profile" />
-
+      <Head title="TIME SLOT" subtitle="Manage time slot of court" />
       <Formik
+        initialValues={{ branch: "", court: "" }}
+        validationSchema={validationSchema}
         onSubmit={handleFormSubmit}
-        initialValues={initialValues}
-        validationSchema={checkoutSchema}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <Box
-              display="grid"
-              gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-              sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-              }}
-            >
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="First Name"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.firstName}
-                name="firstName"
-                error={!!touched.firstName && !!errors.firstName}
-                helperText={touched.firstName && errors.firstName}
-                sx={{ gridColumn: "span 2" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Last Name"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.lastName}
-                name="lastName"
-                error={!!touched.lastName && !!errors.lastName}
-                helperText={touched.lastName && errors.lastName}
-                sx={{ gridColumn: "span 2" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Email"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.email}
-                name="email"
-                error={!!touched.email && !!errors.email}
-                helperText={touched.email && errors.email}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Contact Number"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.contact}
-                name="contact"
-                error={!!touched.contact && !!errors.contact}
-                helperText={touched.contact && errors.contact}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Address 1"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.address1}
-                name="address1"
-                error={!!touched.address1 && !!errors.address1}
-                helperText={touched.address1 && errors.address1}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Address 2"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.address2}
-                name="address2"
-                error={!!touched.address2 && !!errors.address2}
-                helperText={touched.address2 && errors.address2}
-                sx={{ gridColumn: "span 4" }}
-              />
-            </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                Create New User
-              </Button>
-            </Box>
-          </form>
+        {({ errors, touched, handleChange, handleBlur, values }) => (
+          <Form>
+            <div className="slot-form">
+              <div>
+              <div className="slot-form-row">
+                <label htmlFor="branch" className="slot-form-label">Court branch:</label>
+                <Field
+                  as="select"
+                  id="branch"
+                  name="branch"
+                  value={values.branch}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className="input-box-modal"
+                >
+                  <option disabled selected hidden value="">
+                    Please select branch
+                  </option>
+                  {branches.map((branch) => (
+                    <option key={branch.branchId} value={branch.branchId}>
+                      {branch.branchName}
+                    </option>
+                  ))}
+                </Field>
+              </div>
+              {errors.branch && touched.branch && <div className="error-branch">{errors.branch}</div>}
+              </div>
+             <div>
+              <div className="slot-form-row">
+                <label htmlFor="court" className="slot-form-label-court">Court:</label>
+                <Field
+                  as="select"
+                  id="court"
+                  name="court"
+                  value={values.court}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className="input-box-modal"
+                >
+                  <option disabled selected hidden value="">
+                    Please select court
+                  </option>
+                  {courts.map((court) => (
+                    <option key={court.courtId} value={court.courtId}>
+                      {court.courtName}
+                    </option>
+                  ))}
+                </Field>
+              </div>
+              {errors.court && touched.court && <div className="error">{errors.court}</div>}
+              </div>
+              <button
+               type="submit" variant="contained" color="primary" className="slot-submit-button">
+                Submit
+              </button>
+            </div>
+          </Form>
         )}
       </Formik>
+      <div className="time-slot-container">
+        {timeSlots.map((slot, index) => (
+          <div key={index} className="time-slot">
+            {slot}
+          </div>
+        ))}
+      </div>
     </Box>
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
-
-const checkoutSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  contact: yup
-    .string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
-  address1: yup.string().required("required"),
-  address2: yup.string().required("required"),
-});
-const initialValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  contact: "",
-  address1: "",
-  address2: "",
-};
-
-export default Form;
+export default CourtForm;

@@ -1,0 +1,101 @@
+.slot-form {
+    display: flex;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-left: 100px;
+  }
+  .slot-form-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .slot-form-label {
+    min-width: 150px;
+    font-size: 20px;
+    font-weight: 500;
+    color: black;
+    margin-right: 30px;
+  }
+  .slot-form-label-court {
+    min-width: 150px;
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 50px;
+    margin-right: -50px;
+    color: black;
+  }
+  
+  .input-box-modal {
+    width: 500px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1;
+    margin-left: -20px;   
+  }
+  
+  .input-box-modal:focus {
+    border-color: #007BFF;
+    outline: none;
+  }
+  
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-left: 150px;
+  }
+  .error-branch {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-left: 180px;
+  }
+  
+  .slot-submit-button {
+    background-color: black;
+    color: #fff;
+    padding: 10px 40px;
+    font-size: 20px;
+    font-weight: 1000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+    margin-left: 80px;
+  }
+  
+  .slot-submit-button:hover {
+    background-color: hsl(26, 93%, 50%);    
+  }
+  .time-slot-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .time-slot {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #007BFF;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: background-color 0.3s;
+  }
+  
+  .time-slot:hover {
+    background-color: #e6f7ff;
+  }
+  
+  

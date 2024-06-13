@@ -238,13 +238,14 @@ namespace BadmintonCourtAPI.Controllers
         [HttpPut]
         [Route("User/Update")]
         //[Authorize]
-        public async Task<IActionResult> UpdateUser(int id, string username, string password, int? branchId, int? roleId, string firstName, string lastName, string phone, string email)
+        public async Task<IActionResult> UpdateUser(int id, string username, string password, int? branchId, int? roleId, string firstName, string lastName, string phone, string email, bool activeStatus, double balance)
         {
             User tmp = service.userService.GetUserById(id);
             if (!username.IsNullOrEmpty())
                 tmp.UserName = username;
-            if (IsPasswordSecure(password)) // Pass k secure = cook
+            if (password!=null) // Pass k secure = cook
                 tmp.Password = (password); // Lay lai pass cu
+            tmp.ActiveStatus = activeStatus;
 
             // Check role phân quyền đc update những info nào
             if (roleId != null) // Chỉ staff/Admin mới đc update role và chi nhánh
@@ -258,6 +259,11 @@ namespace BadmintonCourtAPI.Controllers
                 {
                     tmp.RoleId = int.Parse(roleId.ToString());
                     tmp.BranchId = null; // -> Admun ko cần chi nhánh
+
+                    if (balance != null)
+                    {
+                        tmp.Balance = balance;
+                    }
                 }
             }
             service.userService.UpdateUser(tmp, id);
@@ -277,12 +283,7 @@ namespace BadmintonCourtAPI.Controllers
             service.userDetailService.UpdateUserDetail(info, id);
             return Ok(new
             {
-                Username = tmp.UserName,
-                Password = tmp.Password,
-                FirstName = info.FirstName,
-                LastName = info.LastName,
-                Email = info.Email,
-                Phone = info.Phone
+                msg = "succes"
             }
   );
         }
@@ -297,11 +298,11 @@ namespace BadmintonCourtAPI.Controllers
             {
                 if (IsPhoneFormatted(phone))
                 {
-                        //Hash pass
-                        service.userService.AddUser(new User(username, password, null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
-                        User user = service.userService.GetRecentAddedUser();
-                        service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
-                        return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
+                    //Hash pass
+                    service.userService.AddUser(new User(username, password, null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
+                    User user = service.userService.GetRecentAddedUser();
+                    service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
+                    return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
                     return Json("Password is not properly secured");
                 }
                 return Json("Phone number is not properly formatted");
@@ -313,21 +314,21 @@ namespace BadmintonCourtAPI.Controllers
         [Route("User/RegisterAdmin")]
         public async Task<IActionResult> AddUser(string username, string password, string firstName, string lastName, int role, int branch, string email, string phone)
         {
-        	UserDetail info = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
-        	if (info == null)
-        	{
-        		if (IsPhoneFormatted(phone))
-        		{
-        			//Hash pass
-        			service.userService.AddUser(new User(username, password, branch, role, null, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
-        			User user = service.userService.GetRecentAddedUser();
-        			service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
-        			return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-        			return Json("Password is not properly secured");
-        		}
-        		return Json("Phone number is not properly formatted");
-        	}
-        	return Json("User has already existed");
+            UserDetail info = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
+            if (info == null)
+            {
+                if (IsPhoneFormatted(phone))
+                {
+                    //Hash pass
+                    service.userService.AddUser(new User(username, password, branch, role, null, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
+                    User user = service.userService.GetRecentAddedUser();
+                    service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
+                    return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
+                    return Json("Password is not properly secured");
+                }
+                return Json("Phone number is not properly formatted");
+            }
+            return Json("User has already existed");
         }
 
 

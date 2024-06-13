@@ -39,6 +39,7 @@ const Team = () => {
     setSelectedRow(row); // Cập nhật selectedRow với hàng được chọn
     // Set form state based on selectedRow values
     setFormState({
+      id: row.userId,
       username: row.userName || '',
       password: row.password || '',
       branch: row.branchName || '',
@@ -57,16 +58,18 @@ const Team = () => {
     const userData = formState;
 
     // Gửi yêu cầu cập nhật cho bảng User
-    fetch(`http://localhost:5266/User/Update`, {
+    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&activeStatus=" + userData.activeStatus + "&balance=" + userData.balance, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(userData)
+
     })
       .then(response => {
         // Xử lý kết quả trả về từ bảng User
+        console.log(userData);
       })
       .catch(error => {
         console.error('Error updating user:', error);
@@ -405,8 +408,6 @@ const Team = () => {
                     <p>Last Name:</p>
                     <p>Role:</p>
                     <p>Branch:</p>
-                    <p>Balance:</p>
-                    <p>Active Status:</p>
                     <p>Email:</p>
                     <p>Phone:</p>
                     
