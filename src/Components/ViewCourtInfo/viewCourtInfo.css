@@ -8,9 +8,9 @@
     background-image: url('../../Assets/image4.jpg');
     background-size: cover;
     background-position: center;
-    filter: blur(10px); 
-    z-index: -1; 
-    opacity: 0.6; 
+    filter: blur(10px);
+    z-index: -1;
+    opacity: 0.6;
 }
 
 .viewcourtinfo {
@@ -100,54 +100,63 @@
     max-width: 100%; 
     padding-bottom: 20px;
     box-sizing: border-box;
-    margin-left: 70px;
+    margin-left: 200px;
 }
 
 .viewcourtinfo-other-pic {
     display: flex;
     flex-direction: column;
-    min-width: 300px;
-    margin-right: 20px; /* Add spacing between cards */
+    min-width: 600px; /* Increased width */
+    max-width: 350px; /* Set a fixed width */
+    height: 500px; /* Increased height */
+    margin-right: 20px; 
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: #fff;
-    padding: 15px;
+    padding: 15px; /* Slightly increased padding */
     box-sizing: border-box;
+    overflow: hidden; /* Hide overflow content */
 }
 
 .viewcourtinfo-other-img {
     width: 100%;
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow for images */
+    height: 160px; /* Adjusted image height */
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    object-fit: cover; /* Ensure the image covers the container */
 }
 
 .viewcourtinfo-other-info {
     margin-top: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .viewcourtinfo-other-info h2, 
 .viewcourtinfo-other-info p {
-    margin-bottom: 10px;
+    margin-bottom: 5px; 
     color: black;
 }
 
 button {
-    background-color: #d4af37; /* Gold color */
+    background-color: #d4af37; 
     border: none;
     color: white;
-    padding: 10px 20px;
+    padding: 5px 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    margin: 10px 0;
+    font-size: 14px;
+    margin: px 0;
     cursor: pointer;
-    border-radius: 5px; /* Rounded corners */
+    border-radius: 5px; 
     transition: background-color 0.3s;
+    width: 20%;
 }
 
 button:hover {
-    background-color: #c89e33; /* Darker gold color on hover */
+    background-color: #c89e33; 
 }
