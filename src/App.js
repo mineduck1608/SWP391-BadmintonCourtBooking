@@ -29,7 +29,7 @@ import Geography from './Scene/geography';
 import Dashboard from './Scene/dashboard';
 import BookCourt from './Components/bookCourt/bookCourt';
 import AdminLayout from './Components/AdminLayout';
-import BuyBalance from './Components/BuyBalance/BuyBalance'
+import BuyTime from './Components/BuyTime/BuyTime'
 
 
 const App = () => {
@@ -51,7 +51,7 @@ const App = () => {
           <Route path="/findCourt" element={<FindCourt />} />
           <Route path="/forget" element={<ForgetPassword />} />
           <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
-          <Route path="/buyTime" element={<div><Header/><BuyBalance/><Footer/></div>}/>
+          <Route path="/buyTime" element={<div><Header/><BuyTime/><Footer/></div>}/>
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
