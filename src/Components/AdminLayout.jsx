@@ -8,7 +8,6 @@ const AdminLayout = ({ isSidebar, setIsSidebar }) => {
     <div className="app">
       <Sidebar isSidebar={isSidebar} />
       <main className="content">
-        <Topbar setIsSidebar={setIsSidebar} />
         <Outlet />
       </main>
     </div>

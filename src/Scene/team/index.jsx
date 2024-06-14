@@ -253,7 +253,7 @@ const Team = () => {
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
-        toast.warning('User deleted unsuccess.')
+        toast.warning('User deleted unsuccess.' + error)
       });
   };
 

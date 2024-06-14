@@ -11,29 +11,29 @@ const SignIn = () => {
 
   const handleClick = async (e) => {
     const result = await signInWithPopup(auth, provider);
+    const user = result.user;
     e.preventDefault();
-    fetch("http://localhost:5266/User/ExternalLogAuth?email=" + result.user.email, {
+    fetch("http://localhost:5266/User/ExternalLogAuth?token=" + result.user.getIdToken(), {
         method: "POST",
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(result.user.email),
+        body: JSON.stringify(result.user.getIdToken()),
       }).then((res) => {
         toast.success('Login successfuly.');
-        console.log(result.user.email);
       }).catch((err) => {
         toast.error('Failed: ' + err.message);
       })
 
     try {
      
-      setValue(result.user.email);
-      sessionStorage.setItem("email", result.user.email);
+      setValue(result.user.getIdToken());
+      sessionStorage.setItem("token", result.user.getIdToken());
       navigate('/home'); // Navigate to /home after successful sign-in
     } catch (error) {
     }
   };
 
   useEffect(() => {
-    const storedEmail = sessionStorage.getItem('email');
+    const storedEmail = sessionStorage.getItem('token');
     if (storedEmail) {
       setValue(storedEmail);
       navigate('/home');
