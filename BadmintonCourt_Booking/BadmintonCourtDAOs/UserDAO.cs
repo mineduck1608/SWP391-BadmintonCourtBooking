@@ -24,19 +24,19 @@ namespace BadmintonCourtDAOs
 
         public List<User> GetAllUsers() => _dbContext.Users.ToList();
 
-        public User GetUserById(int id) => _dbContext.Users.FirstOrDefault(x => x.UserId == id);
+        public User GetUserById(string id) => _dbContext.Users.FirstOrDefault(x => x.UserId == id);
 
-        public List<User> GetUsersByRole(int id) => _dbContext.Users.Where(x => x.RoleId == id).ToList();
+        public List<User> GetUsersByRole(string id) => _dbContext.Users.Where(x => x.RoleId == id).ToList();
 
-        public List<User> GetStaffsByBranch(int id) => _dbContext.Users.Where(x => x.BranchId == id).ToList();
+        public List<User> GetStaffsByBranch(string id) => _dbContext.Users.Where(x => x.BranchId == id).ToList();
 
         public User GetUserByEmail(string email) => _dbContext.Users.FirstOrDefault(x => x.UserDetail.Email == email);
 
-        public User GetRecentAddedUser() => _dbContext.Users.OrderBy(x => x.UserId).LastOrDefault();
+        public User GetRecentAddedUser() => _dbContext.Users.AsEnumerable().OrderBy(x => int.Parse(x.UserId.Substring(1))).LastOrDefault();
 
         public User GetUserByLogin(string username, string password) => _dbContext.Users.FirstOrDefault(x => x.UserName == username && x.Password == password);
 
-        public void UpdateUser(User newUser, int id)
+        public void UpdateUser(User newUser, string id)
         {
             User tmp = GetUserById(id);
             if (tmp != null)
@@ -59,13 +59,13 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeleteUser(int uId)
+        public void DeleteUser(string id)
         {
-            User user = GetUserById(uId);
+            User user = GetUserById(id);
             if (user != null)
             {
                 user.ActiveStatus = false;
-                UpdateUser(user, uId);
+                UpdateUser(user, id);
             }
         }
     }

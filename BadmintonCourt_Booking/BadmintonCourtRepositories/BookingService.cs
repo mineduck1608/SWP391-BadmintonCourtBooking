@@ -24,19 +24,19 @@ namespace BadmintonCourtServices
 
         public List<Booking> GetAllBookings() => bookingDAO.GetAllBookings();
 
-        public Booking GetBookingByBookingId(int id) => bookingDAO.GetBookingByBookingId(id);
+        public Booking GetBookingByBookingId(string id) => bookingDAO.GetBookingByBookingId(id);
+        
+        public Booking GetRecentAddedBooking() => bookingDAO.GetRecentAddedBooking();
 
-        public List<Booking> GetBookingsByUserId(int id) => bookingDAO.GetBookingsByUserId(id);
+        public List<Booking> GetBookingsByUserId(string id) => bookingDAO.GetBookingsByUserId(id);
 
         public List<Booking> GetBookingsByType(int id) => bookingDAO.GetBookingsByType(id);
 
-        public List<Booking> GetBookingsByStatus(bool status) => bookingDAO.GetBookingsByStatus(status);
-
-        public void UpdatBooking(Booking newBooking, int bId) => bookingDAO.UpdateBooking(newBooking, bId);
+        public void UpdatBooking(Booking newBooking, string id) => bookingDAO.UpdateBooking(newBooking, id);
 
         public void AddBooking(Booking booking) => bookingDAO.AddBooking(booking);
 
-        public void DeleteBooking(int id) => bookingDAO.DeleteBooking(id);
+        public void DeleteBooking(string id) => bookingDAO.DeleteBooking(id);
  
     }
 }

@@ -12,7 +12,7 @@ namespace BadmintonCourtServices.IService
 
         public List<UserDetail> GetAllUserDetails();
 
-        public UserDetail GetUserDetailById(int id);
+        public UserDetail GetUserDetailById(string id);
 
         public List<UserDetail> GetUserDetailsByName(string name);
 
@@ -20,11 +20,11 @@ namespace BadmintonCourtServices.IService
 
         public List<UserDetail> GetUserDetailsBySearchResult(string search);
 
-        public void UpdateUserDetail(UserDetail newUserDetail, int id);
+        public void UpdateUserDetail(UserDetail newUserDetail, string id);
 
         public void AddUserDetail(UserDetail userDetail);
 
-        public void DeleteUserDetail(int id);
+        public void DeleteUserDetail(string id);
 
     }
 }

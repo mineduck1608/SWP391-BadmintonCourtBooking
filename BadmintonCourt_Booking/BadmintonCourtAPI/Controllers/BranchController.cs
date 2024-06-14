@@ -1,8 +1,10 @@
-﻿using BadmintonCourtBusinessObjects.Entities;
+﻿using BadmintonCourtAPI.Utils;
+using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 
 namespace BadmintonCourtAPI.Controllers
@@ -12,33 +14,36 @@ namespace BadmintonCourtAPI.Controllers
 
         private readonly BadmintonCourtService service = null;
 
-        public BranchController() 
+        public BranchController(IConfiguration config)
         {
-            service = new BadmintonCourtService();
+            service = new BadmintonCourtService(config);
         }
-
-        public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
-
 
         [HttpPost]
         [Route("Branch/Add")]
-        [Authorize(Roles = "Admin,Staff")]
-        public async Task<ActionResult<CourtBranch>> AddBranch(CourtBranch courtBranch)
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<CourtBranch>> AddBranch(string location, string img, string name, string phone)
         {
-            bool status = IsPhoneFormatted(courtBranch.BranchPhone);
-            if (status)
+            if (location.IsNullOrEmpty())
+                return BadRequest();
+            if (name.IsNullOrEmpty())
+                return BadRequest();
+            if (Util.IsPasswordSecure(phone))
             {
-                service.courtBranchService.AddBranch(courtBranch);
-                return Ok();
+                service.courtBranchService.AddBranch(new CourtBranch { BranchId = Util.GenerateBranchId(service), BranchImg = img, BranchName = name, Location = location, BranchPhone = phone, BranchStatus = 1 });
+                // 1: hoạt động
+                // 0: bỏ
+                // -1: bảo trì
+                return Ok(new { msg = "Success" });
             }
-            return BadRequest("Phone number is not properly formatted");
+            return BadRequest();
         }
 
 
         [HttpDelete]
         [Route("Branch/Delete")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<CourtBranch>> DeleteBranch(int id)
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<CourtBranch>> DeleteBranch(string id)
         {
             service.courtBranchService.DeleteBranch(id);
             return NoContent();
@@ -47,29 +52,44 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpGet]
         [Route("Branch/GetAll")]
-        //[Authorize]
         public async Task<IEnumerable<CourtBranch>> GetAllBranches() => service.courtBranchService.GetAllCourtBranches().ToList();
 
 
         [HttpGet]
-		[Route("Branch/GetBySearch")]
-		[Authorize]
-		public async Task<IEnumerable<CourtBranch>> GetBranchesBySearchResult(string search) => service.courtBranchService.GetBranchesBySearchResult(search);
+        [Route("Branch/GetBySearch")]
+        public async Task<IEnumerable<CourtBranch>> GetBranchesBySearchResult(string search) => service.courtBranchService.GetBranchesBySearchResult(search);
 
 
-		[HttpPut]
-		[Route("Branch/Update")]
-		[Authorize(Roles = "Admin")]
-		public async Task<ActionResult<CourtBranch>> UpdateBranch(CourtBranch newBranch, int id)
+        [HttpPut]
+        [Route("Branch/Update")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<CourtBranch>> UpdateBranch(string location, string img, string name, string phone, int status, string id)
         {
-            bool status = IsPhoneFormatted(newBranch.BranchPhone);
-            if (status)
+            CourtBranch branch = service.courtBranchService.GetBranchById(id);
+            if (!location.IsNullOrEmpty())
+                branch.Location = location;
+            if (!name.IsNullOrEmpty())
+                branch.BranchName = name;
+            if (!img.IsNullOrEmpty())
+                branch.BranchImg = img;
+            if (Util.IsPhoneFormatted(phone))
+                branch.BranchPhone = phone;
+            branch.BranchStatus = status;
+            if (status == -1 || status == 0)
             {
-                service.courtBranchService.UpdateBranch(newBranch, id);
-                return Ok();
+                List<Court> courtList = service.courtService.GetAllCourts();
+                if (courtList.Count == 0 || courtList == null)
+                {
+					foreach (var item in courtList)
+					{
+                        item.CourtStatus = false;
+                        service.courtService.UpdateCourt(item, item.CourtId);
+					}
+				}
             }
-            return BadRequest("Phone number is not properly formatted");
-        }
+            service.courtBranchService.UpdateBranch(branch, id);
+            return Ok(new { msg = "Success" });
+		}
 
     }
 }

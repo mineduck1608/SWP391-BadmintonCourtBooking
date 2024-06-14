@@ -1,6 +1,8 @@
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\bin\Debug\net8.0\ClassLibrary3.deps.json
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\bin\Debug\net8.0\ClassLibrary3.runtimeconfig.json
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\bin\Debug\net8.0\ClassLibrary3.dll
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\bin\Debug\net8.0\ClassLibrary3.pdb
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.csproj.AssemblyReference.cache
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.GeneratedMSBuildEditorConfig.editorconfig
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.AssemblyInfoInputs.cache
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.AssemblyInfo.cs
@@ -8,7 +10,5 @@ D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.dll
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\refint\ClassLibrary3.dll
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.pdb
-D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ref\ClassLibrary3.dll
-D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\bin\Debug\net8.0\ClassLibrary3.runtimeconfig.json
-D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.csproj.AssemblyReference.cache
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ClassLibrary3.genruntimeconfig.cache
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\ClassLibrary3\obj\Debug\net8.0\ref\ClassLibrary3.dll

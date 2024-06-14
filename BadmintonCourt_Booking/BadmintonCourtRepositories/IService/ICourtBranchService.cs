@@ -11,7 +11,7 @@ namespace BadmintonCourtServices.IService
     {
         public List<CourtBranch> GetAllCourtBranches();
 
-        public CourtBranch GetBranchById(int id);
+        public CourtBranch GetBranchById(string id);
 
         public List<CourtBranch> GetBranchesByLocation(string location);
 
@@ -23,8 +23,8 @@ namespace BadmintonCourtServices.IService
 
         public void AddBranch(CourtBranch branch);
 
-        public void UpdateBranch(CourtBranch newBranch, int id);
+        public void UpdateBranch(CourtBranch newBranch, string id);
 
-        public void DeleteBranch(int id);
+        public void DeleteBranch(string id);
     }
 }

@@ -5,19 +5,17 @@ namespace ClassLibrary3.Entities;
 
 public partial class Booking
 {
-    public int BookingId { get; set; }
+    public string BookingId { get; set; } = null!;
 
-    public double TotalPrice { get; set; }
+    public double Amount { get; set; }
 
     public int BookingType { get; set; }
 
-    public int BookingStatus { get; set; }
-
-    public int? UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
     public virtual Payment? Payment { get; set; }
 
     public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
 
-    public virtual User? User { get; set; }
+    public virtual User User { get; set; } = null!;
 }

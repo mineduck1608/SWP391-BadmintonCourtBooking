@@ -23,7 +23,7 @@ namespace BadmintonCourtDAOs
 
         public List<CourtBranch> GetAllCourtBranches() => _dbContext.CourtBranches.ToList();
 
-        public CourtBranch GetBranchById(int id) => _dbContext.CourtBranches.FirstOrDefault(x => x.BranchId == id);
+        public CourtBranch GetBranchById(string id) => _dbContext.CourtBranches.FirstOrDefault(x => x.BranchId == id);
 
         public List<CourtBranch> GetBranchesByLocation(string location) => _dbContext.CourtBranches.Where(x => x.Location.ToLower().Contains(location.ToLower())).ToList();
 
@@ -33,13 +33,15 @@ namespace BadmintonCourtDAOs
 
         public List<CourtBranch> GetBranchesBySearchResult(string search) => _dbContext.CourtBranches.Where(x => x.Location.ToLower().Contains(search.ToLower()) || x.BranchName.ToLower().Contains(search.ToLower()) || x.BranchPhone.Contains(search)).ToList();
 
+        public List<CourtBranch> GetMaintainingBranches() => _dbContext.CourtBranches.Where(x => x.BranchStatus == -1).ToList();
+
         public void AddBranch(CourtBranch branch)
         {
             _dbContext.CourtBranches.Add(branch);
             _dbContext.SaveChanges();
         }
 
-        public void UpdateBranch(CourtBranch newBranch, int id)
+        public void UpdateBranch(CourtBranch newBranch, string id)
         {
             CourtBranch tmp = GetBranchById(id);
             if (tmp != null)
@@ -52,10 +54,11 @@ namespace BadmintonCourtDAOs
             }
         }
         
-        public void DeleteBranch(int id)
+        public void DeleteBranch(string id)
         {
-            _dbContext.CourtBranches.Remove(GetBranchById(id));
-            _dbContext.SaveChanges();
+            CourtBranch branch = GetBranchById(id);
+            branch.BranchStatus = 0;
+            UpdateBranch(branch, id);
         }
     }
 }

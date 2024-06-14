@@ -22,11 +22,11 @@ namespace BadmintonCourtServices
 
         public void AddBranch(CourtBranch branch) => courtBranchDAO.AddBranch(branch);
 
-        public void DeleteBranch(int id) => courtBranchDAO.DeleteBranch(id);
+        public void DeleteBranch(string id) => courtBranchDAO.DeleteBranch(id);
 
         public List<CourtBranch> GetAllCourtBranches() => courtBranchDAO.GetAllCourtBranches();
 
-        public CourtBranch GetBranchById(int id) => courtBranchDAO.GetBranchById(id);
+        public CourtBranch GetBranchById(string id) => courtBranchDAO.GetBranchById(id);
 
         public List<CourtBranch> GetBranchesByLocation(string location) => courtBranchDAO.GetBranchesByLocation(location);
 
@@ -36,7 +36,7 @@ namespace BadmintonCourtServices
 
         public List<CourtBranch> GetBranchesBySearchResult(string search) => courtBranchDAO.GetBranchesBySearchResult(search);
 
-        public void UpdateBranch(CourtBranch newBranch, int id) =>  courtBranchDAO.UpdateBranch(newBranch, id);
+        public void UpdateBranch(CourtBranch newBranch, string id) =>  courtBranchDAO.UpdateBranch(newBranch, id);
 
     }
 }

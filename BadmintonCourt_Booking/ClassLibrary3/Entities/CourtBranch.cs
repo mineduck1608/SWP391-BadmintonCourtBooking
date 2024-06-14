@@ -5,7 +5,7 @@ namespace ClassLibrary3.Entities;
 
 public partial class CourtBranch
 {
-    public int BranchId { get; set; }
+    public string BranchId { get; set; } = null!;
 
     public string Location { get; set; } = null!;
 
@@ -15,7 +15,7 @@ public partial class CourtBranch
 
     public string? BranchImg { get; set; }
 
-    public bool BranchStatus { get; set; }
+    public int BranchStatus { get; set; }
 
     public virtual ICollection<Court> Courts { get; set; } = new List<Court>();
 

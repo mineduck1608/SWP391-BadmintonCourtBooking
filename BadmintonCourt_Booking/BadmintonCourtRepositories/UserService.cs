@@ -22,13 +22,13 @@ namespace BadmintonCourtServices
 
         public void AddUser(User user) => userDAO.AddUser(user);
 
-        public void DeleteUser(int id) => userDAO.DeleteUser(id);
+        public void DeleteUser(string id) => userDAO.DeleteUser(id);
 
         public List<User> GetAllUsers() => userDAO.GetAllUsers();
 
-        public List<User> GetStaffsByBranch(int id) => userDAO.GetStaffsByBranch(id);
+        public List<User> GetStaffsByBranch(string id) => userDAO.GetStaffsByBranch(id);
 
-        public User GetUserById(int id) => userDAO.GetUserById(id);
+        public User GetUserById(string id) => userDAO.GetUserById(id);
 
         public User GetRecentAddedUser() => userDAO.GetRecentAddedUser();
 
@@ -37,9 +37,9 @@ namespace BadmintonCourtServices
 		public User GetUserByLogin(string username, string password) => userDAO.GetUserByLogin(username, password);
 
 
-		public List<User> GetUsersByRole(int id) => userDAO.GetUsersByRole(id);
+		public List<User> GetUsersByRole(string id) => userDAO.GetUsersByRole(id);
 
-        public void UpdateUser(User newUser, int id) => userDAO.UpdateUser(newUser, id);
+        public void UpdateUser(User newUser, string id) => userDAO.UpdateUser(newUser, id);
 
     }
 }

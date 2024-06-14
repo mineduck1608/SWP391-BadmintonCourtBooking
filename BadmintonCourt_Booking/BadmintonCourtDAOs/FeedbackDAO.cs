@@ -22,17 +22,17 @@ namespace BadmintonCourtDAOs
 
         public List<Feedback> GetAllFeedbacks() => _dbContext.Feedbacks.ToList();
 
-        public Feedback GetFeedbackByFeedbackId(int id) => _dbContext.Feedbacks.FirstOrDefault(x => x.FeedbackId == id);
+        public Feedback GetFeedbackByFeedbackId(string id) => _dbContext.Feedbacks.FirstOrDefault(x => x.FeedbackId == id);
 
         public List<Feedback> GetFeedbacksByContent(string content) => _dbContext.Feedbacks.Where(x => x.Content.ToLower().Contains(content.ToLower())).ToList();
 
         public List<Feedback> GetFeedbacksByRate(int rate) => _dbContext.Feedbacks.Where(x => x.Rate == rate).ToList();
 
-        public List<Feedback> GetA_UserFeedbacks(int id) => _dbContext.Feedbacks.Where(x => x.UserId == id).ToList();
+        public List<Feedback> GetA_UserFeedbacks(string id) => _dbContext.Feedbacks.Where(x => x.UserId == id).ToList();
 
-        public List<Feedback> GetBranchFeedbacks(int id) => _dbContext.Feedbacks.Where(x => x.BranchId == id).ToList();
+        public List<Feedback> GetBranchFeedbacks(string id) => _dbContext.Feedbacks.Where(x => x.BranchId == id).ToList();
 
-        public void UpdateFeedback(Feedback newFeedback, int id)
+        public void UpdateFeedback(Feedback newFeedback, string id)
         {
             Feedback tmp = GetFeedbackByFeedbackId(id);
             if (tmp != null)
@@ -50,7 +50,7 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeleteFeedback(int id)
+        public void DeleteFeedback(string id)
         {
             _dbContext.Feedbacks.Remove(GetFeedbackByFeedbackId((id)));
             _dbContext.SaveChanges();

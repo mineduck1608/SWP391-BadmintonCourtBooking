@@ -5,17 +5,17 @@ namespace ClassLibrary3.Entities;
 
 public partial class Slot
 {
-    public int SlotId { get; set; }
+    public string SlotId { get; set; } = null!;
 
-    public TimeOnly StartTime { get; set; }
+    public DateTime StartTime { get; set; }
 
-    public TimeOnly EndTime { get; set; }
+    public DateTime EndTime { get; set; }
 
     public bool Status { get; set; }
 
-    public int CourtId { get; set; }
+    public string CourtId { get; set; } = null!;
 
-    public int? BookingId { get; set; }
+    public string? BookingId { get; set; }
 
     public virtual Booking? Booking { get; set; }
 

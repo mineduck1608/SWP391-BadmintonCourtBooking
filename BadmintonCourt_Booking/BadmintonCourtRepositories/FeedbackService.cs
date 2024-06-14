@@ -24,21 +24,21 @@ namespace BadmintonCourtServices
 
         public void AddFeedback(Feedback feedback) => feedbackDAO.AddFeedback(feedback);
 
-        public void DeleteFeedback(int id) => feedbackDAO.DeleteFeedback(id);
+        public void DeleteFeedback(string id) => feedbackDAO.DeleteFeedback(id);
 
         public List<Feedback> GetAllFeedbacks() => feedbackDAO.GetAllFeedbacks();
 
-        public List<Feedback> GetA_UserFeedbacks(int id) => feedbackDAO.GetA_UserFeedbacks(id);
+        public List<Feedback> GetA_UserFeedbacks(string id) => feedbackDAO.GetA_UserFeedbacks(id);
 
-        public List<Feedback> GetBranchFeedbacks(int id) => feedbackDAO.GetBranchFeedbacks(id);
+        public List<Feedback> GetBranchFeedbacks(string id) => feedbackDAO.GetBranchFeedbacks(id);
 
-        public Feedback GetFeedbackByFeedbackId(int id) => feedbackDAO.GetFeedbackByFeedbackId(id);
+        public Feedback GetFeedbackByFeedbackId(string id) => feedbackDAO.GetFeedbackByFeedbackId(id);
 
         public List<Feedback> GetFeedbacksByContent(string content) => feedbackDAO.GetFeedbacksByContent(content);
 
         public List<Feedback> GetFeedbacksByRate(int rate) => feedbackDAO.GetFeedbacksByRate(rate);
 
-        public void UpdateFeedback(Feedback newFeedback, int id) =>     feedbackDAO.UpdateFeedback(newFeedback, id);
+        public void UpdateFeedback(Feedback newFeedback, string id) =>     feedbackDAO.UpdateFeedback(newFeedback, id);
 
     }
 }

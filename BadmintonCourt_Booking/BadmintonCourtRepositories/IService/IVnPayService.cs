@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.VnPay;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +10,9 @@ namespace BadmintonCourtServices.IService
 {
 	public interface IVnPayService
 	{
-		public string CreatePaymentUrl(HttpContent content);
+		public string CreatePaymentUrl(HttpContext context, VnPayRequestDTO vnPayRequestDTO);
 
+		public VnPayResponseDTO PaymentExecute(IQueryCollection collection);
 
 	}
 }

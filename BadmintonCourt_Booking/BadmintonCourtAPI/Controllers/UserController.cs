@@ -1,5 +1,4 @@
-﻿using BadmintonCourtAPI.Schema;
-using BadmintonCourtBusinessObjects.Entities;
+﻿using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,341 +9,368 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using BadmintonCourtAPI.Utils;
+using BadmintonCourtBusinessObjects.SupportEntities.Account;
+using System.ComponentModel.DataAnnotations;
 
 namespace BadmintonCourtAPI.Controllers
 {
-    public class UserController : Controller
-    {
-        private readonly BadmintonCourtService service = null;
-        public IConfiguration _config = null;
+	public class UserController : Controller
+	{
+		private readonly BadmintonCourtService service = null;
+		private readonly IConfiguration _config;
 
-        public UserController(IConfiguration config)
-        {
-            if (service == null)
-            {
-                service = new BadmintonCourtService();
-            }
-            _config = config;
-        }
+		public UserController(IConfiguration config)
+		{
+			if (service == null)
+			{
+				service = new BadmintonCourtService(_config);
+			}
+			_config = config;
+		}
 
-        private string GetMailFromToken(string token)
-        {
-            var jwtToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            return jwtToken.Claims.FirstOrDefault(claim => claim.Type == "email").Value;
-        }
+		[HttpGet]
+		[Route("User/GetAll")]
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<UserDetail>>> GetAllUsers() => Ok(service.userDetailService.GetAllUserDetails());
 
-        public bool IsPhoneFormatted(string phone) => new Regex(@"\d{9,11}").IsMatch(phone);
+		[HttpGet]
+		[Route("User/GetStaffsInBranch")]
+		//[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<IEnumerable<User>>> GetStaffsByBranch(string id) => Ok(service.userService.GetStaffsByBranch(id).ToList());
 
-        private bool IsPasswordSecure(string password) => password != null ? new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password) : false;
+		[HttpGet]
+		[Route("User/GetByRole")]
+		//[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Staff")]
+		public async Task<ActionResult<IEnumerable<User>>> GetUsersByRole(string id) => Ok(service.userService.GetUsersByRole(id));
 
-        public string GenerateToken(int id, string lastName, string username, string roleName)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
-            {
-                new Claim("UserId", id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, username),
-                new Claim(ClaimTypes.Surname, lastName),
-                new Claim(ClaimTypes.Role, roleName)
-            };
-            var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-              audience: _config["Jwt:Audience"],
-    claims: claims,
-    expires: DateTime.Now.AddMinutes(30),
-    signingCredentials: credentials
-    );
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public string ToHashString(string s)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // Compute the hash of the input string
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(s));
-
-                // Convert the byte array to a hexadecimal string
-                StringBuilder result = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                    // Convert each byte to a hexadecimal string and append to the builder
-                    result.Append(bytes[i].ToString("x2"));
-                return result.ToString();
-            }
-        }
+		[HttpGet]
+		[Route("User/GetById")]
+		//[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Staff")]
+		public async Task<ActionResult<User>> GetUserByUserId(string id) => Ok(service.userService.GetUserById(id));
 
 
-        [HttpGet]
-        [Route("User/GetAll")]
-        //[Authorize]
-        public async Task<ActionResult<IEnumerable<UserSchema>>> GetAllUsers() => Ok(service.userService.GetAllUsers());
+		//[HttpPost]
+		//[Route("User/ExternalLogAuth")]
+		//public async Task<IActionResult> ExternalAuth(string token)
+		//{
+		//	string email = Util.GetMailFromToken(token);
+		//	UserDetail info = service.userDetailService.GetUserDetailByMail(email);
 
-        [HttpGet]
-        [Route("User/GetStaffsInBranch")]
-        //[Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<User>>> GetStaffsByBranch(int id) => Ok(service.userService.GetStaffsByBranch(id).ToList());
+		//	if (info == null) // Chua co acc
+		//	{
 
-        [HttpGet]
-        [Route("User/GetByRole")]
-        //[Authorize(Roles = "Admin")]
-        //[Authorize(Roles = "Staff")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsersByRole(int id) => Ok(service.userService.GetUsersByRole(id));
+		//		service.userService.AddUser(new User { UserId = Util.GenerateUserId(service), UserName = "", Password = "", LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null});
+		//		string id = service.userService.GetRecentAddedUser().UserId; 
 
-        [HttpGet]
-        [Route("User/GetById")]
-        //[Authorize(Roles = "Admin")]
-        //[Authorize(Roles = "Staff")]
-        public async Task<ActionResult<User>> GetUserByUserId(int id) => Ok(service.userService.GetUserById(id));
+		//		service.userDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email, FirstName = "", LastName = "", Phone = ""} );
+		//		return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", _config) });
+		//	}
 
-
-        [HttpPost]
-        [Route("User/ExternalLogAuth")]
-        public async Task<IActionResult> ExternalAuth(string token)
-        {
-            string email = GetMailFromToken(token);
-            UserDetail info = service.userDetailService.GetUserDetailByMail(email);
-
-            if (info == null) // Chua co acc
-            {
-                service.userService.AddUser(new User("", "", null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
-                service.userDetailService.AddUserDetail(new UserDetail(service.userService.GetRecentAddedUser().UserId, "", "", email, ""));
-                int id = service.userService.GetRecentAddedUser().UserId;
-                return Ok(new { token = GenerateToken(id, "", "", "Customer") });
-            }
-
-            // Co acc
-            User user = service.userService.GetUserById(info.UserId);
-            return Ok(new { token = GenerateToken(info.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-        }
-
-        [HttpPost]
-        [Route("User/LoginAuth")]
-        public async Task<IActionResult> LoginAuth(string username, string password)
-        {
-            //User user = service.userService.GetUserByLogin(username, password);
-            User user = service.userService.GetAllUsers().FirstOrDefault(x => x.UserName == username && x.Password == password);
-
-            // Nhập đúng username + pass
-            if (user != null)
-            {
-                UserDetail info = service.userDetailService.GetUserDetailById(user.UserId);
-                if (user.AccessFail == 0)
-                {
-                    user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-                    service.userService.UpdateUser(user, user.UserId);
-                    return Ok(new { token = GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-
-                }   // Legit, nhập đúng từ lần đầu
-
-                else if (user.AccessFail < 3) // Trước đó nhập sai chưa tới lần 3
-                {
-                    user.AccessFail = 0;
-                    user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-                    user.ActiveStatus = true;
-                    service.userService.UpdateUser(user, user.UserId);
-                    return Ok(new { token = GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-                }
-
-                else if (user.AccessFail == 3) // Trước đó nhập sai tới lần 3
-                {
-                    if ((DateTime.Now - user.LastFail).Value.TotalMinutes >= 15)
-                    {
-                        user.AccessFail = 0;
-                        user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-                        user.ActiveStatus = true;
-                        service.userService.UpdateUser(user, user.UserId);
-                        return Ok(new { token = GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-                    }
-                    return Ok("Temporarily locked");
-                }
-
-                else if (user.AccessFail == 4)  // Trước đó nhập sai tới lần 4
-                {
-                    if ((DateTime.Now - user.LastFail).Value.TotalMinutes >= 30)
-                    {
-                        user.AccessFail = 0;
-                        user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-                        user.ActiveStatus = true;
-                        service.userService.UpdateUser(user, user.UserId);
-                        return Ok(new { token = GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-                    }
-                    return Ok("Temporarily locked");
-                }
-
-                else if (user.AccessFail == 5)  // Trước đó nhập sai tới lần 5
-                {
-                    if ((DateTime.Now - user.LastFail).Value.TotalHours >= 1)
-                    {
-                        user.AccessFail = 0;
-                        user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-                        user.ActiveStatus = true;
-                        service.userService.UpdateUser(user, user.UserId);
-                        return Ok(new { token = GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-                    }
-                    return Ok("Temporarily locked");
-                }
-
-                else return Ok("Locked! Contact Admin");
-            }
-
-            else
-            {
-                User failCase = service.userService.GetAllUsers().FirstOrDefault(x => x.UserName == username);
-
-                if (failCase != null) // Đúng username, sai pass
-                {
-                    if (failCase.AccessFail <= 5) // Sai dưới 5 lần
-                    {
-                        failCase.AccessFail += 1;
-                        failCase.LastFail = DateTime.Now;
-                        if (failCase.AccessFail > 2)
-                            failCase.ActiveStatus = false;
-                        service.userService.UpdateUser(failCase, failCase.UserId);
-                        return Ok("Incorrect username or password!");
-                    }
-                    return Ok("Locked! Contact Admin"); // Từ lần sai thứ 6 đổ đi đã khóa acc, liên hệ admin để giải quyết
-                }
-                return NotFound("Not found"); // Sai username, ko quan tâm pass
-            }
-        }
+		//	// Co acc
+		//	User user = service.userService.GetUserById(info.UserId);
+		//	return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+		//}
 
 
-        [HttpPost]
-        [Route("User/ForgetPassword")]
-        public async Task<IActionResult> ResetPass(string newPass, string mail)
-        {
-            User user = service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(mail).UserId);
-            if (user.AccessFail <= 5)
-            {
-                string hashNewPass = ToHashString(newPass);
-                if (!hashNewPass.Equals(user.Password))
-                {
-                    bool status = IsPasswordSecure(newPass);
-                    if (status)
-                    {
-                        user.Password = hashNewPass;
-                        service.userService.UpdateUser(user, user.UserId);
-                        return Json("Success");
-                    }
-                    return Json("Password is not properly secure enough");
-                }
-                return Json("New password can't be same as previous one");
-            }
-            return Ok("Locked! Contact Admin");
-        }
+		[HttpPost]
+		[Route("User/ExternalLogAuth")]
+		public async Task<IActionResult> ExternalAuth(string email)
+		{
+			UserDetail info = service.userDetailService.GetUserDetailByMail(email);
+
+			if (info == null) // Chua co acc
+			{
+				List<User> list = service.userService.GetAllUsers();
+				service.userService.AddUser(new User { UserId = Util.GenerateUserId(service), LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null, RoleId = "R003" });
+				string id = service.userService.GetRecentAddedUser().UserId;
+
+				service.userDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email });
+				return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", _config) });
+			}
+
+			// Co acc
+			User user = service.userService.GetUserById(info.UserId);
+			return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+		}
+
+		[HttpPost]
+		[Route("User/LoginAuth")]
+		public async Task<IActionResult> LoginAuth(string username, string password)
+		{
+			//User user = service.userService.GetUserByLogin(username, password);
+			User user = service.userService.GetAllUsers().FirstOrDefault(x => x.UserName == username && x.Password == password);
+
+			// Nhập đúng username + pass
+			if (user != null)
+			{
+				UserDetail info = service.userDetailService.GetUserDetailById(user.UserId);
+				if (user.AccessFail == 0)
+				{
+					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+					service.userService.UpdateUser(user, user.UserId);
+					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+				}   // Legit, nhập đúng từ lần đầu
+
+				else if (user.AccessFail < 3) // Trước đó nhập sai chưa tới lần 3
+				{
+					user.AccessFail = 0;
+					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+					user.ActiveStatus = true;
+					service.userService.UpdateUser(user, user.UserId);
+					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+				}
+
+				else if (user.AccessFail == 3) // Trước đó nhập sai tới lần 3
+				{
+					if ((DateTime.Now - user.LastFail).Value.TotalMinutes >= 15)
+					{
+						user.AccessFail = 0;
+						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+						user.ActiveStatus = true;
+						service.userService.UpdateUser(user, user.UserId);
+						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+					}
+					return Ok("Temporarily locked");
+				}
+
+				else if (user.AccessFail == 4)  // Trước đó nhập sai tới lần 4
+				{
+					if ((DateTime.Now - user.LastFail).Value.TotalMinutes >= 30)
+					{
+						user.AccessFail = 0;
+						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+						user.ActiveStatus = true;
+						service.userService.UpdateUser(user, user.UserId);
+						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+					}
+					return Ok("Temporarily locked");
+				}
+
+				else if (user.AccessFail == 5)  // Trước đó nhập sai tới lần 5
+				{
+					if ((DateTime.Now - user.LastFail).Value.TotalHours >= 1)
+					{
+						user.AccessFail = 0;
+						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+						user.ActiveStatus = true;
+						service.userService.UpdateUser(user, user.UserId);
+						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
+					}
+					return Ok("Temporarily locked");
+				}
+
+				else return Ok("Locked! Contact Admin");
+			}
+
+			else
+			{
+				User failCase = service.userService.GetAllUsers().FirstOrDefault(x => x.UserName == username);
+
+				if (failCase != null) // Đúng username, sai pass
+				{
+					if (failCase.AccessFail <= 5) // Sai từ dưới 5 lần
+					{
+						failCase.AccessFail += 1;
+						failCase.LastFail = DateTime.Now;
+						if (failCase.AccessFail > 2)
+							failCase.ActiveStatus = false;
+						service.userService.UpdateUser(failCase, failCase.UserId);
+						return Ok("Incorrect username or password!");
+					}
+					return Ok("Locked! Contact Admin"); // Từ lần sai thứ 6 đổ đi đã khóa acc, liên hệ admin để giải quyết
+				}
+				return NotFound("Incorrect username or password!"); // Sai username, ko quan tâm pass
+			}
+		}
 
 
-        [HttpPut]
-        [Route("User/Update")]
-        //[Authorize]
-        public async Task<IActionResult> UpdateUser(int id, string username, string password, int? branchId, int? roleId, string firstName, string lastName, string phone, string email, bool activeStatus, double balance)
-        {
-            User tmp = service.userService.GetUserById(id);
-            if (!username.IsNullOrEmpty())
-                tmp.UserName = username;
-            if (password!=null) // Pass k secure = cook
-                tmp.Password = (password); // Lay lai pass cu
-            tmp.ActiveStatus = activeStatus;
-
-            // Check role phân quyền đc update những info nào
-            if (roleId != null) // Chỉ staff/Admin mới đc update role và chi nhánh
-            {
-                if (roleId == 2) // Nếu đc update thành Staff
-                {
-                    tmp.RoleId = 2;
-                    tmp.BranchId = branchId; // -> Staff mới có chi nhánh
-                }
-                else // Trường hợp còn lại khi đc update Role: Admin
-                {
-                    tmp.RoleId = int.Parse(roleId.ToString());
-                    tmp.BranchId = null; // -> Admun ko cần chi nhánh
-
-                    if (balance != null)
-                    {
-                        tmp.Balance = balance;
-                    }
-                }
-            }
-            service.userService.UpdateUser(tmp, id);
+		[HttpPost]
+		[Route("User/ForgetPassword")]
+		public async Task<IActionResult> ResetPass(string newPass, string mail)
+		{
+			User user = service.userService.GetUserById(service.userDetailService.GetUserDetailByMail(mail).UserId);
+			if (user.AccessFail <= 5)
+			{
+				string hashNewPass = Util.ToHashString(newPass);
+				if (!hashNewPass.Equals(user.Password))
+				{
+					bool status = Util.IsPasswordSecure(newPass);
+					if (status)
+					{
+						user.Password = hashNewPass;
+						service.userService.UpdateUser(user, user.UserId);
+						return Json("Success");
+					}
+					return Json("Password is not properly secure enough");
+				}
+				return Json("New password can't be same as previous one");
+			}
+			return Ok("Locked! Contact Admin");
+		}
 
 
-            // Update xong user chuyển tiếp qua detail
-            UserDetail info = service.userDetailService.GetUserDetailById(id);
-            if (!firstName.IsNullOrEmpty())
-                info.FirstName = firstName;
-            if (!lastName.IsNullOrEmpty())
-                info.LastName = lastName;
-            if (!email.IsNullOrEmpty())
-                info.Email = email;
-            if (!phone.IsNullOrEmpty())
-                if (IsPhoneFormatted(phone))
-                    info.Phone = phone;
-            service.userDetailService.UpdateUserDetail(info, id);
-            return Ok(new
-            {
-                msg = "succes"
-            }
-  );
-        }
+		[HttpPut]
+		[Route("User/Update")]
+		//[Authorize]
+		public async Task<IActionResult> UpdateUser(string id, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string email, string facebook, float balence, int? accessFail, bool status)
+		{
+			List<User> storage = service.userService.GetAllUsers();
+			List<UserDetail> infoStorage = service.userDetailService.GetAllUserDetails();
+
+			User user = service.userService.GetUserById(id);
+			if (!username.IsNullOrEmpty())
+			{
+				if (storage.FirstOrDefault(x => x.UserName == username) == null)
+					user.UserName = username;
+				else return BadRequest(new { msg = "Username existed" });
+			}	
+			if (Util.IsPasswordSecure(password))
+				//if (user.Password != Util.ToHashString(password)) // hash pass
+				user.Password = Util.ToHashString(password); // Lay lai pass cu
+			if (accessFail != null)
+			{
+				if (accessFail == 0)
+					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+				user.AccessFail = accessFail;
+			}
+			if (!roleId.IsNullOrEmpty())
+			{
+				user.RoleId = roleId;
+				if (roleId != "R002")
+					if (!branchId.IsNullOrEmpty())
+						return BadRequest(new { msg = "Only staffs can contain working place" });
+			}
+			user.BranchId = branchId;
+			if (balence != null)
+			{
+				if (balence >= 0)
+				{
+					user.Balance = balence;
+				}
+			}
+			else return BadRequest(new { msg = "Balence must be at least 0" });
+			if (status != null)
+			{
+				if (status == true)
+					if (accessFail.HasValue && accessFail == 0)
+						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
+				user.ActiveStatus = status;
+			}
+			service.userService.UpdateUser(user, id);
+
+			// Update xong user chuyển tiếp qua detail
+			UserDetail info = service.userDetailService.GetUserDetailById(id);
+			if (!firstName.IsNullOrEmpty())
+				info.FirstName = firstName;
+			if (!lastName.IsNullOrEmpty())
+				info.LastName = lastName;
+			if (!email.IsNullOrEmpty())
+			{
+				if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
+					info.Email = email;
+			}
+			else return BadRequest(new { msg = "Email registered" });
+			if (!facebook.IsNullOrEmpty())
+			{
+				if (infoStorage.FirstOrDefault(x => x.Facebook == facebook) == null)
+					info.Facebook = facebook;
+				else return BadRequest(new { msg = "Facebook registered" });
+			}
+
+			if (!phone.IsNullOrEmpty()) 
+			{
+				if (Util.IsPhoneFormatted(phone))
+				{
+					if (infoStorage.FirstOrDefault(x => x.Phone == phone) == null)
+						info.Phone = phone;
+					else return BadRequest(new { msg = "Phone registered" });
+				}
+			}
+			service.userDetailService.UpdateUserDetail(info, id);
+			return Ok(new { msg = "Success" });
+		}
 
 
-        [HttpPost]
-        [Route("User/Register")]
-        public async Task<IActionResult> AddUser(string username, string password, string firstName, string lastName, string email, string phone)
-        {
-            UserDetail info = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
-            if (info == null)
-            {
-                if (IsPhoneFormatted(phone))
-                {
-                    //Hash pass
-                    service.userService.AddUser(new User(username, password, null, 3, 0, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
-                    User user = service.userService.GetRecentAddedUser();
-                    service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
-                    return Ok(new { token = GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName) });
-                    return Json("Password is not properly secured");
-                }
-                return Json("Phone number is not properly formatted");
-            }
-            return Json("User has already existed");
-        }
-
-        [HttpPost]
-        [Route("User/RegisterAdmin")]
-        public async Task<IActionResult> AddUser(string username, string password, string firstName, string lastName, int role, int? branch, string email, string phone)
-        {
-            //Ko cho trung username
-            UserDetail info = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
-            if (info == null)
-            {
-                if (IsPhoneFormatted(phone))
-                {
-                    //Hash pass
-                    service.userService.AddUser(new User(username, password, branch, role, null, true, 0, new DateTime(1900, 1, 1, 0, 0, 0)));
-                    User user = service.userService.GetRecentAddedUser();
-                    service.userDetailService.AddUserDetail(new UserDetail(user.UserId, firstName, lastName, email, phone));
-                    return Ok(new {  });
-                    return Json("Password is not properly secured");
-                }
-                return Json("Phone number is not properly formatted");
-            }
-            return Json("User has already existed");
-        }
+		[HttpPost]
+		[Route("User/Register")]
+		public async Task<IActionResult> Register(string username, string password, string firstName, string lastName, string email, string phone)
+		{
+			UserDetail info = service.userDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
+			if (info == null)
+			{
+				if (Util.IsPhoneFormatted(phone))
+				{
+					if (Util.IsPasswordSecure(password))
+					{
+						//Hash pass
+						//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+						service.userService.AddUser(new User { UserId = Utils.Util.GenerateUserId(service), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+						User user = service.userService.GetRecentAddedUser();
+						service.userDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
+						return Ok(Util.GenerateToken(user.UserId, service.userDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config));
+					}
+					return Json(new { msg = "Password is not properly secured" });
+				}
+				return Json(new { msg = "Phone number is not properly formatted" });
+			}
+			return Json(new { msg = "User has already existed" });
+		}
 
 
+		[HttpPost]
+		[Route("User/Add")]
+		//[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> AddUser(ProvideAccount account)
+		{
+			List<User> storage = service.userService.GetAllUsers();
+			List<UserDetail> infoStorage = service.userDetailService.GetAllUserDetails();
 
-        // Xóa account
-        // Xóa userdetail -> xóa user: Set ActiveStatus = false
-        // Ongoing
-        [HttpDelete]
-        [Route("User/Delete")]
-        //[Authorize(Roles = "")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            service.userService.DeleteUser(id);
-            return Ok();
-        }
+			if (!account.UserName.IsNullOrEmpty())
+				if (storage.FirstOrDefault(x => x.UserName == account.UserName) != null)
+					return BadRequest(new { msg = "Account existed" });
+			if (!account.Email.IsNullOrEmpty())
+			{
+				if (infoStorage.FirstOrDefault(x => x.Email == account.Email) != null)
+					return BadRequest(new { msg = "Account existed" });
+			}
+			else return BadRequest(new { msg = "At least email can't be empty" });
+			if (!account.Phone.IsNullOrEmpty())
+				if (infoStorage.FirstOrDefault(p => p.Phone == account.Phone) != null)
+					return BadRequest(new { msg = "Account existed" });
+			if (!account.Facebook.IsNullOrEmpty())
+				if (infoStorage.FirstOrDefault(p => p.Facebook == account.Facebook) != null)
+					return BadRequest(new { msg = "Account existed" });
+			if (account.Balance < 0)
+				return BadRequest(new { msg = "Balance must be at least 0" });
 
-    }
+			if (account.RoleId != "R002")
+				if (!account.BranchId.IsNullOrEmpty())
+					return BadRequest(new { msg = "Only staffs can contatin working place" });
+
+			double balence;
+			if (account.Balance == null)
+				balence = 0;
+			else balence = account.Balance.Value;
+			string id = "U" + (storage.Count + 1).ToString("D7");
+			service.userService.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = account.Password, Balance = balence, BranchId = account.BranchId, RoleId = account.RoleId });
+			service.userDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = account.Phone, UserId = id });
+			return Ok(new { msg = "Success" });
+		}
+
+		// Xóa account
+		// Xóa userdetail -> xóa user: Set ActiveStatus = false
+		// Ongoing
+		[HttpDelete]
+		[Route("User/Delete")]
+		//[Authorize(Roles = "")]
+		public async Task<IActionResult> DeleteUser(string id)
+		{
+			service.userService.DeleteUser(id);
+			return Ok();
+		}
+
+	}
 }

@@ -5,7 +5,7 @@ namespace ClassLibrary3.Entities;
 
 public partial class Role
 {
-    public int RoleId { get; set; }
+    public string RoleId { get; set; } = null!;
 
     public string Role1 { get; set; } = null!;
 

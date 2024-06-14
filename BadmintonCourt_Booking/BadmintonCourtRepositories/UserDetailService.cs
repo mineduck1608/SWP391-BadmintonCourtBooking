@@ -24,11 +24,11 @@ namespace BadmintonCourtServices
 
         public void AddUserDetail(UserDetail userDetail) => userDetailDAO.AddUserDetail(userDetail);
 
-        public void DeleteUserDetail(int id) => userDetailDAO.DeleteUserDetail(id); 
+        public void DeleteUserDetail(string id) => userDetailDAO.DeleteUserDetail(id); 
 
         public List<UserDetail> GetAllUserDetails() =>  userDetailDAO.GetAllUserDetails();
 
-        public UserDetail GetUserDetailById(int id) => userDetailDAO.GetUserDetailById(id);
+        public UserDetail GetUserDetailById(string id) => userDetailDAO.GetUserDetailById(id);
 
         public UserDetail GetUserDetailByMail(string mail) => userDetailDAO.GetUserDetailByMail(mail);
 
@@ -36,7 +36,7 @@ namespace BadmintonCourtServices
 
         public List<UserDetail> GetUserDetailsBySearchResult(string search) => userDetailDAO.GetUserDetailsBySearchResult(search);
 
-        public void UpdateUserDetail(UserDetail newUserDetail, int id) => userDetailDAO.UpdateUserDetail(newUserDetail, id);
+        public void UpdateUserDetail(UserDetail newUserDetail, string id) => userDetailDAO.UpdateUserDetail(newUserDetail, id);
 
     }
 }

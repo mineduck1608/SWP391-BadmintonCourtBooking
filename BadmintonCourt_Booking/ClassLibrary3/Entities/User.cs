@@ -5,23 +5,23 @@ namespace ClassLibrary3.Entities;
 
 public partial class User
 {
-    public int UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
-    public string UserName { get; set; } = null!;
+    public string? UserName { get; set; }
 
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; }
 
-    public int? BranchId { get; set; }
+    public string? BranchId { get; set; }
 
-    public int RoleId { get; set; }
+    public string RoleId { get; set; } = null!;
 
     public double? Balance { get; set; }
 
     public int? AccessFail { get; set; }
 
-    public bool ActiveStatus { get; set; }
-
     public DateTime? LastFail { get; set; }
+
+    public bool? ActiveStatus { get; set; }
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 

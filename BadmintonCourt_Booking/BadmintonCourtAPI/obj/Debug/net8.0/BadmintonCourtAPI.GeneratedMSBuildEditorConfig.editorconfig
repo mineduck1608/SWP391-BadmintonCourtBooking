@@ -17,35 +17,11 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BadmintonCourtAPI
 build_property.RootNamespace = BadmintonCourtAPI
-build_property.ProjectDir = D:\Coding\SWP391\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\
+build_property.ProjectDir = D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\Coding\SWP391\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI
+build_property.MSBuildProjectDirectory = D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI
 build_property._RazorSourceGeneratorDebug = 
-
-[D:/Coding/SWP391/badmintoncourtbooking/BadmintonCourt_Booking/BadmintonCourtAPI/Views/Feedbacks/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tzXENyZWF0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Coding/SWP391/badmintoncourtbooking/BadmintonCourt_Booking/BadmintonCourtAPI/Views/Feedbacks/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tzXERlbGV0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Coding/SWP391/badmintoncourtbooking/BadmintonCourt_Booking/BadmintonCourtAPI/Views/Feedbacks/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tzXERldGFpbHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Coding/SWP391/badmintoncourtbooking/BadmintonCourt_Booking/BadmintonCourtAPI/Views/Feedbacks/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tzXEVkaXQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Coding/SWP391/badmintoncourtbooking/BadmintonCourt_Booking/BadmintonCourtAPI/Views/Feedbacks/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tzXEluZGV4LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Coding/SWP391/badmintoncourtbooking/BadmintonCourt_Booking/BadmintonCourtAPI/Views/Shared/_ValidationScriptsPartial.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 

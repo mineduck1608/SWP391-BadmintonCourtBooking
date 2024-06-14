@@ -1,4 +1,6 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
+using BadmintonCourtServices.IService;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +30,11 @@ namespace BadmintonCourtServices
 
         public readonly UserDetailService userDetailService = null;
 
-        public BadmintonCourtService()
+        public readonly VnPayService VnPayService = null;
+
+     
+
+        public BadmintonCourtService(IConfiguration config)
         {
             if (bookingService == null)
             {
@@ -66,6 +72,8 @@ namespace BadmintonCourtServices
             {
                 userDetailService = new UserDetailService();
             }
+            if (VnPayService == null)
+                VnPayService = new VnPayService(config);
         }
 
     }

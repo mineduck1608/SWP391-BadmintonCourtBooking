@@ -24,15 +24,15 @@ namespace BadmintonCourtServices
 
         public void AddRole(Role role) => roleDAO.AddRole(role);
 
-        public void DeleteRole(int id) => roleDAO.DeleteRole(id);
+        public void DeleteRole(string id) => roleDAO.DeleteRole(id);
 
         public List<Role> GetAllRoles() =>  roleDAO.GetAllRoles();
 
-        public Role GetRoleById(int id) => roleDAO.GetRoleById(id);
+        public Role GetRoleById(string id) => roleDAO.GetRoleById(id);
 
         public List<Role> GetRolesByName(string name) => roleDAO.GetRolesByName(name);
 
-        public void UpdateRole(Role newRole, int id) => roleDAO.UpdateRole(newRole, id);
+        public void UpdateRole(Role newRole, string id) => roleDAO.UpdateRole(newRole, id);
 
     }
 }

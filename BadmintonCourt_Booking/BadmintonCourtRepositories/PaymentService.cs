@@ -24,21 +24,19 @@ namespace BadmintonCourtServices
 
         public void AddPayment(Payment payment) => paymentDAO.AddPayment(payment);
 
-		public void DeletePayment(int id) => paymentDAO.DeletePayment(id);
+		public void DeletePayment(string id) => paymentDAO.DeletePayment(id);
 
         public List<Payment> GetAllPayments() => paymentDAO.GetAllPayments();   
 
-        public Payment GetPaymentByBookingId(int id) => paymentDAO.GetPaymentByBookingId(id);
+        public Payment GetPaymentByBookingId(string id) => paymentDAO.GetPaymentByBookingId(id);
 
-        public Payment GetPaymentByPaymentId(int id) => paymentDAO.GetPaymentByPaymentId(id);
+        public Payment GetPaymentByPaymentId(string id) => paymentDAO.GetPaymentByPaymentId(id);
 
         public List<Payment> GetPaymentsByDate(DateTime date) => paymentDAO.GetPaymentsByDate(date);
 
-        public List<Payment> GetPaymentsByStatus(bool status) => paymentDAO.GetPaymentsByStatus(status);
+        public List<Payment> GetPaymentsByUserId(string id) => paymentDAO.GetPaymentsByUserId(id);
 
-        public List<Payment> GetPaymentsByUserId(int id) => paymentDAO.GetPaymentsByUserId(id);
-
-        public void UpdatePayment(Payment newPayment, int id) =>    paymentDAO.UpdatePayment(newPayment, id);
+        public void UpdatePayment(Payment newPayment, string id) =>    paymentDAO.UpdatePayment(newPayment, id);
 
     }
 }

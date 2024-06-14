@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj": {}
+    "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj": {}
   },
   "projects": {
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj": {
+    "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj",
+        "projectUniqueName": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj",
         "projectName": "ClassLibrary3",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\ClassLibrary3\\obj\\",
+        "projectPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\ClassLibrary3\\ClassLibrary3.csproj",
+        "packagesPath": "C:\\Users\\pc\\.nuget\\packages\\",
+        "outputPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\ClassLibrary3\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -76,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -5,15 +5,15 @@ namespace ClassLibrary3.Entities;
 
 public partial class Feedback
 {
-    public int FeedbackId { get; set; }
+    public string FeedbackId { get; set; } = null!;
 
     public int Rating { get; set; }
 
     public string Content { get; set; } = null!;
 
-    public int? UserId { get; set; }
+    public string? UserId { get; set; }
 
-    public int BranchId { get; set; }
+    public string BranchId { get; set; } = null!;
 
     public virtual CourtBranch Branch { get; set; } = null!;
 

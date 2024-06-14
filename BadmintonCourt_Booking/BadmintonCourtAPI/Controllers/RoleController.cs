@@ -3,6 +3,7 @@ using BadmintonCourtServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using BadmintonCourtAPI.Utils;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -10,15 +11,16 @@ namespace BadmintonCourtAPI.Controllers
     {
         private readonly BadmintonCourtService service = null;
 
-        public RoleController()
+        public RoleController(IConfiguration config)
         {
             if (service == null)
             {
-                service = new BadmintonCourtService();
+                service = new BadmintonCourtService(config);
             }
         }
 
-        [HttpGet]
+
+		[HttpGet]
         [Route("Role/GetAll")]
         //[Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles() =>
@@ -30,19 +32,23 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Role/GetById")]
-		public async Task<ActionResult<Role>> GetRoleById(int id) => service.roleService.GetRoleById(id);
+		public async Task<ActionResult<Role>> GetRoleById(string id) => service.roleService.GetRoleById(id);
 
 		[HttpPost]
 		[Route("Role/AddRole")]
 		public async Task<IActionResult> AddRole(string roleName)
         {
-            service.roleService.AddRole(new Role(roleName));
-            return Ok();
+            if (roleName.IsNullOrEmpty())
+            {
+				service.roleService.AddRole(new Role { RoleId = Util.GenerateRoleId(service), RoleName = roleName });
+				return Ok();
+			}
+            return BadRequest("Name is not full filled yet");
         }
 
 		[HttpDelete]
 		[Route("Role/Delete")]
-		public async Task<IActionResult> DeleteRole(int id)
+		public async Task<IActionResult> DeleteRole(string id)
         {
             service.roleService.DeleteRole(id);
             return Ok();    
@@ -50,7 +56,7 @@ namespace BadmintonCourtAPI.Controllers
 
         [HttpPut]
 		[Route("Role/Update")]
-		public async Task<IActionResult> UpdateRole(string roleName, int id)
+		public async Task<IActionResult> UpdateRole(string roleName, string id)
         {
             Role tmp = service.roleService.GetRoleById(id);       
             if (!roleName.IsNullOrEmpty())

@@ -11,44 +11,55 @@ namespace BadmintonCourtAPI.Controllers
 
         private readonly BadmintonCourtService service = null;
 
-        public BookingController()
+        public BookingController(IConfiguration config)
         {
-            service = new BadmintonCourtService();
+            if (service == null)
+            {
+                service = new BadmintonCourtService(config);
+            }
         }
+
+		string GenerateId()
+		{
+			string number = $"{service.bookingService.GetAllBookings().Count()}";
+			int length = number.Length;
+			while (length < 17)
+			{
+				string tmp = $"0{number}";
+				number = tmp;
+				length++;
+			}
+			return $"BK{number}";
+		}
 
 
         [HttpGet]
         [Route("Booking/GetAll")]
-        //[Authorize(Roles = "Admin,Staff")]
-        public async Task<IEnumerable<Booking>> GetAllBookings() => service.bookingService.GetAllBookings().ToList();
+		//[Authorize(Roles = "Admin,Staff")]
+		public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings() => Ok(service.bookingService.GetAllBookings());
 
         [HttpGet]
         [Route("Booking/GetByPaymentId")]
         //[Authorize]
-        public async Task<ActionResult<Booking>> GetBookingByPaymentId(int id) => service.bookingService.GetBookingByBookingId(id);
+        public async Task<ActionResult<Booking>> GetBookingByPaymentId(string id) => Ok(service.bookingService.GetBookingByBookingId(id));
 
         [HttpGet]
         [Route("Booking/GetByUser")]
         //[Authorize]
-        public async Task<IEnumerable<Booking>> GetBookingsByUserId(int id) => service.bookingService.GetBookingsByUserId(id).ToList();
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByUserId(string id) => Ok(service.bookingService.GetBookingsByUserId(id).ToList());
 
         [HttpGet]
         [Route("Bookinng/GetByType")]
         //[Authorize]
-        public async Task<IEnumerable<Booking>> GetBookingsByType(int id) => service.bookingService.GetBookingsByType(id).ToList();
-
-        [HttpGet]
-        [Route("Booking/GetByStatus")]
-        //[Authorize(Roles = "Admin,Staff")]
-        public async Task<IEnumerable<Booking>> GetBookingsByStatus(string txtStatus) => txtStatus.Equals("1") ? service.bookingService.GetBookingsByStatus(true).ToList() : service.bookingService.GetBookingsByStatus(false).ToList();
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(service.bookingService.GetBookingsByType(id).ToList());
 
         [HttpDelete]
         [Route("Booking/Delete")]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteBooking(int id)
+        public async Task<IActionResult> DeleteBooking(string id)
         {
             service.bookingService.DeleteBooking(id);
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost]
@@ -63,10 +74,16 @@ namespace BadmintonCourtAPI.Controllers
         [HttpPut]
         [Route("Booking/Update")]
         //[Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> UpdateBooking(Booking newBooking, int id)
+        public async Task<IActionResult> UpdateBooking(int? type, float? amount, string id)
         {
-            service.bookingService.UpdatBooking(newBooking, id);
-            return NoContent();
+            Booking booking = service.bookingService.GetBookingByBookingId(id);
+            if (type.HasValue)
+                booking.BookingType = type.Value;
+            if (amount.HasValue)
+                if (amount.Value >= service.courtService.GetCourtByCourtId("C1").Price)
+                    booking.Amount = amount.Value;
+            service.bookingService.UpdatBooking(booking, id);
+            return Ok();
         }
 
     }

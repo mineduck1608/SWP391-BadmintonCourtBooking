@@ -23,22 +23,21 @@ namespace BadmintonCourtDAOs
 
         public List<Payment> GetAllPayments() => _dbContext.Payments.ToList();
 
-        public Payment GetPaymentByPaymentId(int id) => _dbContext.Payments.FirstOrDefault(x => x.PaymentId == id);
-
-        public List<Payment> GetPaymentsByStatus(bool status) => _dbContext.Payments.Where(x => x.Status == status).ToList();
+        public Payment GetPaymentByPaymentId(string id) => _dbContext.Payments.FirstOrDefault(x => x.PaymentId == id);
 
         public List<Payment> GetPaymentsByDate(DateTime date) => _dbContext.Payments.Where(x => x.Date == date).ToList();
         
-        public List<Payment> GetPaymentsByUserId(int id) => _dbContext.Payments.Where(x => x.UserId == id).ToList();
+        public List<Payment> GetPaymentsByUserId(string id) => _dbContext.Payments.Where(x => x.UserId == id).ToList();
 
-        public Payment GetPaymentByBookingId(int id) => _dbContext.Payments.FirstOrDefault(x => x.BookingId == id);
+        public Payment GetPaymentByBookingId(string id) => _dbContext.Payments.FirstOrDefault(x => x.BookingId == id);
 
-        public void UpdatePayment(Payment newPayment, int id)
+        public void UpdatePayment(Payment newPayment, string id)
         {
             Payment tmp = GetPaymentByPaymentId(id);
             if (tmp != null)
             {
-                tmp.Status = newPayment.Status;
+                tmp.Method = newPayment.Method;
+                tmp.TransactionId = newPayment.TransactionId;
                 tmp.Date = newPayment.Date;
                 _dbContext.Payments.Update(tmp);
                 _dbContext.SaveChanges();
@@ -51,9 +50,9 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeletePayment(int pId)
+        public void DeletePayment(string id)
         {
-            _dbContext.Payments.Remove(GetPaymentByPaymentId((pId)));
+            _dbContext.Payments.Remove(GetPaymentByPaymentId(id));
             _dbContext.SaveChanges();
         }
     }

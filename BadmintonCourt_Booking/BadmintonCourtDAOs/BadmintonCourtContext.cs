@@ -23,6 +23,8 @@ public partial class BadmintonCourtContext : DbContext
 
 	public virtual DbSet<CourtBranch> CourtBranches { get; set; }
 
+	public virtual DbSet<Discount> Discounts { get; set; }
+
 	public virtual DbSet<Feedback> Feedbacks { get; set; }
 
 	public virtual DbSet<Payment> Payments { get; set; }
@@ -35,35 +37,48 @@ public partial class BadmintonCourtContext : DbContext
 
 	public virtual DbSet<UserDetail> UserDetails { get; set; }
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("Server=(local);Database= BadmintonCourt;UID=sa;PWD=12345;TrustServerCertificate=True");
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		=> optionsBuilder.UseSqlServer("Server=(local);Database= BadmintonCourt;UID=sa;PWD=12345;TrustServerCertificate=True");
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<Booking>(entity =>
 		{
-			entity.HasKey(e => e.BookingId).HasName("PK__Booking__C6D03BEDC6246862");
+			entity.HasKey(e => e.BookingId).HasName("PK__Booking__C6D03BEDF7FB8DF5");
 
 			entity.ToTable("Booking");
 
-			entity.Property(e => e.BookingId).HasColumnName("bookingID");
-			entity.Property(e => e.BookingStatus).HasColumnName("bookingStatus");
+			entity.Property(e => e.BookingId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("bookingID");
+			entity.Property(e => e.Amount).HasColumnName("amount");
 			entity.Property(e => e.BookingType).HasColumnName("bookingType");
-			entity.Property(e => e.TotalPrice).HasColumnName("totalPrice");
-			entity.Property(e => e.UserId).HasColumnName("userID");
+			entity.Property(e => e.UserId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("userID");
 
 			entity.HasOne(d => d.User).WithMany(p => p.Bookings)
 				.HasForeignKey(d => d.UserId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
 				.HasConstraintName("FKBooking923627");
 		});
 
 		modelBuilder.Entity<Court>(entity =>
 		{
-			entity.HasKey(e => e.CourtId).HasName("PK__Court__4E6E3688C193A99D");
+			entity.HasKey(e => e.CourtId).HasName("PK__Court__4E6E3688A4FF7267");
 
 			entity.ToTable("Court");
 
-			entity.Property(e => e.CourtId).HasColumnName("courtID");
-			entity.Property(e => e.BranchId).HasColumnName("branchID");
+			entity.Property(e => e.CourtId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("courtID");
+			entity.Property(e => e.BranchId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("branchID");
 			entity.Property(e => e.CourtImg)
 				.HasMaxLength(500)
 				.IsUnicode(false)
@@ -83,11 +98,14 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<CourtBranch>(entity =>
 		{
-			entity.HasKey(e => e.BranchId).HasName("PK__CourtBra__751EBD3F897AFE57");
+			entity.HasKey(e => e.BranchId).HasName("PK__CourtBra__751EBD3FAEDC69BA");
 
 			entity.ToTable("CourtBranch");
 
-			entity.Property(e => e.BranchId).HasColumnName("branchID");
+			entity.Property(e => e.BranchId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("branchID");
 			entity.Property(e => e.BranchImg)
 				.HasMaxLength(500)
 				.IsUnicode(false)
@@ -107,20 +125,42 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnName("location");
 		});
 
+		modelBuilder.Entity<Discount>(entity =>
+		{
+			entity.HasKey(e => e.DiscountId).HasName("PK__Discount__D2130A06928F806A");
+
+			entity.ToTable("Discount");
+
+			entity.Property(e => e.DiscountId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("discountID");
+			entity.Property(e => e.Amount).HasColumnName("amount");
+			entity.Property(e => e.Proportion).HasColumnName("proportion");
+		});
+
 		modelBuilder.Entity<Feedback>(entity =>
 		{
-			entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__2613FDC499DD3CD5");
+			entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__2613FDC490CA2798");
 
 			entity.ToTable("Feedback");
 
-			entity.Property(e => e.FeedbackId).HasColumnName("feedbackID");
-			entity.Property(e => e.BranchId).HasColumnName("branchID");
+			entity.Property(e => e.FeedbackId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("feedbackID");
+			entity.Property(e => e.BranchId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("branchID");
 			entity.Property(e => e.Content)
 				.HasMaxLength(500)
-				.IsUnicode(false)
 				.HasColumnName("content");
 			entity.Property(e => e.Rate).HasColumnName("rating");
-			entity.Property(e => e.UserId).HasColumnName("userID");
+			entity.Property(e => e.UserId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("userID");
 
 			entity.HasOne(d => d.Branch).WithMany(p => p.Feedbacks)
 				.HasForeignKey(d => d.BranchId)
@@ -134,17 +174,33 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Payment>(entity =>
 		{
-			entity.HasKey(e => e.PaymentId).HasName("PK__Payment__A0D9EFA656B8A8ED");
+			entity.HasKey(e => e.PaymentId).HasName("PK__Payment__A0D9EFA6F6988FB8");
 
 			entity.ToTable("Payment");
 
-			entity.HasIndex(e => e.BookingId, "UQ__Payment__C6D03BEC635C95B6").IsUnique();
+			entity.HasIndex(e => e.BookingId, "UQ__Payment__C6D03BEC34D16611").IsUnique();
 
-			entity.Property(e => e.PaymentId).HasColumnName("paymentID");
-			entity.Property(e => e.BookingId).HasColumnName("bookingID");
-			entity.Property(e => e.Date).HasColumnName("date");
-			entity.Property(e => e.Status).HasColumnName("status");
-			entity.Property(e => e.UserId).HasColumnName("userID");
+			entity.Property(e => e.PaymentId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("paymentID");
+			entity.Property(e => e.Amount).HasColumnName("amount");
+			entity.Property(e => e.BookingId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("bookingID");
+			entity.Property(e => e.Date)
+				.HasColumnType("datetime")
+				.HasColumnName("date");
+			entity.Property(e => e.Method).HasColumnName("method");
+			entity.Property(e => e.TransactionId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("transactionId");
+			entity.Property(e => e.UserId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("userID");
 
 			entity.HasOne(d => d.Booking).WithOne(p => p.Payment)
 				.HasForeignKey<Payment>(d => d.BookingId)
@@ -159,11 +215,14 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Role>(entity =>
 		{
-			entity.HasKey(e => e.RoleId).HasName("PK__Role__CD98460AC500C9B9");
+			entity.HasKey(e => e.RoleId).HasName("PK__Role__CD98460A9B8A6701");
 
 			entity.ToTable("Role");
 
-			entity.Property(e => e.RoleId).HasColumnName("roleID");
+			entity.Property(e => e.RoleId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("roleID");
 			entity.Property(e => e.RoleName)
 				.HasMaxLength(10)
 				.IsUnicode(false)
@@ -172,15 +231,28 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Slot>(entity =>
 		{
-			entity.HasKey(e => e.SlotId).HasName("PK__Slot__9C4A67F33F665D36");
+			entity.HasKey(e => e.SlotId).HasName("PK__Slot__9C4A67F3EA1DDAFF");
 
 			entity.ToTable("Slot");
 
-			entity.Property(e => e.SlotId).HasColumnName("slotID");
-			entity.Property(e => e.BookingId).HasColumnName("bookingID");
-			entity.Property(e => e.CourtId).HasColumnName("courtID");
-			entity.Property(e => e.EndTime).HasColumnName("endTime");
-			entity.Property(e => e.StartTime).HasColumnName("startTime");
+			entity.Property(e => e.SlotId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("slotID");
+			entity.Property(e => e.BookingId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("bookingID");
+			entity.Property(e => e.CourtId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("courtID");
+			entity.Property(e => e.EndTime)
+				.HasColumnType("datetime")
+				.HasColumnName("endTime");
+			entity.Property(e => e.StartTime)
+				.HasColumnType("datetime")
+				.HasColumnName("startTime");
 			entity.Property(e => e.Status).HasColumnName("status");
 
 			entity.HasOne(d => d.Booking).WithMany(p => p.Slots)
@@ -195,16 +267,21 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<User>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CDF2FA81722");
+			entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CDF80A50B1E");
 
 			entity.ToTable("User");
 
-			entity.HasIndex(e => e.UserName, "UQ__User__66DCF95C97B8BD90").HasDatabaseName("BadmintonCourt");
-
-			entity.Property(e => e.UserId).HasColumnName("userID");
+			entity.Property(e => e.UserId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("userID");
 			entity.Property(e => e.AccessFail).HasColumnName("accessFail");
+			entity.Property(e => e.ActiveStatus).HasColumnName("activeStatus");
 			entity.Property(e => e.Balance).HasColumnName("balance");
-			entity.Property(e => e.BranchId).HasColumnName("branchID");
+			entity.Property(e => e.BranchId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("branchID");
 			entity.Property(e => e.LastFail)
 				.HasColumnType("datetime")
 				.HasColumnName("lastFail");
@@ -212,7 +289,10 @@ public partial class BadmintonCourtContext : DbContext
 				.HasMaxLength(50)
 				.IsUnicode(false)
 				.HasColumnName("password");
-			entity.Property(e => e.RoleId).HasColumnName("roleID");
+			entity.Property(e => e.RoleId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("roleID");
 			entity.Property(e => e.UserName)
 				.HasMaxLength(50)
 				.IsUnicode(false)
@@ -230,17 +310,22 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<UserDetail>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("PK__UserDeta__CB9A1CDFE3A37A8A");
+			entity.HasKey(e => e.UserId).HasName("PK__UserDeta__CB9A1CDF2F803839");
 
 			entity.ToTable("UserDetail");
 
 			entity.Property(e => e.UserId)
-				.ValueGeneratedNever()
+				.HasMaxLength(30)
+				.IsUnicode(false)
 				.HasColumnName("userID");
 			entity.Property(e => e.Email)
 				.HasMaxLength(50)
 				.IsUnicode(false)
 				.HasColumnName("email");
+			entity.Property(e => e.Facebook)
+				.HasMaxLength(50)
+				.IsUnicode(false)
+				.HasColumnName("facebook");
 			entity.Property(e => e.FirstName)
 				.HasMaxLength(50)
 				.IsUnicode(false)
@@ -250,7 +335,7 @@ public partial class BadmintonCourtContext : DbContext
 				.IsUnicode(false)
 				.HasColumnName("lastName");
 			entity.Property(e => e.Phone)
-				.HasMaxLength(50)
+				.HasMaxLength(10)
 				.IsUnicode(false)
 				.HasColumnName("phone");
 

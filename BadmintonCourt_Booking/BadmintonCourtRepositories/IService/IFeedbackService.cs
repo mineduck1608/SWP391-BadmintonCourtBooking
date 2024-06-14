@@ -12,20 +12,20 @@ namespace BadmintonCourtServices.IService
 
         public List<Feedback> GetAllFeedbacks();
 
-        public Feedback GetFeedbackByFeedbackId(int id);
+        public Feedback GetFeedbackByFeedbackId(string id);
 
         public List<Feedback> GetFeedbacksByContent(string content);
 
         public List<Feedback> GetFeedbacksByRate(int rate);
 
-        public List<Feedback> GetA_UserFeedbacks(int id);
+        public List<Feedback> GetA_UserFeedbacks(string id);
 
-        public List<Feedback> GetBranchFeedbacks(int id);
+        public List<Feedback> GetBranchFeedbacks(string id);
 
-        public void UpdateFeedback(Feedback newFeedback, int id);
+        public void UpdateFeedback(Feedback newFeedback, string id);
 
         public void AddFeedback(Feedback feedback);
 
-        public void DeleteFeedback(int id);
+        public void DeleteFeedback(string id);
     }
 }

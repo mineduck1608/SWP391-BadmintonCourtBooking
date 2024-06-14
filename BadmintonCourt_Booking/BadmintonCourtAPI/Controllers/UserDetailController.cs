@@ -9,11 +9,11 @@ namespace BadmintonCourtAPI.Controllers
     {
         private readonly BadmintonCourtService service = null;
 
-        public UserDetailController()
+        public UserDetailController(IConfiguration config)
         {
             if (service == null)
             {
-                service = new BadmintonCourtService();
+                service = new BadmintonCourtService(config);
             }
         }
 
@@ -51,7 +51,7 @@ namespace BadmintonCourtAPI.Controllers
         // Xóa userdetail -> xóa user
         [HttpDelete]
         [Route("UserDetail/Delete")]
-        public async Task<IActionResult> DeleteUserDetail(int id)
+        public async Task<IActionResult> DeleteUserDetail(string id)
         {
             service.userDetailService.DeleteUserDetail(id);
             return RedirectToAction("DeleteUser", "User", id);

@@ -5,13 +5,13 @@ namespace ClassLibrary3.Entities;
 
 public partial class Court
 {
-    public int CourtId { get; set; }
+    public string CourtId { get; set; } = null!;
 
     public string? CourtImg { get; set; }
 
-    public int BranchId { get; set; }
+    public string BranchId { get; set; } = null!;
 
-    public double Price { get; set; }
+    public float Price { get; set; }
 
     public string Description { get; set; } = null!;
 

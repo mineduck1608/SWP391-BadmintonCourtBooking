@@ -24,22 +24,22 @@ namespace BadmintonCourtServices
 
         public void AddSlot(Slot slot) => slotDAO.AddSlot(slot);
 
-        public void DeleteSlot(int id) => slotDAO.DeleteSlot(id);
+        public void DeleteSlot(string id) => slotDAO.DeleteSlot(id);
 
         public List<Slot> GetAllSlots() => slotDAO.GetAllSlots();
 
-        public Slot GetSlotById(int id) => slotDAO.GetSlotById(id);
+        public Slot GetSlotById(string id) => slotDAO.GetSlotById(id);
 
         public List<Slot> GetSLotsByDate(DateTime date) => slotDAO.GetSLotsByDate(date);
 
         public List<Slot> GetSlotsByStatus(bool status) => slotDAO.GetSlotsByStatus(status);
 
-        public List<Slot> GetA_CourtSlotsInDay(DateTime start, DateTime end, int id) => slotDAO.GetA_CourtSlotsInDay(start, end, id);
+        public List<Slot> GetA_CourtSlotsInDay(DateTime start, DateTime end, string id) => slotDAO.GetA_CourtSlotsInDay(start, end, id);
 
-        public List<Slot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, int id) => slotDAO.GetSlotsByFixedBooking(monthNum, start, end, id);
+        public List<Slot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id) => slotDAO.GetSlotsByFixedBooking(monthNum, start, end, id);
 
-        public List<Slot> GetSlotsByCourt(int id) => slotDAO.GetSlotsByCourt(id);
+        public List<Slot> GetSlotsByCourt(string id) => slotDAO.GetSlotsByCourt(id);
 
-        public void UpdateSlot(Slot newSlot, int id) => slotDAO.UpdateSlot(newSlot, id);
+        public void UpdateSlot(Slot newSlot, string id) => slotDAO.UpdateSlot(newSlot, id);
     }
 }
