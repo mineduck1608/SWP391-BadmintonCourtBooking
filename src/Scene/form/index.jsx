@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Select, MenuItem } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as yup from "yup";
 import Head from "../../Components/Head";
-//import './timeslot.css';
+import './timeslot.css';
 
 const validationSchema = yup.object().shape({
   branch: yup.string().required("Branch is required"),
@@ -12,9 +12,9 @@ const validationSchema = yup.object().shape({
 
 const generateTimeSlots = (startHour, endHour) => {
   const timeSlots = [];
-  for (let hour = startHour; hour < endHour; hour++) {
-    const nextHour = hour + 1;
-    timeSlots.push(`${hour}:00 - ${nextHour}:00`);
+  for (let hour = startHour; hour <= endHour; hour++) {
+    const nextHour = hour === 24 ? 1 : hour + 1; // Handle 24h wrapping to 1h
+    timeSlots.push({ time: `${hour}:00 - ${nextHour}:00`, status: "Available" });
   }
   return timeSlots;
 };
@@ -23,9 +23,7 @@ const CourtForm = () => {
   const [branches, setBranches] = useState([]);
   const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [timeSlots, setTimeSlots] = useState(generateTimeSlots(7, 24));
-
-  
+  const [timeSlots, setTimeSlots] = useState(generateTimeSlots(1, 24));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,9 +54,23 @@ const CourtForm = () => {
     console.log(values);
   };
 
+  const handleStatusChange = (index, newStatus) => {
+    setTimeSlots((prevTimeSlots) => {
+      const updatedTimeSlots = [...prevTimeSlots];
+      updatedTimeSlots[index].status = newStatus;
+      return updatedTimeSlots;
+    });
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  // Split timeSlots into four columns
+  const columnSize = Math.ceil(timeSlots.length / 4);
+  const columns = Array.from({ length: 4 }, (_, i) =>
+    timeSlots.slice(i * columnSize, (i + 1) * columnSize)
+  );
 
   return (
     <Box m="20px">
@@ -72,55 +84,59 @@ const CourtForm = () => {
           <Form>
             <div className="slot-form">
               <div>
-              <div className="slot-form-row">
-                <label htmlFor="branch" className="slot-form-label">Court branch:</label>
-                <Field
-                  as="select"
-                  id="branch"
-                  name="branch"
-                  value={values.branch}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className="input-box-modal"
-                >
-                  <option disabled selected hidden value="">
-                    Please select branch
-                  </option>
-                  {branches.map((branch) => (
-                    <option key={branch.branchId} value={branch.branchId}>
-                      {branch.branchName}
+                <div className="slot-form-row">
+                  <label htmlFor="branch" className="slot-form-label">Court branch:</label>
+                  <Field
+                    as="select"
+                    id="branch"
+                    name="branch"
+                    value={values.branch}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className="slot-input-box-modal"
+                  >
+                    <option disabled selected hidden value="">
+                      Please select branch
                     </option>
-                  ))}
-                </Field>
+                    {branches.map((branch) => (
+                      <option key={branch.branchId} value={branch.branchId}>
+                        {branch.branchName}
+                      </option>
+                    ))}
+                  </Field>
+                </div>
+                {errors.branch && touched.branch && <div className="error-branch">{errors.branch}</div>}
               </div>
-              {errors.branch && touched.branch && <div className="error-branch">{errors.branch}</div>}
-              </div>
-             <div>
-              <div className="slot-form-row">
-                <label htmlFor="court" className="slot-form-label-court">Court:</label>
-                <Field
-                  as="select"
-                  id="court"
-                  name="court"
-                  value={values.court}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className="input-box-modal"
-                >
-                  <option disabled selected hidden value="">
-                    Please select court
-                  </option>
-                  {courts.map((court) => (
-                    <option key={court.courtId} value={court.courtId}>
-                      {court.courtName}
+              <div>
+                <div className="slot-form-row">
+                  <label htmlFor="court" className="slot-form-label-court">Court:</label>
+                  <Field
+                    as="select"
+                    id="court"
+                    name="court"
+                    value={values.court}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className="slot-input-box-modal"
+                  >
+                    <option disabled selected hidden value="">
+                      Please select court
                     </option>
-                  ))}
-                </Field>
-              </div>
-              {errors.court && touched.court && <div className="error">{errors.court}</div>}
+                    {courts.map((court) => (
+                      <option key={court.courtId} value={court.courtId}>
+                        {court.courtName}
+                      </option>
+                    ))}
+                  </Field>
+                </div>
+                {errors.court && touched.court && <div className="error">{errors.court}</div>}
               </div>
               <button
-               type="submit" variant="contained" color="primary" className="slot-submit-button">
+                type="submit"
+                variant="contained"
+                color="primary"
+                className="slot-submit-button"
+              >
                 Submit
               </button>
             </div>
@@ -128,9 +144,22 @@ const CourtForm = () => {
         )}
       </Formik>
       <div className="time-slot-container">
-        {timeSlots.map((slot, index) => (
-          <div key={index} className="time-slot">
-            {slot}
+        {columns.map((column, colIndex) => (
+          <div className="column" key={colIndex}>
+            {column.map((slot, index) => (
+              <div key={index} className="time-slot">
+                <span>{slot.time}</span>
+                <Select
+                  value={slot.status}
+                  onChange={(e) => handleStatusChange(colIndex * columnSize + index, e.target.value)}
+                  className="status-select"
+                >
+                  <MenuItem value="Available">Available</MenuItem>
+                  <MenuItem value="Booked">Booked</MenuItem>
+                  <MenuItem value="Closed">Closed</MenuItem>
+                </Select>
+              </div>
+            ))}
           </div>
         ))}
       </div>

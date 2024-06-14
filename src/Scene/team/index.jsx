@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Head from "../../Components/Head";
 import { Modal } from 'antd';
 import './team.css'; // Import the custom CSS
+import { toast } from "react-toastify";
 
 const Team = () => {
   const [rows, setRows] = useState([]);
@@ -69,7 +70,7 @@ const Team = () => {
     })
       .then(response => {
         // Xử lý kết quả trả về từ bảng User
-        console.log(userData);
+        toast.success("Update success.");
       })
       .catch(error => {
         console.error('Error updating user:', error);
@@ -78,7 +79,7 @@ const Team = () => {
     setTimeout(() => {
       setLoading(false);
       setOpen(false);
-    }, 2000);
+    }, 1000);
   };
 
   const handleCancel = () => {
@@ -92,8 +93,6 @@ const Team = () => {
       username: formState.username,
       password: formState.password,
       branch: formState.branch,
-      balance: formState.balance,
-      activeStatus: formState.activeStatus,
       firstName: formState.firstName,
       lastName: formState.lastName,
       email: formState.email,
@@ -102,7 +101,7 @@ const Team = () => {
     };
   
     // Send a POST request to the API endpoint to add the new user
-    fetch('http://localhost:5266/User/Add', {
+    fetch(`http://localhost:5266/User/RegisterAdmin?username=` + newUser.username + "&password=" + newUser.password + "&firstName=" + newUser.firstName + "&lastName=" + newUser.lastName + "&branch=" + newUser.branch + "&role=" + newUser.role + "&email=" + newUser.email + "&phone=" + newUser.phone, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -117,11 +116,10 @@ const Team = () => {
       return response.json();
     })
     .then(data => {
-      console.log('User added successfully:', data);
-      // Optionally, you can update the UI to reflect the new user
+      toast.success(data);
     })
     .catch(error => {
-      console.error('Error adding user:', error);
+      toast.warning('Error adding user:', error);
       // Handle errors, such as displaying an error message to the user
     });
   
@@ -129,7 +127,7 @@ const Team = () => {
     setTimeout(() => {
       setLoading(false);
       setAddOpen(false);
-    }, 2000);
+    }, 1000);
   };
 
   const handleAddCancel = () => {
@@ -251,10 +249,11 @@ const Team = () => {
         return response.json();
       })
       .then(data => {
-        console.log('User deleted successfully:', data);
+        toast.success('User deleted successfully.');
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
+        toast.warning('User deleted unsuccess.')
       });
   };
 
@@ -328,8 +327,8 @@ const Team = () => {
                       </select>
                       <select value={formState.activeStatus} onChange={e => setFormState({ ...formState, activeStatus: e.target.value })} className="input-box-modal" type="text" >
                         <option value="0" hidden>{selectedRow ? selectedRow.activeStatus.toString() : ''}</option>
-                        <option value="1">true</option>
-                        <option value="2">false</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
                       </select>
                     </div>
                   </div>
