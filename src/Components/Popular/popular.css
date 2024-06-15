@@ -183,6 +183,7 @@
   }
   .popular .secContainer .secHeader .textDiv .secTitle {
     font-size: 2.2rem;
+    color: black;
   }
   .popular .secContainer .secHeader .textDiv p {
     font-size: 15px;
