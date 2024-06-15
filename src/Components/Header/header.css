@@ -28,7 +28,7 @@
 .user-pic img{
     border-radius: 50%;
     width: 130px;
-    margin-left: 330px;
+    margin-left: 380px;
     margin-top: -10px;
 }
 .header .text-header a{
@@ -38,7 +38,7 @@
     display: inline;
 } 
 .text-header{
-    margin-left: 200px;
+    margin-left: 250px;
     display: flex;
     margin-top: 10px;
 }
