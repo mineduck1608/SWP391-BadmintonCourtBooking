@@ -29,7 +29,7 @@
     max-width: 1460px;
     position: relative;
     top: 20px;
-    left: 20px;
+    left: 120px;
     z-index: 1;
     margin: 10px auto;
     border: 1px solid #d4af37; /* Gold border */
@@ -38,6 +38,9 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
     background: linear-gradient(145deg, #ffffff, #e6e6e6); /* Light gradient background */
     margin-left: 100px;
+}
+.viewcourtinfo-info-status{
+    display: flex;
 }
 
 .viewcourtinfo-body-pic {
@@ -159,4 +162,69 @@ button {
 
 button:hover {
     background-color: #c89e33; 
+}
+
+.schedule {
+    margin: 20px;
+}
+
+.court {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.court-name {
+    width: 100px;
+    font-weight: bold;
+}
+
+.court-timeline {
+    display: flex;
+    flex-grow: 1;
+    height: 30px;
+}
+
+.court-timeline > div {
+    text-align: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.available {
+    background-color: #00C389;
+}
+
+.booked {
+    background-color: #FF4D4D;
+}
+
+.legend {
+    display: flex;
+    margin-top: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.legend-color.booked {
+    background-color: #FF4D4D;
+}
+
+.legend-color.available {
+    background-color: #00C389;
+}
+
+.legend-text {
+    font-size: 14px;
 }

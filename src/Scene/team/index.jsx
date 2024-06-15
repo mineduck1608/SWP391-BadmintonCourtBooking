@@ -24,7 +24,7 @@ const Team = () => {
     password: '',
     branch: '',
     balance: '',
-    status: '',
+    activeStatus: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -45,12 +45,12 @@ const Team = () => {
       password: row.password || '',
       branch: row.branchName || '',
       balance: row.balance || '',
-      status: row.status !== null ? row.status.toString() : '',
+      activeStatus: row.activeStatus !== null ? row.activeStatus.toString() : '',
       firstName: row.firstName || '',
       lastName: row.lastName || '',
       email: row.email || '',
       phone: row.phone || '',
-      role: row.role || ''
+      role: row.roleId || ''
     });
     setOpen(true);
   };
@@ -59,7 +59,7 @@ const Team = () => {
     const userData = formState;
 
     // Gửi yêu cầu cập nhật cho bảng User
-    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.status + "&balance=" + userData.balance, {
+    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&activeStatus=" + userData.activeStatus + "&balance=" + userData.balance, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -101,7 +101,7 @@ const Team = () => {
     };
   
     // Send a POST request to the API endpoint to add the new user
-    fetch(`http://localhost:5266/User/RegisterAdmin?username=` + newUser.username + "&password=" + newUser.password + "&firstName=" + newUser.firstName + "&lastName=" + newUser.lastName + "&branch=" + newUser.branch + "&role=" + newUser.role + "&email=" + newUser.email + "&phone=" + newUser.phone, {
+    fetch(`http://localhost:5266/User/Add?UserName=` + newUser.username + "&Password=" + newUser.password + "&FirstName=" + newUser.firstName + "&LastName=" + newUser.lastName + "&Branch=" + newUser.branch + "&RoleId=" + newUser.role + "&Email=" + newUser.email + "&Phone=" + newUser.phone, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -253,9 +253,10 @@ const Team = () => {
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
-        toast.warning('User deleted unsuccess.' + error)
+        //toast.warning('User deleted unsuccess.' + error)
       });
   };
+
 
   const columns = [
     { field: "userId", headerName: "UserID", align: "center", headerAlign: "center" },
@@ -265,7 +266,7 @@ const Team = () => {
     { field: "phone", headerName: "Phone", flex: 1, align: "center", headerAlign: "center" },
     { field: "role", headerName: "Role", flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "status", headerName: "Status", flex: 1, align: "center", headerAlign: "center", renderCell: (params) => (
+      field: "activeStatus", headerName: "Active Status", flex: 1, align: "center", headerAlign: "center", renderCell: (params) => (
         <Box color={params.value ? 'lightgreen' : 'red'}>
           {params.value ? 'true' : 'false'}
         </Box>
@@ -325,8 +326,9 @@ const Team = () => {
                           <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                         ))}
                       </select>
-                      <select value={formState.status} onChange={e => setFormState({ ...formState, status: e.target.value })} className="input-box-modal" type="text" >
-                        <option value="0" hidden>{selectedRow ? selectedRow.status.toString() : ''}</option>
+                      
+                      <select value={formState.activeStatus} onChange={e => setFormState({ ...formState, activeStatus: e.target.value })} className="input-box-modal" type="text" >
+                        <option value="0" hidden>{selectedRow ? selectedRow.activeStatus.toString() : ''}</option>
                         <option value="true">true</option>
                         <option value="false">false</option>
                       </select>

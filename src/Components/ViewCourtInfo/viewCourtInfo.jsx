@@ -78,16 +78,54 @@ const ViewCourtInfo = () => {
                                 <p>{mainCourt.description}</p>
                             </div>
                         </div>
-                        <div className="viewcourtinfo-info">
-                            <h2>Court No: {mainCourt.courtId}</h2>
-                            <p>Address: {branch.location}</p>
-                            <p>Time: AAAAA</p>
-                            <p>Branch: {branch.branchName}</p>
-                            <p>Status: FREE</p>
-                            <button onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
+                        <div className="viewcourtinfo-info-status">
+                            <div className="viewcourtinfo-info">
+                                <h2>Court No: {mainCourt.courtId}</h2>
+                                <p>Address: {branch.location}</p>
+                                <p>Time: AAAAA</p>
+                                <p>Branch: {branch.branchName}</p>
+                                <p>Status: FREE</p>
+                                <button onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
+                            </div>
                         </div>
                     </div>
-
+                    <div className="schedule">
+                        <div className="court">
+                            <div className="court-name">Sân số 1</div>
+                            <div className="court-timeline">
+                                <div className="available" style={{ flex: 7 }}>0h - 7h</div>
+                                <div className="booked" style={{ flex: 4.5 }}>11:30h - 12</div>
+                                <div className="available" style={{ flex: 3.5 }}>13:30h - 17h</div>
+                                <div className="booked" style={{ flex: 5 }}>19h - 0h</div>
+                            </div>
+                        </div>
+                        <div className="court">
+                            <div className="court-name">Sân số 2</div>
+                            <div className="court-timeline">
+                                <div className="available" style={{ flex: 7 }}>0h - 7h</div>
+                                <div className="booked" style={{ flex: 10.5 }}>10h - 15:30h</div>
+                                <div className="available" style={{ flex: 6.5 }}>17:30h - 0h</div>
+                            </div>
+                        </div>
+                        <div className="court">
+                            <div className="court-name">Sân số 3</div>
+                            <div className="court-timeline">
+                                <div className="available" style={{ flex: 7 }}>0h - 7h</div>
+                                <div className="booked" style={{ flex: 10.5 }}>10h - 15h</div>
+                                <div className="available" style={{ flex: 8 }}>16h - 0h</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="legend">
+                        <div className="legend-item">
+                            <div className="legend-color booked"></div>
+                            <div className="legend-text">Đã được book</div>
+                        </div>
+                        <div className="legend-item">
+                            <div className="legend-color available"></div>
+                            <div className="legend-text">Sân trống</div>
+                        </div>
+                    </div>
                     <div className="viewcourtinfo-othercourts">
                         <h1>OTHER COURTS</h1>
                         <div className="viewcourtinfo-othercourts-content">
@@ -112,7 +150,6 @@ const ViewCourtInfo = () => {
                     </div>
                 </div>
             </div>
-
             <Footer />
         </div>
     );
