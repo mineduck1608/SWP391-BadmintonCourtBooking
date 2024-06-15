@@ -1,6 +1,25 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; 
+}
+
+.view-info {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.view-info-wrapper {
+  flex: 1;
+  position: relative;
+  width: 100%; 
+}
+
 .view-info-wrapper::before {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -8,10 +27,9 @@
   background-image: url('../../Assets/image1.jpg');
   background-size: cover;
   background-position: center;
-  filter: blur(10px); 
-  z-index: -1; 
-  opacity: 0.6; 
-  align-items: center;
+  filter: blur(10px);
+  z-index: -1;
+  opacity: 0.6;
 }
 
 .profile-container1 {
@@ -21,12 +39,9 @@
   border-radius: 8px;
   background-color: #f9f9f9;
   max-width: 1000px;
-  margin: 20px ;
+  margin: 40px auto; /* Centered horizontally */
   color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 40px;
-  margin-bottom: 40px;
-  margin-left: 450px;
 }
 
 .profile-sidebar {
@@ -36,7 +51,6 @@
   align-items: center;
   text-align: center;
   margin-right: 20px;
-  padding-top: 10%;
 }
 
 .profile-avatar {
@@ -81,7 +95,7 @@
 }
 
 .info-item {
-  flex: 1 1 calc(50% - 20px); 
+  flex: 1 1 calc(50% - 20px);
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
@@ -132,4 +146,3 @@
 .button:hover {
   background-color: #5a32a8;
 }
-
