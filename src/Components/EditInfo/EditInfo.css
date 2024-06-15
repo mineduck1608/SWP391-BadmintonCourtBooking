@@ -52,7 +52,7 @@
   align-items: center;
   text-align: center;
   margin-right: 20px;
-  margin-top: -50px;
+  padding-top: 10%;
 }
 
 .profile-avatar {
@@ -72,13 +72,13 @@
 
 .profile-content {
   flex: 2;
-  margin-top: 50px;
 }
 
 .profile-content h2 {
   margin-bottom: 20px;
   font-size: 24px;
   color: #333;
+  margin: center;
 }
 
 .info-items {
@@ -111,50 +111,35 @@
   box-sizing: border-box;
 }
 
-.button-container {
+.editInfo-button-container {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
   width: 100%;
 }
 
-.button-editinfo {
+.button {
   padding: 10px 20px;
-  width: auto;
   border: none;
   border-radius: 4px;
-  background-color: #28a745;
+  background-color: #6f42c1;
   color: white;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
-.button-editinfo:hover {
-  background-color: #218838;
-}
 
 .button.upload {
   background-color: #28a745;
   margin-bottom: 10px;
-  padding-right: 75px;
+  width: 40%;
 }
 
 .button.upload:hover {
   background-color: #218838;
 }
 
-.uploaded-image-container {
-  max-width: 100%; /* Đảm bảo container không vượt quá chiều rộng tối đa */
-  margin: 0 auto; /* Căn giữa container */
-  padding: 20px; /* Để khoảng cách xung quanh ảnh */
-  border: 1px solid #ccc; /* Đường viền xung quanh container */
-  border-radius: 8px; /* Bo góc container */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng cho container */
+.button:hover {
+  background-color: #5a32a8;
 }
 
-.uploaded-image {
-  display: block; /* Để ảnh hiển thị dưới dạng block để có thể căn giữa */
-  max-width: 100%; /* Đảm bảo ảnh không vượt quá chiều rộng của container */
-  height: auto; /* Để tỷ lệ chiều cao tự động tính theo chiều rộng */
-  border-radius: 8px; /* Bo góc ảnh */
-}
