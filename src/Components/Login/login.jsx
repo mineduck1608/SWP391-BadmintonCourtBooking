@@ -61,9 +61,6 @@ const Login = () => {
         </div>
         <button type="submit">Login</button>
       </form>
-      <div className="remember-forgot">
-        <Link to={'/forget'}>Forgot password?</Link>
-      </div>
       <div className="register-link">
         <p>Don't have an account? <Link to={'/signup'}>Register</Link></p>
       </div>
@@ -73,8 +70,8 @@ const Login = () => {
       <div className="or">
         <span>or</span>
       </div>
-      <div className='login-google'>
-        <SignIn />
+      <div>
+        <SignIn  className='login-google'/>
       </div>
     </div>
   );

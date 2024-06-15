@@ -31,15 +31,15 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
                         <h1>
                             BMTC Badminton Court Chain System
                         </h1>
-                        <h3>Description</h3>
+                        <h2>Description</h2>
                         <p>Welcome to the BMTC badminton court chain system, which brings you top sports experiences and comfortable practice space. With three branches located in convenient locations, we are proud to be the top choice of the badminton-loving community in the area.</p>                        <br />
-                        <h4>Branch 1: </h4>
+                        <h3>Branch 1: </h3>
                         <p>Address: </p>
                         <p>Phone: </p>
-                        <h4>Branch 2: </h4>
+                        <h3>Branch 2: </h3>
                         <p>Address: </p>
                         <p>Phone: </p>
-                        <h4>Branch 3: </h4>
+                        <h3>Branch 3: </h3>
                         <p>Address: </p>
                         <p>Phone: </p>
                         <br />

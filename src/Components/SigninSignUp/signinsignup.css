@@ -6,11 +6,11 @@
 
 .logo .icon {
     color: hsl(26, 93%, 50%);
-    font-size: 50px;
+    font-size: 70px;
     margin-right: 10px;
 }
 .logo h1{
-    font-size: 50px;
+    font-size: 70px;
     color: #fff;
 }
 
@@ -37,7 +37,7 @@
     margin-top: 80px;
     font-family: "Poetsen One", sans-serif;
 }
-.text-element h1, h3, h4, h5, p, a{
+.text-element h1, h2, h3, h4, h5, p, a{
     color: #fff;
 }
 p{

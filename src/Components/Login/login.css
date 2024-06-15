@@ -1,7 +1,8 @@
 
 
 .wrapper {
-    width: 420px;
+    height: 720px;
+    width: 600px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(30px);
@@ -12,14 +13,14 @@
 }
 
 .wrapper h1{
-    font-size: 36px;
+    font-size: 50px;
     text-align: center;
 }
 
 .wrapper .input-login-box{
     position: relative;
     width: 100%;
-    height: 50px;
+    height: 70px;
     margin: 30px 0;
 }
 .input-login-box input{
@@ -29,7 +30,7 @@
     outline: none;
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 20px;
     color: rgb(246, 246, 246);
     margin-bottom: 10px;
 }
@@ -42,14 +43,14 @@
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 25px;
+    font-size: 40px;
 }
 .return .icon{
     position: absolute;
-    right: 183px;
-    top: 91%;
+    right: 250px;
+    top: 90%;
     transform: translateY(-50%);
-    font-size: 50px;
+    font-size: 90px;
 }
 
 
@@ -78,21 +79,22 @@
 }
 .wrapper button{
     width: 100%;
-    height: 45px;
+    height: 60px;
     background: #fff;
     border: none;
     outline: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size:  16px;
+    font-size:  30px;
     color: #333;
     font-weight: 700;
+    margin-top: 20px;
 }
 .wrapper .register-link{
-    font-size: 14.5px;
+    font-size: 20px;
     text-align: center;
-    margin-top: 20px;
-    margin-left: 50px;
+    margin-top: 50px;
+    margin-left: 90px;
 }
 .register-link p a{
     color: #fff;
@@ -120,16 +122,16 @@ body {
 }
 .wrapper .line{
     margin-bottom: 10px;
-    margin-left: 20px;
+    margin-left: 100px;
 }
 .wrapper .or{
     text-align: center;
-    margin-bottom: 10px;
+    font-size: 20px;
 }
 button:hover{
   background-color: hsl(26, 93%, 50%);
   color: #fff;
 }
-.wrapper .login-google{
-    padding-bottom: 40px;
+.login-google{
+    width: 1000px;
 }
