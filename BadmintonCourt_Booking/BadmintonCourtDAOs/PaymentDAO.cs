@@ -1,5 +1,7 @@
 ﻿using BadmintonCourtBusinessDAOs;
 using BadmintonCourtBusinessObjects.Entities;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +30,20 @@ namespace BadmintonCourtDAOs
         public List<Payment> GetPaymentsByDate(DateTime date) => _dbContext.Payments.Where(x => x.Date == date).ToList();
         
         public List<Payment> GetPaymentsByUserId(string id) => _dbContext.Payments.Where(x => x.UserId == id).ToList();
+
+        public List<Payment> GetPaymentsBySearch(string? id, string? search)
+        {
+            if (!id.IsNullOrEmpty()) // user tìm 
+            {
+                if (!search.IsNullOrEmpty())  
+                    return GetPaymentsByUserId(id).Where(x => x.TransactionId == search || x.PaymentId == search).ToList();
+                return GetPaymentsByUserId(id);
+			}
+
+            if (!search.IsNullOrEmpty()) // Admin, staff tìm
+                return GetAllPayments().Where(x => x.TransactionId == search || x.PaymentId == search).ToList();
+            return GetAllPayments();
+		}
 
         public Payment GetPaymentByBookingId(string id) => _dbContext.Payments.FirstOrDefault(x => x.BookingId == id);
 

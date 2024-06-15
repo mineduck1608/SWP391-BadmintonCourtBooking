@@ -12,31 +12,31 @@ namespace BadmintonCourtServices
     public class CourtBranchService : ICourtBranchService
     {
 
-        private readonly CourtBranchDAO courtBranchDAO = null;
+        private readonly CourtBranchDAO _branchDAO = null;
 
         public CourtBranchService()
         {
-            if (courtBranchDAO == null)
-                courtBranchDAO= new CourtBranchDAO();
+            if (_branchDAO == null)
+                _branchDAO= new CourtBranchDAO();
         }
 
-        public void AddBranch(CourtBranch branch) => courtBranchDAO.AddBranch(branch);
+        public void AddBranch(CourtBranch branch) => _branchDAO.AddBranch(branch);
 
-        public void DeleteBranch(string id) => courtBranchDAO.DeleteBranch(id);
+        public void DeleteBranch(string id) => _branchDAO.DeleteBranch(id);
 
-        public List<CourtBranch> GetAllCourtBranches() => courtBranchDAO.GetAllCourtBranches();
+        public List<CourtBranch> GetAllCourtBranches() => _branchDAO.GetAllCourtBranches();
 
-        public CourtBranch GetBranchById(string id) => courtBranchDAO.GetBranchById(id);
+        public CourtBranch GetBranchById(string id) => _branchDAO.GetBranchById(id);
 
-        public List<CourtBranch> GetBranchesByLocation(string location) => courtBranchDAO.GetBranchesByLocation(location);
+        public List<CourtBranch> GetBranchesByLocation(string location) => _branchDAO.GetBranchesByLocation(location);
 
-        public List<CourtBranch> GetBranchesByName(string name) => courtBranchDAO.GetBranchesByName(name);
+        public List<CourtBranch> GetBranchesByName(string name) => _branchDAO.GetBranchesByName(name);
 
-        public List<CourtBranch> GetBranchesByPhone(string phone) => courtBranchDAO.GetBranchesByPhone(phone);
+        public List<CourtBranch> GetBranchesByPhone(string phone) => _branchDAO.GetBranchesByPhone(phone);
 
-        public List<CourtBranch> GetBranchesBySearchResult(string search) => courtBranchDAO.GetBranchesBySearchResult(search);
+        public List<CourtBranch> GetBranchesBySearchResult(string search) => _branchDAO.GetBranchesBySearchResult(search);
 
-        public void UpdateBranch(CourtBranch newBranch, string id) =>  courtBranchDAO.UpdateBranch(newBranch, id);
+        public void UpdateBranch(CourtBranch newBranch, string id) =>  _branchDAO.UpdateBranch(newBranch, id);
 
     }
 }

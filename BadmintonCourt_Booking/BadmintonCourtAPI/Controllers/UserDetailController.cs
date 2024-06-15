@@ -7,35 +7,35 @@ namespace BadmintonCourtAPI.Controllers
 {
     public class UserDetailController : Controller
     {
-        private readonly BadmintonCourtService service = null;
+        private readonly BadmintonCourtService _service = null;
 
         public UserDetailController(IConfiguration config)
         {
-            if (service == null)
+            if (_service == null)
             {
-                service = new BadmintonCourtService(config);
+                _service = new BadmintonCourtService(config);
             }
         }
 
         [HttpGet]
         [Route("UserDetail/GetAll")]
-        public async Task<IEnumerable<UserDetail>> GetAllUserDetails() => service.userDetailService.GetAllUserDetails();
+        public async Task<IEnumerable<UserDetail>> GetAllUserDetails() => _service.UserDetailService.GetAllUserDetails();
 
         [HttpGet]
         [Route("UserDetail/GetByName")]
         public async Task<IEnumerable<UserDetail>> GetUserDetailsByName(string name) =>
-			service.userDetailService.GetUserDetailsByName(name);
+			_service.UserDetailService.GetUserDetailsByName(name);
 
         [HttpGet]
         [Route("UserDetail/GetBySearch")]
-        public async Task<IEnumerable<UserDetail>> GetUserDetailsBySearch(string search) => search.IsNullOrEmpty() == true ? service.userDetailService.GetAllUserDetails().ToList() : service.userDetailService.GetUserDetailsBySearchResult(search).ToList();
+        public async Task<IEnumerable<UserDetail>> GetUserDetailsBySearch(string search) => search.IsNullOrEmpty() == true ? _service.UserDetailService.GetAllUserDetails().ToList() : _service.UserDetailService.GetUserDetailsBySearchResult(search).ToList();
 
        
         [HttpPost]
         [Route("UserDetail/Register")]
         public async Task<IActionResult> AddUserDetail(UserDetail userDetail)
         {
-			service.userDetailService.AddUserDetail(userDetail);
+			_service.UserDetailService.AddUserDetail(userDetail);
             return Ok();
         }
 
@@ -43,7 +43,7 @@ namespace BadmintonCourtAPI.Controllers
         [Route("UserDetail/Update")]
         public async Task<IActionResult> UpdateUserDetail(UserDetail userDetail)
         {
-			service.userDetailService.UpdateUserDetail(userDetail, userDetail.UserId);
+			_service.UserDetailService.UpdateUserDetail(userDetail, userDetail.UserId);
             return Ok();
         }
 
@@ -53,7 +53,7 @@ namespace BadmintonCourtAPI.Controllers
         [Route("UserDetail/Delete")]
         public async Task<IActionResult> DeleteUserDetail(string id)
         {
-            service.userDetailService.DeleteUserDetail(id);
+            _service.UserDetailService.DeleteUserDetail(id);
             return RedirectToAction("DeleteUser", "User", id);
         }
 

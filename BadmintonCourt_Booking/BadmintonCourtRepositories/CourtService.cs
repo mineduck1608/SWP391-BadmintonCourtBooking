@@ -11,32 +11,32 @@ namespace BadmintonCourtServices
 {
     public class CourtService : ICourtService
     {
-        private readonly CourtDAO courtDAO = null;
+        private readonly CourtDAO _courtDAO = null;
         
         public CourtService()
         {
-            if (courtDAO == null)
+            if (_courtDAO == null)
             {
-                courtDAO = new CourtDAO();
+                _courtDAO = new CourtDAO();
             }
         }
-        public List<Court> GetAllCourts() => courtDAO.GetAllCourts();
+        public List<Court> GetAllCourts() => _courtDAO.GetAllCourts();
 
-        public Court GetCourtByCourtId(string id) => courtDAO.GetCourtByCourtId(id);
+        public Court GetCourtByCourtId(string id) => _courtDAO.GetCourtByCourtId(id);
 
-        public Court GetRecentAddedCourt() => courtDAO.GetRecentAddedCourt();
+        public Court GetRecentAddedCourt() => _courtDAO.GetRecentAddedCourt();
 
-        public List<Court> GetCourtsByBranchId(string id) => courtDAO.GetCourtsByBranchId(id);
+        public List<Court> GetCourtsByBranchId(string id) => _courtDAO.GetCourtsByBranchId(id);
 
-        public List<Court> GetCourtsByPriceInterval(float min, float max) => courtDAO.GetCourtsByPriceInterval(min, max);
+        public List<Court> GetCourtsByPriceInterval(float min, float max) => _courtDAO.GetCourtsByPriceInterval(min, max);
 
-        public List<Court> GetCourtsBySearchResult(string search) => courtDAO.GetCourtsBySearchResult(search);
+        public List<Court> GetCourtsBySearchResult(string search) => _courtDAO.GetCourtsBySearchResult(search);
 
-        public void UpdateCourt(Court newCourt, string id) => courtDAO.UpdateCourt(newCourt, id);
+        public void UpdateCourt(Court newCourt, string id) => _courtDAO.UpdateCourt(newCourt, id);
 
-        public void DeleteCourt(string id) => courtDAO.DeleteCourt(id);
+        public void DeleteCourt(string id) => _courtDAO.DeleteCourt(id);
 
-        public void AddCourt(Court court) => courtDAO.AddCourt(court);
+        public void AddCourt(Court court) => _courtDAO.AddCourt(court);
 
     }
 }

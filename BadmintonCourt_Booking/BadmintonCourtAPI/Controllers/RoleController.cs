@@ -9,13 +9,13 @@ namespace BadmintonCourtAPI.Controllers
 {
     public class RoleController : Controller
     {
-        private readonly BadmintonCourtService service = null;
+        private readonly BadmintonCourtService _service = null;
 
         public RoleController(IConfiguration config)
         {
-            if (service == null)
+            if (_service == null)
             {
-                service = new BadmintonCourtService(config);
+                _service = new BadmintonCourtService(config);
             }
         }
 
@@ -24,15 +24,15 @@ namespace BadmintonCourtAPI.Controllers
         [Route("Role/GetAll")]
         //[Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles() =>
-            Ok(service.roleService.GetAllRoles());
+            Ok(_service.RoleService.GetAllRoles());
 
         [HttpGet]
         [Route("Role/GetByName")]
-        public async Task<IEnumerable<Role>> GetRolesByName(string name) => service.roleService.GetRolesByName(name).ToList();
+        public async Task<IEnumerable<Role>> GetRolesByName(string name) => _service.RoleService.GetRolesByName(name).ToList();
 
 		[HttpGet]
 		[Route("Role/GetById")]
-		public async Task<ActionResult<Role>> GetRoleById(string id) => service.roleService.GetRoleById(id);
+		public async Task<ActionResult<Role>> GetRoleById(string id) => _service.RoleService.GetRoleById(id);
 
 		[HttpPost]
 		[Route("Role/AddRole")]
@@ -40,7 +40,7 @@ namespace BadmintonCourtAPI.Controllers
         {
             if (roleName.IsNullOrEmpty())
             {
-				service.roleService.AddRole(new Role { RoleId = Util.GenerateRoleId(service), RoleName = roleName });
+				_service.RoleService.AddRole(new Role { RoleId = "R" + (_service.RoleService.GetAllRoles().Count + 1).ToString("D3"), RoleName = roleName });
 				return Ok();
 			}
             return BadRequest("Name is not full filled yet");
@@ -50,7 +50,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Role/Delete")]
 		public async Task<IActionResult> DeleteRole(string id)
         {
-            service.roleService.DeleteRole(id);
+            _service.RoleService.DeleteRole(id);
             return Ok();    
         }
 
@@ -58,10 +58,10 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Role/Update")]
 		public async Task<IActionResult> UpdateRole(string roleName, string id)
         {
-            Role tmp = service.roleService.GetRoleById(id);       
+            Role tmp = _service.RoleService.GetRoleById(id);       
             if (!roleName.IsNullOrEmpty())
                 tmp.RoleName = roleName;
-            service.roleService.UpdateRole(tmp, id);
+            _service.RoleService.UpdateRole(tmp, id);
             return Ok();
         }
 

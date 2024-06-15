@@ -16,7 +16,10 @@ namespace BadmintonCourtServices.IService
 
         public List<Payment> GetPaymentsByDate(DateTime date);
 
-        public List<Payment> GetPaymentsByUserId(string id);
+        public List<Payment> GetPaymentsBySearch(string? id, string? search);
+
+
+		public List<Payment> GetPaymentsByUserId(string id);
 
         public Payment GetPaymentByBookingId(string id);
 

@@ -12,31 +12,31 @@ namespace BadmintonCourtServices
 {
     public class BookingService : IBookingService
     {
-        private readonly BookingDAO bookingDAO = null;
+        private readonly BookingDAO _bookingDAO = null;
 
         public BookingService() 
         {
-            if (bookingDAO == null)
+            if (_bookingDAO == null)
             {
-                bookingDAO = new BookingDAO();
+                _bookingDAO = new BookingDAO();
             }
         }
 
-        public List<Booking> GetAllBookings() => bookingDAO.GetAllBookings();
+        public List<Booking> GetAllBookings() => _bookingDAO.GetAllBookings();
 
-        public Booking GetBookingByBookingId(string id) => bookingDAO.GetBookingByBookingId(id);
+        public Booking GetBookingByBookingId(string id) => _bookingDAO.GetBookingByBookingId(id);
         
-        public Booking GetRecentAddedBooking() => bookingDAO.GetRecentAddedBooking();
+        public Booking GetRecentAddedBooking() => _bookingDAO.GetRecentAddedBooking();
 
-        public List<Booking> GetBookingsByUserId(string id) => bookingDAO.GetBookingsByUserId(id);
+        public List<Booking> GetBookingsByUserId(string id) => _bookingDAO.GetBookingsByUserId(id);
 
-        public List<Booking> GetBookingsByType(int id) => bookingDAO.GetBookingsByType(id);
+        public List<Booking> GetBookingsByType(int id) => _bookingDAO.GetBookingsByType(id);
 
-        public void UpdatBooking(Booking newBooking, string id) => bookingDAO.UpdateBooking(newBooking, id);
+        public void UpdatBooking(Booking newBooking, string id) => _bookingDAO.UpdateBooking(newBooking, id);
 
-        public void AddBooking(Booking booking) => bookingDAO.AddBooking(booking);
+        public void AddBooking(Booking booking) => _bookingDAO.AddBooking(booking);
 
-        public void DeleteBooking(string id) => bookingDAO.DeleteBooking(id);
+        public void DeleteBooking(string id) => _bookingDAO.DeleteBooking(id);
  
     }
 }

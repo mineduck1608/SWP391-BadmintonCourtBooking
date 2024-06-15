@@ -20,8 +20,52 @@ namespace BadmintonCourtAPI.Controllers
 			_service = service;
 		}
 
+		[HttpGet]
+		//[Authorize(Roles = "Admin,Staff")]
+		[Route("Payment/GetAll")]
+		public async Task<ActionResult<IEnumerable<Payment>>> GetAllPayments() => Ok(_service.PaymentService.GetAllPayments());
+
+		[HttpGet]
+		[Route("Payment/GetByOrder")]
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<Payment>>> GetAllPaymentsByOrder(int order, DateOnly start, DateOnly end)
+		{
+			if (start > end)
+				return BadRequest(new { msg = "Invalid time interval" });
+
+			if (order == 1) // Sort tăng dần theo ngày
+				return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
+
+			return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+		}
+
+
+		[HttpGet]
+		[Route("Payment/GetByUser")]
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<Payment>>> GetUserPayments(string id) => Ok(_service.PaymentService.GetPaymentsByUserId(id));
+
+		[HttpGet]
+		[Route("Payment/GetByUserOrder")]
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<Payment>>> GetUserPaymentsByOrder(int order, DateOnly start, DateOnly end, string id)
+		{
+			if (start > end)
+				return BadRequest(new { msg = "Invalid time interval" });
+
+			if (order == 1) // Sort tăng dần theo ngày
+				return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date <= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
+
+			return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date <= new DateTime(start.Year,  start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+		}
+
+		[HttpGet]
+		[Route("Payment/GetBySearch")]
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsBySearch(string? id, string? search) => Ok(_service.PaymentService.GetPaymentsBySearch(id, search));
+
 		[HttpPost]
-		[Authorize]
+		//[Authorize]
 		[Route("Booking/TransactionProcess")]
 		public async Task<ActionResult> Payment(TransactionDTO model)
 		{
@@ -32,8 +76,8 @@ namespace BadmintonCourtAPI.Controllers
 			// type: loại đặt: linh động, cố định, 1 lần chơi
 			// start - end: khoảng thời gian chơi. VD: 3h - 5h ngày x/x/xxxx
 			// numMonth: số tháng chơi (giành cho đặt cố định)
-			UserDetail info = _service.userDetailService.GetUserDetailById(model.UserId);
-			Court court = _service.courtService.GetCourtByCourtId(model.CourtId);
+			UserDetail info = _service.UserDetailService.GetUserDetailById(model.UserId);
+			Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
 			string content = "";  // Nội dung giao dịch đc add tự động vào app bank lúc giao dịch
 								  //------------------------------------------------------------
 
@@ -47,7 +91,7 @@ namespace BadmintonCourtAPI.Controllers
 
 				else if (model.Type == "linh hoạt") // Linh hoạt
 				{
-					double price = _service.courtService.GetCourtByCourtId("C001").Price;
+					double price = _service.CourtService.GetCourtByCourtId("C001").Price;
 					content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Hours: {model.Hours}";
 					_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = int.Parse(model.Hours) * price, Content = content, Date = DateTime.Now, OrderId = "VNP" + new Random().Next(1000, 100000), UserId = int.Parse(model.UserId) });
 				}
@@ -67,11 +111,10 @@ namespace BadmintonCourtAPI.Controllers
 
 
 		[HttpPost]
-		[Authorize]
+		//[Authorize]
 		[Route("Payment/Result")]
-		public async Task<ActionResult> PaymentCallBack()
+		public async Task<ActionResult> VnPayPaymentCallBack()
 		{
-			// Demo VnPay
 			VnPayResponseDTO result = _service.VnPayService.PaymentExecute(Request.Query);
 			if (result == null || result.VnPayResponseCode != "00" && result.Status == false)
 				return BadRequest(new { VnPayResponseCode = $"{result.VnPayResponseCode}" });
@@ -87,26 +130,25 @@ namespace BadmintonCourtAPI.Controllers
 
 			if (dayList.Count == 0) // Linh hoạt
 			{
-				_service.paymentService.AddPayment(new Payment { PaymentId = Util.GeneratPaymentId(_service), BookingId = null, Date = result.Date, Method = "Flexible", UserId = userId, TransactionId = result.TransactionId, Amount = amount });
-				User user = _service.userService.GetUserById(userId);
-				user.Balance += result.Amount / _service.courtService.GetCourtByCourtId("S1").Price;
-				_service.userService.UpdateUser(user, userId);
+				_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), Date = result.Date, Method = "VnPay", UserId = userId, TransactionId = result.TransactionId, Amount = amount });
+				User user = _service.UserService.GetUserById(userId);
+				user.Balance += result.Amount / _service.CourtService.GetCourtByCourtId("S1").Price;
+				_service.UserService.UpdateUser(user, userId);
 			}
 
 			else if (dayList.Count == 1) // 1 lan choi
 			{
-				_service.bookingService.AddBooking(new Booking { BookingId = Util.GenerateBookingId(_service), BookingType = 1, Amount = amount, UserId = userId });
-				_service.paymentService.AddPayment(new Payment { PaymentId = Util.GeneratPaymentId(_service), BookingId = _service.bookingService.GetRecentAddedBooking().BookingId, Date = result.Date, Method = "1 lan choi", UserId = userId, TransactionId = result.TransactionId });
-				_service.slotService.AddSlot(new Slot { SlotId = Util.GenerateSlotId(_service), BookingId = _service.bookingService.GetRecentAddedBooking().BookingId, CourtId = courtId, Status = false, StartTime = new DateTime(dayList[0].Year, dayList[0].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[0]), 0, 0), EndTime = new DateTime(dayList[0].Year, dayList[0].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[1]), 0, 0) });
+				_service.BookingService.AddBooking(new Booking { BookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7"), BookingType = 1, Amount = amount, UserId = userId });
+				_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), BookingId = _service.BookingService.GetRecentAddedBooking().BookingId, Date = result.Date, Method = "1 lan choi", UserId = userId, TransactionId = result.TransactionId });
+				_service.SlotService.AddSlot(new Slot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = _service.BookingService.GetRecentAddedBooking().BookingId, CourtId = courtId, Status = false, StartTime = new DateTime(dayList[0].Year, dayList[0].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[0]), 0, 0), EndTime = new DateTime(dayList[0].Year, dayList[0].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[1]), 0, 0) });
 			}
 			else // Co dinh - 1 thang, 2 thang, 3 thang, ...
 			{
-				_service.bookingService.AddBooking(new Booking { BookingId = Util.GenerateBookingId(_service), BookingType = 2, Amount = amount, UserId = userId });
-				_service.paymentService.AddPayment(new Payment { PaymentId = Util.GeneratPaymentId(_service), BookingId = _service.bookingService.GetRecentAddedBooking().BookingId, Date = result.Date, Method = "Fixed", UserId = userId, TransactionId = result.TransactionId });
+				_service.BookingService.AddBooking(new Booking { BookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7"), BookingType = 2, Amount = amount, UserId = userId });
+				_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), BookingId = _service.BookingService.GetRecentAddedBooking().BookingId, Date = result.Date, Method = "VnPay", UserId = userId, TransactionId = result.TransactionId });
 				for (int i = 0; i < dayList.Count; i++)
-					_service.slotService.AddSlot(new Slot { SlotId = Util.GenerateSlotId(_service), BookingId = _service.bookingService.GetRecentAddedBooking().BookingId, CourtId = courtId, Status = false, StartTime = new DateTime(dayList[i].Year, dayList[i].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[0]), 0, 0), EndTime = new DateTime(dayList[0].Year, dayList[0].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[1]), 0, 0) });
+					_service.SlotService.AddSlot(new Slot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = _service.BookingService.GetRecentAddedBooking().BookingId, CourtId = courtId, Status = false, StartTime = new DateTime(dayList[i].Year, dayList[i].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[0]), 0, 0), EndTime = new DateTime(dayList[0].Year, dayList[0].Month, dayList[0].Day, int.Parse(result.Interval.Split('-')[1]), 0, 0) });
 			}
-			// Demo Momo: on going
 			return Ok();
 		}
 	}

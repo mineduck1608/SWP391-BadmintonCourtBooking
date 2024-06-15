@@ -12,23 +12,23 @@ namespace BadmintonCourtServices
     public class BadmintonCourtService
     {
 
-        public readonly BookingService bookingService = null;
+        public readonly BookingService BookingService = null;
 
-        public readonly CourtService courtService = null;
+        public readonly CourtService CourtService = null;
 
-        public readonly CourtBranchService courtBranchService = null;
+        public readonly CourtBranchService BranchService = null;
 
-        public readonly FeedbackService feedbackService = null;
+        public readonly FeedbackService FeedbackService = null;
 
-        public readonly PaymentService paymentService = null;
+        public readonly PaymentService PaymentService = null;
 
-        public readonly RoleService roleService = null;
+        public readonly RoleService RoleService = null;
 
-        public readonly SlotService slotService = null;
+        public readonly SlotService SlotService = null;
 
-        public readonly UserService userService = null;
+        public readonly UserService UserService = null;
 
-        public readonly UserDetailService userDetailService = null;
+        public readonly UserDetailService UserDetailService = null;
 
         public readonly VnPayService VnPayService = null;
 
@@ -36,41 +36,41 @@ namespace BadmintonCourtServices
 
         public BadmintonCourtService(IConfiguration config)
         {
-            if (bookingService == null)
+            if (BookingService == null)
             {
-                bookingService = new BookingService();
+                BookingService = new BookingService();
             }
-            if (courtService == null)
+            if (CourtService == null)
             {
-                courtService = new CourtService();
+                CourtService = new CourtService();
             }
-            if (courtBranchService == null)
+            if (BranchService == null)
             {
-                courtBranchService= new CourtBranchService();
+                BranchService= new CourtBranchService();
             }
-            if (feedbackService == null)
+            if (FeedbackService == null)
             {
-                feedbackService = new FeedbackService();
+                FeedbackService = new FeedbackService();
             }
-            if (paymentService == null)
+            if (PaymentService == null)
             {
-                paymentService = new PaymentService();
+                PaymentService = new PaymentService();
             }
-            if (roleService == null)
+            if (RoleService == null)
             {
-                roleService = new RoleService();
+                RoleService = new RoleService();
             }
-            if (slotService == null)
+            if (SlotService == null)
             {
-                slotService = new SlotService();
+                SlotService = new SlotService();
             }
-            if (userService == null)
+            if (UserService == null)
             {
-                userService = new UserService();
+                UserService = new UserService();
             }
-            if (userDetailService == null)
+            if (UserDetailService == null)
             {
-                userDetailService = new UserDetailService();
+                UserDetailService = new UserDetailService();
             }
             if (VnPayService == null)
                 VnPayService = new VnPayService(config);

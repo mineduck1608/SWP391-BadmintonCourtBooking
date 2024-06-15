@@ -9,19 +9,19 @@ namespace BadmintonCourtAPI.Controllers
     public class BookingController : Controller
     {
 
-        private readonly BadmintonCourtService service = null;
+        private readonly BadmintonCourtService _service = null;
 
         public BookingController(IConfiguration config)
         {
-            if (service == null)
+            if (_service == null)
             {
-                service = new BadmintonCourtService(config);
+                _service = new BadmintonCourtService(config);
             }
         }
 
 		string GenerateId()
 		{
-			string number = $"{service.bookingService.GetAllBookings().Count()}";
+			string number = $"{_service.BookingService.GetAllBookings().Count()}";
 			int length = number.Length;
 			while (length < 17)
 			{
@@ -36,29 +36,29 @@ namespace BadmintonCourtAPI.Controllers
         [HttpGet]
         [Route("Booking/GetAll")]
 		//[Authorize(Roles = "Admin,Staff")]
-		public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings() => Ok(service.bookingService.GetAllBookings());
+		public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings() => Ok(_service.BookingService.GetAllBookings());
 
         [HttpGet]
         [Route("Booking/GetByPaymentId")]
         //[Authorize]
-        public async Task<ActionResult<Booking>> GetBookingByPaymentId(string id) => Ok(service.bookingService.GetBookingByBookingId(id));
+        public async Task<ActionResult<Booking>> GetBookingByPaymentId(string id) => Ok(_service.BookingService.GetBookingByBookingId(id));
 
         [HttpGet]
         [Route("Booking/GetByUser")]
         //[Authorize]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByUserId(string id) => Ok(service.bookingService.GetBookingsByUserId(id).ToList());
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByUserId(string id) => Ok(_service.BookingService.GetBookingsByUserId(id).ToList());
 
         [HttpGet]
         [Route("Bookinng/GetByType")]
         //[Authorize]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(service.bookingService.GetBookingsByType(id).ToList());
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(_service.BookingService.GetBookingsByType(id).ToList());
 
         [HttpDelete]
         [Route("Booking/Delete")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBooking(string id)
         {
-            service.bookingService.DeleteBooking(id);
+            _service.BookingService.DeleteBooking(id);
             return Ok();
         }
 
@@ -67,7 +67,7 @@ namespace BadmintonCourtAPI.Controllers
         //[Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> AddBooking(Booking booking)
         {
-            service.bookingService.AddBooking(booking);
+            _service.BookingService.AddBooking(booking);
             return NoContent();
         }
 
@@ -76,13 +76,13 @@ namespace BadmintonCourtAPI.Controllers
         //[Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> UpdateBooking(int? type, float? amount, string id)
         {
-            Booking booking = service.bookingService.GetBookingByBookingId(id);
+            Booking booking = _service.BookingService.GetBookingByBookingId(id);
             if (type.HasValue)
                 booking.BookingType = type.Value;
             if (amount.HasValue)
-                if (amount.Value >= service.courtService.GetCourtByCourtId("C1").Price)
+                if (amount.Value >= _service.CourtService.GetCourtByCourtId("C1").Price)
                     booking.Amount = amount.Value;
-            service.bookingService.UpdatBooking(booking, id);
+            _service.BookingService.UpdatBooking(booking, id);
             return Ok();
         }
 

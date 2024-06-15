@@ -15,36 +15,36 @@ namespace BadmintonCourtAPI.Controllers
 {
 	public class FeedbackController : Controller
 	{
-		private readonly BadmintonCourtService service = null;
+		private readonly BadmintonCourtService _service = null;
 
 		public FeedbackController(IConfiguration config)
 		{
-			if (service == null)
+			if (_service == null)
 			{
-				service = new BadmintonCourtService(config);
+				_service = new BadmintonCourtService(config);
 			}
 		}
 	
 		[HttpGet]
 		[Route("Feedback/GetAll")]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks() => Ok(service.feedbackService.GetAllFeedbacks());
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks() => Ok(_service.FeedbackService.GetAllFeedbacks());
 
 		[HttpGet]
 		[Route("Feedback/GetByBranch")]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByBranch(string id) => Ok(service.feedbackService.GetBranchFeedbacks(id));
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByBranch(string id) => Ok(_service.FeedbackService.GetBranchFeedbacks(id));
 
 		[HttpGet]
 		[Route("Feedback/GetBySearch")]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksBySearch(string search) => Ok(service.feedbackService.GetFeedbacksByContent(search));
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksBySearch(string search) => Ok(_service.FeedbackService.GetFeedbacksByContent(search));
 
 		[HttpGet]
 		[Route("Feedback/GetByUser")]
 		//[Authorize]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUser(string id) => Ok(service.feedbackService.GetA_UserFeedbacks(id));
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUser(string id) => Ok(_service.FeedbackService.GetA_UserFeedbacks(id));
 
 		[HttpGet]
 		[Route("Feedback/GetByRate")]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByRate(int rate) => Ok(service.feedbackService.GetFeedbacksByRate(rate));
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByRate(int rate) => Ok(_service.FeedbackService.GetFeedbacksByRate(rate));
 
 		[HttpPost]
 		[Route("Feedback/Post")]
@@ -53,7 +53,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (content.IsNullOrEmpty())
 				return BadRequest("Full fill your comment");
-			service.feedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (service.feedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rate = rate });
+			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rate = rate });
 			return Ok();
 		}
 
@@ -62,11 +62,11 @@ namespace BadmintonCourtAPI.Controllers
 		//[Authorize]
 		public async Task<IActionResult> UpdateFeedback(int rate, string content, string id)
 		{
-			Feedback feedback = service.feedbackService.GetFeedbackByFeedbackId(id);
+			Feedback feedback = _service.FeedbackService.GetFeedbackByFeedbackId(id);
 			feedback.Rate = int.Parse(rate.ToString());
 			if (!content.IsNullOrEmpty())
 				feedback.Content = content;
-			service.feedbackService.UpdateFeedback(feedback, id);
+			_service.FeedbackService.UpdateFeedback(feedback, id);
 			return Ok();
 		}
 
@@ -75,7 +75,7 @@ namespace BadmintonCourtAPI.Controllers
 		//[Authorize]
 		public async Task<IActionResult> DeleteFeedback(string id)
 		{
-			service.feedbackService.DeleteFeedback(id);
+			_service.FeedbackService.DeleteFeedback(id);
 			return Ok();
 		}
 

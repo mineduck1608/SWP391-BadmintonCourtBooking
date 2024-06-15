@@ -12,31 +12,31 @@ namespace BadmintonCourtServices
     public class UserDetailService : IUserDetailService
     {
 
-        private readonly UserDetailDAO userDetailDAO = null;
+        private readonly UserDetailDAO _userDetailDAO = null;
 
         public UserDetailService()
         {
-            if (userDetailDAO == null)
+            if (_userDetailDAO == null)
             {
-                userDetailDAO = new UserDetailDAO();
+                _userDetailDAO = new UserDetailDAO();
             }
         }
 
-        public void AddUserDetail(UserDetail userDetail) => userDetailDAO.AddUserDetail(userDetail);
+        public void AddUserDetail(UserDetail userDetail) => _userDetailDAO.AddUserDetail(userDetail);
 
-        public void DeleteUserDetail(string id) => userDetailDAO.DeleteUserDetail(id); 
+        public void DeleteUserDetail(string id) => _userDetailDAO.DeleteUserDetail(id); 
 
-        public List<UserDetail> GetAllUserDetails() =>  userDetailDAO.GetAllUserDetails();
+        public List<UserDetail> GetAllUserDetails() =>  _userDetailDAO.GetAllUserDetails();
 
-        public UserDetail GetUserDetailById(string id) => userDetailDAO.GetUserDetailById(id);
+        public UserDetail GetUserDetailById(string id) => _userDetailDAO.GetUserDetailById(id);
 
-        public UserDetail GetUserDetailByMail(string mail) => userDetailDAO.GetUserDetailByMail(mail);
+        public UserDetail GetUserDetailByMail(string mail) => _userDetailDAO.GetUserDetailByMail(mail);
 
-        public List<UserDetail> GetUserDetailsByName(string name) => userDetailDAO.GetUserDetailsByName(name);
+        public List<UserDetail> GetUserDetailsByName(string name) => _userDetailDAO.GetUserDetailsByName(name);
 
-        public List<UserDetail> GetUserDetailsBySearchResult(string search) => userDetailDAO.GetUserDetailsBySearchResult(search);
+        public List<UserDetail> GetUserDetailsBySearchResult(string search) => _userDetailDAO.GetUserDetailsBySearchResult(search);
 
-        public void UpdateUserDetail(UserDetail newUserDetail, string id) => userDetailDAO.UpdateUserDetail(newUserDetail, id);
+        public void UpdateUserDetail(UserDetail newUserDetail, string id) => _userDetailDAO.UpdateUserDetail(newUserDetail, id);
 
     }
 }
