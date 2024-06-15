@@ -10,7 +10,7 @@ const BookCourt = () => {
                 <h1 className="bookCourt-title">BOOKING A COURT</h1>
                 <div className="bookCourt-body">
                     <div className="bookCourt-section bookCourt-left-section">
-                        <h2>1. SELECT A COURT</h2>
+                        <h2 className="notes">1. SELECT A COURT</h2>
                         <div className="bookCourt-option1">
                             <label htmlFor="branch">BRANCH:</label>
                             <select id="branch" name="branch">
@@ -64,7 +64,7 @@ const BookCourt = () => {
                         </div>
                     </div>
                     <div className="bookCourt-section bookCourt-right-section">
-                        <h2>3. TIME AND DATE</h2>
+                        <h2 className="notes">3. TIME AND DATE</h2>
                         <div className="bookCourt-form-group4">
                             <label htmlFor="time-start">Time:</label>
                             <select id="time-start" name="time-start">
@@ -86,6 +86,10 @@ const BookCourt = () => {
                         </div>
                         <h2 className="notes">4. NOTES</h2>
                         <textarea id="notes" name="notes" placeholder="Enter your notes here"></textarea>
+                        <div className="bookcourt-status">
+                        <h2 className="notes">5. STATUS: </h2>
+                        <h2 className="notes">ON GOING</h2>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" className="bookCourt-complete-booking-button">Complete Booking</button>
