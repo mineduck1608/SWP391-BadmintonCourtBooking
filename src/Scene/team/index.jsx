@@ -24,7 +24,7 @@ const Team = () => {
     password: '',
     branch: '',
     balance: '',
-    activeStatus: '',
+    status: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -45,7 +45,7 @@ const Team = () => {
       password: row.password || '',
       branch: row.branchName || '',
       balance: row.balance || '',
-      activeStatus: row.activeStatus !== null ? row.activeStatus.toString() : '',
+      status: row.status !== null ? row.status.toString() : '',
       firstName: row.firstName || '',
       lastName: row.lastName || '',
       email: row.email || '',
@@ -59,7 +59,7 @@ const Team = () => {
     const userData = formState;
 
     // Gửi yêu cầu cập nhật cho bảng User
-    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&activeStatus=" + userData.activeStatus + "&balance=" + userData.balance, {
+    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.status + "&balance=" + userData.balance, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -265,7 +265,7 @@ const Team = () => {
     { field: "phone", headerName: "Phone", flex: 1, align: "center", headerAlign: "center" },
     { field: "role", headerName: "Role", flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "activeStatus", headerName: "Active Status", flex: 1, align: "center", headerAlign: "center", renderCell: (params) => (
+      field: "status", headerName: "Status", flex: 1, align: "center", headerAlign: "center", renderCell: (params) => (
         <Box color={params.value ? 'lightgreen' : 'red'}>
           {params.value ? 'true' : 'false'}
         </Box>
@@ -325,8 +325,8 @@ const Team = () => {
                           <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                         ))}
                       </select>
-                      <select value={formState.activeStatus} onChange={e => setFormState({ ...formState, activeStatus: e.target.value })} className="input-box-modal" type="text" >
-                        <option value="0" hidden>{selectedRow ? selectedRow.activeStatus.toString() : ''}</option>
+                      <select value={formState.status} onChange={e => setFormState({ ...formState, status: e.target.value })} className="input-box-modal" type="text" >
+                        <option value="0" hidden>{selectedRow ? selectedRow.status.toString() : ''}</option>
                         <option value="true">true</option>
                         <option value="false">false</option>
                       </select>
