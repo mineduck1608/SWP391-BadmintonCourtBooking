@@ -23,6 +23,7 @@
         z-index: 1000;
         border:none;
         box-shadow: none;
+        
 
         .logoDiv {
             .logo {
@@ -34,7 +35,7 @@
 
                 .icon {
                     color: var(--PrimaryColor);
-                    font-size: 35px;
+                    font-size: 50px;
                     margin-right: 10px;
                 }
             }
@@ -58,6 +59,7 @@
                     justify-content: center;
                     width: 100%;
                     margin: auto;
+                    
 
                     .navItem {
                         padding: 1rem 0;
@@ -144,6 +146,7 @@
     .activeHeader{
         background: black;
         box-shadow: 0 2px 8px 2px rgba(178,178,178,0.334);
+        
     }
 }
 
@@ -156,7 +159,7 @@
         }
 
         .header{
-            padding: 1.5rem 2rem;
+            padding: 2rem 2rem;
 
             .navBar{
                 .navLists{
@@ -169,7 +172,7 @@
                         .navLink{
                             color: var(--whiteColor);
                             padding: 0 .45rem;
-                            font-size: .9rem;
+                            font-size: 1.2rem;
                             font-weight: 400;
                             &:hover{
                                 color:var(--PrimaryColor);
@@ -188,13 +191,14 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        width: 110px;
+                        width: 120px;
                         height: 35px;
+                        margin-top: 13px;
 
                         a{
                             color: var(--whiteColor);
                             font-weight: 500;
-                            font-size: 15px;
+                            font-size: 18px;
                         }
                     }
 

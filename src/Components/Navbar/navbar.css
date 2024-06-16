@@ -32,7 +32,7 @@
 }
 .navBarSection .header .logoDiv .logo .icon {
   color: var(--PrimaryColor);
-  font-size: 35px;
+  font-size: 50px;
   margin-right: 10px;
 }
 @media screen and (max-width: 768px) {
@@ -128,7 +128,7 @@
     display: none;
   }
   .navBarSection .header {
-    padding: 1.5rem 2rem;
+    padding: 2rem 2rem;
   }
   .navBarSection .header .navBar .navLists {
     display: flex;
@@ -139,7 +139,7 @@
   .navBarSection .header .navBar .navLists .navItem .navLink {
     color: var(--whiteColor);
     padding: 0 0.45rem;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     font-weight: 400;
   }
   .navBarSection .header .navBar .navLists .navItem .navLink:hover {
@@ -153,13 +153,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 110px;
+    width: 120px;
     height: 35px;
+    margin-top: 13px;
   }
   .navBarSection .header .navBar .navLists .btn a {
     color: var(--whiteColor);
     font-weight: 500;
-    font-size: 15px;
+    font-size: 18px;
   }
   .navBarSection .header .navBar .navLists .loginBtn {
     background: none;

@@ -88,7 +88,7 @@ const Branch = () => {
           >
             View Info
           </Button>
-          <Button
+<Button
             variant="contained"
             color="secondary"
             onClick={() => handleDelete(params.row.id)}
