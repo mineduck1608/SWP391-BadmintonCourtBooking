@@ -25,7 +25,7 @@ const BuyTime = () => {
           <p className='buyTime_p'>Remaining time: {remainingTime}</p>
           <div className='buyTime_centerDiv'>
             <button className='buyTime_btn' onClick={() => adjustHour(-1)}>-</button>
-            <input className='buyTime_counter1' type='number' value={getRemainingTime()} readOnly />
+            <input className='buyTime_counter1' type='number' value={buyHour} readOnly />
             <button className='buyTime_btn' onClick={() => adjustHour(1)}>+</button>
           </div>
           <div className='buyTime_centerDiv'>
