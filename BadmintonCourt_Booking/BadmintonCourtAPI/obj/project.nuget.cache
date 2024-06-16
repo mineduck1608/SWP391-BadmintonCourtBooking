@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1ErT+gRQJcRbDBgdxDjuIIkVZ7BRioC1tRxcIawyz4lNn6eV1x0HJfRt8zGoy8i6n1y5M7PGC/7mfqEIj8NLXA==",
+  "dgSpecHash": "R1ByeCZ+dGLw3vPiOrR8Gaifa6UjOxHreW4nE4sIPnJ96Gv5puOGxOGJYQBL5gIMpLEBsWm8bw3mbtR4O0hnKg==",
   "success": true,
-  "projectFilePath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
+  "projectFilePath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ducco\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\ducco\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {}
+    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {}
   },
   "projects": {
-    "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
+    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
+        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
         "projectName": "BadmintonCourtBusinessObjects",
-        "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
+        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
         "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\obj\\",
+        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -94,14 +94,14 @@
         }
       }
     },
-    "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
+    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
+        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
         "projectName": "BadmintonCourtDAOs",
-        "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
+        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
         "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\obj\\",
+        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -118,8 +118,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
-                "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj"
+              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
+                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj"
               }
             }
           }
@@ -176,14 +176,14 @@
         }
       }
     },
-    "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
+    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
+        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
         "projectName": "BadmintonCourtServices",
-        "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
+        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
         "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\obj\\",
+        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -200,8 +200,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
-                "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj"
+              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
+                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj"
               }
             }
           }

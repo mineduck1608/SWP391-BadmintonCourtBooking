@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BadmintonCourtAPI.Utils;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Protocol.Plugins;
+using Microsoft.EntityFrameworkCore;
 namespace BadmintonCourtAPI.Controllers
 {
     public class SlotController : Controller
@@ -17,25 +19,26 @@ namespace BadmintonCourtAPI.Controllers
             }
         }
 
-		//[HttpPost]
-		//[Route("Slot/AddDefault")]
-		//public async Task<IActionResult> AddDefaultSlot(Slot slot)
-		//      {
-		//          service.slotService.AddSlot(slot);
-		//          return Ok();
-		//      }
+        //[HttpPost]
+        //[Route("Slot/AddDefault")]
+        //public async Task<IActionResult> AddDefaultSlot(Slot slot)
+        //      {
+        //          service.slotService.AddSlot(slot);
+        //          return Ok();
+        //      }
 
 
-		//[HttpPost]
-		//[Route("Slot/AddBooked")]
-		//      //[Authorize(Roles = "Admin,Staff")]
-		//public async Task<IActionResult> AddBookedSLot(DateTime date, int start, int end, int bookingId, int courtId, int id)
-		//      {
-		//	service.slotService.AddSlot(new Slot(new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
-		//          return Ok();
-		//      }
+        //[HttpPost]
+        //[Route("Slot/AddBooked")]
+        //      //[Authorize(Roles = "Admin,Staff")]
+        //public async Task<IActionResult> AddBookedSLot(DateTime date, int start, int end, int bookingId, int courtId, int id)
+        //      {
+        //	service.slotService.AddSlot(new Slot(new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
+        //          return Ok();
+        //      }
 
-		[HttpPost]
+ 
+        [HttpPost]
 		[Route("Slot/BookingByBalence")]
 		//[Authorize]
 		public async Task<IActionResult> AddBookedSLot(DateOnly date, int start, int end, string courtId, string userId)
@@ -60,12 +63,18 @@ namespace BadmintonCourtAPI.Controllers
 		
 		}
 
-		[HttpPost]
-		[Route("Slot/GetSLotCourtInDay")]
-		public async Task<IEnumerable<Slot>> GetA_CourtSlotsInDay(DateOnly date, string id) => _service.SlotService.GetA_CourtSlotsInDay(new DateTime(date.Year, date.Month, date.Day, 0, 0, 0), new DateTime(date.Year, date.Month, date.Day, 23, 59, 0), id).ToList();
+        [HttpPost]
+        [Route("GetSLotCourtInDay")]
+        public async Task<IEnumerable<Slot>> GetSLotCourtInDay([FromBody] SlotRequest request)
+        {
+            DateTime startDate = new DateTime(request.Date.Year, request.Date.Month, request.Date.Day, 0, 0, 0);
+            DateTime endDate = new DateTime(request.Date.Year, request.Date.Month, request.Date.Day, 23, 59, 0);
+
+            return await _service.SlotService.GetA_CourtSlotsInDay(startDate, endDate, request.Id);
+        }
 
 
-		[HttpGet]
+        [HttpGet]
 		[Route("Slot/GetBeforeConfirm")]
 		public async Task<ActionResult<IEnumerable<Slot>>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, string id) => Ok(_service.SlotService.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList());
 
@@ -125,4 +134,11 @@ namespace BadmintonCourtAPI.Controllers
   //          return Ok();
   //      }
     }
+
+    public class SlotRequest
+    {
+        public DateTime Date { get; set; }
+        public string Id { get; set; }
+    }
+
 }

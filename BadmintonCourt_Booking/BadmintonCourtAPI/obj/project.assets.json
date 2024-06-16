@@ -8605,11 +8605,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
+      "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
       "projectName": "BadmintonCourtAPI",
-      "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
+      "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
       "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-      "outputPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtAPI\\obj\\",
+      "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -8626,8 +8626,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
-              "projectPath": "D:\\Coding\\badmintoncourtbooking-Phuc\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj"
+            "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
+              "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj"
             }
           }
         }

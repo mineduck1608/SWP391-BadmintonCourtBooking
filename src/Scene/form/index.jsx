@@ -25,6 +25,25 @@ const CourtForm = () => {
   const [loading, setLoading] = useState(true);
   const [timeSlots, setTimeSlots] = useState(generateTimeSlots(1, 24));
 
+  const [date, setDate] = useState('');
+  const [bookings, setBookings] = useState([]);
+
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
+  };
+
+  const fetchBookings = () => {
+    if (!date) {
+      alert('Vui lòng chọn ngày trước khi tìm kiếm');
+      return;
+    }
+
+    fetch(`${apiBaseUrl}/api/bookings/date/${date}`)
+      .then(response => response.json())
+      .then(data => setBookings(data))
+      .catch(error => console.error(error));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -131,6 +150,7 @@ const CourtForm = () => {
                 </div>
                 {errors.court && touched.court && <div className="error">{errors.court}</div>}
               </div>
+
               <button
                 type="submit"
                 variant="contained"
@@ -139,6 +159,9 @@ const CourtForm = () => {
               >
                 Submit
               </button>
+              <label>Chọn ngày:</label>
+              <input type="date" value={date} onChange={handleDateChange} />
+              <button onClick={fetchBookings}>Tìm kiếm</button>
             </div>
           </Form>
         )}

@@ -70,7 +70,7 @@ const Team = () => {
     })
       .then(response => {
         // Xử lý kết quả trả về từ bảng User
-        toast.success("Update success.");
+        toast(response.msg);
       })
       .catch(error => {
         console.error('Error updating user:', error);
@@ -234,7 +234,6 @@ const Team = () => {
   }, [token]);
 
   const handleDelete = (id) => {
-    console.log(`Delete user with id: ${id}`);
     fetch(`http://localhost:5266/User/Delete?id=${id}`, {
       method: "DELETE",
       headers: {
@@ -253,7 +252,7 @@ const Team = () => {
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
-        //toast.warning('User deleted unsuccess.' + error)
+        toast.warning('User deleted unsuccess.' + error)
       });
   };
 
