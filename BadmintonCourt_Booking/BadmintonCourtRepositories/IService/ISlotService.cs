@@ -17,7 +17,7 @@ namespace BadmintonCourtServices.IService
 
         public List<Slot> GetSLotsByDate(DateTime date);
 
-        public List<Slot> GetA_CourtSlotsInDay(DateTime start, DateTime end, string id);
+        public List<Slot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id);
 
         public List<Slot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id);
 

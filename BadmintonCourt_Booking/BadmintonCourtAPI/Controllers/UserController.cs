@@ -13,6 +13,7 @@ using BadmintonCourtAPI.Utils;
 using BadmintonCourtBusinessObjects.SupportEntities.Account;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Identity.Client.Extensions.Msal;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -30,10 +31,15 @@ namespace BadmintonCourtAPI.Controllers
 			_config = config;
 		}
 
+		//[HttpGet]
+		//[Route("User/GetAll")]
+		////[Authorize]
+		//public async Task<ActionResult<IEnumerable<UserDetail>>> GetAllUsers() => Ok(_service.UserDetailService.GetAllUserDetails());
+
 		[HttpGet]
 		[Route("User/GetAll")]
 		//[Authorize]
-		public async Task<ActionResult<IEnumerable<UserDetail>>> GetAllUsers() => Ok(_service.UserDetailService.GetAllUserDetails());
+		public async Task<ActionResult<IEnumerable<User>>> GetAllUsers() => Ok(_service.UserService.GetAllUsers());
 
 		[HttpGet]
 		[Route("User/GetStaffsInBranch")]
@@ -216,7 +222,7 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPut]
 		[Route("User/Update")]
 		//[Authorize]
-		public async Task<IActionResult> UpdateUser(string id, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string email, string facebook, float balence, int? accessFail, bool status)
+		public async Task<IActionResult> UpdateUser(string id, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string? email, string facebook, float balence, int? accessFail, bool status)
 		{
 			List<User> storage = _service.UserService.GetAllUsers();
 			List<UserDetail> infoStorage = _service.UserDetailService.GetAllUserDetails();
@@ -227,7 +233,7 @@ namespace BadmintonCourtAPI.Controllers
 				if (storage.FirstOrDefault(x => x.UserName == username) == null)
 					user.UserName = username;
 				else return BadRequest(new { msg = "Username existed" });
-			}	
+			}
 			if (Util.IsPasswordSecure(password))
 				//if (user.Password != Util.ToHashString(password)) // hash pass
 				user.Password = Util.ToHashString(password); // Lay lai pass cu
@@ -248,9 +254,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (balence != null)
 			{
 				if (balence >= 0)
-				{
 					user.Balance = balence;
-				}
 			}
 			else return BadRequest(new { msg = "Balence must be at least 0" });
 			if (status != null)
@@ -272,24 +276,18 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
 					info.Email = email;
+				else return BadRequest(new { msg = "Email registered" });
 			}
-			else return BadRequest(new { msg = "Email registered" });
+			if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
+				info.Email = email;
 			if (!facebook.IsNullOrEmpty())
 			{
 				if (infoStorage.FirstOrDefault(x => x.Facebook == facebook) == null)
 					info.Facebook = facebook;
 				else return BadRequest(new { msg = "Facebook registered" });
 			}
-
-			if (!phone.IsNullOrEmpty()) 
-			{
-				if (Util.IsPhoneFormatted(phone))
-				{
-					if (infoStorage.FirstOrDefault(x => x.Phone == phone) == null)
-						info.Phone = phone;
-					else return BadRequest(new { msg = "Phone registered" });
-				}
-			}
+			if (Util.IsPhoneFormatted(phone))
+				info.Phone = phone;
 			_service.UserDetailService.UpdateUserDetail(info, id);
 			return Ok(new { msg = "Success" });
 		}
@@ -299,32 +297,41 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("User/Register")]
 		public async Task<IActionResult> Register(string username, string password, string firstName, string lastName, string email, string phone)
 		{
-			UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
+			UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email));
 			if (info == null)
 			{
-				if (Util.IsPhoneFormatted(phone))
+				if (!username.IsNullOrEmpty())
 				{
-					if (Util.IsPasswordSecure(password))
+					if (_service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(username)) == null)
 					{
-						//Hash pass
-						//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-						_service.UserService.AddUser(new User { UserId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-						User user = _service.UserService.GetRecentAddedUser();
-						_service.UserDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
-						return Ok(Util.GenerateToken(user.UserId, _service.UserDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config));
+						if (Util.IsPhoneFormatted(phone))
+						{
+							if (Util.IsPasswordSecure(password))
+							{
+								//Hash pass
+								//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+								_service.UserService.AddUser(new User { UserId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+								User user = _service.UserService.GetRecentAddedUser();
+								_service.UserDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
+								return Ok(Util.GenerateToken(user.UserId, _service.UserDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config));
+							}
+							return BadRequest(new { msg = "Password is not properly secured" });
+						}
+						return BadRequest(new { msg = "Phone number is not properly formatted" });
 					}
-					return Json(new { msg = "Password is not properly secured" });
+					return BadRequest(new { msg = "Username existed" });
 				}
-				return Json(new { msg = "Phone number is not properly formatted" });
+				return BadRequest(new { msg = "Username can't be empty" });
+
 			}
-			return Json(new { msg = "User has already existed" });
+			return BadRequest(new { msg = "Email registered" });
 		}
 
 
 		[HttpPost]
 		[Route("User/Add")]
 		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> AddUser(ProvideAccount account)
+		public async Task<IActionResult> AddUser(ProvideAccount account) 
 		{
 			List<User> storage = _service.UserService.GetAllUsers();
 			List<UserDetail> infoStorage = _service.UserDetailService.GetAllUserDetails();
@@ -338,9 +345,6 @@ namespace BadmintonCourtAPI.Controllers
 					return BadRequest(new { msg = "Account existed" });
 			}
 			else return BadRequest(new { msg = "At least email can't be empty" });
-			if (!account.Phone.IsNullOrEmpty())
-				if (infoStorage.FirstOrDefault(p => p.Phone == account.Phone) != null)
-					return BadRequest(new { msg = "Account existed" });
 			if (!account.Facebook.IsNullOrEmpty())
 				if (infoStorage.FirstOrDefault(p => p.Facebook == account.Facebook) != null)
 					return BadRequest(new { msg = "Account existed" });
@@ -357,7 +361,7 @@ namespace BadmintonCourtAPI.Controllers
 			else balence = account.Balance.Value;
 			string id = "U" + (storage.Count + 1).ToString("D7");
 			_service.UserService.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = account.Password, Balance = balence, BranchId = account.BranchId, RoleId = account.RoleId });
-			_service.UserDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = account.Phone, UserId = id });
+			_service.UserDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = Util.IsPhoneFormatted(account.Phone) ? account.Phone : null, UserId = id });
 			return Ok(new { msg = "Success" });
 		}
 

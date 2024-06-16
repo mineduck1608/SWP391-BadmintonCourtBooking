@@ -6,16 +6,16 @@ using BadmintonCourtAPI.Utils;
 using Microsoft.IdentityModel.Tokens;
 namespace BadmintonCourtAPI.Controllers
 {
-    public class SlotController : Controller
-    {
-        private readonly BadmintonCourtService _service;
-        public SlotController(IConfiguration config)
-        {
-            if (_service == null)
-            {
-                _service = new BadmintonCourtService(config);
-            }
-        }
+	public class SlotController : Controller
+	{
+		private readonly BadmintonCourtService _service;
+		public SlotController(IConfiguration config)
+		{
+			if (_service == null)
+			{
+				_service = new BadmintonCourtService(config);
+			}
+		}
 
 		//[HttpPost]
 		//[Route("Slot/AddDefault")]
@@ -35,6 +35,43 @@ namespace BadmintonCourtAPI.Controllers
 		//          return Ok();
 		//      }
 
+
+
+		[HttpGet]
+		[Route("Slot/GetAll")]
+		//[Authorize(Roles = "Admin,Staff")]
+		public async Task<ActionResult<IEnumerable<Slot>>> GetAllSlots() => Ok(_service.SlotService.GetAllSlots());
+
+		[HttpGet]
+		[Route("Slot/GetByDemand")]
+		//[Authorize(Roles = "Admin,Staff")]
+		public async Task<ActionResult<IEnumerable<Slot>>> GetSlotsByDemand(string? branchId, string? courtId, DateOnly? startDate, DateOnly? endDate)
+		{
+			if (startDate != null && endDate != null)
+				if (startDate > endDate)	
+					return BadRequest();
+				
+			DateTime start = startDate == null ? new DateTime(1900, 1, 1, 0, 0, 1) : new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day, 0, 0, 1);
+			DateTime end = endDate == null ? new DateTime(9000, 1, 1, 23, 59, 59) : new DateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day, 23, 59, 59);
+			// -----------------------------------------------------------
+			if (branchId.IsNullOrEmpty() && courtId.IsNullOrEmpty()) // Full
+				return Ok(_service.SlotService.GetAllSlots().Where(x => x.Status = false && x.StartTime >= start && x.EndTime <= end && x.BookingId != null).ToList());
+			// -----------------------------------------------------------
+			else if (!branchId.IsNullOrEmpty() && courtId.IsNullOrEmpty()) // Theo chi nhánh
+			{
+				List<Court> courtList = _service.CourtService.GetCourtsByBranchId(branchId);
+				List<Slot> result = new List<Slot>();
+				foreach (var court in courtList)
+					foreach (var slot in _service.SlotService.GetA_CourtSlotsInTimeInterval(start, end, court.CourtId))
+						result.Add(slot);
+				return Ok(result);
+			}
+			// -----------------------------------------------------------
+			// Sân cụ thể
+			return Ok(_service.SlotService.GetA_CourtSlotsInTimeInterval(start, end, courtId));
+		}
+
+
 		[HttpPost]
 		[Route("Slot/BookingByBalence")]
 		//[Authorize]
@@ -43,7 +80,7 @@ namespace BadmintonCourtAPI.Controllers
 			User user = _service.UserService.GetUserById(userId);
 			DateTime startDate = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
 			DateTime endDate = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
-			List<Slot> tmpStorage = _service.SlotService.GetA_CourtSlotsInDay(startDate, endDate, courtId);
+			List<Slot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
 			if (tmpStorage == null || tmpStorage.Count == 0)
 			{
 				if (user.Balance >= (end - start))
@@ -57,12 +94,12 @@ namespace BadmintonCourtAPI.Controllers
 				return Ok("Balance not enough");
 			}
 			return Ok("This slot has been booked");
-		
+
 		}
 
 		[HttpPost]
 		[Route("Slot/GetSLotCourtInDay")]
-		public async Task<IEnumerable<Slot>> GetA_CourtSlotsInDay(DateOnly date, string id) => _service.SlotService.GetA_CourtSlotsInDay(new DateTime(date.Year, date.Month, date.Day, 0, 0, 0), new DateTime(date.Year, date.Month, date.Day, 23, 59, 0), id).ToList();
+		public async Task<ActionResult<IEnumerable<Slot>>> GetA_CourtSlotsInDay(DateOnly date, string id) => _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(date.Year, date.Month, date.Day, 0, 0, 1), new DateTime(date.Year, date.Month, date.Day, 23, 59, 59), id).ToList();
 
 
 		[HttpGet]
@@ -73,12 +110,12 @@ namespace BadmintonCourtAPI.Controllers
 		// Update thời gian hoạt động của sân đồng thời update toàn bộ các sân
 		// Bắt đầu từ Slot gốc - slot đầu tiên có id là 1
 
-		
-        [HttpPut]
+
+		[HttpPut]
 		[Route("Slot/UpdateOfficeHours")]
-        //[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateOfficeHours(int start, int end)
-        {
+		{
 			if (start >= end)
 				return BadRequest(new { msg = "End must be bigger than start" });
 			Slot slot = _service.SlotService.GetSlotById("S1");
@@ -86,7 +123,7 @@ namespace BadmintonCourtAPI.Controllers
 			slot.EndTime = Util.CustomizeDate(end);
 			_service.SlotService.UpdateSlot(slot, "S1");
 			return Ok(new { msg = "Success" });
-        }
+		}
 
 		[HttpPut]
 		[Route("Slot/Update")]
@@ -98,13 +135,13 @@ namespace BadmintonCourtAPI.Controllers
 				if (status) // Tình trạng sân lại trống
 					return BadRequest(new { msg = "If court is booked, the status can't be false" });
 			if (start >= end || start < primitiveSlot.StartTime.Hour || end > primitiveSlot.EndTime.Hour)
-				return BadRequest(new { msg = "Invalid time"});
-			
+				return BadRequest(new { msg = "Invalid time" });
+
 
 			// Check trường hợp sân đấy giờ đấy đang tạm bảo trì đổi thời gian + sân khác cho khách
 			Slot tmp = _service.SlotService.GetAllSlots().FirstOrDefault(x => x.CourtId == courtId && x.StartTime == new DateTime(date.Year, date.Month, date.Day, start, 0, 0) && x.EndTime == new DateTime(date.Year, date.Month, date.Day, end, 0, 0) && x.Status == false && x.BookingId != null);
 			if (tmp != null)  // Trường hợp sân đấy giờ đấy đã có khách khác đặt
-				return BadRequest(new { msg = $"Court {courtId} from {start}h - {end}h {date} has been booked"});
+				return BadRequest(new { msg = $"Court {courtId} from {start}h - {end}h {date} has been booked" });
 
 			Slot slot = _service.SlotService.GetSlotById(slotId);
 			slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
@@ -118,11 +155,11 @@ namespace BadmintonCourtAPI.Controllers
 
 		//[HttpDelete]
 		//[Route("Slot/Delete")]
-  //      [Authorize(Roles = "Admin")]
+		//      [Authorize(Roles = "Admin")]
 		//public async Task<IActionResult> DeleteSlot(string id)
-  //      {
-  //          service.slotService.DeleteSlot(id);
-  //          return Ok();
-  //      }
-    }
+		//      {
+		//          service.slotService.DeleteSlot(id);
+		//          return Ok();
+		//      }
+	}
 }
