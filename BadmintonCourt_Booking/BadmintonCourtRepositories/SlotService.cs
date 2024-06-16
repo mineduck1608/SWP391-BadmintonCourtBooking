@@ -34,7 +34,7 @@ namespace BadmintonCourtServices
 
         public List<Slot> GetSlotsByStatus(bool status) => _slotDAO.GetSlotsByStatus(status);
 
-        public List<Slot> GetA_CourtSlotsInDay(DateTime start, DateTime end, string id) => _slotDAO.GetA_CourtSlotsInDay(start, end, id);
+        public List<Slot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id) => _slotDAO.GetA_CourtSlotsInTimeInterval(start, end, id);
 
         public List<Slot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id) => _slotDAO.GetSlotsByFixedBooking(monthNum, start, end, id);
 
