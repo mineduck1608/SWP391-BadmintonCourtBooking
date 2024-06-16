@@ -1,0 +1,133 @@
+/* managetimeslot-styles.css */
+
+.managetimeslot-custom-modal .ant-modal-body {
+  padding: 24px 24px 0;
+}
+
+.managetimeslot-custom-modal .ant-modal-footer {
+  border-top: 0;
+  padding: 10px 24px 24px;
+  text-align: center;
+}
+
+.managetimeslot-custom-modal .ant-modal-title {
+  text-align: center;
+  font-size: 20px;
+}
+
+.managetimeslot-custom-modal .ant-modal-content {
+  border-radius: 10px;
+}
+
+.managetimeslot-custom-modal .ant-modal-content input,
+.managetimeslot-custom-modal .ant-modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+}
+
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal {
+  display: flex;
+  justify-content: space-between;
+}
+
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-left,
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-right {
+  width: 48%;
+}
+
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-item {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-item-text1,
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-item-text2 {
+  flex: 40%;
+  font-weight: bold;
+}
+
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-item-value,
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-user-modal-item-valu1 {
+  flex: 60%;
+}
+
+.managetimeslot-custom-modal .ant-modal-content .managetimeslot-input-box-modal {
+  width: calc(100% - 20px);
+}
+
+.managetimeslot-button-hover-black {
+  margin-right: 10px;
+}
+
+.managetimeslot-user-modal {
+  display: flex;
+  justify-content: space-between;
+}
+
+.managetimeslot-user-modal-left,
+.managetimeslot-user-modal-right {
+  width: 48%;
+}
+
+.managetimeslot-user-modal-item {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.managetimeslot-user-modal-item-text1,
+.managetimeslot-user-modal-item-text2 {
+  flex: 40%;
+  font-weight: bold;
+}
+
+.managetimeslot-user-modal-item-value,
+.managetimeslot-user-modal-item-valu1 {
+  flex: 60%;
+}
+
+.managetimeslot-input-box-modal {
+  width: calc(100% - 20px);
+}
+
+.managetimeslot-input-box-modal:disabled {
+  background-color: #f0f0f0;
+}
+
+.managetimeslot-action-button {
+  background-color: #b22222;
+  color: white;
+  margin-left: 8px;
+}
+
+.managetimeslot-button-primary {
+  background-color: #1976d2;
+  color: white;
+}
+
+.managetimeslot-button-primary:hover {
+  background-color: #1565c0;
+}
+
+.managetimeslot-button-add-user {
+  margin-bottom: 20px;
+}
+.timeslotmanage-filter{
+  display: flex;
+}
+.timeslotmanage-filter-branch{
+  color: black;
+  font-size: 25px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 15px;
+  margin-left: 20px;
+}
+.timeslotmanage-filter-branch-input-box-modal{
+  width: 20%;
+  margin-top: 15px;
+  height: 50%;
+  margin-left: 20px;
+}

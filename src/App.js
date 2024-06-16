@@ -19,7 +19,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import Team from "./Scene/team";
 import Branch from "./Scene/courtBranch";
 import Court from "./Scene/court";
-import Form from "./Scene/form";
+import SlotManagement from "./Scene/form";
 import Calendar from "./Scene/calendar";
 import FAQ from "./Scene/faq";
 import Bar from "./Scene/bar";
@@ -61,7 +61,7 @@ const App = () => {
             <Route path="team" element={<Team />} />
             <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
-            <Route path="form" element={<Form />} />
+            <Route path="form" element={<SlotManagement/>} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="bar" element={<Bar />} />

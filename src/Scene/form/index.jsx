@@ -1,193 +1,344 @@
-import { useState, useEffect } from "react";
-import { Box, Button, Select, MenuItem } from "@mui/material";
-import { Formik, Form, Field } from "formik";
-import * as yup from "yup";
+import { Box, Button } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import React, { useState, useEffect } from "react";
 import Head from "../../Components/Head";
-import './timeslot.css';
+import { Modal } from 'antd';
+import './managetimeslot.css'; // Import the custom CSS
+import { toast } from "react-toastify";
+import { Spin, ConfigProvider } from 'antd';
+import { useTheme } from "@mui/material";
+import { tokens } from "../../theme";
 
-const validationSchema = yup.object().shape({
-  branch: yup.string().required("Branch is required"),
-  court: yup.string().required("Court is required"),
-});
 
-const generateTimeSlots = (startHour, endHour) => {
-  const timeSlots = [];
-  for (let hour = startHour; hour <= endHour; hour++) {
-    const nextHour = hour === 24 ? 1 : hour + 1; // Handle 24h wrapping to 1h
-    timeSlots.push({ time: `${hour}:00 - ${nextHour}:00`, status: "Available" });
-  }
-  return timeSlots;
-};
-
-const CourtForm = () => {
+const TimeSlotManagement = () => {
+  const [rows, setRows] = useState([]);
+  const token = sessionStorage.getItem('token');
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const [branches, setBranches] = useState([]);
-  const [courts, setCourts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [timeSlots, setTimeSlots] = useState(generateTimeSlots(1, 24));
+  const [addFormState, setAddFormState] = useState();
+  const [addOpen, setAddOpen] = useState(false);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
-  const [date, setDate] = useState('');
-  const [bookings, setBookings] = useState([]);
-
-  const handleDateChange = (e) => {
-    setDate(e.target.value);
+  // Define initial state values
+  const initialState = {
+    branch: '',
+    startTime: '',
+    endTime: ''
   };
 
-  const fetchBookings = () => {
-    if (!date) {
-      alert('Vui lòng chọn ngày trước khi tìm kiếm');
-      return;
-    }
+  // Use a single state object to manage form fields
+  const [formState, setFormState] = useState(initialState);
 
-    fetch(`${apiBaseUrl}/api/bookings/date/${date}`)
+  const showModal = (row) => {
+    setSelectedRow(row);
+    setFormState({
+      id: row.id,
+      branch: row.branchId || '',
+      startTime: row.startTime || '',
+      endTime: row.endTime || ''
+    });
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    const slotData = formState;
+    fetch(`http://localhost:5266/Slot/Update?id=${slotData.id}&branchId=${slotData.branch}&startTime=${slotData.startTime}&endTime=${slotData.endTime}`, {
+      method: "PUT",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(slotData)
+    })
       .then(response => response.json())
-      .then(data => setBookings(data))
-      .catch(error => console.error(error));
+      .then(data => {
+        toast.success('Slot updated successfully');
+      })
+      .catch(error => {
+        console.error('Error updating slot:', error);
+        toast.error('Failed to update slot');
+      });
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(false);
+    }, 1000);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    setFormState(initialState);
+  };
+
+  const handleAddOk = () => {
+    const newSlot = {
+      branch: formState.branch,
+      startTime: formState.startTime,
+      endTime: formState.endTime
+    };
+    fetch(`http://localhost:5266/Slot/Add`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newSlot)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to add slot');
+        }
+        return response.json();
+      })
+      .then(data => {
+        toast.success('Slot added successfully');
+      })
+      .catch(error => {
+        console.error('Error adding slot:', error);
+        toast.error('Failed to add slot');
+      });
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setAddOpen(false);
+    }, 1000);
+  };
+
+  const handleAddCancel = () => {
+    setAddOpen(false);
+    setFormState(initialState);
+  };
+
+  const addSlot = () => {
+    setAddOpen(true);
   };
 
   useEffect(() => {
+    if (!token) {
+      console.error('Token not found. Please log in.');
+      return;
+    }
+
     const fetchData = async () => {
       try {
-        const branchResponse = await fetch("API_URL_FOR_BRANCHES");
-        const courtResponse = await fetch("API_URL_FOR_COURTS");
+        const [branchesRes, slotsRes] = await Promise.all([
+          fetch(`http://localhost:5266/Branch/GetAll`, {
+            method: "GET",
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }),
+          fetch(`http://localhost:5266/Slot/GetAll`, {
+            method: "GET",
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+        ]);
 
-        if (!branchResponse.ok || !courtResponse.ok) {
-          throw new Error("Failed to fetch data");
+        if (!branchesRes.ok || !slotsRes.ok) {
+          throw new Error('Failed to fetch data');
         }
 
-        const branchData = await branchResponse.json();
-        const courtData = await courtResponse.json();
+        const [branches, slots] = await Promise.all([
+          branchesRes.json(),
+          slotsRes.json()
+        ]);
 
-        setBranches(branchData);
-        setCourts(courtData);
+        setBranches(branches);
+
+        const formattedData = slots.map((row, index) => ({
+          id: index + 1,
+          ...row,
+          branchName: branches.find(branch => branch.branchId === row.branchId)?.branchName || 'Unknown'
+        }));
+
+        setRows(formattedData);
       } catch (error) {
-        console.error("Error fetching data", error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+
+  const handleBranchChange = (value) => {
+    setFormState({ ...formState, branch: value }); // Update formState with selected branch
   };
 
-  const handleStatusChange = (index, newStatus) => {
-    setTimeSlots((prevTimeSlots) => {
-      const updatedTimeSlots = [...prevTimeSlots];
-      updatedTimeSlots[index].status = newStatus;
-      return updatedTimeSlots;
-    });
+  const handleDelete = (id) => {
+    fetch(`http://localhost:5266/Slot/Delete?id=${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to delete slot');
+        }
+        return response.json();
+      })
+      .then(data => {
+        toast.success('Slot deleted successfully.');
+        setRows(prevRows => prevRows.filter(row => row.id !== id));
+      })
+      .catch(error => {
+        console.error('Failed to delete slot:', error);
+        toast.error('Failed to delete slot');
+      });
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // Split timeSlots into four columns
-  const columnSize = Math.ceil(timeSlots.length / 4);
-  const columns = Array.from({ length: 4 }, (_, i) =>
-    timeSlots.slice(i * columnSize, (i + 1) * columnSize)
-  );
+  const columns = [
+    {
+      field: "id", headerName: "ID", align: "center", headerAlign: "center"
+    },
+    { field: "branchName", headerName: "Branch", flex: 1, align: "center", headerAlign: "center" },
+    { field: "startTime", headerName: "Start Time", flex: 1, align: "center", headerAlign: "center" },
+    { field: "endTime", headerName: "End Time", flex: 1, align: "center", headerAlign: "center" },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box>
+          <Button type="primary" onClick={() => showModal(params.row)}
+            variant="contained"
+            color="primary"
+            size="small"
+            className="managetimeslot-action-button" // Updated class name
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => handleDelete(params.row.id)}
+            style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
+          >
+            Delete
+          </Button>
+        </Box>
+      )
+    }
+  ];
 
   return (
-    <Box m="20px">
-      <Head title="TIME SLOT" subtitle="Manage time slot of court" />
-      <Formik
-        initialValues={{ branch: "", court: "" }}
-        validationSchema={validationSchema}
-        onSubmit={handleFormSubmit}
-      >
-        {({ errors, touched, handleChange, handleBlur, values }) => (
-          <Form>
-            <div className="slot-form">
-              <div>
-                <div className="slot-form-row">
-                  <label htmlFor="branch" className="slot-form-label">Court branch:</label>
-                  <Field
-                    as="select"
-                    id="branch"
-                    name="branch"
-                    value={values.branch}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="slot-input-box-modal"
-                  >
-                    <option disabled selected hidden value="">
-                      Please select branch
-                    </option>
-                    {branches.map((branch) => (
-                      <option key={branch.branchId} value={branch.branchId}>
-                        {branch.branchName}
-                      </option>
-                    ))}
-                  </Field>
+    <ConfigProvider theme={{
+      token: {
+        colorPrimary: theme.palette.primary.main,
+        colorSuccess: theme.palette.success.main,
+        colorWarning: theme.palette.warning.main,
+        colorError: theme.palette.error.main,
+        colorInfo: theme.palette.info.main,
+      },
+    }}>
+      <Box m="20px">
+        <Head title="Time Slots" subtitle="Managing Time Slots" />
+        <Button type="primary" onClick={addSlot} variant="contained" color="primary" size="small">
+          Add Time Slot
+        </Button>
+        <Modal
+          width={800}
+          open={open}
+          title="Edit Time Slot"
+          onOk={handleOk}
+          onCancel={handleCancel}
+          className="managetimeslot-custom-modal" // Updated class name
+          footer={[
+            <Button key="back" onClick={handleCancel} className="managetimeslot-button-hover-black"> {/* Updated class name */}
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={handleOk} className="managetimeslot-button-hover-black"> {/* Updated class name */}
+              Update
+            </Button>
+          ]}
+          centered
+        >
+          <form>
+            <div className="managetimeslot-timeslot-modal"> {/* Updated class name */}
+              <div className="managetimeslot-timeslot-modal-item"> {/* Updated class name */}
+                <div className="managetimeslot-timeslot-modal-item-label"> {/* Updated class name */}
+                  <p>Branch:</p>
+                  <p>Start Time:</p>
+                  <p>End Time:</p>
                 </div>
-                {errors.branch && touched.branch && <div className="error-branch">{errors.branch}</div>}
-              </div>
-              <div>
-                <div className="slot-form-row">
-                  <label htmlFor="court" className="slot-form-label-court">Court:</label>
-                  <Field
-                    as="select"
-                    id="court"
-                    name="court"
-                    value={values.court}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="slot-input-box-modal"
-                  >
-                    <option disabled selected hidden value="">
-                      Please select court
-                    </option>
-                    {courts.map((court) => (
-                      <option key={court.courtId} value={court.courtId}>
-                        {court.courtName}
-                      </option>
+                <div className="managetimeslot-timeslot-modal-item-value"> {/* Updated class name */}
+                  <select value={formState.branch} onChange={(e) => setFormState({ ...formState, branch: e.target.value })} className="managetimeslot-input-box-modal"> {/* Updated class name */}
+                    <option disabled selected hidden value="">Select branch</option>
+                    {branches.map(branch => (
+                      <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
                     ))}
-                  </Field>
+                  </select>
+                  <input value={formState.startTime} onChange={(e) => setFormState({ ...formState, startTime: e.target.value })} className="managetimeslot-input-box-modal" type="time" /> {/* Updated class name */}
+                  <input value={formState.endTime} onChange={(e) => setFormState({ ...formState, endTime: e.target.value })} className="managetimeslot-input-box-modal" type="time" /> {/* Updated class name */}
                 </div>
-                {errors.court && touched.court && <div className="error">{errors.court}</div>}
               </div>
-
-              <button
-                type="submit"
-                variant="contained"
-                color="primary"
-                className="slot-submit-button"
-              >
-                Submit
-              </button>
-              <label>Chọn ngày:</label>
-              <input type="date" value={date} onChange={handleDateChange} />
-              <button onClick={fetchBookings}>Tìm kiếm</button>
             </div>
-          </Form>
-        )}
-      </Formik>
-      <div className="time-slot-container">
-        {columns.map((column, colIndex) => (
-          <div className="column" key={colIndex}>
-            {column.map((slot, index) => (
-              <div key={index} className="time-slot">
-                <span>{slot.time}</span>
-                <Select
-                  value={slot.status}
-                  onChange={(e) => handleStatusChange(colIndex * columnSize + index, e.target.value)}
-                  className="status-select"
-                >
-                  <MenuItem value="Available">Available</MenuItem>
-                  <MenuItem value="Booked">Booked</MenuItem>
-                  <MenuItem value="Closed">Closed</MenuItem>
-                </Select>
-              </div>
-            ))}
-          </div>
-        ))}
+          </form>
+        </Modal>
+      </Box>
+
+      <div className="timeslotmanage-filter">
+        <label htmlFor="" className="timeslotmanage-filter-branch">Branch:</label>
+        <select value={formState.branch} onChange={(e) => setFormState({ ...formState, branch: e.target.value })} className="timeslotmanage-filter-branch-input-box-modal">
+          <option disabled selected hidden value={selectedRow ? selectedRow.branchName : ''}>{selectedRow ? selectedRow.branchName : ''}</option>
+          {branches.map(branch => (
+            <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
+          ))}
+        </select>
       </div>
-    </Box>
+
+      <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .name-column--cell": {
+            color: colors.greenAccent[300],
+          },
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.greenAccent[200]} !important`,
+          },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
+        }}
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          getRowId={(row) => row.id}
+        />
+      </Box>
+    </ConfigProvider>
   );
 };
 
-export default CourtForm;
+export default TimeSlotManagement;

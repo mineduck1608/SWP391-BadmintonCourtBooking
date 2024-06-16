@@ -1,7 +1,6 @@
 import React from 'react';
-import './ViewHistory.css';
-import Header from './Components/Header'; 
-import Footer from './Components/Footer'; 
+//import './ViewHistory.css';
+
 
 const BookingHistory = () => {
   const bookings = [

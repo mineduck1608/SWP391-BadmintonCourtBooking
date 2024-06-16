@@ -5,6 +5,10 @@ import Head from "../../Components/Head";
 import { Modal } from 'antd';
 import './team.css'; // Import the custom CSS
 import { toast } from "react-toastify";
+import { Spin, ConfigProvider } from 'antd';
+import { useTheme } from "@mui/material";
+import { tokens } from "../../theme";
+
 
 const Team = () => {
   const [rows, setRows] = useState([]);
@@ -16,6 +20,8 @@ const Team = () => {
   const [branches, setBranches] = useState([]);
   const [addFormState, setAddFormState] = useState();
   const [addOpen, setAddOpen] = useState(false);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
 
   // Define initial state values
@@ -374,6 +380,15 @@ const Team = () => {
   ];
 
   return (
+    <ConfigProvider theme={{
+      token: {
+        colorPrimary: theme.palette.primary.main,
+        colorSuccess: theme.palette.success.main,
+        colorWarning: theme.palette.warning.main,
+        colorError: theme.palette.error.main,
+        colorInfo: theme.palette.info.main,
+      },
+    }}>
     <Box m="20px">
       <Head title="User" subtitle="Managing the User Accounts" />
       <Box>
@@ -439,7 +454,38 @@ const Team = () => {
           </form>
         </Modal>
       </Box>
-      <Box m="40px 0 0 0" height="75vh">
+      <Box
+          m="40px 0 0 0"
+          height="75vh"
+          sx={{
+            "& .MuiDataGrid-root": {
+              border: "none",
+            },
+            "& .MuiDataGrid-cell": {
+              borderBottom: "none",
+            },
+            "& .name-column--cell": {
+              color: colors.greenAccent[300],
+            },
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: colors.blueAccent[700],
+              borderBottom: "none",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              backgroundColor: colors.primary[400],
+            },
+            "& .MuiDataGrid-footerContainer": {
+              borderTop: "none",
+              backgroundColor: colors.blueAccent[700],
+            },
+            "& .MuiCheckbox-root": {
+              color: `${colors.greenAccent[200]} !important`,
+            },
+            "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+              color: `${colors.grey[100]} !important`,
+            },
+          }}
+        >
         <DataGrid
           rows={rows}
           columns={columns}
@@ -447,6 +493,7 @@ const Team = () => {
         />
       </Box>
     </Box>
+    </ConfigProvider>
   );
 };
 
