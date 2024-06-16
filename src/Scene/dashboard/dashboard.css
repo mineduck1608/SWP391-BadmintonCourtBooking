@@ -39,3 +39,15 @@
 .css-q6y2iz-MuiTypography-root {
   font-size: 16px !important;
 }
+
+/* dashboard.css */
+
+.download-button {
+  font-size: 14px !important;
+  font-weight: bold !important;
+  display: flex;
+  padding: 10px 120px !important;
+  align-items: center !important;
+  margin-right: -180px !important;
+}
+

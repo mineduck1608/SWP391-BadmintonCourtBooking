@@ -5,7 +5,6 @@ import Head from "../../Components/Head";
 import React, { useState, useEffect } from 'react';
 import { ConfigProvider, Modal, Descriptions, Spin } from 'antd';
 
-
 const Court = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -19,15 +18,29 @@ const Court = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5266/Court/GetAll');
-                if (!response.ok) {
+                const [courtResponse, branchResponse] = await Promise.all([
+                    fetch('http://localhost:5266/Court/GetAll'),
+                    fetch('http://localhost:5266/Branch/GetAll')
+                ]);
+
+                if (!courtResponse.ok || !branchResponse.ok) {
                     throw new Error('Failed to fetch data');
                 }
-                const jsonData = await response.json();
-                const newData = jsonData.map((row, index) => ({
-                    ...row,
-                    id: index + 1
+
+                const courts = await courtResponse.json();
+                const branches = await branchResponse.json();
+
+                const branchMap = branches.reduce((acc, branch) => {
+                    acc[branch.branchId] = branch.branchName;
+                    return acc;
+                }, {});
+
+                const newData = courts.map((court, index) => ({
+                    ...court,
+                    id: index + 1,
+                    branchName: branchMap[court.branchId]
                 }));
+
                 setData(newData);
                 setLoading(false);
             } catch (error) {
@@ -46,8 +59,8 @@ const Court = () => {
     };
 
     const handleDelete = (id) => {
-        console.log('Delete row with id: ${id}');
-    }
+        console.log(`Delete row with id: ${id}`);
+    };
 
     const columns = [
         {
@@ -56,7 +69,6 @@ const Court = () => {
             align: "center",
             headerAlign: "center",
         },
-
         {
             field: "courtImg",
             headerName: "Img",
@@ -85,21 +97,14 @@ const Court = () => {
         },
         {
             field: "description",
-            headerName: "description",
+            headerName: "Description",
             flex: 1,
             align: "center",
             headerAlign: "center",
         },
         {
-            field: "Branch",
+            field: "branchName",
             headerName: "Branch Name",
-            flex: 1,
-            align: "center",
-            headerAlign: "center",
-        },
-        {
-            field: "slots",
-            headerName: "Slots",
             flex: 1,
             align: "center",
             headerAlign: "center",
@@ -117,7 +122,7 @@ const Court = () => {
                         color="primary"
                         onClick={() => handleViewInfo(params.row.courtId)}
                     >
-                        View Info
+                        Edit Info
                     </Button>
                     <Button
                         variant="contained"
@@ -132,11 +137,11 @@ const Court = () => {
     ];
 
     if (loading) {
-        return <Box m="20px">Loading...</Box>
+        return <Box m="20px">Loading...</Box>;
     }
 
     if (error) {
-        return <Box m="20px">Error: {error}</Box>
+        return <Box m="20px">Error: {error}</Box>;
     }
 
     return (
@@ -209,8 +214,8 @@ const Court = () => {
                                 <Descriptions.Item label="Price">{selectedCourt.price}</Descriptions.Item>
                                 <Descriptions.Item label="Status">{selectedCourt.courtStatus ? 'true' : 'false'}</Descriptions.Item>
                                 <Descriptions.Item label="Description">{selectedCourt.description}</Descriptions.Item>
-                                <Descriptions.Item label="Branch">{selectedCourt.Branch}</Descriptions.Item>
-                                <Descriptions.Item label="Slots">{selectedCourt.slots}</Descriptions.Item>
+                                <Descriptions.Item label="Branch">{selectedCourt.branchName}</Descriptions.Item>
+                                <Descriptions.Item label="Slots">{selectedCourt.slots.length}</Descriptions.Item>
                             </Descriptions>
                         </Box>
                     ) : (
