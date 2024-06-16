@@ -18,6 +18,10 @@
     font-family: Arial, sans-serif;
 }
 
+.viewcourtinfo-info-status{
+    display: flex;
+}
+
 .viewcourtinfo-info h2,
 .viewcourtinfo-info p {
     color: black;
@@ -29,7 +33,7 @@
     max-width: 1460px;
     position: relative;
     top: 20px;
-    left: 120px;
+    left: 20px;
     z-index: 1;
     margin: 10px auto;
     border: 1px solid #d4af37; /* Gold border */
@@ -38,9 +42,10 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
     background: linear-gradient(145deg, #ffffff, #e6e6e6); /* Light gradient background */
     margin-left: 100px;
-}
-.viewcourtinfo-info-status{
-    display: flex;
+    max-width: 1000px; /* Adjusted from 1460px to make it narrower */
+    margin-left: auto; /* Center the box horizontally */
+    margin-right: auto;
+    margin-left: 120px;
 }
 
 .viewcourtinfo-body-pic {
@@ -96,14 +101,14 @@
 
 .viewcourtinfo-othercourts-content {
     display: flex;
-    flex-wrap: nowrap;
     gap: 20px;
     overflow-x: auto;
     width: 100%;
     max-width: 100%; 
     padding-bottom: 20px;
     box-sizing: border-box;
-    margin-left: 200px;
+    
+    
 }
 
 .viewcourtinfo-other-pic {
@@ -123,11 +128,12 @@
 }
 
 .viewcourtinfo-other-img {
-    width: 100%;
+    width: 50%;
     height: 160px; /* Adjusted image height */
     border-radius: 8px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
     object-fit: cover; /* Ensure the image covers the container */
+    display: flex;
 }
 
 .viewcourtinfo-other-info {
@@ -136,6 +142,9 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 45%; /* Adjusted from 50% to make it narrower */
+    height: auto; /* Adjusted to maintain aspect ratio */
+    font-size: 0.9em;
 }
 
 .viewcourtinfo-other-info h2, 
@@ -157,11 +166,17 @@ button {
     cursor: pointer;
     border-radius: 5px; 
     transition: background-color 0.3s;
-    width: 20%;
+    width: 50%;
 }
 
 button:hover {
     background-color: #c89e33; 
+}
+
+.viewcourtinfo-othercourts-body{
+    width: 100%;
+    display: flex;
+    max-width: 100px;
 }
 
 .schedule {
@@ -227,4 +242,8 @@ button:hover {
 
 .legend-text {
     font-size: 14px;
+}
+
+.other-court-button{
+    width: 50%;
 }
