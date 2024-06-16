@@ -20,6 +20,7 @@
 
 .viewcourtinfo-info-status{
     display: flex;
+    
 }
 
 .viewcourtinfo-info h2,
@@ -45,7 +46,8 @@
     max-width: 1000px; /* Adjusted from 1460px to make it narrower */
     margin-left: auto; /* Center the box horizontally */
     margin-right: auto;
-    margin-left: 120px;
+    margin-left: 250px;
+    flex-grow: 1;
 }
 
 .viewcourtinfo-body-pic {
@@ -78,6 +80,7 @@
     margin-top: 20px;
     color: black;
     font-size: larger;
+    
 }
 
 .viewcourtinfo-info h2,
@@ -107,7 +110,7 @@
     max-width: 100%; 
     padding-bottom: 20px;
     box-sizing: border-box;
-    
+    margin-left: 125px;
     
 }
 
