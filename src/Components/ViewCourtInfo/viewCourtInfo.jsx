@@ -142,7 +142,9 @@ const ViewCourtInfo = () => {
                                             <h1>Description:</h1>
                                             <p>{court.description}</p>
                                         </div>
-                                        <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                        <div className="other-court-button">
+                                            <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
