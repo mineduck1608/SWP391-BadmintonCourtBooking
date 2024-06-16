@@ -1,0 +1,85 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-image: url('../../Assets/login.jpg'); 
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+}
+
+.booking-history {
+  width: 80%;
+  margin: 50px auto;
+  background-color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.header {
+  background-color: #4caf50;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.booking-table th,
+.booking-table td {
+  padding: 15px;
+  text-align: left;
+}
+
+.booking-table th {
+  background-color: #4caf50;
+  color: white;
+}
+
+.booking-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.booking-table tr:hover {
+  background-color: #ddd;
+}
+
+.booking-table .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.view-button,
+.buy-more-time-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.view-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.buy-more-time-button {
+  background-color: #ff9800;
+  color: white;
+}
+
+.view-button:hover,
+.buy-more-time-button:hover {
+  opacity: 0.8;
+}
