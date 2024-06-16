@@ -12,21 +12,22 @@ namespace BadmintonCourtServices.IService
 
         public List<Payment> GetAllPayments();
 
-        public Payment GetPaymentByPaymentId(int id);
-
-        public List<Payment> GetPaymentsByStatus(bool status);
+        public Payment GetPaymentByPaymentId(string id);
 
         public List<Payment> GetPaymentsByDate(DateTime date);
 
-        public List<Payment> GetPaymentsByUserId(int id);
+        public List<Payment> GetPaymentsBySearch(string? id, string? search);
 
-        public Payment GetPaymentByBookingId(int id);
 
-        public void UpdatePayment(Payment newPayment, int id);
+		public List<Payment> GetPaymentsByUserId(string id);
+
+        public Payment GetPaymentByBookingId(string id);
+
+        public void UpdatePayment(Payment newPayment, string id);
 
         public void AddPayment(Payment payment);
 
-        public void DeletePayment(int id);
+        public void DeletePayment(string id);
 
     }
 }

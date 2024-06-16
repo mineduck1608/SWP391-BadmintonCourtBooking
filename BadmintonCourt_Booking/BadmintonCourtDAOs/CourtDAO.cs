@@ -24,26 +24,17 @@ namespace BadmintonCourtDAOs
 
         public List<Court> GetAllCourts() => _dbContext.Courts.ToList();
 
-        public List<Court> GetCourtsByBranchId(int id) => _dbContext.Courts.Where(x => x.BranchId == id).ToList();
+        public List<Court> GetCourtsByBranchId(string id) => _dbContext.Courts.Where(x => x.BranchId == id).ToList();
 
-        public List<Court> GetCourtsByPriceInterval(float? min, float? max)
-        {
-            if (min == null)
-                min = 0;
-            if (max == null) 
-                max = float.MaxValue;
-            return _dbContext.Courts.Where(x => x.Price >= min && x.Price <= max).ToList();
-        }
-
+        public List<Court> GetCourtsByPriceInterval(float min, float max) =>  _dbContext.Courts.Where(x => x.Price >= min && x.Price <= max).ToList();
+        
         public List<Court> GetCourtsBySearchResult(string search) => _dbContext.Courts.Where(x => x.Description.ToLower().Contains(search.ToLower()) || x.Branch.BranchName.ToLower().Contains(search.ToLower()) || x.Branch.Location.ToLower().Contains(search.ToLower())).ToList();
 
-        public Court GetCourtByCourtId(int id) => _dbContext.Courts.FirstOrDefault(x => x.CourtId == id);
+        public Court GetCourtByCourtId(string id) => _dbContext.Courts.FirstOrDefault(x => x.CourtId == id);
 
-        
-
-        public void UpdateCourt(Court newCourt, int cId)
+        public void UpdateCourt(Court newCourt, string id)
         {
-            Court tmp = GetCourtByCourtId(cId);
+            Court tmp = GetCourtByCourtId(id);
             if (tmp != null)
             {
                 tmp.CourtImg = newCourt.CourtImg;
@@ -61,10 +52,11 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeleteCourt(int cId)
+        public void DeleteCourt(string id)
         {
-            _dbContext.Courts.Remove(GetCourtByCourtId(cId));
-            _dbContext.SaveChanges();
+            Court court = GetCourtByCourtId(id);
+            court.CourtStatus = false;
+            UpdateCourt(court, id);
         }
     }
 }

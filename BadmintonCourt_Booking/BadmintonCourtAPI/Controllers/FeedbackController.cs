@@ -13,59 +13,69 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BadmintonCourtAPI.Controllers
 {
-    public class FeedbackController : Controller
-    {
-        private readonly BadmintonCourtService service = null;
+	public class FeedbackController : Controller
+	{
+		private readonly BadmintonCourtService _service = null;
 
-        public FeedbackController()
-        {
-            if (service == null)
-            {
-                service = new BadmintonCourtService();
-            }
-        }
-
-        [HttpGet]
-        [Route("Feedback/GetAll")]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks() => Ok(service.feedbackService.GetAllFeedbacks());
-
-        [HttpGet]
-		[Route("Feedback/GetByBranch")]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByBranch(int id) => Ok(service.feedbackService.GetBranchFeedbacks(id));
-
-        [HttpGet]
-        [Route("Feedback/GetBySearch")]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksBySearch(string search) => Ok(service.feedbackService.GetFeedbacksByContent(search));
-
-        [HttpGet]
-        [Route("Feedback/GetByUser")]
-        //[Authorize]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUser(int id) => Ok(service.feedbackService.GetA_UserFeedbacks(id));
-
-        [HttpGet]
-        [Route("Feedback/GetByRate")]
-		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByRate(int rate) => Ok(service.feedbackService.GetFeedbacksByRate(rate));
-
-        [HttpPost]
-        [Route("Feedback/Post")]
-        //[Authorize]
-        public async Task<IActionResult> AddFeedback(int rate, string content, int id, int branchId)
-        {
-            service.feedbackService.AddFeedback(new Feedback(rate, content, id, branchId));
-            return Ok();
-        }
-
-        [HttpPut]
-        [Route("Feedback/Update")]
-		//[Authorize]
-		public async Task<IActionResult> UpdateFeedback(int? rate, string content, int id)
+		public FeedbackController(IConfiguration config)
 		{
-            Feedback feedback = service.feedbackService.GetFeedbackByFeedbackId(id);
-            if (rate != null)
-                feedback.Rate = int.Parse(rate.ToString());
-             if (!content.IsNullOrEmpty())
-                feedback.Content = content;
-             service.feedbackService.UpdateFeedback(feedback, id);
+			if (_service == null)
+			{
+				_service = new BadmintonCourtService(config);
+			}
+		}
+	
+		[HttpGet]
+		[Route("Feedback/GetAll")]
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks() => Ok(_service.FeedbackService.GetAllFeedbacks());
+
+		[HttpGet]
+		[Route("Feedback/GetByBranch")]
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByBranch(string id) => Ok(_service.FeedbackService.GetBranchFeedbacks(id));
+
+		[HttpGet]
+		[Route("Feedback/GetBySearch")]
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksBySearch(string search) => Ok(_service.FeedbackService.GetFeedbacksByContent(search));
+
+		[HttpGet]
+		[Route("Feedback/GetByUser")]
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUser(string id) => Ok(_service.FeedbackService.GetA_UserFeedbacks(id));
+
+		[HttpGet]
+		[Route("Feedback/GetByRate")]
+		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByRate(int rate) => Ok(_service.FeedbackService.GetFeedbacksByRate(rate));
+
+		[HttpPost]
+		[Route("Feedback/Post")]
+		//[Authorize]
+		public async Task<IActionResult> AddFeedback(int rate, string content, string id, string branchId)
+		{
+			if (content.IsNullOrEmpty())
+				return BadRequest("Full fill your comment");
+			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rate = rate });
+			return Ok();
+		}
+
+		[HttpPut]
+		[Route("Feedback/Update")]
+		//[Authorize]
+		public async Task<IActionResult> UpdateFeedback(int rate, string content, string id)
+		{
+			Feedback feedback = _service.FeedbackService.GetFeedbackByFeedbackId(id);
+			feedback.Rate = int.Parse(rate.ToString());
+			if (!content.IsNullOrEmpty())
+				feedback.Content = content;
+			_service.FeedbackService.UpdateFeedback(feedback, id);
+			return Ok();
+		}
+
+		[HttpDelete]
+		[Route("Feedback/Delete")]
+		//[Authorize]
+		public async Task<IActionResult> DeleteFeedback(string id)
+		{
+			_service.FeedbackService.DeleteFeedback(id);
 			return Ok();
 		}
 

@@ -5,17 +5,20 @@ namespace BadmintonCourtBusinessObjects.Entities;
 
 public partial class Payment 
 {
-    public int PaymentId { get; set; }
+	public string PaymentId { get; set; }
 
-    public bool Status { get; set; }
+	public string UserId { get; set; }
 
-    public DateTime? Date { get; set; }
+	public DateTime Date { get; set; }
 
-    public int UserId { get; set; }
+	public string Method { get; set; }
 
-    public int BookingId { get; set; }
+	public string TransactionId { get; set; }
 
-    public virtual Booking Booking { get; set; } = null!;
+	public string BookingId { get; set; }
+	public double Amount { get; set; }
 
-    public virtual User User { get; set; } = null!;
+	public virtual Booking Booking { get; set; }
+
+	public virtual User User { get; set; }
 }

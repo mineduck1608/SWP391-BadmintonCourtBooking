@@ -17,13 +17,14 @@ namespace BadmintonCourtAPI
             // Add services to the container.
             builder.Services.AddControllers();
 
+            // Configure CORS
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowLocalhost3000", builder =>
+                options.AddPolicy("AllowLocalhost3000", policy =>
                 {
-                    builder.WithOrigins("http://localhost:3000")
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    policy.WithOrigins("http://localhost:3000")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
             });
 
@@ -31,6 +32,7 @@ namespace BadmintonCourtAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Configure JWT authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -44,11 +46,13 @@ namespace BadmintonCourtAPI
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
+
             builder.Services.AddRazorPages();
             builder.Services.AddMvc();
 
             var app = builder.Build();
 
+            // Enable the CORS policy
             app.UseCors("AllowLocalhost3000");
 
             // Configure the HTTP request pipeline.
@@ -65,8 +69,6 @@ namespace BadmintonCourtAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            
 
             app.UseEndpoints(endpoints =>
             {

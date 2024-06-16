@@ -1992,6 +1992,7 @@
       },
       "BadmintonCourtBusinessObjects/1.0.0": {
         "dependencies": {
+          "Microsoft.AspNetCore.Cors": "2.2.0",
           "Microsoft.EntityFrameworkCore": "8.0.6",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.6",
           "Microsoft.Extensions.Configuration.Json": "8.0.0"
@@ -2003,6 +2004,8 @@
       "BadmintonCourtDAOs/1.0.0": {
         "dependencies": {
           "BadmintonCourtBusinessObjects": "1.0.0",
+          "Microsoft.AspNetCore.Cors": "2.2.0",
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
           "Microsoft.EntityFrameworkCore": "8.0.6",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.6"
         },
@@ -2012,7 +2015,8 @@
       },
       "BadmintonCourtServices/1.0.0": {
         "dependencies": {
-          "BadmintonCourtDAOs": "1.0.0"
+          "BadmintonCourtDAOs": "1.0.0",
+          "Microsoft.AspNetCore.Cors": "2.2.0"
         },
         "runtime": {
           "BadmintonCourtServices.dll": {}

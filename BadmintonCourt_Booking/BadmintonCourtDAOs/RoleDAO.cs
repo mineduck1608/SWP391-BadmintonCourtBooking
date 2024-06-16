@@ -23,11 +23,11 @@ namespace BadmintonCourtDAOs
 
         public List<Role> GetAllRoles() => _dbContext.Roles.ToList();
 
-        public Role GetRoleById(int id) => _dbContext.Roles.FirstOrDefault(x => x.RoleId == id);
+        public Role GetRoleById(string id) => _dbContext.Roles.FirstOrDefault(x => x.RoleId == id);
 
         public List<Role> GetRolesByName(string name) => _dbContext.Roles.Where(x => x.RoleName.ToLower().Contains(name.ToLower())).ToList();
 
-        public void UpdateRole(Role newRole, int id)
+        public void UpdateRole(Role newRole, string id)
         {
             Role tmp = GetRoleById(id);
             if (tmp != null)
@@ -44,9 +44,9 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeleteRole(int id)
+        public void DeleteRole(string id)
         {
-            _dbContext.Roles.Remove(GetRoleById((id)));
+            _dbContext.Roles.Remove(GetRoleById(id));
             _dbContext.SaveChanges();
         }
     }

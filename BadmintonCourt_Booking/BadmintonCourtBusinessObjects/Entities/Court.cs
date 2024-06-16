@@ -5,27 +5,20 @@ namespace BadmintonCourtBusinessObjects.Entities;
 
 public partial class Court 
 {
-    public int CourtId { get; set; }
+	public string CourtId { get; set; }
 
-    public string? CourtImg { get; set; }
+	public string? CourtImg { get; set; }
 
-    public int BranchId { get; set; }
+	public string BranchId { get; set; }
 
-    public double Price { get; set; }
+	public float Price { get; set; }
 
-    public bool CourtStatus { get; set; }
+	public string Description { get; set; }
 
-    public string Description { get; set; } = null!;
+	public bool CourtStatus { get; set; }
 
-    public virtual CourtBranch Branch { get; set; } = null!;
+	public virtual CourtBranch Branch { get; set; }
 
-    public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
+	public virtual ICollection<Slot> Slots { get; set; }
 
-    public Court(string? courtImg, int branchId, double price, string description)
-    {
-        CourtImg = courtImg;
-        BranchId = branchId;
-        Price = price;
-        Description = description;
-    }
 }

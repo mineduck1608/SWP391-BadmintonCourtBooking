@@ -12,7 +12,7 @@ namespace BadmintonCourtServices.IService
 
         public List<User> GetAllUsers();
 
-        public User GetUserById(int id);
+        public User GetUserById(string id);
 
         public User GetRecentAddedUser();
 
@@ -20,15 +20,15 @@ namespace BadmintonCourtServices.IService
 
         public User GetUserByLogin(string username, string password);
 
-		public List<User> GetUsersByRole(int id);
+		public List<User> GetUsersByRole(string id);
 
-        public List<User> GetStaffsByBranch(int id);
+        public List<User> GetStaffsByBranch(string id);
 
-        public void UpdateUser(User newUser, int id);
+        public void UpdateUser(User newUser, string id);
 
         public void AddUser(User user);
 
-        public void DeleteUser(int id);
+        public void DeleteUser(string id);
 
     }
 }

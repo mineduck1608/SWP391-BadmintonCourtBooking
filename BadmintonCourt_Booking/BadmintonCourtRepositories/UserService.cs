@@ -12,34 +12,34 @@ namespace BadmintonCourtServices
     public class UserService : IUserService
     {
 
-        private readonly UserDAO userDAO = null;
+        private readonly UserDAO _userDAO = null;
 
         public UserService()
         {
-            if (userDAO == null)
-                userDAO = new UserDAO();
+            if (_userDAO == null)
+                _userDAO = new UserDAO();
         }
 
-        public void AddUser(User user) => userDAO.AddUser(user);
+        public void AddUser(User user) => _userDAO.AddUser(user);
 
-        public void DeleteUser(int id) => userDAO.DeleteUser(id);
+        public void DeleteUser(string id) => _userDAO.DeleteUser(id);
 
-        public List<User> GetAllUsers() => userDAO.GetAllUsers();
+        public List<User> GetAllUsers() => _userDAO.GetAllUsers();
 
-        public List<User> GetStaffsByBranch(int id) => userDAO.GetStaffsByBranch(id);
+        public List<User> GetStaffsByBranch(string id) => _userDAO.GetStaffsByBranch(id);
 
-        public User GetUserById(int id) => userDAO.GetUserById(id);
+        public User GetUserById(string id) => _userDAO.GetUserById(id);
 
-        public User GetRecentAddedUser() => userDAO.GetRecentAddedUser();
+        public User GetRecentAddedUser() => _userDAO.GetRecentAddedUser();
 
-		public User GetUserByEmail(string email) => userDAO.GetUserByEmail(email);
+		public User GetUserByEmail(string email) => _userDAO.GetUserByEmail(email);
 
-		public User GetUserByLogin(string username, string password) => userDAO.GetUserByLogin(username, password);
+		public User GetUserByLogin(string username, string password) => _userDAO.GetUserByLogin(username, password);
 
 
-		public List<User> GetUsersByRole(int id) => userDAO.GetUsersByRole(id);
+		public List<User> GetUsersByRole(string id) => _userDAO.GetUsersByRole(id);
 
-        public void UpdateUser(User newUser, int id) => userDAO.UpdateUser(newUser, id);
+        public void UpdateUser(User newUser, string id) => _userDAO.UpdateUser(newUser, id);
 
     }
 }

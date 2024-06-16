@@ -11,15 +11,15 @@ namespace BadmintonCourtServices.IService
     {
         public List<Role> GetAllRoles();
 
-        public Role GetRoleById(int id);
+        public Role GetRoleById(string id);
 
         public List<Role> GetRolesByName(string name);
 
-        public void UpdateRole(Role newRole, int id);
+        public void UpdateRole(Role newRole, string id);
 
         public void AddRole(Role role);
 
-        public void DeleteRole(int id);
+        public void DeleteRole(string id);
 
     }
 }

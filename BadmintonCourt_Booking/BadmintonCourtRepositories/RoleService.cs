@@ -12,27 +12,27 @@ namespace BadmintonCourtServices
     public class RoleService : IRoleService
     {
 
-        private readonly RoleDAO roleDAO = null;
+        private readonly RoleDAO _roleDAO = null;
 
         public RoleService()
         {
-            if (roleDAO == null)
+            if (_roleDAO == null)
             {
-                roleDAO = new RoleDAO();
+                _roleDAO = new RoleDAO();
             }
         }
 
-        public void AddRole(Role role) => roleDAO.AddRole(role);
+        public void AddRole(Role role) => _roleDAO.AddRole(role);
 
-        public void DeleteRole(int id) => roleDAO.DeleteRole(id);
+        public void DeleteRole(string id) => _roleDAO.DeleteRole(id);
 
-        public List<Role> GetAllRoles() =>  roleDAO.GetAllRoles();
+        public List<Role> GetAllRoles() =>  _roleDAO.GetAllRoles();
 
-        public Role GetRoleById(int id) => roleDAO.GetRoleById(id);
+        public Role GetRoleById(string id) => _roleDAO.GetRoleById(id);
 
-        public List<Role> GetRolesByName(string name) => roleDAO.GetRolesByName(name);
+        public List<Role> GetRolesByName(string name) => _roleDAO.GetRolesByName(name);
 
-        public void UpdateRole(Role newRole, int id) => roleDAO.UpdateRole(newRole, id);
+        public void UpdateRole(Role newRole, string id) => _roleDAO.UpdateRole(newRole, id);
 
     }
 }

@@ -2,51 +2,72 @@
 using BadmintonCourtServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using BadmintonCourtAPI.Utils;
+using Microsoft.IdentityModel.Tokens;
 namespace BadmintonCourtAPI.Controllers
 {
     public class SlotController : Controller
     {
-        private readonly BadmintonCourtService service;
-
-        public SlotController()
+        private readonly BadmintonCourtService _service;
+        public SlotController(IConfiguration config)
         {
-            if (service == null)
+            if (_service == null)
             {
-                service = new BadmintonCourtService();
+                _service = new BadmintonCourtService(config);
             }
         }
-
-        public DateTime CustomizeDate(int period) => new DateTime(1900, 1, 1, period, 0, 0);
-
 
 		//[HttpPost]
 		//[Route("Slot/AddDefault")]
 		//public async Task<IActionResult> AddDefaultSlot(Slot slot)
-  //      {
-  //          service.slotService.AddSlot(slot);
-  //          return Ok();
-  //      }
+		//      {
+		//          service.slotService.AddSlot(slot);
+		//          return Ok();
+		//      }
 
+
+		//[HttpPost]
+		//[Route("Slot/AddBooked")]
+		//      //[Authorize(Roles = "Admin,Staff")]
+		//public async Task<IActionResult> AddBookedSLot(DateTime date, int start, int end, int bookingId, int courtId, int id)
+		//      {
+		//	service.slotService.AddSlot(new Slot(new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
+		//          return Ok();
+		//      }
 
 		[HttpPost]
-		[Route("Slot/AddBooked")]
-        //[Authorize(Roles = "Admin,Staff")]
-		public async Task<IActionResult> AddBookedSLot(DateTime date, int start, int end, int bookingId, int courtId, int id)
-        {
-			service.slotService.AddSlot(new Slot(new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
-            return Ok();
-        }
+		[Route("Slot/BookingByBalence")]
+		//[Authorize]
+		public async Task<IActionResult> AddBookedSLot(DateOnly date, int start, int end, string courtId, string userId)
+		{
+			User user = _service.UserService.GetUserById(userId);
+			DateTime startDate = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
+			DateTime endDate = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
+			List<Slot> tmpStorage = _service.SlotService.GetA_CourtSlotsInDay(startDate, endDate, courtId);
+			if (tmpStorage == null || tmpStorage.Count == 0)
+			{
+				if (user.Balance >= (end - start))
+				{
+					_service.BookingService.AddBooking(new Booking { BookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7"), Amount = (end - start) * _service.CourtService.GetCourtByCourtId("S1").Price, BookingType = 1, UserId = userId });
+					_service.SlotService.AddSlot(new Slot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = _service.BookingService.GetRecentAddedBooking().BookingId, CourtId = courtId, Status = false, StartTime = startDate, EndTime = endDate });
+					user.Balance -= (end - start);
+					_service.UserService.UpdateUser(user, userId);
+					return Ok("Success");
+				}
+				return Ok("Balance not enough");
+			}
+			return Ok("This slot has been booked");
+		
+		}
 
-
-		[HttpGet]
+		[HttpPost]
 		[Route("Slot/GetSLotCourtInDay")]
-		public async Task<IEnumerable<Slot>> GetA_CourtSlotsInDay(DateTime date, int id) => service.slotService.GetA_CourtSlotsInDay(new DateTime(date.Year, date.Month, date.Day, 0, 0, 0), new DateTime(date.Year, date.Month, date.Day, 23, 59, 0), id).ToList();
+		public async Task<IEnumerable<Slot>> GetA_CourtSlotsInDay(DateOnly date, string id) => _service.SlotService.GetA_CourtSlotsInDay(new DateTime(date.Year, date.Month, date.Day, 0, 0, 0), new DateTime(date.Year, date.Month, date.Day, 23, 59, 0), id).ToList();
 
 
 		[HttpGet]
 		[Route("Slot/GetBeforeConfirm")]
-		public async Task<ActionResult<IEnumerable<Slot>>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, int id) => Ok(service.slotService.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList());
+		public async Task<ActionResult<IEnumerable<Slot>>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, string id) => Ok(_service.SlotService.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList());
 
 
 		// Update thời gian hoạt động của sân đồng thời update toàn bộ các sân
@@ -58,26 +79,50 @@ namespace BadmintonCourtAPI.Controllers
         //[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateOfficeHours(int start, int end)
         {
-            int oldStart = service.slotService.GetSlotById(1).StartTime.Hour;
-            int oldEnd = service.slotService.GetSlotById(1).EndTime.Hour;
-            List<Slot> storage = service.slotService.GetAllSlots().Where(x => x.StartTime.Hour == oldStart && x.EndTime.Hour == oldEnd).ToList();
-            foreach (Slot slot in storage)
-            {
-                slot.StartTime = CustomizeDate(start);
-                slot.EndTime = CustomizeDate(end);
-                service.slotService.UpdateSlot(slot, slot.SlotId);
-            }
-            return Ok();
+			if (start >= end)
+				return BadRequest(new { msg = "End must be bigger than start" });
+			Slot slot = _service.SlotService.GetSlotById("S1");
+			slot.StartTime = Util.CustomizeDate(start);
+			slot.EndTime = Util.CustomizeDate(end);
+			_service.SlotService.UpdateSlot(slot, "S1");
+			return Ok(new { msg = "Success" });
         }
 
+		[HttpPut]
+		[Route("Slot/Update")]
+		//[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> UpdateSlot(DateOnly date, int start, int end, string slotId, string? bookingId, string courtId, bool status)
+		{
+			Slot primitiveSlot = _service.SlotService.GetSlotById("S1");
+			if (!bookingId.IsNullOrEmpty()) // Nếu slot có khách đặt
+				if (status) // Tình trạng sân lại trống
+					return BadRequest(new { msg = "If court is booked, the status can't be false" });
+			if (start >= end || start < primitiveSlot.StartTime.Hour || end > primitiveSlot.EndTime.Hour)
+				return BadRequest(new { msg = "Invalid time"});
+			
 
-		[HttpDelete]
-		[Route("Slot/Delete")]
-        //[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> DeleteSlot(int id)
-        {
-            service.slotService.DeleteSlot(id);
-            return Ok();
-        }
+			// Check trường hợp sân đấy giờ đấy đang tạm bảo trì đổi thời gian + sân khác cho khách
+			Slot tmp = _service.SlotService.GetAllSlots().FirstOrDefault(x => x.CourtId == courtId && x.StartTime == new DateTime(date.Year, date.Month, date.Day, start, 0, 0) && x.EndTime == new DateTime(date.Year, date.Month, date.Day, end, 0, 0) && x.Status == false && x.BookingId != null);
+			if (tmp != null)  // Trường hợp sân đấy giờ đấy đã có khách khác đặt
+				return BadRequest(new { msg = $"Court {courtId} from {start}h - {end}h {date} has been booked"});
+
+			Slot slot = _service.SlotService.GetSlotById(slotId);
+			slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
+			slot.EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
+			slot.Status = status;
+			slot.BookingId = bookingId;
+			slot.CourtId = courtId;
+			_service.SlotService.UpdateSlot(slot, slotId);
+			return Ok(new { msg = "Success" });
+		}
+
+		//[HttpDelete]
+		//[Route("Slot/Delete")]
+  //      [Authorize(Roles = "Admin")]
+		//public async Task<IActionResult> DeleteSlot(string id)
+  //      {
+  //          service.slotService.DeleteSlot(id);
+  //          return Ok();
+  //      }
     }
 }

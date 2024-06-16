@@ -11,19 +11,20 @@ namespace BadmintonCourtServices.IService
     {
         public List<Booking> GetAllBookings();
 
-        public Booking GetBookingByBookingId(int id);
+        public Booking GetBookingByBookingId(string id);
 
-        public List<Booking> GetBookingsByUserId(int id);
+        public Booking GetRecentAddedBooking();
+
+
+		public List<Booking> GetBookingsByUserId(string id);
 
         public List<Booking> GetBookingsByType(int id);
 
-        public List<Booking> GetBookingsByStatus(bool status);
-
-        public void UpdatBooking(Booking newBooking, int bId);
+        public void UpdatBooking(Booking newBooking, string id);
 
         public void AddBooking(Booking booking);
 
-        public void DeleteBooking(int id);
+        public void DeleteBooking(string id);
 
     }
 }

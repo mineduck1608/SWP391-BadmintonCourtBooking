@@ -22,22 +22,21 @@ namespace BadmintonCourtDAOs
 
         public List<Booking> GetAllBookings() => _dbContext.Bookings.ToList();
 
-        public Booking GetBookingByBookingId(int id) => _dbContext.Bookings.FirstOrDefault(x => x.BookingId == id);
+        public Booking GetBookingByBookingId(string id) => _dbContext.Bookings.FirstOrDefault(x => x.BookingId == id);
 
-        public List<Booking> GetBookingsByUserId(int id) => _dbContext.Bookings.Where(x => x.UserId == id).ToList();
+        public Booking GetRecentAddedBooking() => _dbContext.Bookings.OrderBy(x => int.Parse(x.BookingId.Substring(1))).LastOrDefault();
+
+        public List<Booking> GetBookingsByUserId(string id) => _dbContext.Bookings.Where(x => x.UserId == id).ToList();
 
         public List<Booking> GetBookingsByType(int id) => _dbContext.Bookings.Where(x => x.BookingType == id).ToList();
 
-        public List<Booking> GetBookingsByStatus(bool status) => _dbContext.Bookings.Where(x => x.BookingStatus == status).ToList();
-
-        public void UpdateBooking (Booking newBooking, int id)
+        public void UpdateBooking (Booking newBooking, string id)
         {
             Booking tmp = GetBookingByBookingId(id);
             if (tmp != null)
             {
                 tmp.BookingType = newBooking.BookingType;
-                tmp.BookingStatus = newBooking.BookingStatus;
-                tmp.TotalPrice = newBooking.TotalPrice;
+                tmp.Amount = newBooking.Amount;
                 _dbContext.Bookings.Update(tmp);
                 _dbContext.SaveChanges();
             }
@@ -49,9 +48,9 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeleteBooking(int bId) 
+        public void DeleteBooking(string id) 
         {
-            _dbContext.Bookings.Remove(GetBookingByBookingId((bId)));
+            _dbContext.Bookings.Remove(GetBookingByBookingId(id));
             _dbContext.SaveChanges();
         }
 

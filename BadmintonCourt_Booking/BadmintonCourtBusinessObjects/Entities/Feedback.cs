@@ -5,25 +5,18 @@ namespace BadmintonCourtBusinessObjects.Entities;
 
 public partial class Feedback 
 {
-    public int FeedbackId { get; set; }
+	public string FeedbackId { get; set; }
 
-    public int Rate { get; set; }
+	public int Rate { get; set; }
 
-    public string Content { get; set; } = null!;
+	public string Content { get; set; }
 
-    public int UserId { get; set; }
+	public string UserId { get; set; }
 
-    public int BranchId { get; set; }
+	public string BranchId { get; set; }
 
-    public virtual CourtBranch Branch { get; set; } = null!;
+	public virtual CourtBranch Branch { get; set; }
 
-    public virtual User? User { get; set; }
+	public virtual User? User { get; set; }
 
-	public Feedback(int rate, string content, int userId, int branchId)
-	{
-		Rate = rate;
-		Content = content;
-		UserId = userId;
-		BranchId = branchId;
-	}
 }

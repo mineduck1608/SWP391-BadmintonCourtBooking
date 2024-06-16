@@ -22,7 +22,7 @@ namespace BadmintonCourtDAOs
 
         public List<UserDetail> GetAllUserDetails() => _dbContext.UserDetails.ToList();
 
-        public UserDetail GetUserDetailById(int id) => _dbContext.UserDetails.FirstOrDefault(x => x.UserId == id);
+        public UserDetail GetUserDetailById(string id) => _dbContext.UserDetails.FirstOrDefault(x => x.UserId == id);
 
         public List<UserDetail> GetUserDetailsByName(string name) => _dbContext.UserDetails.Where(x => x.LastName.ToLower().Contains(name.ToLower()) || x.FirstName.ToLower().Contains(name.ToLower())).ToList();
 
@@ -32,7 +32,7 @@ namespace BadmintonCourtDAOs
 
 		public List<UserDetail> GetUserDetailsBySearchResult(string search) => _dbContext.UserDetails.Where(x => x.Email.ToLower().Contains(search.ToLower()) || x.LastName.ToLower().Contains(search.ToLower()) || x.FirstName.ToLower().Contains(search.ToLower())).ToList();
 
-        public void UpdateUserDetail(UserDetail newUserDetail, int id)
+        public void UpdateUserDetail(UserDetail newUserDetail, string id)
         {
             UserDetail tmp = GetUserDetailById(id);
             if (tmp != null)
@@ -52,7 +52,7 @@ namespace BadmintonCourtDAOs
             _dbContext.SaveChanges();
         }
 
-        public void DeleteUserDetail(int id)
+        public void DeleteUserDetail(string id)
         {
             _dbContext.UserDetails.Remove(GetUserDetailById((id)));
             _dbContext.SaveChanges();
