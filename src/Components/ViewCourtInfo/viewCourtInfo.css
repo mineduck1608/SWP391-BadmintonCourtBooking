@@ -20,6 +20,7 @@
 
 .viewcourtinfo-info-status{
     display: flex;
+    
 }
 
 .viewcourtinfo-info h2,
@@ -29,8 +30,8 @@
 
 .viewcourtinfo-body {
     display: inline-block;
-    width: 100%;
-    max-width: 1460px;
+    width: 150%;
+    max-width: 1500px;
     position: relative;
     top: 20px;
     left: 20px;
@@ -42,10 +43,12 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
     background: linear-gradient(145deg, #ffffff, #e6e6e6); /* Light gradient background */
     margin-left: 100px;
-    max-width: 1000px; /* Adjusted from 1460px to make it narrower */
     margin-left: auto; /* Center the box horizontally */
     margin-right: auto;
-    margin-left: 120px;
+    margin-left: 180px;
+    flex-grow: 1;
+    box-shadow: 2px 2px 2px 2px #92741b;
+    
 }
 
 .viewcourtinfo-body-pic {
@@ -78,6 +81,7 @@
     margin-top: 20px;
     color: black;
     font-size: larger;
+    
 }
 
 .viewcourtinfo-info h2,
@@ -107,50 +111,55 @@
     max-width: 100%; 
     padding-bottom: 20px;
     box-sizing: border-box;
+    margin-left: 325px;
     
     
 }
 
 .viewcourtinfo-other-pic {
     display: flex;
-    flex-direction: column;
-    min-width: 600px; /* Increased width */
-    max-width: 350px; /* Set a fixed width */
-    height: 500px; /* Increased height */
+    flex-direction: row;
+    min-width: 600px; 
+    max-width: 350px; 
+    height: 500px; 
     margin-right: 20px; 
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: #fff;
-    padding: 15px; /* Slightly increased padding */
+    padding: 15px; 
     box-sizing: border-box;
-    overflow: hidden; /* Hide overflow content */
+    overflow: hidden; 
 }
 
 .viewcourtinfo-other-img {
     width: 50%;
-    height: 160px; /* Adjusted image height */
+    height: 160px; 
     border-radius: 8px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    object-fit: cover; /* Ensure the image covers the container */
+    object-fit: cover; 
     display: flex;
 }
 
 .viewcourtinfo-other-info {
     margin-top: 10px;
+    
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 45%; /* Adjusted from 50% to make it narrower */
-    height: auto; /* Adjusted to maintain aspect ratio */
-    font-size: 0.9em;
+    justify-content: flex-start;
+    width: 45%; 
+    height: auto; 
+    font-size: 1.2em;
+    
+    
 }
 
 .viewcourtinfo-other-info h2, 
 .viewcourtinfo-other-info p {
-    margin-bottom: 5px; 
     color: black;
+    margin-left: 10px;
+    margin-bottom: 2px;
 }
 
 button {
@@ -245,5 +254,5 @@ button:hover {
 }
 
 .other-court-button{
-    width: 50%;
+    width: 60%;
 }

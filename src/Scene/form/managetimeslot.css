@@ -97,7 +97,7 @@
 }
 
 .managetimeslot-action-button {
-  background-color: #b22222;
+  background-color: black;
   color: white;
   margin-left: 8px;
 }
@@ -130,4 +130,42 @@
   margin-top: 15px;
   height: 50%;
   margin-left: 20px;
+}
+.timeslotmanage-filter-court-input-box-modal{
+  width: 20%;
+  margin-top: 15px;
+  height: 50%;
+  margin-left: 20px;
+}
+.timeslotmanage-filter-court{
+  color: black;
+  font-size: 25px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 15px;
+  margin-left: 50px;
+}
+.timeslotmanage-filter-date{
+  color: black;
+  font-size: 25px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 15px;
+  margin-left: 80px;
+}
+.timeslotmanage-filter-date-input{
+  width: 20%;
+  text-align: center;
+  border: solid 1px lightgray;
+  border-radius: 5px;
+  margin-left: 10px;
+  margin-top: 15px;
+}
+.timeslot-flex{
+  width: auto;
+  height: 50px;
+  margin-top: 10px;
+  margin-left: 50px;
+  color: #f0f0f0;
+  background-color: black;
 }

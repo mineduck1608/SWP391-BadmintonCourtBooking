@@ -17,14 +17,25 @@ const TimeSlotManagement = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [branches, setBranches] = useState([]);
+  const [courts, setCourts] = useState([]); // State for courts
+  const [slots, setSlots] = useState([]); // State for slots
   const [addFormState, setAddFormState] = useState();
   const [addOpen, setAddOpen] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const [branchesfilter, setBranchesFilter] = [branches, setBranches];
+  const [courtsfilter, setCourtsFilter] = [courts, setCourts];
+  const [slotsfilter, setSlotsFilter] = [slots, setSlots];
+
+  console.log(branchesfilter)
+  console.log(courtsfilter)
+
+
   // Define initial state values
   const initialState = {
     branch: '',
+    court: '',
     startTime: '',
     endTime: ''
   };
@@ -35,8 +46,9 @@ const TimeSlotManagement = () => {
   const showModal = (row) => {
     setSelectedRow(row);
     setFormState({
-      id: row.id,
+      id: row.slotId,
       branch: row.branchId || '',
+      court: row.courtId || '',
       startTime: row.startTime || '',
       endTime: row.endTime || ''
     });
@@ -45,7 +57,7 @@ const TimeSlotManagement = () => {
 
   const handleOk = () => {
     const slotData = formState;
-    fetch(`http://localhost:5266/Slot/Update?id=${slotData.id}&branchId=${slotData.branch}&startTime=${slotData.startTime}&endTime=${slotData.endTime}`, {
+    fetch(`http://localhost:5266/Slot/Update?id=${slotData.id}&branchId=${slotData.branch}&courtId=${slotData.court}&startTime=${slotData.startTime}&endTime=${slotData.endTime}`, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -76,6 +88,7 @@ const TimeSlotManagement = () => {
   const handleAddOk = () => {
     const newSlot = {
       branch: formState.branch,
+      court: formState.court,
       startTime: formState.startTime,
       endTime: formState.endTime
     };
@@ -124,8 +137,15 @@ const TimeSlotManagement = () => {
 
     const fetchData = async () => {
       try {
-        const [branchesRes, slotsRes] = await Promise.all([
+        const [branchesRes, courtsRes, slotsRes] = await Promise.all([
           fetch(`http://localhost:5266/Branch/GetAll`, {
+            method: "GET",
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }),
+          fetch(`http://localhost:5266/Court/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -141,23 +161,32 @@ const TimeSlotManagement = () => {
           })
         ]);
 
-        if (!branchesRes.ok || !slotsRes.ok) {
+        if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok) {
           throw new Error('Failed to fetch data');
         }
 
-        const [branches, slots] = await Promise.all([
+        const [branchesData, courtsData, slotsData] = await Promise.all([
           branchesRes.json(),
+          courtsRes.json(),
           slotsRes.json()
         ]);
 
-        setBranches(branches);
+        setBranches(branchesData);
+        setCourts(courtsData);
 
-        const formattedData = slots.map((row, index) => ({
-          id: index + 1,
-          ...row,
-          branchName: branches.find(branch => branch.branchId === row.branchId)?.branchName || 'Unknown'
-        }));
+        const formattedData = slotsData.map((row, index) => {
+          const court = courtsData.find(court => court.courtId === row.courtId);
+          const branch = branchesData.find(branch => branch.branchId === court.branchId);
 
+          return {
+            id: index + 1,
+            ...row,
+            branchName: branch ? branch.branchName : 'Unknown',
+            courtName: court ? court.courtName : 'Unknown'
+          };
+        });
+
+        setSlots(slotsData);
         setRows(formattedData);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -167,9 +196,70 @@ const TimeSlotManagement = () => {
     fetchData();
   }, [token]);
 
-
   const handleBranchChange = (value) => {
-    setFormState({ ...formState, branch: value }); // Update formState with selected branch
+    console.log(value);
+    const selectedBranch = branches.find(branch => branch.branchId === value);
+    setFormState({ ...formState, branch: value });
+
+    if (selectedBranch) {
+      // Filter courts based on selected branch
+      const filteredCourts = courts.filter(court => court.branchId === value);
+      setCourtsFilter(filteredCourts);
+
+      // Filter slots based on selected branch
+      const filteredSlots = slots.filter(slot => {
+        const court = filteredCourts.find(court => court.courtId === slot.courtId);
+        return court && court.branchId === value;
+      });
+
+      // Update rows with filtered slots
+      const formattedData = filteredSlots.map((row, index) => ({
+        id: index + 1,
+        ...row,
+        branchName: selectedBranch.branchName,
+        courtName: filteredCourts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
+      }));
+      console.log(formattedData)
+      setRows(formattedData);
+    } else {
+      setCourts([]);
+      setRows([]);
+    }
+  };
+
+  const handleCourtChange = (value) => {
+    setFormState({ ...formState, court: value });
+
+    if (!value) {
+      // If no court selected, show slots for all courts in the selected branch
+      const filteredSlots = slots.filter(slot => {
+        const court = courts.find(court => court.courtId === slot.courtId);
+        return court && court.branchId === formState.branch;
+      });
+
+      // Update rows with filtered slots
+      const formattedData = filteredSlots.map((row, index) => ({
+        id: index + 1,
+        ...row,
+        branchName: branches.find(branch => branch.branchId === formState.branch)?.branchName || 'Unknown',
+        courtName: courts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
+      }));
+
+      setRows(formattedData);
+    } else {
+      // Filter slots based on selected court
+      const filteredSlots = slots.filter(slot => slot.courtId === value);
+
+      // Update rows with filtered slots
+      const formattedData = filteredSlots.map((row, index) => ({
+        id: index + 1,
+        ...row,
+        branchName: branches.find(branch => branch.branchId === formState.branch)?.branchName || 'Unknown',
+        courtName: courts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
+      }));
+
+      setRows(formattedData);
+    }
   };
 
   const handleDelete = (id) => {
@@ -197,10 +287,9 @@ const TimeSlotManagement = () => {
   };
 
   const columns = [
-    {
-      field: "id", headerName: "ID", align: "center", headerAlign: "center"
-    },
+    { field: "slotId", headerName: "ID", align: "center", headerAlign: "center" },
     { field: "branchName", headerName: "Branch", flex: 1, align: "center", headerAlign: "center" },
+    { field: "courtName", headerName: "Court", flex: 1, align: "center", headerAlign: "center" }, // Add courtName column
     { field: "startTime", headerName: "Start Time", flex: 1, align: "center", headerAlign: "center" },
     { field: "endTime", headerName: "End Time", flex: 1, align: "center", headerAlign: "center" },
     {
@@ -212,11 +301,13 @@ const TimeSlotManagement = () => {
       headerAlign: "center",
       renderCell: (params) => (
         <Box>
-          <Button type="primary" onClick={() => showModal(params.row)}
+          <Button
+            type="primary"
+            onClick={() => showModal(params.row)}
             variant="contained"
             color="primary"
             size="small"
-            className="managetimeslot-action-button" // Updated class name
+            className="managetimeslot-action-button"
           >
             Edit
           </Button>
@@ -232,7 +323,7 @@ const TimeSlotManagement = () => {
       )
     }
   ];
-
+  
   return (
     <ConfigProvider theme={{
       token: {
@@ -245,97 +336,174 @@ const TimeSlotManagement = () => {
     }}>
       <Box m="20px">
         <Head title="Time Slots" subtitle="Managing Time Slots" />
-        <Button type="primary" onClick={addSlot} variant="contained" color="primary" size="small">
-          Add Time Slot
-        </Button>
-        <Modal
-          width={800}
-          open={open}
-          title="Edit Time Slot"
-          onOk={handleOk}
-          onCancel={handleCancel}
-          className="managetimeslot-custom-modal" // Updated class name
-          footer={[
-            <Button key="back" onClick={handleCancel} className="managetimeslot-button-hover-black"> {/* Updated class name */}
-              Cancel
-            </Button>,
-            <Button key="submit" type="primary" loading={loading} onClick={handleOk} className="managetimeslot-button-hover-black"> {/* Updated class name */}
-              Update
-            </Button>
-          ]}
-          centered
-        >
-          <form>
-            <div className="managetimeslot-timeslot-modal"> {/* Updated class name */}
-              <div className="managetimeslot-timeslot-modal-item"> {/* Updated class name */}
-                <div className="managetimeslot-timeslot-modal-item-label"> {/* Updated class name */}
-                  <p>Branch:</p>
-                  <p>Start Time:</p>
-                  <p>End Time:</p>
-                </div>
-                <div className="managetimeslot-timeslot-modal-item-value"> {/* Updated class name */}
-                  <select value={formState.branch} onChange={(e) => setFormState({ ...formState, branch: e.target.value })} className="managetimeslot-input-box-modal"> {/* Updated class name */}
-                    <option disabled selected hidden value="">Select branch</option>
-                    {branches.map(branch => (
-                      <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
-                    ))}
-                  </select>
-                  <input value={formState.startTime} onChange={(e) => setFormState({ ...formState, startTime: e.target.value })} className="managetimeslot-input-box-modal" type="time" /> {/* Updated class name */}
-                  <input value={formState.endTime} onChange={(e) => setFormState({ ...formState, endTime: e.target.value })} className="managetimeslot-input-box-modal" type="time" /> {/* Updated class name */}
+
+        <div className="timeslotmanage-filter">
+          <label htmlFor="" className="timeslotmanage-filter-branch">
+            Branch:
+          </label>
+          <select
+            value={formState.branch}
+            onChange={(e) => handleBranchChange(e.target.value)}
+            className="timeslotmanage-filter-branch-input-box-modal"
+          >
+            <option disabled selected hidden value="">
+              {selectedRow ? selectedRow.branchName : ''}
+            </option>
+            {branches.map((branch) => (
+              <option key={branch.branchId} value={branch.branchId}>
+                {branch.branchName}
+              </option>
+              
+            ))}
+          </select>
+
+          <label htmlFor="" className="timeslotmanage-filter-court">
+            Court:
+          </label>
+          <select
+            value={formState.court}
+            onChange={(e) => handleCourtChange(e.target.value)}
+            className="timeslotmanage-filter-court-input-box-modal"
+          >
+            <option disabled selected hidden value="">
+              {selectedRow ? selectedRow.courtName : ''}
+            </option>
+            {courts.map((court) => (
+              <option key={court.courtId} value={court.courtId}>
+                {court.courtName}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="" className="timeslotmanage-filter-date">
+            Date:
+          </label>
+          <input type="date" className="timeslotmanage-filter-date-input" />
+
+          <button
+            className="timeslot-flex"
+            type="primary"
+            onClick={addSlot}
+            variant="contained"
+            color="primary"
+            size="small"
+          >
+            Add Time Slot
+          </button>
+          <Modal
+            width={800}
+            open={open}
+            title="Edit Time Slot"
+            onOk={handleOk}
+            onCancel={handleCancel}
+            className="managetimeslot-custom-modal"
+            footer={[
+              <Button key="back" onClick={handleCancel} className="managetimeslot-button-hover-black">
+                Cancel
+              </Button>,
+              <Button key="submit" type="primary" loading={loading} onClick={handleOk} className="managetimeslot-button-hover-black">
+                Update
+              </Button>
+            ]}
+            centered
+          >
+            <form>
+              <div className="managetimeslot-timeslot-modal">
+                <div className="managetimeslot-timeslot-modal-item">
+                  <div className="managetimeslot-timeslot-modal-item-label">
+                    <p>Branch:</p>
+                    <p>Court:</p>
+                    <p>Start Time:</p>
+                    <p>End Time:</p>
+                  </div>
+                  <div className="managetimeslot-timeslot-modal-item-value">
+                    <select
+                      value={formState.branch}
+                      onChange={(e) => handleBranchChange(e.target.value)}
+                      className="managetimeslot-input-box-modal"
+                    >
+                      <option disabled selected hidden value="">
+                        Select branch
+                      </option>
+                      {branches.map((branch) => (
+                        <option key={branch.branchId} value={branch.branchId}>
+                          {branch.branchName}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={formState.court}
+                      onChange={(e) => handleCourtChange(e.target.value)}
+                      className="managetimeslot-input-box-modal"
+                    >
+                      <option disabled selected hidden value="">
+                        Select court
+                      </option>
+                      {courts.map((court) => (
+                        <option key={court.courtId} value={court.courtId}>
+                          {court.courtName}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      value={formState.startTime}
+                      onChange={(e) =>
+                        setFormState({ ...formState, startTime: e.target.value })
+                      }
+                      className="managetimeslot-input-box-modal"
+                      type="time"
+                    />
+                    <input
+                      value={formState.endTime}
+                      onChange={(e) =>
+                        setFormState({ ...formState, endTime: e.target.value })
+                      }
+                      className="managetimeslot-input-box-modal"
+                      type="time"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
-        </Modal>
-      </Box>
+            </form>
+          </Modal>
 
-      <div className="timeslotmanage-filter">
-        <label htmlFor="" className="timeslotmanage-filter-branch">Branch:</label>
-        <select value={formState.branch} onChange={(e) => setFormState({ ...formState, branch: e.target.value })} className="timeslotmanage-filter-branch-input-box-modal">
-          <option disabled selected hidden value={selectedRow ? selectedRow.branchName : ''}>{selectedRow ? selectedRow.branchName : ''}</option>
-          {branches.map(branch => (
-            <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
-          ))}
-        </select>
-      </div>
+        </div>
 
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeader": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          getRowId={(row) => row.id}
-        />
+        <Box
+          m="40px 0 0 0"
+          height="75vh"
+          sx={{
+            "& .MuiDataGrid-root": {
+              border: "none",
+            },
+            "& .MuiDataGrid-cell": {
+              borderBottom: "none",
+            },
+            "& .name-column--cell": {
+              color: colors.greenAccent[300],
+            },
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: colors.blueAccent[700],
+              borderBottom: "none",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              backgroundColor: colors.primary[400],
+            },
+            "& .MuiDataGrid-footerContainer": {
+              borderTop: "none",
+              backgroundColor: colors.blueAccent[700],
+            },
+            "& .MuiCheckbox-root": {
+              color: `${colors.greenAccent[200]} !important`,
+            },
+            "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+              color: `${colors.grey[100]} !important`,
+            },
+          }}
+        >
+          <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id} />
+        </Box>
       </Box>
     </ConfigProvider>
   );
