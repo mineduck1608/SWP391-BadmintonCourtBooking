@@ -151,8 +151,9 @@
     width: 45%; 
     height: auto; 
     font-size: 1.2em;
-    
-    
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis (...) to truncated text */
 }
 
 .viewcourtinfo-other-info h2, 
@@ -160,6 +161,10 @@
     color: black;
     margin-left: 10px;
     margin-bottom: 2px;
+    max-width: 100%; /* Ensure the element does not exceed its container */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis (...) to truncated text */
 }
 
 button {
@@ -255,4 +260,13 @@ button:hover {
 
 .other-court-button{
     width: 60%;
+}
+
+.viewcourtinfo-other-des h1{
+    font-size: 30px;
+}
+
+.viewcourtinfo-other-des{
+    margin-left: 7px;
+    
 }

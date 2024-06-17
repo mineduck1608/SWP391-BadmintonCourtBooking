@@ -73,3 +73,9 @@
     line-height: 1.5;
     /* Tăng khoảng cách giữa các dòng trong mỗi thẻ p */
 }
+.button-adduser{
+    color: white;
+    background-color: black;
+    width: 20%;
+    margin-top: -15px;
+}

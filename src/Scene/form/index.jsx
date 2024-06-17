@@ -28,9 +28,6 @@ const TimeSlotManagement = () => {
   const [courtsfilter, setCourtsFilter] = [courts, setCourts];
   const [slotsfilter, setSlotsFilter] = [slots, setSlots];
 
-  console.log(branchesfilter)
-  console.log(courtsfilter)
-
 
   // Define initial state values
   const initialState = {
@@ -129,51 +126,115 @@ const TimeSlotManagement = () => {
     setAddOpen(true);
   };
 
+  const fetchData = async () => {
+    try {
+      const [branchesRes, courtsRes, slotsRes] = await Promise.all([
+        fetch(`http://localhost:5266/Branch/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Court/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Slot/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      ]);
+
+      if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const [branchesData, courtsData, slotsData] = await Promise.all([
+        branchesRes.json(),
+        courtsRes.json(),
+        slotsRes.json()
+      ]);
+
+      setBranches(branchesData);
+      setCourts(courtsData);
+
+      const formattedData = slotsData.map((row, index) => {
+        const court = courtsData.find(court => court.courtId === row.courtId);
+        const branch = branchesData.find(branch => branch.branchId === court.branchId);
+
+        return {
+          id: index + 1,
+          ...row,
+          branchName: branch ? branch.branchName : 'Unknown',
+          courtName: court ? court.courtName : 'Unknown'
+        };
+      });
+
+      setSlots(slotsData);
+      setRows(formattedData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
     if (!token) {
       console.error('Token not found. Please log in.');
       return;
     }
+    fetchData();
+  }, [token]);
 
-    const fetchData = async () => {
-      try {
-        const [branchesRes, courtsRes, slotsRes] = await Promise.all([
-          fetch(`http://localhost:5266/Branch/GetAll`, {
-            method: "GET",
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }),
-          fetch(`http://localhost:5266/Court/GetAll`, {
-            method: "GET",
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }),
-          fetch(`http://localhost:5266/Slot/GetAll`, {
-            method: "GET",
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          })
-        ]);
+  const handleBranchChange = async (value) => {
+    setFormState({ ...formState, branch: value, court: '' });
 
-        if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok) {
-          throw new Error('Failed to fetch data');
-        }
+    try {
+      const [branchesRes, courtsRes, slotsRes] = await Promise.all([
+        fetch(`http://localhost:5266/Branch/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Court/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Slot/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      ]);
 
-        const [branchesData, courtsData, slotsData] = await Promise.all([
-          branchesRes.json(),
-          courtsRes.json(),
-          slotsRes.json()
-        ]);
+      if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
 
-        setBranches(branchesData);
-        setCourts(courtsData);
+      const [branchesData, courtsData, slotsData] = await Promise.all([
+        branchesRes.json(),
+        courtsRes.json(),
+        slotsRes.json()
+      ]);
 
+      setBranches(branchesData);
+      setCourts(courtsData);
+      setSlots(slotsData);
+
+      if (value === "all") {
         const formattedData = slotsData.map((row, index) => {
           const court = courtsData.find(court => court.courtId === row.courtId);
           const branch = branchesData.find(branch => branch.branchId === court.branchId);
@@ -185,82 +246,109 @@ const TimeSlotManagement = () => {
             courtName: court ? court.courtName : 'Unknown'
           };
         });
-
-        setSlots(slotsData);
         setRows(formattedData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } else {
+        const selectedBranch = branchesData.find(branch => branch.branchId === value);
+        const filteredCourts = courtsData.filter(court => court.branchId === value);
+        const filteredSlots = slotsData.filter(slot => {
+          const court = filteredCourts.find(court => court.courtId === slot.courtId);
+          return court && court.branchId === value;
+        });
+        setCourtsFilter(filteredCourts);
+
+        const formattedData = filteredSlots.map((row, index) => ({
+          id: index + 1,
+          ...row,
+          branchName: selectedBranch ? selectedBranch.branchName : 'Unknown',
+          courtName: filteredCourts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
+        }));
+
+        setRows(formattedData);
       }
-    };
-
-    fetchData();
-  }, [token]);
-
-  const handleBranchChange = (value) => {
-    console.log(value);
-    const selectedBranch = branches.find(branch => branch.branchId === value);
-    setFormState({ ...formState, branch: value });
-
-    if (selectedBranch) {
-      // Filter courts based on selected branch
-      const filteredCourts = courts.filter(court => court.branchId === value);
-      setCourtsFilter(filteredCourts);
-
-      // Filter slots based on selected branch
-      const filteredSlots = slots.filter(slot => {
-        const court = filteredCourts.find(court => court.courtId === slot.courtId);
-        return court && court.branchId === value;
-      });
-
-      // Update rows with filtered slots
-      const formattedData = filteredSlots.map((row, index) => ({
-        id: index + 1,
-        ...row,
-        branchName: selectedBranch.branchName,
-        courtName: filteredCourts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
-      }));
-      console.log(formattedData)
-      setRows(formattedData);
-    } else {
-      setCourts([]);
-      setRows([]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
-
-  const handleCourtChange = (value) => {
-    setFormState({ ...formState, court: value });
-
-    if (!value) {
-      // If no court selected, show slots for all courts in the selected branch
-      const filteredSlots = slots.filter(slot => {
-        const court = courts.find(court => court.courtId === slot.courtId);
-        return court && court.branchId === formState.branch;
-      });
-
-      // Update rows with filtered slots
-      const formattedData = filteredSlots.map((row, index) => ({
-        id: index + 1,
-        ...row,
-        branchName: branches.find(branch => branch.branchId === formState.branch)?.branchName || 'Unknown',
-        courtName: courts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
-      }));
-
-      setRows(formattedData);
-    } else {
-      // Filter slots based on selected court
-      const filteredSlots = slots.filter(slot => slot.courtId === value);
-
-      // Update rows with filtered slots
-      const formattedData = filteredSlots.map((row, index) => ({
-        id: index + 1,
-        ...row,
-        branchName: branches.find(branch => branch.branchId === formState.branch)?.branchName || 'Unknown',
-        courtName: courts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
-      }));
-
-      setRows(formattedData);
+  const handleCourtChange = async (value) => {
+    try {
+      // Set the new court value in formState
+      setFormState({ ...formState, court: value });
+  
+      // Fetch fresh data for branches, courts, and slots
+      const [branchesRes, courtsRes, slotsRes] = await Promise.all([
+        fetch(`http://localhost:5266/Branch/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Court/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Slot/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      ]);
+  
+      // Check if all responses are ok
+      if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+  
+      // Parse fetched data
+      const [branchesData, courtsData, slotsData] = await Promise.all([
+        branchesRes.json(),
+        courtsRes.json(),
+        slotsRes.json()
+      ]);
+  
+      // Update state with fetched data
+      setBranches(branchesData);
+      setCourts(courtsData);
+      setSlots(slotsData);
+  
+      // Handle displaying slots based on selected court
+      if (value === "all") {
+        const formattedData = slotsData.map((row, index) => {
+          const court = courtsData.find(court => court.courtId === row.courtId);
+          const branch = branchesData.find(branch => branch.branchId === court.branchId);
+  
+          return {
+            id: index + 1,
+            ...row,
+            branchName: branch ? branch.branchName : 'Unknown',
+            courtName: court ? court.courtName : 'Unknown'
+          };
+        });
+        setRows(formattedData);
+      } else {
+        // Filter slots based on selected court
+        const filteredSlots = slotsData.filter(slot => slot.courtId === value);
+  
+        // Update rows with filtered slots
+        const formattedData = filteredSlots.map((row, index) => ({
+          id: index + 1,
+          ...row,
+          branchName: branchesData.find(branch => branch.branchId === formState.branch)?.branchName || 'Unknown',
+          courtName: courtsData.find(court => court.courtId === row.courtId)?.courtName || 'Unknown'
+        }));
+  
+        setRows(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
+  
 
   const handleDelete = (id) => {
     fetch(`http://localhost:5266/Slot/Delete?id=${id}`, {
@@ -323,7 +411,7 @@ const TimeSlotManagement = () => {
       )
     }
   ];
-  
+
   return (
     <ConfigProvider theme={{
       token: {
@@ -346,14 +434,16 @@ const TimeSlotManagement = () => {
             onChange={(e) => handleBranchChange(e.target.value)}
             className="timeslotmanage-filter-branch-input-box-modal"
           >
-            <option disabled selected hidden value="">
+            <option disabled selected hidden value="Select branch">
               {selectedRow ? selectedRow.branchName : ''}
             </option>
+
+            <option value="all">All</option>
             {branches.map((branch) => (
               <option key={branch.branchId} value={branch.branchId}>
                 {branch.branchName}
               </option>
-              
+
             ))}
           </select>
 
@@ -365,9 +455,10 @@ const TimeSlotManagement = () => {
             onChange={(e) => handleCourtChange(e.target.value)}
             className="timeslotmanage-filter-court-input-box-modal"
           >
-            <option disabled selected hidden value="">
+            <option disabled selected hidden value="Select court">
               {selectedRow ? selectedRow.courtName : ''}
             </option>
+            <option value="all">All</option>
             {courts.map((court) => (
               <option key={court.courtId} value={court.courtId}>
                 {court.courtName}
@@ -406,24 +497,21 @@ const TimeSlotManagement = () => {
             ]}
             centered
           >
-            <form>
-              <div className="managetimeslot-timeslot-modal">
-                <div className="managetimeslot-timeslot-modal-item">
-                  <div className="managetimeslot-timeslot-modal-item-label">
-                    <p>Branch:</p>
-                    <p>Court:</p>
-                    <p>Start Time:</p>
-                    <p>End Time:</p>
-                  </div>
+            <div className="managetimeslot-timeslot-modal">
+              <div className="managetimeslot-timeslot-modal-item">
+                <div className="managetimeslot-timeslot-modal-item-label">
+                  <p>Branch:</p>
+                  <p>Court:</p>
+                  <p>Start Time:</p>
+                  <p>End Time:</p>
+                </div>
+                <div className="managetimeslot-timeslot-modal-item-value">
                   <div className="managetimeslot-timeslot-modal-item-value">
                     <select
                       value={formState.branch}
                       onChange={(e) => handleBranchChange(e.target.value)}
                       className="managetimeslot-input-box-modal"
                     >
-                      <option disabled selected hidden value="">
-                        Select branch
-                      </option>
                       {branches.map((branch) => (
                         <option key={branch.branchId} value={branch.branchId}>
                           {branch.branchName}
@@ -431,41 +519,42 @@ const TimeSlotManagement = () => {
                       ))}
                     </select>
 
-                    <select
-                      value={formState.court}
-                      onChange={(e) => handleCourtChange(e.target.value)}
-                      className="managetimeslot-input-box-modal"
-                    >
-                      <option disabled selected hidden value="">
-                        Select court
-                      </option>
-                      {courts.map((court) => (
-                        <option key={court.courtId} value={court.courtId}>
-                          {court.courtName}
-                        </option>
-                      ))}
-                    </select>
-
-                    <input
-                      value={formState.startTime}
-                      onChange={(e) =>
-                        setFormState({ ...formState, startTime: e.target.value })
-                      }
-                      className="managetimeslot-input-box-modal"
-                      type="time"
-                    />
-                    <input
-                      value={formState.endTime}
-                      onChange={(e) =>
-                        setFormState({ ...formState, endTime: e.target.value })
-                      }
-                      className="managetimeslot-input-box-modal"
-                      type="time"
-                    />
                   </div>
+
+                  <select
+                    value={formState.court}
+                    onChange={(e) => handleCourtChange(e.target.value)}
+                    className="managetimeslot-input-box-modal"
+                  >
+                    <option disabled value="">
+                      Select court
+                    </option>
+                    {courtsfilter.map((court) => (
+                      <option key={court.courtId} value={court.courtId}>
+                        {court.courtName}
+                      </option>
+                    ))}
+                  </select>
+
+                  <input
+                    value={formState.startTime}
+                    onChange={(e) =>
+                      setFormState({ ...formState, startTime: e.target.value })
+                    }
+                    className="managetimeslot-input-box-modal"
+                    type="time"
+                  />
+                  <input
+                    value={formState.endTime}
+                    onChange={(e) =>
+                      setFormState({ ...formState, endTime: e.target.value })
+                    }
+                    className="managetimeslot-input-box-modal"
+                    type="time"
+                  />
                 </div>
               </div>
-            </form>
+            </div>
           </Modal>
 
         </div>
@@ -505,7 +594,7 @@ const TimeSlotManagement = () => {
           <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id} />
         </Box>
       </Box>
-    </ConfigProvider>
+    </ConfigProvider >
   );
 };
 
