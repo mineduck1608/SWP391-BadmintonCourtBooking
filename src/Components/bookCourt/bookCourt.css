@@ -1,3 +1,6 @@
+*{
+  /* border: 1px black solid; */
+}
 /* Styles for the bookCourt container */
 .bookCourt-container {
   width: 80%;
@@ -75,8 +78,13 @@ span {
 
 .inputradio {
   position: fixed;
-  left: -850px;
+  left: -45%;
   margin-top: 7px;
+  display: inline;
+}
+
+.tab1 {
+  left: -40%;
 }
 
 /* Styles for radio buttons */
@@ -208,6 +216,12 @@ textarea {
 
 .buyTimeBtn {
   display: block;
+  background-color: black;
+  padding: 2%;
+  width:fit-content;
+}
+.buyTimeBtn:hover{
+  background-color: var(--PrimaryColor);
 }
 #datePicker{
   margin-left: 1%;
@@ -216,4 +230,18 @@ textarea {
 }
 #dateError{
   color: red;
+}
+#MomoLogo{
+  width: 5%;
+  display: block;
+}
+#VnpayLogo{
+  width: 5%;
+}
+.tab2 {
+  /* position: relative; */
+  margin-left: 7.5%;
+}
+#nowrap{
+  white-space: nowrap;
 }
