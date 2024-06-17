@@ -156,47 +156,44 @@ button {
 }
 
 .courtList {
+    
     display: grid;
-    /* Set two fixed-width columns */
-    grid-template-columns: repeat(2, minmax(0, 900px)); 
-    gap: 40px; 
-    margin-top: 20%;
-    width: 95%; 
-    /* Ensure the max-width is enough to contain two courts plus the gap */
-    max-width: calc(1000px + 40px); 
-    margin-left: auto; 
-    margin-right: auto; 
-    margin-bottom: auto;
+    grid-template-columns: repeat(2, 1fr); /* This will create two columns */
+    gap: 20px; /* Adjust gap as needed */
+    width: 100%; /* Full width of the container */
+    justify-content: center; /* Center the items horizontally */
+    margin-top: 200px;
 }
 
 
 
 .courtCard {
     display: flex;
-    flex-direction: row;
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 8px;
     background: var(--whiteColor);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    .courtCard {
-    flex: none; /* Disable flex on courtCard */
-    width: calc(50% - 20px); /* Adjust width to fill half of the row minus the gap */
-}
+    width: 700px; /* Adjust width to fill half of the row minus half of the gap */
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
 }
 
 .courtImage img {
-    max-width: 400px; 
-    height: 160px;
+    width: 400px; 
+    height: 250px;
     margin-right: 20px;
     border-radius: 8px;
 }
 
 .courtInfo {
     flex: 1; 
-    padding: 20px;
-    margin-left: auto; 
+    
+    
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
 }
 
 .courtInfo h2 {
