@@ -130,12 +130,14 @@
   margin-top: 15px;
   height: 50%;
   margin-left: 20px;
+  text-align: center;
 }
 .timeslotmanage-filter-court-input-box-modal{
   width: 20%;
   margin-top: 15px;
   height: 50%;
   margin-left: 20px;
+  text-align: center;
 }
 .timeslotmanage-filter-court{
   color: black;

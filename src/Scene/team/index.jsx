@@ -392,9 +392,9 @@ const Team = () => {
     <Box m="20px">
       <Head title="User" subtitle="Managing the User Accounts" />
       <Box>
-        <Button type="primary" onClick={addUser} variant="contained" color="primary" size="small">
+        <button className="button-adduser" type="primary" onClick={addUser} variant="contained" color="primary" size="small">
           Add User
-        </Button>
+        </button>
         <Modal
           width={1000}
           open={addOpen}
