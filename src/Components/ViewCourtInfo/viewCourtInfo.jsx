@@ -73,14 +73,19 @@ const ViewCourtInfo = () => {
                     <div className="viewcourtinfo-body">
                         <div className="viewcourtinfo-body-pic">
                             <img className="viewcourtinfo-img" src={image2} alt="" />
-                            <div className="viewcourtinfo-body-des">
-                                <h1>Description:</h1>
-                                <p>{mainCourt.description}</p>
+                            <div className="viewcourtinfo-body-courtId-des">
+                                <div className="viewcourtinfo-body-courtId">
+                                    <h1>Court No: {mainCourt.courtId}</h1>
+                                </div>
+                                <div className="viewcourtinfo-body-des">
+                                    <h1>Description:</h1>
+                                    <p>{mainCourt.description}</p>
+                                </div>
                             </div>
                         </div>
                         <div className="viewcourtinfo-info-status">
                             <div className="viewcourtinfo-info">
-                                <h2>Court No: {mainCourt.courtId}</h2>
+                                
                                 <p>Address: {branch.location}</p>
                                 <p>Time: AAAAA</p>
                                 <p>Branch: {branch.branchName}</p>
@@ -143,7 +148,7 @@ const ViewCourtInfo = () => {
                                             <p>{court.description}</p>
                                         </div>
                                         <div className="other-court-button">
-                                            <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                        <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
                                         </div>
                                     </div>
                                 </div>
