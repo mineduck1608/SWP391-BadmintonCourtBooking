@@ -171,3 +171,69 @@
   color: #f0f0f0;
   background-color: black;
 }
+.managetimeslot-custom-modal {
+  border-radius: 10px;
+}
+
+.managetimeslot-timeslot-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}
+
+.managetimeslot-user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 40px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.managetimeslot-user-info-title {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.managetimeslot-user-info-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ddd;
+}
+
+.managetimeslot-user-info-text {
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.managetimeslot-user-info-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.managetimeslot-button-hover-black {
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  margin-left: 80%;
+}
+
+.managetimeslot-button-hover-black:hover {
+  background-color: hsl(26, 93%, 50%);
+}
