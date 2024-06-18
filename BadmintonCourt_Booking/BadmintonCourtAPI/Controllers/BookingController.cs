@@ -19,19 +19,6 @@ namespace BadmintonCourtAPI.Controllers
             }
         }
 
-		string GenerateId()
-		{
-			string number = $"{_service.BookingService.GetAllBookings().Count()}";
-			int length = number.Length;
-			while (length < 17)
-			{
-				string tmp = $"0{number}";
-				number = tmp;
-				length++;
-			}
-			return $"BK{number}";
-		}
-
 
         [HttpGet]
         [Route("Booking/GetAll")]
@@ -65,10 +52,10 @@ namespace BadmintonCourtAPI.Controllers
         [HttpPost]
         [Route("Booking/Add")]
         //[Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> AddBooking(Booking booking)
-        {
-            _service.BookingService.AddBooking(booking);
-            return NoContent();
+        public async Task<IActionResult> AddBooking(double amount, int bookingType, string userId, DateTime date)
+        {   
+            _service.BookingService.AddBooking(new Booking { BookingId = "B" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D5"), Amount =  amount, BookingDate = date, BookingType = bookingType, UserId = userId});
+            return Ok(new { msg = "Success" });
         }
 
         [HttpPut]

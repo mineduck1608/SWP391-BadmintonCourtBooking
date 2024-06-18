@@ -26,9 +26,12 @@ namespace BadmintonCourtDAOs
 
         public List<Court> GetCourtsByBranchId(string id) => _dbContext.Courts.Where(x => x.BranchId == id).ToList();
 
-        public List<Court> GetCourtsByPriceInterval(float min, float max) =>  _dbContext.Courts.Where(x => x.Price >= min && x.Price <= max).ToList();
-        
-        public List<Court> GetCourtsBySearchResult(string search) => _dbContext.Courts.Where(x => x.Description.ToLower().Contains(search.ToLower()) || x.Branch.BranchName.ToLower().Contains(search.ToLower()) || x.Branch.Location.ToLower().Contains(search.ToLower())).ToList();
+        public List<Court> GetCourtsByPriceInterval(double min, double max) =>  _dbContext.Courts.Where(x => x.Price >= min && x.Price <= max).ToList();
+
+		public List<Court> GetCourtsByStatus(bool status) => _dbContext.Courts.Where(x => x.CourtStatus == status).ToList();    
+
+
+		public List<Court> GetCourtsBySearchResult(string search) => _dbContext.Courts.Where(x => x.Description.ToLower().Contains(search.ToLower()) || x.Branch.BranchName.ToLower().Contains(search.ToLower()) || x.Branch.Location.ToLower().Contains(search.ToLower())).ToList();
 
         public Court GetCourtByCourtId(string id) => _dbContext.Courts.FirstOrDefault(x => x.CourtId == id);
 

@@ -9,23 +9,23 @@ namespace BadmintonCourtServices.IService
 {
     public interface ISlotService
     {
-        public List<Slot> GetAllSlots();
+        public List<BookedSlot> GetAllSlots();
 
-        public Slot GetSlotById(string id);
+        public BookedSlot GetSlotById(string id);
 
-        public List<Slot> GetSlotsByStatus(bool status);
+        public List<BookedSlot> GetSlotsByBookingId(string bookingId);
 
-        public List<Slot> GetSLotsByDate(DateTime date);
+		public List<BookedSlot> GetSLotsByDate(DateTime date);
 
-        public List<Slot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id);
+        public List<BookedSlot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id);
 
-        public List<Slot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id);
+        public List<BookedSlot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id);
 
-        public List<Slot> GetSlotsByCourt(string id);
+        public List<BookedSlot> GetSlotsByCourt(string id);
 
-        public void UpdateSlot(Slot newSlot, string id);
+        public void UpdateSlot(BookedSlot newSlot, string id);
 
-        public void AddSlot(Slot slot);
+        public void AddSlot(BookedSlot slot);
 
         public void DeleteSlot(string id);
 

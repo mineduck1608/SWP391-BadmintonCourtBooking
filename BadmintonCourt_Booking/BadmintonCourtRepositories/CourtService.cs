@@ -28,7 +28,9 @@ namespace BadmintonCourtServices
 
         public List<Court> GetCourtsByBranchId(string id) => _courtDAO.GetCourtsByBranchId(id);
 
-        public List<Court> GetCourtsByPriceInterval(float min, float max) => _courtDAO.GetCourtsByPriceInterval(min, max);
+		public List<Court> GetCourtsByStatus(bool status) => _courtDAO.GetCourtsByStatus(status);
+
+		public List<Court> GetCourtsByPriceInterval(double min, double max) => _courtDAO.GetCourtsByPriceInterval(min, max);
 
         public List<Court> GetCourtsBySearchResult(string search) => _courtDAO.GetCourtsBySearchResult(search);
 

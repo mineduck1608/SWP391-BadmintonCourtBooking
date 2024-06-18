@@ -35,15 +35,17 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<Role>> GetRoleById(string id) => _service.RoleService.GetRoleById(id);
 
 		[HttpPost]
-		[Route("Role/AddRole")]
+		[Route("Role/Add")]
 		public async Task<IActionResult> AddRole(string roleName)
         {
-            if (roleName.IsNullOrEmpty())
+            if (!roleName.IsNullOrEmpty())
             {
+                if (_service.RoleService.GetAllRoles().FirstOrDefault(x => x.RoleName == roleName) != null)
+                    return BadRequest(new { msg = $"Role {roleName} has already existed" });
 				_service.RoleService.AddRole(new Role { RoleId = "R" + (_service.RoleService.GetAllRoles().Count + 1).ToString("D3"), RoleName = roleName });
-				return Ok();
+				return Ok(new { msg = "Success" });
 			}
-            return BadRequest("Name is not full filled yet");
+            return BadRequest(new { msg = "Name is not full filled yet" });
         }
 
 		[HttpDelete]
@@ -51,7 +53,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<IActionResult> DeleteRole(string id)
         {
             _service.RoleService.DeleteRole(id);
-            return Ok();    
+            return Ok(new { msg = "Success"});    
         }
 
         [HttpPut]
@@ -60,9 +62,13 @@ namespace BadmintonCourtAPI.Controllers
         {
             Role tmp = _service.RoleService.GetRoleById(id);       
             if (!roleName.IsNullOrEmpty())
+            {
+				if (_service.RoleService.GetAllRoles().FirstOrDefault(x => x.RoleName == roleName) != null)
+					return BadRequest(new { msg = $"Role {roleName} has already existed" });
                 tmp.RoleName = roleName;
+			}
             _service.RoleService.UpdateRole(tmp, id);
-            return Ok();
+            return Ok(new { msg = "Success" });
         }
 
     }

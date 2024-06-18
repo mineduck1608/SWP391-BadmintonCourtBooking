@@ -22,7 +22,7 @@ namespace BadmintonCourtDAOs
             }
         }
 
-        public List<User> GetAllUsers() => _dbContext.Users.Where(x => x.ActiveStatus == true).ToList();
+        public List<User> GetAllUsers() => _dbContext.Users.ToList();
 
         public User GetUserById(string id) => _dbContext.Users.FirstOrDefault(x => x.UserId == id);
 

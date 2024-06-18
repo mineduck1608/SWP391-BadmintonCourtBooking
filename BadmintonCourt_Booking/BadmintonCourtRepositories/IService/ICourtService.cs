@@ -11,9 +11,12 @@ namespace BadmintonCourtServices.IService
     {
         public List<Court> GetAllCourts();
         public List<Court> GetCourtsByBranchId(string id);
-        public List<Court> GetCourtsByPriceInterval(float min, float max);
+        public List<Court> GetCourtsByPriceInterval(double min, double max);
         public List<Court> GetCourtsBySearchResult(string search);
-        public Court GetCourtByCourtId(string id);
+
+        public List<Court> GetCourtsByStatus(bool status);
+
+		public Court GetCourtByCourtId(string id);
         public Court GetRecentAddedCourt();
         public void UpdateCourt(Court newCourt, string id);
         public void DeleteCourt(string id);

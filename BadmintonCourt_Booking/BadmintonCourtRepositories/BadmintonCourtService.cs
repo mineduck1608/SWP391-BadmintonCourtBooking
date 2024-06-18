@@ -18,7 +18,9 @@ namespace BadmintonCourtServices
 
         public readonly CourtBranchService BranchService = null;
 
-        public readonly FeedbackService FeedbackService = null;
+		public readonly DiscountService DiscountService = null;
+
+		public readonly FeedbackService FeedbackService = null;
 
         public readonly PaymentService PaymentService = null;
 
@@ -74,6 +76,8 @@ namespace BadmintonCourtServices
             }
             if (VnPayService == null)
                 VnPayService = new VnPayService(config);
+            if (DiscountService == null)
+                DiscountService = new DiscountService();
         }
 
     }

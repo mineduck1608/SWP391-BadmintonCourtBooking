@@ -17,7 +17,7 @@ namespace BadmintonCourtBusinessObjects.SupportEntities.Payment
 		public string CourtId { get; set; }
 		public string Type { get; set; } // Cố định, linh hoạt
 		public int NumMonth { get; set; }  // 2 tháng, 3 tháng
-		public string Hours { get; set; }   // 10 tiếng, 20 tiếng, ...
+		public string Amount { get; set; }   // 10k 20k 50k
 		public string DaysList { get; set; } // Giành cho chơi cố định, request gửi về list các ngày đã đc accept để tạo ngầm slot
 		// Nếu giao dịch ko thành công sẽ tự động hủy slot đã tạo ngầm trong db
 		

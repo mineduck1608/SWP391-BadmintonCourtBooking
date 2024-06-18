@@ -1,7 +1,9 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
+using BadmintonCourtBusinessObjects.SupportEntities.Slot;
 using BadmintonCourtServices;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -65,6 +67,14 @@ namespace BadmintonCourtAPI.Utils
 		}
 
 		public static DateTime CustomizeDate(int period) => new DateTime(1900, 1, 1, period, 0, 0);
+
+		public static List<BookedSlotSchema> FormatSlotList(List<BookedSlot> slots)
+		{
+			List <BookedSlotSchema> result = new List<BookedSlotSchema>();
+			foreach (var slot in slots)
+				result.Add(new BookedSlotSchema { BookedSlotId = slot.SlotId, BookingId = slot.BookingId, Date = new DateOnly(slot.StartTime.Year, slot.StartTime.Month, slot.StartTime.Day), Start = slot.StartTime.Hour, End = slot.EndTime.Hour });
+			return result;
+		}
 
 		public static bool ArePricesValid(double? min, double? max) => min < max;
 	}

@@ -35,7 +35,7 @@ namespace BadmintonCourtDAOs
 		}
 
 
-		public string GetResponseData(string key) => _responseData.TryGetValue(key, out string retValue) ? retValue : String.Empty;
+		public string? GetResponseData(string key) => _responseData.TryGetValue(key, out string retValue) ? retValue : String.Empty;
 
 		#region Request
 

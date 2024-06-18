@@ -3,22 +3,23 @@ using System.Collections.Generic;
 
 namespace BadmintonCourtBusinessObjects.Entities;
 
-public partial class Court 
+public partial class Court
 {
-	public string CourtId { get; set; }
+    public string CourtId { get; set; } = null!;
 
-	public string? CourtImg { get; set; }
+    public string? CourtImg { get; set; }
 
-	public string BranchId { get; set; }
+    public string BranchId { get; set; } = null!;
 
-	public float Price { get; set; }
+    public float Price { get; set; }
 
-	public string Description { get; set; }
+    public string Description { get; set; } = null!;
 
-	public bool CourtStatus { get; set; }
+    public string CourtName { get; set; } = null!;
 
-	public virtual CourtBranch Branch { get; set; }
+    public bool CourtStatus { get; set; }
 
-	public virtual ICollection<Slot> Slots { get; set; }
+    public virtual ICollection<BookedSlot> BookedSlots { get; set; } = new List<BookedSlot>();
 
+    public virtual CourtBranch Branch { get; set; } = null!;
 }

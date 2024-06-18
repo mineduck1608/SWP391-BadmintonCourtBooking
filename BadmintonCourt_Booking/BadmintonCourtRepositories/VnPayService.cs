@@ -45,9 +45,9 @@ namespace BadmintonCourtServices
 			_vnPayLib.AddRequestData("vnp_OrderInfo", vnPayRequestDTO.Content);
 			_vnPayLib.AddRequestData("vnp_OrderType", "other"); //default value: other
 			_vnPayLib.AddRequestData("vnp_ReturnUrl", _config["VnPay:ReturnUrl"]);
-			_vnPayLib.AddRequestData("vnp_TxnRef", Utils.GenerateTxnRefId()); // Mã tham chiếu của giao dịch tại hệ
+			_vnPayLib.AddRequestData("vnp_TxnRef", vnPayRequestDTO.UserId + DateTime.Now.Ticks.ToString()); // Mã tham chiếu của giao dịch tại hệ
 			_vnPayLib.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString());
-			if (vnPayRequestDTO.Type == "Cố định" || vnPayRequestDTO.Type == "1 lần chơi") 
+			if (vnPayRequestDTO.Type == "Cố định" || vnPayRequestDTO.Type == "1 lần chơi")
 			{
 				//_vnPayDAO.AddRequestData("Day List", ToHashString(vnPayRequestDTO.DaysList));
 				_vnPayLib.AddRequestData("Day_List", vnPayRequestDTO.DaysList);
@@ -63,7 +63,7 @@ namespace BadmintonCourtServices
 					_vnPayLib.AddRequestData(key, value.ToString());
 
 			var vnp_orderId = Convert.ToInt64(_vnPayLib.GetResponseData("vnp_TxnRef"));
-			var vnp_transactionId = Convert.ToInt64(_vnPayLib.GetResponseData(" vnp_TransactionNo"));
+			var vnp_transactionId = _vnPayLib.GetResponseData("vnp_TransactionNo");
 			var vnp_SecureHash = collection.FirstOrDefault(x => x.Key == "vnp_SecureHash").Value;
 			var vnp_ResponseCode = _vnPayLib.GetResponseData("vnp_ResponseCode");
 			var vnp_OrderInfo = _vnPayLib.GetResponseData("vnp_OrderInfo");
@@ -75,34 +75,22 @@ namespace BadmintonCourtServices
 			{
 				var dayList = _vnPayLib.GetResponseData("Day_List");
 				var interval = _vnPayLib.GetResponseData("Interval");
-				if (!string.IsNullOrEmpty(dayList))
-					return new VnPayResponseDTO // Cố định | 1 lần chơi
-					{
-						Status = true,
-						PaymentMethod = "vnpay",
-						Description = vnp_OrderInfo,
-						BookingId = vnp_orderId.ToString(),
-						TransactionId = vnp_transactionId.ToString(),
-						Token = vnp_SecureHash,
-						VnPayResponseCode = vnp_ResponseCode,
-						DayList = dayList,
-						Interval = interval,
-						Amount = float.Parse(amount),
-						Date = DateTime.Now
-					};
-				return new VnPayResponseDTO // Linh hoạt
+				return new VnPayResponseDTO // Cố định | 1 lần chơi
 				{
 					Status = true,
-					PaymentMethod = "vnpay",
+					PaymentMethod = "1",
 					Description = vnp_OrderInfo,
 					BookingId = vnp_orderId.ToString(),
 					TransactionId = vnp_transactionId.ToString(),
 					Token = vnp_SecureHash,
 					VnPayResponseCode = vnp_ResponseCode,
-					Amount = float.Parse(amount),
+					DayList = dayList,
+					Interval = interval,
+					Amount = double.Parse(amount),
 					Date = DateTime.Now
 				};
 			}
 		}
+
 	}
 }
