@@ -3,7 +3,9 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import React, { useState, useEffect } from 'react';
-import { ConfigProvider, Modal, Descriptions, Spin } from 'antd';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { ConfigProvider, Modal, Form, Input, InputNumber, Radio } from 'antd';
 
 const Court = () => {
     const theme = useTheme();
@@ -14,6 +16,10 @@ const Court = () => {
     const [error, setError] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedCourt, setSelectedCourt] = useState(null);
+    const [isAddMode, setIsAddMode] = useState(false);
+    const [refresh, setRefresh] = useState(false);
+
+    const [form] = Form.useForm();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,16 +56,83 @@ const Court = () => {
         };
 
         fetchData();
-    }, []);
+    }, [refresh]);
 
     const handleViewInfo = (id) => {
         const court = data.find((court) => court.courtId === id);
         setSelectedCourt(court);
         setModalVisible(true);
+        setIsAddMode(false);
+        form.setFieldsValue({
+            courtImg: court.courtImg,
+            price: court.price,
+            description: court.description,
+            courtStatus: court.courtStatus,
+            branchName: court.branchName
+        });
     };
 
-    const handleDelete = (id) => {
-        console.log(`Delete row with id: ${id}`);
+    const handleAddCourt = () => {
+        setSelectedCourt(null);
+        setModalVisible(true);
+        setIsAddMode(true);
+        form.resetFields();
+    };
+
+    const handleDelete = async (id) => {
+        const court = data.find((court) => court.id === id);
+        const url = `http://localhost:5266/Court/GetDeleted?courtId=${court.courtId}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to delete court: ${errorData.message}`);
+            }
+
+            // Update the court status in the state
+            setData((prevData) =>
+                prevData.filter((c) => c.id !== id)
+            );
+            toast.success("Court Deleted Successfully");
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error("Failed to delete court");
+        }
+    };
+
+    const handleSubmit = async (values) => {
+        const { courtImg, price, description, courtStatus } = values;
+        const url = isAddMode 
+            ? `http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${selectedCourt?.branchId || 'someDefaultBranchId'}&price=${price}&description=${description}`
+            : `http://localhost:5266/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${selectedCourt.courtId}&activeStatus=${courtStatus}`;
+
+        try {
+            const response = await fetch(url, {
+                method: isAddMode ? 'POST' : 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to ${isAddMode ? 'add' : 'update'} court: ${errorData.message}`);
+            }
+
+            setModalVisible(false);
+            setRefresh(!refresh);
+            toast.success(`Court ${isAddMode ? 'Added' : 'Updated'} Successfully`);
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error(`Failed to ${isAddMode ? 'add' : 'update'} court`);
+        }
     };
 
     const columns = [
@@ -156,6 +229,9 @@ const Court = () => {
         }}>
             <Box m="20px">
                 <Head title="COURTS" subtitle="List of Badminton Courts" />
+                <Button variant="contained" color="primary" onClick={handleAddCourt}>
+                    Add Court
+                </Button>
                 <Box
                     m="40px 0 0 0"
                     height="75vh"
@@ -199,30 +275,60 @@ const Court = () => {
                 </Box>
 
                 <Modal
-                    title={<span style={{ fontSize: '32px' }}>Court Info</span>}
+                    title={<span style={{ fontSize: '32px' }}>{isAddMode ? 'Add Court' : 'Edit Court'}</span>}
                     open={modalVisible}
                     onCancel={() => setModalVisible(false)}
                     footer={null}
                 >
-                    {selectedCourt ? (
-                        <Box>
-                            <Descriptions bordered column={1}>
-                                <Descriptions.Item label="Court ID">{selectedCourt.courtId}</Descriptions.Item>
-                                <Descriptions.Item label="Image">
-                                    <img src={selectedCourt.courtImg} alt="court" style={{ width: '100%' }} />
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Price">{selectedCourt.price}</Descriptions.Item>
-                                <Descriptions.Item label="Status">{selectedCourt.courtStatus ? 'true' : 'false'}</Descriptions.Item>
-                                <Descriptions.Item label="Description">{selectedCourt.description}</Descriptions.Item>
-                                <Descriptions.Item label="Branch">{selectedCourt.branchName}</Descriptions.Item>
-                                <Descriptions.Item label="Slots">{selectedCourt.slots.length}</Descriptions.Item>
-                            </Descriptions>
-                        </Box>
-                    ) : (
-                        <Spin />
-                    )}
+                    <Form form={form} onFinish={handleSubmit} layout="vertical">
+                        <Form.Item
+                            name="courtImg"
+                            label="Image"
+                            rules={[{ required: true, message: 'Please input the image!' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="courtStatus"
+                            label="Status"
+                            rules={[{ required: true, message: 'Please select the status!' }]}
+                        >
+                            <Radio.Group>
+                                <Radio value={true}>true</Radio>
+                                <Radio value={false}>false</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item
+                            name="price"
+                            label="Price"
+                            rules={[{ required: true, message: 'Please input the price!' }]}
+                        >
+                            <InputNumber style={{ width: '100%' }} />
+                        </Form.Item>
+                        <Form.Item
+                            name="description"
+                            label="Description"
+                            rules={[{ required: true, message: 'Please input the description!' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        {!isAddMode && (
+                            <Form.Item
+                                name="branchName"
+                                label="Branch Name"
+                            >
+                                <Input disabled />
+                            </Form.Item>
+                        )}
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </Modal>
             </Box>
+            <ToastContainer />
         </ConfigProvider>
     );
 };
