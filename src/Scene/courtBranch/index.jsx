@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from "@mui/material";
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import { useTheme } from "@mui/material";
-import { Modal, Spin, ConfigProvider, Radio } from 'antd';
-import './branch.css';
+import { Modal, Spin, ConfigProvider } from 'antd';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './branch.css';
 
 const Branch = () => {
   const theme = useTheme();
@@ -20,148 +21,124 @@ const Branch = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [newBranch, setNewBranch] = useState({
     location: '',
-    img: '',
-    name: '',
-    phone: '',
-    status: '',
+    branchName: '',
+    branchPhone: '',
+    branchImg: '',
   });
 
-  const fetchData = async () => {
-    try {
-      const [branchResponse, feedbackResponse] = await Promise.all([
-        fetch('http://localhost:5266/Branch/GetAll'),
-        fetch('http://localhost:5266/Feedback/GetAll')
-      ]);
-
-      if (!branchResponse.ok || !feedbackResponse.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const branches = await branchResponse.json();
-      const feedbacks = await feedbackResponse.json();
-
-      const feedbackMap = feedbacks.reduce((acc, feedback) => {
-        if (!acc[feedback.branchId]) {
-          acc[feedback.branchId] = [];
-        }
-        acc[feedback.branchId].push(feedback);
-        return acc;
-      }, {});
-
-      const newData = branches.map((branch, index) => ({
-        ...branch,
-        id: index + 1,
-        feedbacks: feedbackMap[branch.branchId] || []
-      }));
-
-      setData(newData);
-      setLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const branchResponse = await fetch('http://localhost:5266/Branch/GetAll');
+        if (!branchResponse.ok) {
+          throw new Error('Failed to fetch branch data');
+        }
+        const branchData = await branchResponse.json();
+
+        const feedbackResponse = await fetch('http://localhost:5266/Feedback/GetAll');
+        if (!feedbackResponse.ok) {
+          throw new Error('Failed to fetch feedback data');
+        }
+
+        const feedbackData = await feedbackResponse.json();
+
+        const feedbackMap = feedbackData.reduce((acc, feedback) => {
+          acc[feedback.branchId] = acc[feedback.branchId] || [];
+          acc[feedback.branchId].push(feedback.content);
+          return acc;
+        }, {});
+
+        const combinedData = branchData.map((branch, index) => ({
+          ...branch,
+          id: index + 1,
+          feedbacks: feedbackMap[branch.branchId] ? feedbackMap[branch.branchId].join(', ') : 'No feedbacks'
+        }));
+
+        setData(combinedData);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
     fetchData();
+    const interval = setInterval(fetchData, 1000); // Fetch data every 1000ms
+    return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
   const handleViewInfo = (id) => {
     const branch = data.find((branch) => branch.branchId === id);
     setSelectedBranch(branch);
     setModalVisible(true);
-    setAddModalVisible(false);
   };
 
-  const handleDelete = async (id) => {
-    const branch = data.find((branch) => branch.id === id);
-    const url = `http://localhost:5266/Branch/Delete?id=${branch.branchId}`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete branch');
-      }
-
-      // Update the branch data in the state
-      setData((prevData) =>
-        prevData.filter((b) => b.id !== id)
-      );
-      toast.success("Branch Deleted Successfully");
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error("Failed to delete branch");
-    }
+  const handleDelete = (id) => {
+    console.log(`Delete row with id: ${id}`);
+    // Implement the logic for deleting a row here
   };
 
-  const handleAddBranch = async () => {
-    const { location, img, name, phone, status } = newBranch;
-    try {
-      const response = await fetch(`http://localhost:5266/Branch/Add?location=${location}&img=${img}&name=${name}&phone=${phone}&status=${status}`, {
-        method: 'POST'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add branch');
-      }
-
-      // Fetch the updated data
-      fetchData();
-
-      setAddModalVisible(false);
-      setNewBranch({
-        location: '',
-        img: '',
-        name: '',
-        phone: '',
-        status: true
-      });
-    } catch (error) {
-      console.error(error.message);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedBranch({
+      ...selectedBranch,
+      [name]: name === 'branchStatus' ? value === 'true' : value,
+    });
   };
 
-  const handleEditBranch = async () => {
-    const { location, img, name, phone, status, branchId } = selectedBranch;
+  const handleAddInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewBranch({
+      ...newBranch,
+      [name]: value,
+    });
+  };
+
+  const handleSave = async () => {
+    const { location, branchImg, branchName, branchPhone, branchStatus, branchId } = selectedBranch;
+    const statusValue = branchStatus ? 1 : 0; // Convert boolean to 1 or 0
     try {
-      const response = await fetch(`http://localhost:5266/Branch/Update?location=${location}&img=${img}&name=${name}&phone=${phone}&status=${status}&id=${branchId}`, {
-        method: 'PUT'
+      const response = await fetch(`http://localhost:5266/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}`, {
+        method: 'PUT',
       });
 
       if (!response.ok) {
         throw new Error('Failed to update branch');
       }
 
-      // Fetch the updated data
-      fetchData();
-
+      toast.success('Branch updated successfully!');
       setModalVisible(false);
-      setSelectedBranch(null);
     } catch (error) {
-      console.error(error.message);
+      console.error('Error:', error);
+      toast.error('Failed to update branch');
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedBranch((prevBranch) => ({
-      ...prevBranch,
-      [name]: value
-    }));
-  };
+  const handleAddBranch = async () => {
+    const { location, branchImg, branchName, branchPhone } = newBranch;
+    try {
+      const response = await fetch(`http://localhost:5266/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          location,
+          branchImg,
+          branchName,
+          branchPhone,
+        }),
+      });
 
-  const handleStatusChange = (e) => {
-    const { value } = e.target;
-    setSelectedBranch((prevBranch) => ({
-      ...prevBranch,
-      status: value
-    }));
+      if (!response.ok) {
+        throw new Error('Failed to add branch');
+      }
+      toast.success('Branch added successfully!');
+      setAddModalVisible(false);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to add branch');
+    }
   };
 
   const columns = [
@@ -182,20 +159,7 @@ const Branch = () => {
         </Box>
       )
     },
-    {
-      field: "feedbacks",
-      headerName: "Feedbacks",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box>
-          {params.value.map((feedback, index) => (
-            <div key={index}>{feedback.content}</div>
-          ))}
-        </Box>
-      )
-    },
+    { field: "feedbacks", headerName: "Feedbacks", flex: 1, align: "center", headerAlign: "center" },
     {
       field: "actions",
       headerName: "Actions",
@@ -224,11 +188,11 @@ const Branch = () => {
   ];
 
   if (loading) {
-    return <Box m="20px">Loading...</Box>
+    return <Box m="20px">Loading...</Box>;
   }
 
   if (error) {
-    return <Box m="20px">Error: {error}</Box>
+    return <Box m="20px">Error: {error}</Box>;
   }
 
   return (
@@ -242,8 +206,8 @@ const Branch = () => {
       },
     }}>
       <Box m="20px">
-        <Head title="BRANCHES" subtitle="List of Branches for Future Reference" />
-        <Box display="flex" justifyContent="space-between" alignItems="center" m="20px 0">
+          <Head title="BRANCHES" subtitle="List of Branches for Future Reference" />
+          <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="20px">
           <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
             Add Branch
           </Button>
@@ -291,20 +255,21 @@ const Branch = () => {
         </Box>
 
         <Modal
-          title={<span style={{ fontSize: '32px' }}>Edit Branch</span>}
+          title={<span style={{ fontSize: '32px' }}>Branch Info</span>}
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
-          footer={(
-            <Button type="primary" onClick={handleEditBranch}>
-              Submit
+          footer={[
+            <Button key="cancel" variant="contained" color="primary" onClick={() => setModalVisible(false)}>
+              Cancel
+            </Button>,
+            <Button key="submit" variant="contained" color="secondary" onClick={handleSave}>
+              Save
             </Button>
-          )}
+          ]}
         >
           {selectedBranch ? (
-            <Box>
+            <Box component="form" noValidate autoComplete="off">
               <TextField
-                required
-                id="branchId"
                 label="Branch ID"
                 name="branchId"
                 value={selectedBranch.branchId}
@@ -315,8 +280,6 @@ const Branch = () => {
                 margin="normal"
               />
               <TextField
-                required
-                id="location"
                 label="Location"
                 name="location"
                 value={selectedBranch.location}
@@ -325,46 +288,41 @@ const Branch = () => {
                 margin="normal"
               />
               <TextField
-                required
-                id="img"
-                label="Image"
-                name="img"
-                value={selectedBranch.img}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                required
-                id="name"
                 label="Branch Name"
-                name="name"
-                value={selectedBranch.name}
+                name="branchName"
+                value={selectedBranch.branchName}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
               />
               <TextField
-                required
-                id="phone"
                 label="Phone"
-                name="phone"
-                value={selectedBranch.phone}
+                name="branchPhone"
+                value={selectedBranch.branchPhone}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
               />
-              <Box display="flex" flexDirection="column" alignItems="center" m="20px 0">
-                <Box>Status</Box>
-                <Radio.Group
-                  value={selectedBranch.status}
-                  onChange={handleStatusChange}
-                  style={{ display: 'flex', justifyContent: 'center' }}
+              <TextField
+                label="Image"
+                name="branchImg"
+                value={selectedBranch.branchImg}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <FormControl component="fieldset" margin="normal">
+                <FormLabel component="legend">Branch Status</FormLabel>
+                <RadioGroup
+                  row
+                  name="branchStatus"
+                  value={selectedBranch.branchStatus ? 'true' : 'false'}
+                  onChange={handleInputChange}
                 >
-                  <Radio value={true}>True</Radio>
-                  <Radio value={false}>False</Radio>
-                </Radio.Group>
-              </Box>
+                  <FormControlLabel value="true" control={<Radio />} label="True" />
+                  <FormControlLabel value="false" control={<Radio />} label="False" />
+                </RadioGroup>
+              </FormControl>
             </Box>
           ) : (
             <Spin />
@@ -375,73 +333,53 @@ const Branch = () => {
           title={<span style={{ fontSize: '32px' }}>Add Branch</span>}
           open={addModalVisible}
           onCancel={() => setAddModalVisible(false)}
-          footer={null}
+          footer={[
+            <Button key="cancel" variant="contained" color="primary" onClick={() => setAddModalVisible(false)}>
+              Cancel
+            </Button>,
+            <Button key="submit" variant="contained" color="secondary" onClick={handleAddBranch}>
+              Save
+            </Button>,
+          ]}
         >
-          <Box
-            component="form"
-            sx={{
-              '& .MuiTextField-root': { m: 1, width: '100%' },
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <div>
-              <TextField
-                required
-                id="location"
-                label="Location"
-                value={newBranch.location}
-                onChange={(e) => setNewBranch({ ...newBranch, location: e.target.value })}
-                fullWidth
-              />
-              <TextField
-                required
-                id="img"
-                label="Image"
-                value={newBranch.img}
-                onChange={(e) => setNewBranch({ ...newBranch, img: e.target.value })}
-                fullWidth
-              />
-              <TextField
-                required
-                id="name"
-                label="Branch Name"
-                value={newBranch.name}
-                onChange={(e) => setNewBranch({ ...newBranch, name: e.target.value })}
-                fullWidth
-              />
-              <TextField
-                required
-                id="phone"
-                label="Phone"
-                value={newBranch.phone}
-                onChange={(e) => setNewBranch({ ...newBranch, phone: e.target.value })}
-                fullWidth
-              />
-              <Box display="flex" flexDirection="column" alignItems="center" m="20px 0">
-                <Box>Status</Box>
-                <Radio.Group
-                  value={newBranch.status}
-                  onChange={(e) => setNewBranch({ ...newBranch, status: e.target.value })}
-                  style={{ display: 'flex', justifyContent: 'center' }}
-                >
-                  <Radio value={true}>True</Radio>
-                  <Radio value={false}>False</Radio>
-                </Radio.Group>
-              </Box>
-            </div>
-            <Box display="flex" justifyContent="flex-end" m="20px 0">
-              <Button variant="contained" color="primary" onClick={handleAddBranch}>
-                Add
-              </Button>
-            </Box>
+          <Box component="form" noValidate autoComplete="off">
+            <TextField
+              label="Location"
+              name="location"
+              value={newBranch.location}
+              onChange={handleAddInputChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Branch Name"
+              name="branchName"
+              value={newBranch.branchName}
+              onChange={handleAddInputChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Phone"
+              name="branchPhone"
+              value={newBranch.branchPhone}
+              onChange={handleAddInputChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Image"
+              name="branchImg"
+              value={newBranch.branchImg}
+              onChange={handleAddInputChange}
+              fullWidth
+              margin="normal"
+            />
           </Box>
         </Modal>
+
+        <ToastContainer />
       </Box>
-      <ToastContainer />
     </ConfigProvider>
   );
 };
