@@ -486,7 +486,6 @@ const TimeSlotManagement = () => {
             value={formState.court}
             onChange={(e) => handleCourtChange(e.target.value)}
             className="timeslotmanage-filter-court-input-box-modal"
-            disabled={!formState.branch} // Disable until branch is selected
           >
             <option disabled selected hidden value="Select court">
               {selectedRow ? selectedRow.courtName : ''}
@@ -546,120 +545,120 @@ const TimeSlotManagement = () => {
           </Modal>
 
           <Modal
-  width={700}
-  open={addOpen}
-  title="Add Time Slot"
-  onOk={handleAddOk}
-  onCancel={handleAddCancel}
-  className="managetimeslot-custom-modal"
-  footer={[
-    <button key="submit" onClick={handleAddOk} className="managetimeslot-button-hover-black-addslot">
-      Add
-    </button>,
-    <button key="back" onClick={handleAddCancel} className="managetimeslot-button-hover-black-addslot">
-      Cancel
-    </button>
-  ]}
-  centered
->
-  <div className="managetimeslot-add-slot-modal">
-    <div className="managetimeslot-add-slot-fields">
-      <div className="managetimeslot-add-slot-label-time-row">
-        <div className="time-input">
-          <label htmlFor="branch" className="managetimeslot-add-slot-label">Branch:</label>
-          <select
-            id="branch"
-            value={addFormState.branch}
-            onChange={(e) => handleBranchChange(e.target.value)}
-            className="managetimeslot-add-slot-input"
-            required
+            width={700}
+            open={addOpen}
+            title="Add Time Slot"
+            onOk={handleAddOk}
+            onCancel={handleAddCancel}
+            className="managetimeslot-custom-modal"
+            footer={[
+              <button key="submit" onClick={handleAddOk} className="managetimeslot-button-hover-black-addslot">
+                Add
+              </button>,
+              <button key="back" onClick={handleAddCancel} className="managetimeslot-button-hover-black-addslot">
+                Cancel
+              </button>
+            ]}
+            centered
           >
-            <option disabled selected hidden value="">Select branch</option>
-            {branches.map((branch) => (
-              <option key={branch.branchId} value={branch.branchId}>
-                {branch.branchName}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="time-input">
-          <label htmlFor="court" className="managetimeslot-add-slot-label">Court:</label>
-          <select
-            id="court"
-            value={addFormState.court}
-            onChange={(e) => handleCourtChange(e.target.value)}
-            className="managetimeslot-add-slot-input"
-            required
-            disabled={!addFormState.branch} // Disable until branch is selected
-          >
-            <option disabled selected hidden value="">Select court</option>
-            {courtsfilter.map((court) => (
-              <option key={court.courtId} value={court.courtId}>
-                {court.courtName}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="managetimeslot-add-slot-label-time-row">
-        <div className="time-input">
-          <label htmlFor="date" className="managetimeslot-add-slot-label">Date:</label>
-          <input
-            type="date"
-            id="date"
-            value={addFormState.date}
-            onChange={(e) => setAddFormState({ ...addFormState, date: e.target.value })}
-            className="managetimeslot-add-slot-input"
-            required
-          />
-        </div>
-        <div className="time-input">
-          <label htmlFor="startTime" className="managetimeslot-add-slot-label">Start Time:</label>
-          <select
-            id="startTime"
-            value={addFormState.startTime}
-            onChange={(e) => setAddFormState({ ...addFormState, startTime: e.target.value })}
-            className="managetimeslot-add-slot-input time-select"
-            required
-          >
-            <option disabled selected hidden value="">Select start time</option>
-            {hours.map(hour => (
-              <option key={hour} value={hour}>{hour}</option>
-            ))}
-          </select>
-        </div>
-        <div className="time-input">
-          <label htmlFor="endTime" className="managetimeslot-add-slot-label">End Time:</label>
-          <select
-            id="endTime"
-            value={addFormState.endTime}
-            onChange={(e) => setAddFormState({ ...addFormState, endTime: e.target.value })}
-            className="managetimeslot-add-slot-input time-select"
-            required
-          >
-            <option disabled selected hidden value="">Select end time</option>
-            {hours.map(hour => (
-              <option key={hour} value={hour}>{hour}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="managetimeslot-add-slot-label-time-row">
-        <div className="time-input">
-          <label htmlFor="phone" className="managetimeslot-add-slot-label">Phone Number:</label>
-          <input
-            type="text"
-            id="phone"
-            value={addFormState.phone}
-            onChange={(e) => setAddFormState({ ...addFormState, phone: e.target.value })}
-            className="managetimeslot-add-slot-input"
-            required
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-</Modal>
+            <div className="managetimeslot-add-slot-modal">
+              <div className="managetimeslot-add-slot-fields">
+                <div className="managetimeslot-add-slot-label-time-row">
+                  <div className="time-input">
+                    <label htmlFor="branch" className="managetimeslot-add-slot-label">Branch:</label>
+                    <select
+                      id="branch"
+                      value={addFormState.branch}
+                      onChange={(e) => handleBranchChange(e.target.value)}
+                      className="managetimeslot-add-slot-input"
+                      required
+                    >
+                      <option disabled selected hidden value="">Select branch</option>
+                      {branches.map((branch) => (
+                        <option key={branch.branchId} value={branch.branchId}>
+                          {branch.branchName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="time-input">
+                    <label htmlFor="court" className="managetimeslot-add-slot-label">Court:</label>
+                    <select
+                      id="court"
+                      value={addFormState.court}
+                      onChange={(e) => handleCourtChange(e.target.value)}
+                      className="managetimeslot-add-slot-input"
+                      required
+                      disabled={!addFormState.branch} // Disable until branch is selected
+                    >
+                      <option disabled selected hidden value="">Select court</option>
+                      {courtsfilter.map((court) => (
+                        <option key={court.courtId} value={court.courtId}>
+                          {court.courtName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="managetimeslot-add-slot-label-time-row">
+                  <div className="time-input">
+                    <label htmlFor="date" className="managetimeslot-add-slot-label">Date:</label>
+                    <input
+                      type="date"
+                      id="date"
+                      value={addFormState.date}
+                      onChange={(e) => setAddFormState({ ...addFormState, date: e.target.value })}
+                      className="managetimeslot-add-slot-input"
+                      required
+                    />
+                  </div>
+                  <div className="time-input">
+                    <label htmlFor="startTime" className="managetimeslot-add-slot-label">Start Time:</label>
+                    <select
+                      id="startTime"
+                      value={addFormState.startTime}
+                      onChange={(e) => setAddFormState({ ...addFormState, startTime: e.target.value })}
+                      className="managetimeslot-add-slot-input time-select"
+                      required
+                    >
+                      <option disabled selected hidden value="">Select start time</option>
+                      {hours.map(hour => (
+                        <option key={hour} value={hour}>{hour}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="time-input">
+                    <label htmlFor="endTime" className="managetimeslot-add-slot-label">End Time:</label>
+                    <select
+                      id="endTime"
+                      value={addFormState.endTime}
+                      onChange={(e) => setAddFormState({ ...addFormState, endTime: e.target.value })}
+                      className="managetimeslot-add-slot-input time-select"
+                      required
+                    >
+                      <option disabled selected hidden value="">Select end time</option>
+                      {hours.map(hour => (
+                        <option key={hour} value={hour}>{hour}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="managetimeslot-add-slot-label-time-row">
+                  <div className="time-input">
+                    <label htmlFor="phone" className="managetimeslot-add-slot-label">Phone Number:</label>
+                    <input
+                      type="text"
+                      id="phone"
+                      value={addFormState.phone}
+                      onChange={(e) => setAddFormState({ ...addFormState, phone: e.target.value })}
+                      className="managetimeslot-add-slot-input"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal>
         </div>
 
         <Box
