@@ -14,7 +14,6 @@ const BookCourt = () => {
     const [validTimeRange, setValidTimeRange] = useState(false)
     const [transferMethod, setTransferMethod] = useState('Momo')
     const [validBooking, setValidBooking] = useState(false)
-    const [loading, setLoading] = useState(false)
     const apiUrl = "http://localhost:5266/"
 
     const fetchBranches = async () => {
@@ -69,80 +68,42 @@ const BookCourt = () => {
         var t2 = parseInt(document.getElementById("time-end").value)
         setValidTimeRange(t1 < t2)
     }
-    // const validateBooking = () => {
-    //     console.log("Running");
-    //     setValidBooking(t => t || true)
-    //     validateDate()
-    //     validateTime()
-    //     setValidBooking(t => validDate && validTimeRange)
-    //     var selectedCourt = document.getElementById("court").value
-    //     var courtActive = false;
-    //     fetch(`${apiUrl}Court/GetById?id=${selectedCourt}`)
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error('Failed to fetch court data');
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => {
-    //             courtActive = data["courtStatus"];
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching court data:', error);
-    //             setValidBooking(false);
-    //         });
-
-    //     setValidBooking(t => t && courtActive)
-    //     return validBooking
-    // }
-    // const completeBooking = async () => {
-    //     console.log("Complete booking2");
-    //     setLoading(true)
-    //     let promise = await Promise.resolve(validateBooking())
-    //     if (promise) alert("YES")
-    // }
     const validateBooking = async () => {
         console.log("Running");
         setValidBooking(t => t || true);
         validateDate();
         validateTime();
-    
+
         try {
             const selectedCourt = document.getElementById("court").value;
             const response = await fetch(`${apiUrl}Court/GetById?id=${selectedCourt}`);
-    
             if (!response.ok) {
                 throw new Error('Failed to fetch court data');
             }
-    
             const data = await response.json();
             const courtActive = data["courtStatus"];
-    
             setValidBooking(t => t && courtActive);
-    
             return validBooking;
-    
+
         } catch (error) {
             console.error('Error fetching court data:', error);
             setValidBooking(false);
             return false;
         }
     };
-    
+
     const completeBooking = async () => {
         console.log("Complete booking");
-        setLoading(true);
-    
         try {
             const result = await validateBooking();
             if (result) {
-                alert("YES");
+                window.location.assign("https://www.google.com/")
             }
         } catch (error) {
             console.error('Error validating booking:', error);
         }
     };
-    
+
     return (
         <div className="bookCourt-container">
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
@@ -151,7 +112,10 @@ const BookCourt = () => {
                     <h2 className="notes">1. SELECT A COURT</h2>
                     <div className="bookCourt-option1">
                         <label htmlFor="branch">BRANCH:</label>
-                        <select id="branch" name="branch" onChange={() => fetchCourts()}>
+                        <select id="branch" name="branch" onChange={() => {
+                            fetchCourts()
+                            validateBooking()
+                        }}>
                             <option value="" hidden selected>Choose a branch</option>
                             {
                                 branches.map(b =>
@@ -164,11 +128,14 @@ const BookCourt = () => {
                     </div>
                     <div className="bookCourt-option2">
                         <label htmlFor="court">COURT:</label>
-                        <select id="court" name="court">
+                        <select id="court" name="court" onChange={() => {
+                            console.log("Changed court");
+                            validateBooking()
+                        }}>
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
                                 courts.map((c, i) => (
-                                    <option value={c["courtId"]} selected>{c["courtId"]}</option>
+                                    <option value={c["courtId"]}>{c["courtId"]}</option>
                                 ))
                             }
                         </select>
@@ -242,7 +209,7 @@ const BookCourt = () => {
                     <h2 className="notes">3. TIME AND DATE</h2>
                     <div className="bookCourt-form-group4">
                         <label htmlFor="time-start">Time:</label>
-                        <select id="time-start" name="time-start" onChange={() => validateBooking()}>
+                        <select id="time-start" name="time-start" onChange={() => validateTime()}>
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
@@ -251,7 +218,7 @@ const BookCourt = () => {
                             }
                         </select>
                         <span>to</span>
-                        <select id="time-end" name="time-end" onChange={() => validateBooking()}>
+                        <select id="time-end" name="time-end" onChange={() => validateTime()}>
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
@@ -267,7 +234,7 @@ const BookCourt = () => {
                     }
                     <div className="bookCourt-form-group5">
                         <label htmlFor="day">Day: </label>
-                        <input type="date" id="datePicker" onChange={() => validateBooking()} />
+                        <input type="date" id="datePicker" onChange={() => validateDate()} />
 
                     </div>
                     {
@@ -285,8 +252,7 @@ const BookCourt = () => {
             </div>
             <button type="submit" className="bookCourt-complete-booking-button"
                 onClick={() => {
-                    validateBooking();
-                    setTimeout(() => completeBooking(), 1000)
+                    completeBooking()
                 }}
             >
                 Complete booking</button>
