@@ -12,7 +12,7 @@
 .buyTime_centerDiv{
     display: flex;
     justify-content: center;
-    margin: 2%;
+    margin: 1%;
 }
 .buyTime_btn {
     padding: 1%;
@@ -37,7 +37,6 @@
     width: 80%;
     left: 10%;
     height: 30cqh;
-    padding-top: 1%;
     top: 5%;
 }
 .buyTime_bodyContainer{
@@ -59,4 +58,5 @@
 .buyTime_p{
     color: black;
     text-align: center;
+    font-weight: 600;
 }
