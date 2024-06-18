@@ -237,3 +237,39 @@
 .managetimeslot-button-hover-black:hover {
   background-color: hsl(26, 93%, 50%);
 }
+
+.managetimeslot-button-hover-black-addslot {
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  margin-right: 10px;
+}
+
+.managetimeslot-button-hover-black-addslot:hover {
+  background-color: hsl(26, 93%, 50%);
+}
+
+.managetimeslot-add-slot-label-time-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time-input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.time-input:last-child {
+  margin-right: 0;
+}
+
+.managetimeslot-add-slot-input {
+  width: 100%;
+}
+
+.time-select {
+  text-align: center; /* Center the text in the dropdown */
+}
