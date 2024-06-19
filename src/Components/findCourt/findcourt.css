@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: row;
     box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
-    margin-top: 10px; /* Added margin-top */
+    margin-top: 10px; 
 }
 
 .branchDiv,
@@ -109,6 +109,7 @@ button {
 }
 
 .Btn {
+    width: 10%;
     background: var(--PrimaryColor);
     border: none;
     outline: none;
@@ -158,10 +159,10 @@ button {
 .courtList {
     
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* This will create two columns */
-    gap: 20px; /* Adjust gap as needed */
-    width: 100%; /* Full width of the container */
-    justify-content: center; /* Center the items horizontally */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px; 
+    width: 100%; 
+    justify-content: center; 
     margin-top: 200px;
 }
 
@@ -174,7 +175,7 @@ button {
     border-radius: 8px;
     background: var(--whiteColor);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 700px; /* Adjust width to fill half of the row minus half of the gap */
+    width: 700px; 
     white-space: nowrap;
     overflow: hidden; 
     text-overflow: ellipsis;
@@ -226,4 +227,71 @@ button {
 
 .homeText h1{
     margin-top: 40px;
+    color: white;
 }
+
+.findcourt-Title {
+    font-size: 50px;
+    
+  }
+  
+ .findcourt-feedbackBox {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    max-height: 750px;
+    overflow-y: auto;
+    
+}
+
+.findcourt-feedbackBox h2 {
+    margin-bottom: 20px;
+    
+}
+
+.findcourt-feedbackGrid {
+    display: grid;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.findcourt-feedbackCard {
+    background-color: #ebe7e7;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.findcourt-feedbackImage {
+    flex-shrink: 0;
+}
+
+.findcourt-feedbackImage img {
+    max-width: 300px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.findcourt-feedbackInfo {
+    text-align: left;
+    margin-left: 15px;
+    max-width: 1000px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.findcourt-feedbackInfo p {
+    color: #000;
+    margin: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
