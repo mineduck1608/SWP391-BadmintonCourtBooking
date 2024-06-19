@@ -60,6 +60,11 @@
     text-align: center;
     font-weight: 600;
 }
+.buyTime_err{
+    color: red;
+    text-align: center;
+    font-weight: 600;
+}
 .buyTime_select{
     width: 50%;
     left: 25%;
