@@ -9,16 +9,20 @@ using System.Security.Cryptography;
 using System.Text;
 using BadmintonCourtAPI.Utils;
 using Microsoft.IdentityModel.Tokens;
+using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.MoMo;
 
 namespace BadmintonCourtAPI.Controllers
 {
 	public class PaymentController : Controller
 	{
-		private readonly BadmintonCourtService _service;
-
-		public PaymentController(BadmintonCourtService service)
+		private readonly BadmintonCourtService _service = null;
+		private const string PLAY_ONCE = "once";
+		private const string FLEXIBLE = "flexible";
+		private const string FIXED = "fixed";
+		public PaymentController(IConfiguration configuration)
 		{
-			_service = service;
+			if (_service == null)
+				_service = new BadmintonCourtService(configuration);
 		}
 
 		[HttpGet]
@@ -57,7 +61,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (order == 1) // Sort tăng dần theo ngày
 				return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date >= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
 
-			return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date >= new DateTime(start.Year,  start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+			return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date >= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
 		}
 
 		[HttpGet]
@@ -79,38 +83,69 @@ namespace BadmintonCourtAPI.Controllers
 			// numMonth: số tháng chơi (giành cho đặt cố định)
 			UserDetail info = _service.UserDetailService.GetUserDetailById(model.UserId);
 			Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
-			string content = "";  // Nội dung giao dịch đc add tự động vào app bank lúc giao dịch
-								  //------------------------------------------------------------
 
 			if (model.Method == "vnpay") // VNPAY
 			{
-				if (model.Type == "1 lần chơi")  // Đặt loại 1 lần chơi
-				{
-					content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {model.Date} {model.Start}h - {model.End}h | Court: {model.CourtId}";
-					_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = (int.Parse(model.End) - int.Parse(model.Start)) * court.Price * 1000, Content = content, Date = DateTime.Now, UserId = model.UserId, DaysList = model.DaysList, Interval = $"{model.Start}-{model.End}" });
-				}
-
-				else if (model.Type == "linh hoạt") // Linh hoạt
-				{
-					double price = _service.CourtService.GetCourtByCourtId("C001").Price;
-					content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Amount: {model.Amount}";
-					_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = double.Parse(model.Amount), Content = content, Date = DateTime.Now, UserId = model.UserId });
-				}
-				else // Cố định. Vd: ngày 1/1/2001 15h-17h 2 tháng sân A
-				{
-					content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Start date on schedule: {model.Date} {model.Start}h - {model.End}h | Court: {model.CourtId} | Number of months: {model.NumMonth}";
-					_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = (int.Parse(model.End) - int.Parse(model.Start)) * court.Price * model.NumMonth * 4 * 1000, Content = content, Date = DateTime.Now, UserId = model.UserId, DaysList = model.DaysList, Interval = $"{model.Start}-{model.End}" });
-				}
-				return Ok();
+				var vnPay = await PayByVnPay(model, info, court);
 			}
 			else if (model.Method == "momo")
 			{
-				return Ok();
+				return Ok(await PayByMoMo(model, info, court));
 			}
 			return Ok();
 		}
 
+		public async Task<ActionResult> PayByVnPay(TransactionDTO model, UserDetail info, Court court)
+		{
+			string content = "";
+			if (model.Type == PLAY_ONCE)  // Đặt loại 1 lần chơi
+			{
+				content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {model.Date} {model.Start}h - {model.End}h | Court: {model.CourtId}";
+				_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = (int.Parse(model.End) - int.Parse(model.Start)) * court.Price * 1000, Content = content, Date = DateTime.Now, UserId = model.UserId, DaysList = model.DaysList, Interval = $"{model.Start}-{model.End}" });
+			}
 
+			else if (model.Type == FLEXIBLE) // Linh hoạt
+			{
+				double price = _service.CourtService.GetCourtByCourtId("C001").Price;
+				content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Amount: {model.Amount}";
+				_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = double.Parse(model.Amount), Content = content, Date = DateTime.Now, UserId = model.UserId });
+			}
+			else // Cố định. Vd: ngày 1/1/2001 15h-17h 2 tháng sân A
+			{
+				content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} | Start date on schedule: {model.Date} {model.Start}h - {model.End}h | Court: {model.CourtId} | Number of months: {model.NumMonth}";
+				_service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO { Amount = (int.Parse(model.End) - int.Parse(model.Start)) * court.Price * model.NumMonth * 4 * 1000, Content = content, Date = DateTime.Now, UserId = model.UserId, DaysList = model.DaysList, Interval = $"{model.Start}-{model.End}" });
+			}
+			return Ok();
+		}
+
+		public async Task<MoMoResponse> PayByMoMo(TransactionDTO model, UserDetail info, Court court)
+		{
+			string amount = model.Amount;
+			string orderInfo = $"User: {info.FirstName} {info.LastName}, date: {DateTime.Now.ToString("dd/MM/yyyy")}, type: {model.Type}";
+			string type = model.Type;
+			switch (type)
+			{
+				case FIXED:
+					orderInfo += $"\nReserves for {model.NumMonth} month(s), from {model.Date} {model.Start}h - {model.End}h, at court: {model.CourtId}.";
+					break;
+				case PLAY_ONCE:
+					orderInfo += $"\nPlay on {model.Date.ToString("dd/MM/yyyy")}";
+					break;
+				case FLEXIBLE:
+					orderInfo += $"\n";
+					break;
+				default: throw new NotImplementedException("Other booking types are not implemented yet");
+			}
+			var reqdata = MoMoServices.CreateRequestData(orderInfo, amount);
+			var response = await MoMoServices.SendMoMoRequest(reqdata);
+			return response;
+		}
+		[HttpGet]
+		[Route("/Payment/MoMoCallback")]
+		public ActionResult MoMoCallback(MoMoResponse response)
+		{
+			return Ok();
+		}
 		[HttpPost]
 		//[Authorize]
 		[Route("Payment/Result")]
