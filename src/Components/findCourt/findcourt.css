@@ -109,6 +109,7 @@ button {
 }
 
 .Btn {
+    width: 10%;
     background: var(--PrimaryColor);
     border: none;
     outline: none;
