@@ -181,8 +181,6 @@ const FindCourt = () => {
                     })}
                   </div>
                 </div>
-
-              </div>
             </section>
           </div>
         </div>
