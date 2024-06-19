@@ -67,9 +67,7 @@ const FindCourt = () => {
     const fetchFeedback = async () => {
       setLoadingFeedback(true);
       try {
-        // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        // Dummy feedback data
         const feedbackData = [
           { id: 1, firstName: 'Tran', lastName: 'Quynh', comment: 'dep', rating: 4, courtId: 1 },
           { id: 2, firstName: 'Quynh', lastName: 'Tran', comment: 'depp', rating: 5, courtId: 2 },
