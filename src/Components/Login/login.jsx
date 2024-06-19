@@ -28,9 +28,16 @@ const Login = () => {
           if (resp.token) {
             sessionStorage.setItem('token', resp.token);
             const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
-            const roleToken = decodedToken.UserId; // Extract userId from the decoded token
-            toast.success("Login successful!");
-            navigate('/home');
+            const roleToken = decodedToken.Role; // Extract userId from the decoded token
+            if (roleToken == "Customer") {
+              navigate('/home');
+              toast.success("Login successful!");
+            }
+            if (roleToken == "Admin") {
+              navigate('/admin');
+              toast.success("Login successful!");
+            }
+
           } else {
             toast.error('Invalid username or password.');
           }
@@ -71,7 +78,7 @@ const Login = () => {
         <span>or</span>
       </div>
       <div>
-        <SignIn  className='login-google'/>
+        <SignIn className='login-google' />
       </div>
     </div>
   );

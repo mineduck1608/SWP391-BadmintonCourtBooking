@@ -70,7 +70,7 @@ const App = () => {
             <Route path="geography" element={<Geography />} />
           </Route>
         </Routes>
-        <ToastContainer theme='colored' />
+        <ToastContainer theme='colored'/>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

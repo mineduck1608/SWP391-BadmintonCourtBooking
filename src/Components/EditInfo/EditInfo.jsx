@@ -8,35 +8,27 @@ import { imageDb } from '../googleSignin/config';
 import { v4 } from 'uuid';
 import { listAll, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ref } from 'firebase/storage';
+import { useNavigate } from 'react-router-dom';
 
 export default function EditInfo() {
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({
     userId: '',
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    avatar: ''
+    img: ''
   });
 
-  //imagefirebase
-  const [img, setImg] = useState('');
-  const [imgUrl, setImgUrl] = useState([]);
+  const [img, setImg] = useState(null);
+  const [imgPreview, setImgPreview] = useState('');
 
-
-  const [isLoaded, setIsLoaded] = useState(false);
   const token = sessionStorage.getItem('token');
   const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
   const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
 
   useEffect(() => {
-    listAll(ref(imageDb, "files")).then(imgs => {
-      imgs.items.forEach(val => {
-        getDownloadURL(val).then(url => {
-          setImgUrl(data => [...data, url])
-        })
-      })
-    })
     fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
       method: "GET",
       headers: {
@@ -61,7 +53,7 @@ export default function EditInfo() {
   }, [token]);
 
   const handleSave = () => {
-    fetch(`http://localhost:5266/User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}`, {
+    fetch(`http://localhost:5266/User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}&img=${userInfo.img}`, {
       method: "PUT",
       headers: {
         'Content-Type': 'application/json'
@@ -71,45 +63,56 @@ export default function EditInfo() {
       .then(response => response.json())
       .then(data => {
         toast.success('Update info success.');
+        navigate("/viewInfo");
       })
-      .catch(error => toast.waring('Update info failed,'));
+      .catch(error => toast.warning('Update info failed.'));
   };
 
-  const handleClick = () => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        setImg(file);
+        setImgPreview(URL.createObjectURL(file));
+    }
+};
+
+const handleClick = () => {
     if (!img) {
-      toast.error('No image selected');
-      return;
+        toast.error('No image selected');
+        return;
     }
     const imgRef = ref(imageDb, `files/${v4()}`);
     uploadBytes(imgRef, img)
-      .then(() => getDownloadURL(imgRef))
-      .then(url => {
-        setUserInfo({ ...userInfo, avatar: url });
-        toast.success('Image uploaded successfully');
-        console.log(url);
+        .then(() => getDownloadURL(imgRef))
+        .then(url => {
+          const encodedUrl = encodeURIComponent(url);
+    setUserInfo(prevState => ({ ...prevState, img: encodedUrl }));
+    toast.success('Image uploaded successfully');
       })
-      .catch(error => {
-        console.error('Error uploading image:', error);
-        toast.error('Image upload failed');
-      });
-  };
-  return (
+        .catch(error => {
+            console.error('Error uploading image:', error);
+            toast.error('Image upload failed');
+        });
+};
+return (
     <div className='edit-info'>
-      <div className='edit-info-header'>
-        <Header />
-      </div>
-      <div className="edit-info-wrapper">
-        <div className="background">
-          <div className="profile-container">
-            <div className="profile-sidebar">
-  
-                  <div className="uploaded-image-container">
-                    <img src={'https://firebasestorage.googleapis.com/v0/b/badmintoncourtbooking-183b2.appspot.com/o/files%2F22701a3e-720e-475d-aa47-c8c4040189e1?alt=media&token=e01180b0-300b-417f-9ef9-82fe648398d8'} alt={`Uploaded Image`} className="uploaded-image" />
-                  </div>
-              {/* Input và nút upload */}
-              <input type="file" onChange={(e) => setImg(e.target.files[0])} />
-              <button className="button upload" onClick={handleClick}>Upload</button>
-            </div>
+        <div className='edit-info-header'>
+            <Header />
+        </div>
+        <div className="edit-info-wrapper">
+            <div className="background">
+                <div className="profile-container">
+                    <div className="profile-sidebar">
+                        <div className="uploaded-image-container">
+                            <img
+                                src={imgPreview || userInfo.img}
+                                alt="Uploaded"
+                                className="uploaded-image"
+                            />
+                        </div>
+                        <input type="file" onChange={handleImageChange} />
+                        <button className="button upload" onClick={handleClick}>Upload</button>
+                    </div>
             <div className="profile-content">
               <h2>Profile Settings</h2>
               <div className="info-items">
@@ -120,7 +123,7 @@ export default function EditInfo() {
                     id="first-name"
                     name="first-name"
                     value={userInfo.firstName}
-                    placeholder={isLoaded ? userInfo.firstName : 'Enter First Name'}
+                    placeholder='Enter First Name'
                     onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
                   />
                 </div>
@@ -131,7 +134,7 @@ export default function EditInfo() {
                     id="last-name"
                     name="last-name"
                     value={userInfo.lastName}
-                    placeholder={isLoaded ? userInfo.lastName : 'Enter Last Name'}
+                    placeholder='Enter Last Name'
                     onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
                   />
                 </div>
@@ -142,7 +145,7 @@ export default function EditInfo() {
                     id="email"
                     name="email"
                     value={userInfo.email}
-                    placeholder={isLoaded ? userInfo.email : 'Enter Email'}
+                    placeholder='Enter Email'
                     onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
                   />
                 </div>
@@ -153,7 +156,7 @@ export default function EditInfo() {
                     id="phone"
                     name="phone"
                     value={userInfo.phone}
-                    placeholder={isLoaded ? userInfo.phone : 'Enter Phone Number'}
+                    placeholder='Enter Phone Number'
                     onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
                   />
                 </div>

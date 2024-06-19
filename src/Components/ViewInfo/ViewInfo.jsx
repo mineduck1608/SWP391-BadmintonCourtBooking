@@ -12,21 +12,20 @@ export default function ViewInfo() {
     lastName: '',
     email: '',
     phone: '',
-    user: ''
+    img: ''
   });
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
     if (!token) {
-      console.error('Token not found. Please log in.');
+      console.error('Token không tìm thấy. Vui lòng đăng nhập.');
       return;
     }
 
-    const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
-    const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
+    const decodedToken = jwtDecode(token); // Giải mã JWT token để lấy thông tin người dùng
+    const userIdToken = decodedToken.UserId; // Trích xuất userId từ token đã giải mã
 
-
-    fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
+    fetch(`http://localhost:5266/UserDetail/GetAll`, { // Lấy tất cả thông tin người dùng
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -35,18 +34,20 @@ export default function ViewInfo() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to fetch user info');
+        throw new Error('Lấy thông tin người dùng thất bại');
       }
       return response.json();
     })
     .then((data) => {
-      // Find user with matching userId
+      // Tìm người dùng với userId khớp
       const matchingUser = data.find(user => user.userId == userIdToken);
       if (matchingUser) {
         setUserInfo(matchingUser);
+        console.log('Fetched user info:', matchingUser); // Log fetched user info
+        console.log('Image URL:', matchingUser.img); // Log the image URL
       }
     })
-    .catch(error => console.error('Error fetching user info:', error));
+    .catch(error => console.error('Lỗi khi lấy thông tin người dùng:', error));
   }, [token]);
 
   return (
@@ -58,9 +59,13 @@ export default function ViewInfo() {
         <div className='background'>
           <div className="profile-container1">
             <div className="profile-sidebar">
-              <img src={userInfo.avatar} alt="User Avatar" className="profile-avatar" />
-              <h2>{userInfo.firstName} {userInfo.lastName}</h2>
-              <p>{userInfo.email}</p>
+              <img 
+                src={userInfo.img || 'default-avatar.png'} // Use a default image if img is empty
+                alt="User Avatar" 
+                className="profile-avatar" 
+                onError={(e) => e.target.src = 'default-avatar.png'} // Fallback if image fails to load
+                style={{ maxWidth: '100%', height: 'auto' }} // Ensure the image is responsive
+              />
             </div>
             <div className="profile-content">
               <h2>Profile Settings</h2>

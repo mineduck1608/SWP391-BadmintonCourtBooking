@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import 'react-pro-sidebar/dist/css/styles.css';
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
@@ -18,9 +18,15 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { jwtDecode } from 'jwt-decode';
+
 
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
+ 
+    
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
@@ -37,11 +43,51 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
     );
 };
 
+
 const Sidebar = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [selected, setSelected] = useState('Dashboard');
+    const navigate = useNavigate(); // Ensure useNavigate is called inside the component
+
+    useEffect(() => {
+        let token = sessionStorage.getItem('token');
+        if (!token) {
+            navigate('/'); // Redirect to home if token is not present
+            return;
+        }
+
+        let decodedToken;
+        try {
+            decodedToken = jwtDecode(token); // Decode the JWT token to get user information
+        } catch (error) {
+            console.error('Invalid token:', error);
+            sessionStorage.clear();
+            navigate('/'); // Redirect to home if token is invalid
+            return;
+        }
+
+        const { Role: role } = decodedToken;
+
+        if (!role) {
+            navigate('/signin'); // Redirect to sign-in if role is missing
+            return;
+        }
+
+        if (role !== "Admin") {
+            sessionStorage.clear();
+            navigate('/'); // Redirect to home if the role is not 'Admin'
+            return;
+        }
+    }, [navigate]);
+
+    const handleLogout = () => {
+        sessionStorage.clear();
+        toast.success('Logout successful.');
+        navigate('/'); // Redirect to home on logout
+    };
+
 
     return (
         <Box className="sidebar-wrapper"
@@ -83,7 +129,7 @@ const Sidebar = () => {
                                 <Link to={'/'} className="logo">
                                     <MdSportsTennis className="iconSidebar" />
                                 </Link>
-                                <Typography className="webName" variant="h3" color={colors.grey[100]}>
+                                <Typography className="webNameAdmin" variant="h4" color={colors.grey[100]}>
                                     BMTC
                                 </Typography>
                                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -98,6 +144,7 @@ const Sidebar = () => {
                         <Box mb="25px" mr="50px" ml="50px">
 
                             <Box textAlign="center">
+                                <button onClick={handleLogout} className="admin-button-logout">Logout</button>
                                 <Typography
                                     className="adminName"
                                     variant="h2"
@@ -105,7 +152,7 @@ const Sidebar = () => {
                                     fontWeight="bold"
                                     sx={{ m: "10px 0 0 0" }}
                                 >
-                                    Minh Duc
+                                    Admin
                                 </Typography>
                                 <Typography className="role" variant="h5" color={colors.greenAccent[500]}>
                                     VP Fancy Admin

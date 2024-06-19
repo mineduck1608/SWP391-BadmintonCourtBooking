@@ -1,5 +1,6 @@
 import React from 'react'
 import './home.css'  
+import { Link } from 'react-router-dom'
 
 const Home = () => {
     return (
@@ -15,7 +16,7 @@ const Home = () => {
                     </p>
 
                     <button className='btn'>
-                        <a href="#">Book Now!</a>
+                        <Link to={'./findCourt'}>Book Now!</Link>
                     </button>
                 </div>
 

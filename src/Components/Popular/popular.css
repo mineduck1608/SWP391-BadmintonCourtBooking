@@ -116,7 +116,6 @@
   font-size: 2rem;
   font-weight: 700;
   color: var(--blackColor);
-  position: relative;
   width: -moz-max-content;
   width: max-content;
 }
@@ -193,3 +192,6 @@
     gap: 1.5rem !important;
   }
 }/*# sourceMappingURL=popular.css.map */
+.black-text {
+  color: black;
+}

@@ -3,6 +3,7 @@ import './popular.css'
 import { BsArrowLeftShort } from 'react-icons/bs'
 import { BsArrowRightShort } from 'react-icons/bs'
 import { BsDot } from 'react-icons/bs'
+import { Link } from 'react-router-dom';
 
 //Import the images====================>
 import img2 from '../../Assets/image1.jpg'
@@ -55,32 +56,40 @@ const Popular = () => {
                         <BsArrowRightShort className="icon" />
                     </div>
                 </div>
-
-                <div className="mainContent grid">
-                    {courtBranches.map(branch => (
-                        <div className="singleDestination" key={branch.branchId}>
-                            <div className="destImage">
-                                <img src={img2} alt="Image title" />
-                                <div className="overlayInfo">
-                                    <p>{branch.location}</p>
-                                    <BsArrowRightShort className='icon' />
+                <Link to={'/findCourt'}>
+                    <div className="mainContent grid" >
+                        {courtBranches.map(branch => (
+                            <div className="singleDestination" key={branch.branchId}>
+                                <div className="destImage">
+                                    <img src={img2} alt="Image title" />
+                                    <div className="overlayInfo black-text">
+                                        <p>{branch.location}</p>
+                                        <BsArrowRightShort className='icon' />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="destFooter">
-                                <div className="number">0{branch.branchId}</div>
-                                <div className="destText flex">
-                                    <h6>{branch.location}</h6>
-                                    <span className='flex'>
-                                        <span className="dot">
-                                            <BsDot className="icon" />
+                                <div className="destFooter black-text">
+                                    <div className="number">{branch.branchName}</div>
+                                    <div className="destText flex black-text">
+                                        <h6>Location: {branch.location}</h6>
+                                        <span className='flex'>
+                                            <span className="dot">
+                                                <BsDot className="icon" />
+                                            </span>
                                         </span>
-                                    </span>
+                                    </div>
+                                    <div className="destText flex black-text">
+                                        <h6>Phone: {branch.branchPhone}</h6>
+                                        <span className='flex'>
+                                            <span className="dot">
+                                                <BsDot className="icon" />
+                                            </span>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-
+                        ))}
+                    </div>
+                </Link>
             </div>
         </section>
     )
