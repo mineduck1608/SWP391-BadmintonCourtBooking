@@ -105,7 +105,7 @@ const FindCourt = () => {
                   <h1 className="findcourt-Title">Find a Court</h1>
                 </div>
 
-                <div className="searchCard grid">
+{/*                 <div className="searchCard grid">
                   <div className="branchDiv">
                     <label htmlFor="branch">Branch</label>
                     <select required>
@@ -116,7 +116,7 @@ const FindCourt = () => {
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className="courtDiv">
                     <label htmlFor="court">Court</label>
