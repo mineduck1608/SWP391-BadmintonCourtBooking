@@ -6,12 +6,16 @@ import { jwtDecode } from 'jwt-decode';
 
 const BuyTime = () => {
   const [userID, setUserID] = useState('');
-  const [remainingTime, setremainingTime] = useState(0);
+  const [remainingTime, setRemainingTime] = useState(0);
   const [buyHour, setBuyHour] = useState(0);
   const apiUrl = "http://localhost:5266/"
   const adjustHour = (amount) => {
     if (buyHour + amount >= 0 && buyHour + amount <= 12)
       setBuyHour(bh => bh + amount)
+  }
+  const completeBooking = async () => {
+    setBuyHour(b => b*1000)
+    
   }
   //Get the userID
   useEffect(() => {
@@ -28,7 +32,8 @@ const BuyTime = () => {
           if (decodedToken.UserId !== data["userId"]) {
             throw new Error("Authorize failed")
           } else {
-            setremainingTime(data["balance"])
+            setUserID(data["userId"])
+            setRemainingTime(data["balance"])
           }
         }
         catch (err) {
@@ -44,19 +49,18 @@ const BuyTime = () => {
         <h1 className='buyTime_title'>Buy more time for a flexible plan</h1>
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining time: {remainingTime}</p>
+          <p className='buyTime_p'>Convert rate: 1k -&gt; 1 coin</p>
           <div className='buyTime_centerDiv'>
-            <button className='buyTime_btn' onClick={() => adjustHour(-1)}>-</button>
-            <input className='buyTime_counter1' type='number' value={buyHour} readOnly />
-            <button className='buyTime_btn' onClick={() => adjustHour(1)}>+</button>
+            <input className='buyTime_counter1' type='number' value={buyHour} min='0'/>
           </div>
           <p className='buyTime_p'>Payment method</p>
-          <select >
+          <select className='buyTime_select'>
             <option value="Momo">MoMo</option>
             <option value="Vnpay">VnPay</option>
           </select>
           <div className='buyTime_centerDiv'>
             <button className='buyTime_btn' onClick={() => window.history.back()}>Cancel</button>
-            <button className='buyTime_btn'>Confirm</button>
+            <button className='buyTime_btn' onClick={() => completeBooking()}>Confirm</button>
           </div>
         </article>
       </div>
