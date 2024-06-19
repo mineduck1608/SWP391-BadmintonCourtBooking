@@ -19,6 +19,7 @@ namespace BadmintonCourtAPI.Controllers
 		private const string PLAY_ONCE = "once";
 		private const string FLEXIBLE = "flexible";
 		private const string FIXED = "fixed";
+		private const string BUY_TIME = "buyTime";
 		public PaymentController(IConfiguration configuration)
 		{
 			if (_service == null)
@@ -90,7 +91,7 @@ namespace BadmintonCourtAPI.Controllers
 			}
 			else if (model.Method == "momo")
 			{
-				return Ok(await PayByMoMo(model, info, court));
+				return Ok(await PayByMoMo(model, info));
 			}
 			return Ok();
 		}
@@ -118,20 +119,23 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok();
 		}
 
-		public async Task<MoMoResponse> PayByMoMo(TransactionDTO model, UserDetail info, Court court)
+		public async Task<MoMoResponse> PayByMoMo(TransactionDTO model, UserDetail info)
 		{
 			string amount = model.Amount;
-			string orderInfo = $"User: {info.FirstName} {info.LastName}, date: {DateTime.Now.ToString("dd/MM/yyyy")}, type: {model.Type}";
+			string orderInfo = $"User: {info.FirstName} {info.LastName}, date: {DateTime.Now.ToString("dd/MM/yyyy")}, type: {model.Type}.";
 			string type = model.Type;
 			switch (type)
 			{
 				case FIXED:
-					orderInfo += $"\nReserves for {model.NumMonth} month(s), from {model.Date} {model.Start}h - {model.End}h, at court: {model.CourtId}.";
+					orderInfo += $"Reserves for {model.NumMonth} month(s), from {model.Date} {model.Start}h - {model.End}h, at court: {model.CourtId}.";
 					break;
 				case PLAY_ONCE:
-					orderInfo += $"\nPlay on {model.Date.ToString("dd/MM/yyyy")}";
+					orderInfo += $"Play on {model.Date.ToString("dd/MM/yyyy")}";
 					break;
-				case FLEXIBLE:
+				case FLEXIBLE: 
+					//Not doing anything. The hour will be subtracted onto user's balance. This is here to check if the type is correct
+					break;
+				case BUY_TIME:
 					orderInfo += $"\n";
 					break;
 				default: throw new NotImplementedException("Other booking types are not implemented yet");

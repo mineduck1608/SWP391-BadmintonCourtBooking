@@ -44,7 +44,7 @@ namespace BadmintonCourtAPI
 			builder.Services.AddSingleton<IVnPayService, VnPayService>();
 
 			var app = builder.Build();
-
+			app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader());
 			if (app.Environment.IsDevelopment())
 			{
 				app.UseSwagger();

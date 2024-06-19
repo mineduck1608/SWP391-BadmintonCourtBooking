@@ -53,7 +53,7 @@ namespace BadmintonCourtServices
 				amount = request.Amount,
 				orderInfo = request.OrderInfo,
 				requestId = request.OrderID,
-				extraData = "",
+				extraData = request.ExtraData,
 				signature = SignSHA256(CreateRawData(request), request.SecretKey)
 			};
 			return JsonConvert.SerializeObject(requestData);
