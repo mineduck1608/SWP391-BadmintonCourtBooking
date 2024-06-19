@@ -3,7 +3,7 @@ import './findcourt.css';
 import { TimePicker } from 'antd';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
-import image2 from '../../Assets/image2.jpg'; 
+import image2 from '../../Assets/image2.jpg';
 
 const { RangePicker } = TimePicker;
 
@@ -13,6 +13,11 @@ const FindCourt = () => {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [feedback, setFeedback] = useState([]);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [errorFeedback, setErrorFeedback] = useState('');
+  const [expandedFeedback, setExpandedFeedback] = useState({});
 
   const onChange = (time) => {
     setTimeRange(time);
@@ -58,6 +63,36 @@ const FindCourt = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      setLoadingFeedback(true);
+      try {
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Dummy feedback data
+        const feedbackData = [
+          { id: 1, firstName: 'Tran', lastName: 'Quynh', comment: 'dep', rating: 4, courtId: 1 },
+          { id: 2, firstName: 'Quynh', lastName: 'Tran', comment: 'depp', rating: 5, courtId: 2 },
+          
+        ];
+        setFeedback(feedbackData);
+      } catch (error) {
+        setErrorFeedback('Failed to load feedback');
+      } finally {
+        setLoadingFeedback(false);
+      }
+    };
+
+    fetchFeedback();
+  }, []);
+
+  const toggleFeedbackExpansion = (id) => {
+    setExpandedFeedback(prevState => ({
+      ...prevState,
+      [id]: !prevState[id]
+    }));
+  };
+
   return (
     <div className="findCourt">
       <div className="findCourtHeader">
@@ -69,7 +104,7 @@ const FindCourt = () => {
             <section className="find">
               <div className="secContainer container">
                 <div className="homeText">
-                  <h1 className="Title">Find a Court</h1>
+                  <h1 className="findcourt-Title">Find a Court</h1>
                 </div>
 
                 <div className="searchCard grid">
@@ -99,20 +134,6 @@ const FindCourt = () => {
                     </select>
                   </div>
 
-                  <div className="dateDiv">
-                    <label htmlFor="date">Date</label>
-                    <input type="date" />
-                  </div>
-
-                  <div className="custom-time-picker">
-                    <label htmlFor="timeRange">Time Range</label>
-                    <RangePicker
-                      popupClassName="custom-time-picker-dropdown"
-                      getPopupContainer={(trigger) => trigger.parentNode}
-                      onChange={onChange}
-                    />
-                  </div>
-
                   <button className="Btn">
                     <a href="#">Search</a>
                   </button>
@@ -124,10 +145,10 @@ const FindCourt = () => {
                   {courts.map((court) => (
                     <div className="courtCard" key={court.courtId}>
                       <div className="courtImage">
-                        <img src={court.image} alt={court.courtName} />
+                        <img src={court.image} alt={`Court ${court.courtId}`} />
                       </div>
                       <div className="courtInfo">
-                        <h2>{court.courtName}</h2>
+                        <h2>Court No: {court.courtId}</h2>
                         <p>Address: {court.address}</p>
                         <p>Time: {court.time}</p>
                         <p>Price: {court.price}</p>
@@ -138,6 +159,31 @@ const FindCourt = () => {
                     </div>
                   ))}
                 </div>
+
+                <div className="findcourt-feedbackBox">
+                  <h2>User Feedback</h2>
+                  {loadingFeedback && <p>Loading feedback...</p>}
+                  {errorFeedback && <p>{errorFeedback}</p>}
+                  <div className="findcourt-feedbackGrid">
+                    {feedback.map((fb) => {
+                      const court = courts.find(court => court.courtId === fb.courtId);
+                      return (
+                        <div key={fb.id} className="findcourt-feedbackCard">
+                          <div className="findcourt-feedbackImage">
+                            <img src={court ? court.image : image2} alt={`Court ${fb.courtId}`} />
+                          </div>
+                          <div className="findcourt-feedbackInfo">
+                            <h2>Court Id: {fb.courtId}</h2>
+                            <p><strong>{fb.firstName} {fb.lastName}</strong>: {fb.comment}</p>
+                            <p>Rating: {fb.rating}/5</p>
+                            {court && <p>Court No: {court.courtId}</p>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
               </div>
             </section>
           </div>
