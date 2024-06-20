@@ -8,6 +8,10 @@ import { Modal, Spin, ConfigProvider } from 'antd';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './branch.css';
+import { v4 } from 'uuid';
+import { uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref } from 'firebase/storage';
+import { imageDb } from '../../Components/googleSignin/config.js';
 
 const Branch = () => {
   const theme = useTheme();
@@ -114,6 +118,9 @@ const Branch = () => {
     }
   };
 
+  const [img, setImg] = useState(null);
+
+
   const handleAddBranch = async () => {
     const { location, branchImg, branchName, branchPhone } = newBranch;
     try {
@@ -194,6 +201,35 @@ const Branch = () => {
   if (error) {
     return <Box m="20px">Error: {error}</Box>;
   }
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (!img) {
+      toast.error('No image selected');
+      return;
+    }
+    const imgRef = ref(imageDb, `files/${v4()}`);
+    uploadBytes(imgRef, img)
+      .then(() => getDownloadURL(imgRef))
+      .then(url => {
+        const encodedUrl = encodeURIComponent(url);
+        if (modalVisible) {
+          setSelectedBranch(branchImg => ({ ...branchImg, branchImg: encodedUrl }));
+        } else {
+          setNewBranch(branchImg => ({ ...branchImg, branchImg: encodedUrl }));
+        }
+        toast.success('Image uploaded successfully');
+      })
+      .catch(error => {
+        console.error('Error uploading image:', error);
+        toast.error('Image upload failed');
+      });
+  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImg(file);
+    }
+  };
 
   return (
     <ConfigProvider theme={{
@@ -206,8 +242,8 @@ const Branch = () => {
       },
     }}>
       <Box m="20px">
-          <Head title="BRANCHES" subtitle="List of Branches for Future Reference" />
-          <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="20px">
+        <Head title="BRANCHES" subtitle="List of Branches for Future Reference" />
+        <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="20px">
           <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
             Add Branch
           </Button>
@@ -303,14 +339,22 @@ const Branch = () => {
                 fullWidth
                 margin="normal"
               />
-              <TextField
-                label="Image"
-                name="branchImg"
-                value={selectedBranch.branchImg}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
+              <div className="uploaded-image-container">
+                <TextField
+                  label="Image URL"
+                  name="branchImg"
+                  value={selectedBranch.branchImg}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  fullWidth
+                  margin="normal"
+                />
+              </div>
+              <div className="uploaded-branchimage-upload">
+              <input className="button-branch-input" type="file" onChange={handleImageChange} />
+              <button className="button upload" onClick={handleClick}>Upload</button>
+              </div>
               <FormControl component="fieldset" margin="normal">
                 <FormLabel component="legend">Branch Status</FormLabel>
                 <RadioGroup

@@ -3,8 +3,18 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { ConfigProvider, Modal, Form, Input, InputNumber, Radio } from 'antd';
+import { v4 } from 'uuid';
+import { uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref } from 'firebase/storage';
+import { imageDb } from '../../Components/googleSignin/config.js';
+=======
 import { ConfigProvider, Modal, Spin } from 'antd';
 import {toast, ToastContainer} from 'react-toastify';
+>>>>>>> 4bff605d8ad0903701080150ec138d5e9d92fdca
 
 const Court = () => {
     const theme = useTheme();
@@ -26,12 +36,17 @@ const Court = () => {
         branchName: '',
     });
 
+<<<<<<< HEAD
+    const [form] = Form.useForm();
+    const [img, setImg] = useState(null);
+=======
     const [newCourtData, setNewCourtData] = useState({
         courtImg: '',
         branchId: '',
         price: '',
         description: '',
     });
+>>>>>>> 4bff605d8ad0903701080150ec138d5e9d92fdca
 
     useEffect(() => {
         const fetchData = async () => {
@@ -137,11 +152,23 @@ const Court = () => {
         }
     };
 
+<<<<<<< HEAD
+    const handleSubmit = async (values) => {
+        const { courtImg, price, description, courtStatus } = values;
+        const url = isAddMode
+            ? `http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${selectedCourt?.branchId || 'someDefaultBranchId'}&price=${price}&description=${description}`
+            : `http://localhost:5266/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${selectedCourt.courtId}&activeStatus=${courtStatus}`;
+
+        try {
+            const response = await fetch(url, {
+                method: isAddMode ? 'POST' : 'PUT',
+=======
     const handleAddCourt = async() => {
         const {courtImg, branchId, price, description} = newCourtData;
         try{
             const response = await fetch(`http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
                 method: 'POST',
+>>>>>>> 4bff605d8ad0903701080150ec138d5e9d92fdca
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -247,6 +274,31 @@ const Court = () => {
         return <Box m="20px">Error: {error}</Box>;
     }
 
+    const handleClick = async (e) => {
+        e.preventDefault();
+        if (!img) {
+            toast.error('No image selected');
+            return;
+        }
+        const imgRef = ref(imageDb, `files/${v4()}`);
+        try {
+            await uploadBytes(imgRef, img);
+            const url = await getDownloadURL(imgRef);
+            const encodedUrl = encodeURIComponent(url);
+            form.setFieldsValue({ courtImg: encodedUrl });
+            toast.success('Image uploaded successfully');
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            toast.error('Image upload failed');
+        }
+    };
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImg(file);
+        }
+    };
+
     return (
         <ConfigProvider theme={{
             token: {
@@ -334,12 +386,35 @@ const Court = () => {
                         <TextField
                             label="Image URL"
                             name="courtImg"
+<<<<<<< HEAD
+                            label="Image"
+                            rules={[{ required: true, message: 'Please input the image!' }]}
+                        >
+                            <div className="uploaded-branchimage-upload">
+                                <input className="button-branch-input" type="file" onChange={handleImageChange} />
+                                <button className="button upload" onClick={handleClick}>Upload</button>
+                            </div>
+                        </Form.Item>
+                        <Form.Item
+                            name="courtStatus"
+                            label="Status"
+                            rules={[{ required: true, message: 'Please select the status!' }]}
+                        >
+                            <Radio.Group>
+                                <Radio value={true}>true</Radio>
+                                <Radio value={false}>false</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item
+                            name="price"
+=======
                             value={formData.courtImg}
                             onChange={handleInputChange}
                             fullWidth
                             margin="normal"
                         />
                         <TextField
+>>>>>>> 4bff605d8ad0903701080150ec138d5e9d92fdca
                             label="Price"
                             name="price"
                             value={formData.price}

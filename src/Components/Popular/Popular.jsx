@@ -5,11 +5,6 @@ import { BsArrowRightShort } from 'react-icons/bs'
 import { BsDot } from 'react-icons/bs'
 import { Link } from 'react-router-dom';
 
-//Import the images====================>
-import img2 from '../../Assets/image1.jpg'
-import img5 from '../../Assets/image2.jpg'
-import img7 from '../../Assets/image3.jpg'
-import img9 from '../../Assets/image4.jpg'
 
 
 //Use high order array method to display all the destination
@@ -61,7 +56,7 @@ const Popular = () => {
                         {courtBranches.map(branch => (
                             <div className="singleDestination" key={branch.branchId}>
                                 <div className="destImage">
-                                    <img src={img2} alt="Image title" />
+                                    <img src={branch.branchImg} alt="Image title" />
                                     <div className="overlayInfo black-text">
                                         <p>{branch.location}</p>
                                         <BsArrowRightShort className='icon' />
