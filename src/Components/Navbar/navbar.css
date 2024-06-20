@@ -27,12 +27,14 @@
   color: var(--whiteColor);
   font-weight: 500;
   cursor: pointer;
-  align-items: center;
   justify-content: center;
+}
+.navBarSection .header .logoDiv .logo .flex {
+  font-size: 60px;
 }
 .navBarSection .header .logoDiv .logo .icon {
   color: var(--PrimaryColor);
-  font-size: 50px;
+  font-size: 55px;
   margin-right: 10px;
 }
 @media screen and (max-width: 768px) {

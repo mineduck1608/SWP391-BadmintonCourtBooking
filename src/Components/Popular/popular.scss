@@ -21,15 +21,15 @@
             gap: 1rem;
 
             .textDiv {
-                setTitle {
-                    color: var(--blackColor);
+                .secTitle {
+                    color: var(--blackColor) !important;
                     line-height: 1.5rem;
                     padding-bottom: .5rem;
                 }
 
                 p {
                     font-size: 13px;
-                    color: var(--textColor);
+                    color: var(--textColor) !important;
                     font-weight: 500;
                 }
             }
@@ -39,23 +39,23 @@
 
                 .icon {
                     padding: .5rem;
-                    background: var(--greyText);
+                    background: var(--greyText) !important;
                     border-radius: 50%;
                     font-size: 2.5rem;
 
                     &:hover {
-                        background: var(--blackColor);
-                        color: var(--whiteColor);
+                        background: var(--blackColor) !important;
+                        color: var(--whiteColor) !important;
                     }
                 }
 
                 .leftIcon {
-                    background: var(--blackColor);
-                    color: var(--whiteColor);
+                    background: var(--blackColor) !important;
+                    color: var(--whiteColor) !important;
 
                     &:hover {
-                        background: var(--greyText);
-                        color: var(--blackColor);
+                        background: var(--greyText) !important;
+                        color: var(--blackColor) !important;
                     }
                 }
             }
@@ -98,12 +98,12 @@
                         overflow: hidden;
 
                         h3 {
-                            color: var(--whiteColor);
+                            color: var(--whiteColor) !important;
                             font-weight: 600;
                         }
 
                         p {
-                            color: var(--whiteColor);
+                            color: var(--whiteColor) !important;
                             opacity: .7;
                             font-size: 13px;
                         }
@@ -113,7 +113,7 @@
                             right: 10px;
                             bottom: 10px;
                             padding: .5rem;
-                            background: var(--PrimaryColor);
+                            background: var(--PrimaryColor) !important;
                             font-size: 2.5rem;
                             border-radius: 50%;
                             color: var(--whiteColor);
@@ -121,9 +121,9 @@
                             transition: .3s ease;
 
                             &:hover {
-                                background: var(--blackColor);
-                                border: 1px solid var(--PrimaryColor);
-                                color: var(--PrimaryColor);
+                                background: var(--blackColor) !important;
+                                border: 1px solid var(--PrimaryColor) !important;
+                                color: var(--PrimaryColor) !important;
                             }
                         }
                     }
@@ -231,6 +231,7 @@
                 .textDiv {
                     .secTitle {
                         font-size: 2.2rem;
+                        color: var(--blackColor);
                     }
                     p {
                         font-size: 15px;
