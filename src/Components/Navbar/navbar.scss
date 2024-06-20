@@ -1,4 +1,3 @@
-/* Color */
 :root {
     --PrimaryColor: hsl(26, 93%, 50%);
     --HoverColor: hsl(26, 90%, 42%);
@@ -12,18 +11,16 @@
 }
 
 .navBarSection {
-    .header {
-        position: fixed;
+    .header1 {
+        position: fixed; 
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: transparent;
         width: 100%;
         padding: 1rem;
         z-index: 1000;
-        border:none;
+        border: none;
         box-shadow: none;
-        
 
         .logoDiv {
             .logo {
@@ -31,13 +28,14 @@
                 font-weight: 500;
                 cursor: pointer;
                 justify-content: center;
-                .flex{
-                    font-size: 60px;
+                .flex {
+                    font-size: 58px;
                 }
                 .icon {
                     color: var(--PrimaryColor);
-                    font-size: 55px;
-                    margin-right: 10px;
+                    font-size: 55px !important;
+                    margin-right: 10px !important;
+                    margin-left: 20px !important;
                 }
             }
         }
@@ -60,7 +58,6 @@
                     justify-content: center;
                     width: 100%;
                     margin: auto;
-                    
 
                     .navItem {
                         padding: 1rem 0;
@@ -110,83 +107,81 @@
                                 background: var(--HoverColor);
 
                                 a {
-                                    color: var(--whiteColor)
+                                    color: var(--whiteColor);
                                 }
                             }
                         }
                     }
                 }
 
-                .closeNavbar{
+                .closeNavbar {
                     position: absolute;
                     top: 1rem;
                     right: 1.5rem;
                     color: var(--PrimaryColor);
-                    &:hover .icon{
+                    &:hover .icon {
                         color: var(--HoverColor);
                     }
                 }
             }
 
-            .activeNavbar{
+            .activeNavbar {
                 left: 0;
             }
         }
 
-        .toggleNavbar{
-            .icon{
+        .toggleNavbar {
+            .icon {
                 font-size: 30px;
                 color: var(--whiteColor);
-                &:hover{
-                    color: var(--PrimaryColor)
+                &:hover {
+                    color: var(--PrimaryColor);
                 }
             }
         }
     }
 
-    .activeHeader{
+    .activeHeader {
         background: black;
-        box-shadow: 0 2px 8px 2px rgba(178,178,178,0.334);
+        box-shadow: 0 2px 8px 2px rgba(178, 178, 178, 0.334);
     }
 }
 
 // MEDIA QUERIES ======================>
 
 @media screen and (min-width: 769px) {
-    .navBarSection{
-        .toggleNavbar, .closeNavbar{
+    .navBarSection {
+        .toggleNavbar, .closeNavbar {
             display: none;
         }
 
-        .header{
+        .header1 {
             padding: 2rem 2rem;
 
-            .navBar{
-                .navLists{
+            .navBar {
+                .navLists {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     flex-direction: row;
 
-                    .navItem{
-                        .navLink{
+                    .navItem {
+                        .navLink {
                             color: var(--whiteColor);
                             padding: 0 .45rem;
                             font-size: 1.2rem;
                             font-weight: 400;
-                            &:hover{
-                                color:var(--PrimaryColor);
+                            &:hover {
+                                color: var(--PrimaryColor);
                             }
                         }
-
-
                     }
 
-                    .headerBtns{
-                        margin-top: -12px;
+                    .headerBtns {
+                        margin-top: -12px; 
                     }
 
-                    .btn{
+                    .btn {
                         margin-left: 1rem;
                         display: flex;
                         align-items: center;
@@ -195,20 +190,20 @@
                         height: 35px;
                         margin-top: 13px;
 
-                        a{
+                        a {
                             color: var(--whiteColor);
-                            font-weight: 500;
+                            font-weight: 500; 
                             font-size: 18px;
                         }
                     }
 
-                    .loginBtn{
+                    .loginBtn {
                         background: none;
                         border: 1px solid var(--PrimaryColor);
 
-                        &:hover{
+                        &:hover {
                             background: var(--PrimaryColor);
-                            a{
+                            a {
                                 color: var(--whiteColor);
                             }
                         }
@@ -220,10 +215,10 @@
 }
 
 @media screen and (min-width: 960px) {
-    .header{
-        .navBar{
-            .navLists{
-                .navItem{
+    .header1 {
+        .navBar {
+            .navLists {
+                .navItem {
                     padding: 0 .7rem;
                 }
             }
@@ -232,7 +227,7 @@
 }
 
 @media screen and (min-width: 1024px) {
-    .header{
-        padding: 1rem 8.5rem !important;
+    .header1 {
+        padding: 1rem 8.5rem;
     }
 }

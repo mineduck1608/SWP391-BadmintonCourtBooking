@@ -90,7 +90,7 @@ const ViewCourtInfo = () => {
                                 <p>Time: AAAAA</p>
                                 <p>Branch: {branch.branchName}</p>
                                 <p>Status: FREE</p>
-                                <button onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
+                                <button className='viewCourt' onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
                             </div>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ const ViewCourtInfo = () => {
                                             <p>{court.description}</p>
                                         </div>
                                         <div className="other-court-button">
-                                        <button onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                        <button className='viewCourt' onClick={() => handleBookCourt(court.courtId)}>Book</button>
                                         </div>
                                     </div>
                                 </div>

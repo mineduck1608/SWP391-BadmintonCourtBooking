@@ -26,13 +26,13 @@
   text-align: center !important;
 }
 .home .secContainer .homeText .title {
-  color: var(--whiteColor);
+  color: var(--whiteColor) !important;
   font-size: 2rem !important;
   font-weight: 700 !important;
   line-height: 2.5rem !important;
 }
 .home .secContainer .homeText .subTitle {
-  color: var(--whiteColor);
+  color: var(--whiteColor) !important;
   opacity: 0.9 !important;
   font-size: 17px !important;
   font-weight: 300 !important;
@@ -49,7 +49,7 @@
   width: 80% !important;
   border-radius: 1rem !important;
   padding: 2rem !important;
-  background: var(--whiteColor);
+  background: var(--whiteColor) !important;
   position: absolute !important;
   gap: 1rem !important;
   justify-content: center !important;
@@ -103,7 +103,7 @@
 .home .secContainer .homeCard .btn {
   width: 100% !important;
   padding: 0.6rem 1.5 rem !important;
-  color: var(--whiteColor);
+  color: var(--whiteColor) !important;
   font-weight: 600 !important;
   margin-top: -2px !important;
 }

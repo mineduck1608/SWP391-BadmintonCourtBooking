@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './navbar.css'
 import { MdSportsTennis } from "react-icons/md";
 import { AiFillCloseCircle } from "react-icons/ai";
@@ -20,21 +20,20 @@ const Navbar = () => {
     }
 
     //Code to add background color to the header...
-    const [transparent, setTransparent] = useState('header')
-    const addBg = () => {
+    const [transparent, setTransparent] = useState('header1')
+    const addBg = ()=>{
         if (window.scrollY >= 10) {
-            setTransparent('header activeHeader')
+            setTransparent('header1 activeHeader')
         }
         else {
-            setTransparent('header')
+            setTransparent('header1')
         }
     }
-    window.addEventListener('scroll', addBg)
+    window.addEventListener('scroll', addBg);
 
     return (
         <section className='navBarSection'>
             <div className={transparent}>
-
                 <div className="logoDiv">
                     <Link to={'/'} className="logo">
                         <h1 className='flex'><MdSportsTennis className="icon" />
