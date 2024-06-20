@@ -18,14 +18,14 @@
   align-items: flex-start;
   gap: 1rem;
 }
-.popular .secContainer .secHeader .textDiv setTitle {
-  color: var(--blackColor);
+.popular .secContainer .secHeader .textDiv .secTitle {
+  color: var(--blackColor) !important;
   line-height: 1.5rem;
   padding-bottom: 0.5rem;
 }
 .popular .secContainer .secHeader .textDiv p {
   font-size: 13px;
-  color: var(--textColor);
+  color: var(--textColor) !important;
   font-weight: 500;
 }
 .popular .secContainer .secHeader .iconsDiv {
@@ -33,21 +33,21 @@
 }
 .popular .secContainer .secHeader .iconsDiv .icon {
   padding: 0.5rem;
-  background: var(--greyText);
+  background: var(--greyText) !important;
   border-radius: 50%;
   font-size: 2.5rem;
 }
 .popular .secContainer .secHeader .iconsDiv .icon:hover {
-  background: var(--blackColor);
-  color: var(--whiteColor);
+  background: var(--blackColor) !important;
+  color: var(--whiteColor) !important;
 }
 .popular .secContainer .secHeader .iconsDiv .leftIcon {
-  background: var(--blackColor);
-  color: var(--whiteColor);
+  background: var(--blackColor) !important;
+  color: var(--whiteColor) !important;
 }
 .popular .secContainer .secHeader .iconsDiv .leftIcon:hover {
-  background: var(--greyText);
-  color: var(--blackColor);
+  background: var(--greyText) !important;
+  color: var(--blackColor) !important;
 }
 .popular .secContainer .mainContent {
   padding: 2rem 0;
@@ -84,11 +84,11 @@
   overflow: hidden;
 }
 .popular .secContainer .mainContent .singleDestination .destImage .overlayInfo h3 {
-  color: var(--whiteColor);
+  color: var(--whiteColor) !important;
   font-weight: 600;
 }
 .popular .secContainer .mainContent .singleDestination .destImage .overlayInfo p {
-  color: var(--whiteColor);
+  color: var(--whiteColor) !important;
   opacity: 0.7;
   font-size: 13px;
 }
@@ -97,7 +97,7 @@
   right: 10px;
   bottom: 10px;
   padding: 0.5rem;
-  background: var(--PrimaryColor);
+  background: var(--PrimaryColor) !important;
   font-size: 2.5rem;
   border-radius: 50%;
   color: var(--whiteColor);
@@ -105,9 +105,9 @@
   transition: 0.3s ease;
 }
 .popular .secContainer .mainContent .singleDestination .destImage .overlayInfo .icon:hover {
-  background: var(--blackColor);
-  border: 1px solid var(--PrimaryColor);
-  color: var(--PrimaryColor);
+  background: var(--blackColor) !important;
+  border: 1px solid var(--PrimaryColor) !important;
+  color: var(--PrimaryColor) !important;
 }
 .popular .secContainer .mainContent .singleDestination .destFooter {
   padding: 1rem;
@@ -116,6 +116,7 @@
   font-size: 2rem;
   font-weight: 700;
   color: var(--blackColor);
+  position: relative;
   width: -moz-max-content;
   width: max-content;
 }
@@ -182,7 +183,7 @@
   }
   .popular .secContainer .secHeader .textDiv .secTitle {
     font-size: 2.2rem;
-    color: black;
+    color: var(--blackColor);
   }
   .popular .secContainer .secHeader .textDiv p {
     font-size: 15px;
@@ -192,6 +193,3 @@
     gap: 1.5rem !important;
   }
 }/*# sourceMappingURL=popular.css.map */
-.black-text {
-  color: black;
-}

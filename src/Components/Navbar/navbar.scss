@@ -30,12 +30,13 @@
                 color: var(--whiteColor);
                 font-weight: 500;
                 cursor: pointer;
-                align-items: center;
                 justify-content: center;
-
+                .flex{
+                    font-size: 60px;
+                }
                 .icon {
                     color: var(--PrimaryColor);
-                    font-size: 50px;
+                    font-size: 55px;
                     margin-right: 10px;
                 }
             }
@@ -146,7 +147,6 @@
     .activeHeader{
         background: black;
         box-shadow: 0 2px 8px 2px rgba(178,178,178,0.334);
-        
     }
 }
 

@@ -11,144 +11,145 @@
 }
 
 .home {
-  height: 80vh;
-  background: linear-gradient(rgba(33, 33, 33, 0.522), rgba(33, 33, 33, 0.522)), url("../../Assets/image2.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  position: relative;
+  height: 80vh !important;
+  background: linear-gradient(rgba(33, 33, 33, 0.522), rgba(33, 33, 33, 0.522)), url("../../Assets/image2.jpg") !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: auto !important;
+  position: relative !important;
 }
 .home .secContainer .homeText {
-  text-align: center;
+  text-align: center !important;
 }
 .home .secContainer .homeText .title {
   color: var(--whiteColor);
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 2.5rem;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  line-height: 2.5rem !important;
 }
 .home .secContainer .homeText .subTitle {
   color: var(--whiteColor);
-  opacity: 0.9;
-  font-size: 17px;
-  font-weight: 300;
-  padding: 1rem 0;
-  max-width: 70%;
-  text-align: center;
-  margin: auto;
+  opacity: 0.9 !important;
+  font-size: 17px !important;
+  font-weight: 300 !important;
+  padding: 1rem 0 !important;
+  max-width: 70% !important;
+  text-align: center !important;
+  margin: auto !important;
 }
 .home .secContainer .homeText .btn {
-  padding: 0.6rem 1.5rem;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 20px !important;
 }
 .home .secContainer .homeCard {
-  width: 80%;
-  border-radius: 1rem;
-  padding: 2rem;
+  width: 80% !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
   background: var(--whiteColor);
-  position: absolute;
-  gap: 1rem;
-  justify-content: center;
-  bottom: -35%;
-  transform: translate(-50%);
-  left: 50%;
-  box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
+  position: absolute !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  bottom: -35% !important;
+  transform: translate(-50%) !important;
+  left: 50% !important;
+  box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45) !important;
 }
 .home .secContainer .homeCard .locationDiv,
 .home .secContainer .homeCard .distDiv,
 .home .secContainer .homeCard .priceDiv {
-  width: 100%;
+  width: 100% !important;
 }
 .home .secContainer .homeCard .locationDiv label,
 .home .secContainer .homeCard .distDiv label,
 .home .secContainer .homeCard .priceDiv label {
-  display: block;
-  color: var(--textColor);
-  font-weight: 500;
-  font-size: 17px;
-  padding-bottom: 0.4rem;
+  display: block !important;
+  color: var(--textColor) !important;
+  font-weight: 500 !important;
+  font-size: 17px !important;
+  padding-bottom: 0.4rem !important;
 }
 .home .secContainer .homeCard .locationDiv input,
 .home .secContainer .homeCard .distDiv input,
 .home .secContainer .homeCard .priceDiv input {
-  width: 100%;
-  background: var(--inputColor);
-  border-radius: 10px;
-  border: none;
-  padding: 10px;
-  font-size: 13px;
-  font-weight: 500;
+  width: 100% !important;
+  background: var(--inputColor) !important;
+  border-radius: 10px !important;
+  border: none !important;
+  padding: 10px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
 }
 .home .secContainer .homeCard .locationDiv input::-moz-placeholder, .home .secContainer .homeCard .distDiv input::-moz-placeholder, .home .secContainer .homeCard .priceDiv input::-moz-placeholder {
-  font-size: 13px;
-  opacity: 0.5;
-  font-weight: 400;
+  font-size: 13px !important;
+  opacity: 0.5 !important;
+  font-weight: 400 !important;
 }
 .home .secContainer .homeCard .locationDiv input::placeholder,
 .home .secContainer .homeCard .distDiv input::placeholder,
 .home .secContainer .homeCard .priceDiv input::placeholder {
-  font-size: 13px;
-  opacity: 0.5;
-  font-weight: 400;
+  font-size: 13px !important;
+  opacity: 0.5 !important;
+  font-weight: 400 !important;
 }
 .home .secContainer .homeCard .locationDiv input:focus,
 .home .secContainer .homeCard .distDiv input:focus,
 .home .secContainer .homeCard .priceDiv input:focus {
-  outline: none;
+  outline: none !important;
 }
 .home .secContainer .homeCard .btn {
-  width: 100%;
-  padding: 0.6rem 1.5 rem;
+  width: 100% !important;
+  padding: 0.6rem 1.5 rem !important;
   color: var(--whiteColor);
-  font-weight: 600;
-  margin-top: -2px;
+  font-weight: 600 !important;
+  margin-top: -2px !important;
 }
 
 @media screen and (min-width: 480px) {
   .home .secContainer .homeCard {
-    bottom: -100px;
-    width: 90%;
-    grid-template-columns: repeat(2, 1fr);
+    bottom: -100px !important;
+    width: 90% !important;
+    grid-template-columns: repeat(2, 1fr) !important;
   }
   .home .secContainer .homeCard .btn {
-    transform: translateY(15px);
+    transform: translateY(15px) !important;
   }
 }
 @media screen and (min-width: 556px) {
   .home .secContainer .homeText .title {
-    font-size: 2.5rem;
+    font-size: 2.5rem !important;
   }
   .home .secContainer .homeText .subTitle {
-    font-size: 18px;
+    font-size: 18px !important;
   }
 }
 @media screen and (min-width: 720px) {
   .home .secContainer .homeCard {
-    bottom: -10%;
-    grid-template-columns: repeat(4, 1fr);
+    bottom: -10% !important;
+    grid-template-columns: repeat(4, 1fr) !important;
   }
 }
 @media screen and (min-width: 720px) {
   .home .secContainer .homeText {
-    padding: 1rem 10rem;
+    padding: 1rem 10rem !important;
   }
   .home .secContainer .homeText .title {
-    font-size: 4.0rem;
-    margin: auto;
-    line-height: 4rem;
+    font-size: 3.5rem !important;
+    margin: auto !important;
+    line-height: 4rem !important;
   }
   .home .secContainer .homeText .subTitle {
-    width: 70%;
+    width: 70% !important;
   }
 }
 @media screen and (min-width: 1024px) {
   home .secContainer .homeText .subTitle {
-    font-size: 20px;
+    font-size: 20px !important;
   }
   home .secContainer .homeCard {
-    width: 70%;
+    width: 70% !important;
   }
 }/*# sourceMappingURL=home.css.map */
