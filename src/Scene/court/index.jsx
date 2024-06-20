@@ -6,6 +6,10 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { ConfigProvider, Modal, Form, Input, InputNumber, Radio } from 'antd';
+import { v4 } from 'uuid';
+import { uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref } from 'firebase/storage';
+import { imageDb } from '../../Components/googleSignin/config.js';
 
 const Court = () => {
     const theme = useTheme();
@@ -20,6 +24,7 @@ const Court = () => {
     const [refresh, setRefresh] = useState(false);
 
     const [form] = Form.useForm();
+    const [img, setImg] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -109,7 +114,7 @@ const Court = () => {
 
     const handleSubmit = async (values) => {
         const { courtImg, price, description, courtStatus } = values;
-        const url = isAddMode 
+        const url = isAddMode
             ? `http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${selectedCourt?.branchId || 'someDefaultBranchId'}&price=${price}&description=${description}`
             : `http://localhost:5266/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${selectedCourt.courtId}&activeStatus=${courtStatus}`;
 
@@ -217,6 +222,31 @@ const Court = () => {
         return <Box m="20px">Error: {error}</Box>;
     }
 
+    const handleClick = async (e) => {
+        e.preventDefault();
+        if (!img) {
+            toast.error('No image selected');
+            return;
+        }
+        const imgRef = ref(imageDb, `files/${v4()}`);
+        try {
+            await uploadBytes(imgRef, img);
+            const url = await getDownloadURL(imgRef);
+            const encodedUrl = encodeURIComponent(url);
+            form.setFieldsValue({ courtImg: encodedUrl });
+            toast.success('Image uploaded successfully');
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            toast.error('Image upload failed');
+        }
+    };
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImg(file);
+        }
+    };
+
     return (
         <ConfigProvider theme={{
             token: {
@@ -286,7 +316,10 @@ const Court = () => {
                             label="Image"
                             rules={[{ required: true, message: 'Please input the image!' }]}
                         >
-                            <Input />
+                            <div className="uploaded-branchimage-upload">
+                                <input className="button-branch-input" type="file" onChange={handleImageChange} />
+                                <button className="button upload" onClick={handleClick}>Upload</button>
+                            </div>
                         </Form.Item>
                         <Form.Item
                             name="courtStatus"

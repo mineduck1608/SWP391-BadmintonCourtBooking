@@ -17,37 +17,43 @@ const TimeSlotManagement = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [branches, setBranches] = useState([]);
-  const [courts, setCourts] = useState([]); // State for courts
-  const [slots, setSlots] = useState([]); // State for slots
+  const [courts, setCourts] = useState([]);
+  const [slots, setSlots] = useState([]);
   const [addFormState, setAddFormState] = useState({
-    branch: '',
-    court: '',
+    branchId: '',
+    courtId: '',
     date: '',
-    startTime: '',
-    endTime: ''
+    start: '',
+    end: '',
+    bookingId: '',
+    bookedSlotId: ''
   });
   const [addOpen, setAddOpen] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [branchesfilter, setBranchesFilter] = [branches, setBranches];
-  const [courtsfilter, setCourtsFilter] = useState([]); // Update courtsfilter to useState
+  const [courtsfilter, setCourtsFilter] = useState([]);
 
-  // Define initial state values
   const initialState = {
-    branch: '',
-    court: '',
-    startTime: '',
-    endTime: '',
-    date: ''
+    branchId: '',
+    courtId: '',
+    date: '',
+    start: '',
+    end: '',
+    bookingId: '',
+    bookedSlotId: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    img: ''
   };
 
-  // Use a single state object to manage form fields
   const [formState, setFormState] = useState(initialState);
 
   const showModal = async (row) => {
     try {
-      // Fetch all bookings
       const bookingsRes = await fetch(`http://localhost:5266/Booking/GetAll`, {
         method: "GET",
         headers: {
@@ -63,7 +69,6 @@ const TimeSlotManagement = () => {
       const bookingsData = await bookingsRes.json();
       const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
 
-      // Fetch user data using userId from the booking data
       const userRes = await fetch(`http://localhost:5266/User/GetById?id=${booking.userId}`, {
         method: "GET",
         headers: {
@@ -78,7 +83,6 @@ const TimeSlotManagement = () => {
 
       const userData = await userRes.json();
 
-      // Fetch all user details
       const userDetailsRes = await fetch(`http://localhost:5266/UserDetail/GetAll`, {
         method: "GET",
         headers: {
@@ -94,14 +98,15 @@ const TimeSlotManagement = () => {
       const userDetailsData = await userDetailsRes.json();
       const userDetail = userDetailsData.find(detail => detail.userId === userData.userId);
 
-      // Set form state with slot, user, and user detail information
       setSelectedRow(row);
       setFormState({
         firstName: userDetail.firstName || '',
         lastName: userDetail.lastName || '',
         phone: userDetail?.phone || '',
         email: userDetail?.email || '',
-        img: userDetail?.img || ''
+        img: userDetail?.img || '',
+        bookingId: booking ? booking.bookingId : 'N/A',
+        bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
       });
       setOpen(true);
     } catch (error) {
@@ -112,7 +117,7 @@ const TimeSlotManagement = () => {
 
   const handleOk = () => {
     const slotData = formState;
-    fetch(`http://localhost:5266/Slot/Update?id=${slotData.id}&branchId=${slotData.branch}&courtId=${slotData.court}&startTime=${slotData.startTime}&endTime=${slotData.endTime}`, {
+    fetch(`http://localhost:5266/Slot/Update?id=${slotData.id}&branchId=${slotData.branchId}&courtId=${slotData.courtId}&date=${slotData.date}&start=${slotData.start}&end=${slotData.end}`, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -141,16 +146,17 @@ const TimeSlotManagement = () => {
   };
 
   const handleAddOk = () => {
-    if (!addFormState.branch || !addFormState.court || !addFormState.date || !addFormState.startTime || !addFormState.endTime) {
+    if (!addFormState.branchId || !addFormState.courtId || !addFormState.date || !addFormState.start || !addFormState.end) {
       toast.error('All fields are required.');
       return;
     }
 
     const newSlot = {
-      branchId: addFormState.branch,
-      courtId: addFormState.court,
-      startTime: `${addFormState.date}T${addFormState.startTime}:00`,
-      endTime: `${addFormState.date}T${addFormState.endTime}:00`
+      branchId: addFormState.branchId,
+      courtId: addFormState.courtId,
+      date: addFormState.date,
+      start: addFormState.start,
+      end: addFormState.end
     };
     fetch(`http://localhost:5266/Slot/Add`, {
       method: 'POST',
@@ -184,11 +190,13 @@ const TimeSlotManagement = () => {
   const handleAddCancel = () => {
     setAddOpen(false);
     setAddFormState({
-      branch: '',
-      court: '',
+      branchId: '',
+      courtId: '',
       date: '',
-      startTime: '',
-      endTime: ''
+      start: '',
+      end: '',
+      bookingId: '',
+      bookedSlotId: ''
     });
   };
 
@@ -243,25 +251,30 @@ const TimeSlotManagement = () => {
       setBranches(branchesData);
       setCourts(courtsData);
       setSlots(slotsData);
+      console.log(branchesData)
 
+  
       const formattedData = slotsData.map((row, index) => {
-        const court = courtsData.find(court => court.courtId === row.courtId);
-        const branch = branchesData.find(branch => branch.branchId === court.branchId);
-        const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+        const court = courts.find(court => court.courtId === row.courtId);
+        const branch = branches.find(branch => branch.branchId === court.branchId);
+        const booking = bookingsData.find(booking => booking.slotId === row.bookedSlotId);
 
         return {
           id: index + 1,
           ...row,
           branchName: branch ? branch.branchName : 'Unknown',
           courtName: court ? court.courtName : 'Unknown',
-          date: dayjs(row.startTime).format('DD-MM-YYYY'),
-          timeRange: `${dayjs(row.startTime).format('HH:mm')} - ${dayjs(row.endTime).format('HH:mm')}`,
-          totalPrice: booking ? booking.totalPrice : 'N/A'
+          date: dayjs(row.date).format('DD-MM-YYYY'),
+          timeRange: `${row.start}:00 - ${row.end}:00`,
+          totalPrice: booking ? booking.totalPrice : 'N/A',
+          bookingId: booking ? booking.bookingId : 'N/A',
+          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
       });
 
       setSlots(slotsData);
       setRows(formattedData);
+      console.log(formattedData)
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -276,14 +289,14 @@ const TimeSlotManagement = () => {
   }, [token]);
 
   const handleBranchChange = (value) => {
-    setAddFormState({ ...addFormState, branch: value, court: '' });
+    setAddFormState({ ...addFormState, branchId: value, courtId: '' });
 
     const filteredCourts = courts.filter(court => court.branchId === value);
     setCourtsFilter(filteredCourts);
   };
 
   const handleCourtChange = (value) => {
-    setAddFormState({ ...addFormState, court: value });
+    setAddFormState({ ...addFormState, courtId: value });
   };
 
   const handleDateChange = async (dateValue) => {
@@ -336,10 +349,10 @@ const TimeSlotManagement = () => {
       setCourts(courtsData);
       setSlots(slotsData);
 
-      const selectedBranchId = formState.branch;
-      const selectedCourtId = formState.court;
+      const selectedBranchId = formState.branchId;
+      const selectedCourtId = formState.courtId;
 
-      let filteredSlots = slotsData.filter(slot => dayjs(slot.startTime).format('YYYY-MM-DD') === dateValue);
+      let filteredSlots = slotsData.filter(slot => dayjs(slot.date).format('YYYY-MM-DD') === dateValue);
 
       if (selectedBranchId && selectedBranchId !== "all") {
         const filteredCourts = courtsData.filter(court => court.branchId === selectedBranchId);
@@ -358,18 +371,21 @@ const TimeSlotManagement = () => {
       const formattedData = filteredSlots.map((row, index) => {
         const court = courtsData.find(court => court.courtId === row.courtId);
         const branch = branchesData.find(branch => branch.branchId === court.branchId);
-        const booking = bookingsData.find(booking => booking.slotId === row.slotId);
-
+        const booking = bookingsData.find(booking => booking.slotId === row.bookedSlotId);
+        console.log(court)
         return {
           id: index + 1,
           ...row,
           branchName: branch ? branch.branchName : 'Unknown',
           courtName: court ? court.courtName : 'Unknown',
-          date: dayjs(row.startTime).format('DD-MM-YYYY'),
-          timeRange: `${dayjs(row.startTime).format('HH:mm')} - ${dayjs(row.endTime).format('HH:mm')}`,
-          totalPrice: booking ? booking.totalPrice : 'N/A'
+          date: dayjs(row.date).format('DD-MM-YYYY'),
+          timeRange: `${row.start}:00 - ${row.end}:00`,
+          totalPrice: booking ? booking.totalPrice : 'N/A',
+          bookingId: booking ? booking.bookingId : 'N/A',
+          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
       });
+      
 
       setRows(formattedData);
     } catch (error) {
@@ -404,7 +420,7 @@ const TimeSlotManagement = () => {
   const columns = [
     { field: "slotId", headerName: "ID", align: "center", headerAlign: "center" },
     { field: "branchName", headerName: "Branch", flex: 1, align: "center", headerAlign: "center" },
-    { field: "courtName", headerName: "Court", flex: 1, align: "center", headerAlign: "center" }, // Add courtName column
+    { field: "courtName", headerName: "Court", flex: 1, align: "center", headerAlign: "center" },
     { field: "date", headerName: "Date", flex: 1, align: "center", headerAlign: "center" },
     { field: "timeRange", headerName: "Time Range", flex: 1, align: "center", headerAlign: "center" },
     {
@@ -462,7 +478,7 @@ const TimeSlotManagement = () => {
             Branch:
           </label>
           <select
-            value={formState.branch}
+            value={formState.branchId}
             onChange={(e) => handleBranchChange(e.target.value)}
             className="timeslotmanage-filter-branch-input-box-modal"
           >
@@ -483,7 +499,7 @@ const TimeSlotManagement = () => {
             Court:
           </label>
           <select
-            value={formState.court}
+            value={formState.courtId}
             onChange={(e) => handleCourtChange(e.target.value)}
             className="timeslotmanage-filter-court-input-box-modal"
           >
@@ -533,12 +549,18 @@ const TimeSlotManagement = () => {
           >
             <div className="managetimeslot-timeslot-modal">
               <div className="managetimeslot-user-info">
-                <img src={'https://firebasestorage.googleapis.com/v0/b/badmintoncourtbooking-183b2.appspot.com/o/files%2F22701a3e-720e-475d-aa47-c8c4040189e1?alt=media&token=e01180b0-300b-417f-9ef9-82fe648398d8'} alt={`${formState.firstName} ${formState.lastName}`} className="managetimeslot-user-info-image" />
+                <img
+                  src={formState.img || 'https://firebasestorage.googleapis.com/v0/b/badmintoncourtbooking-183b2.appspot.com/o/files%2F22701a3e-720e-475d-aa47-c8c4040189e1?alt=media&token=e01180b0-300b-417f-9ef9-82fe648398d8'}
+                  alt={`${formState.firstName} ${formState.lastName}`}
+                  className="managetimeslot-user-info-image"
+                />
                 <div className="managetimeslot-user-info-details">
                   <p className="managetimeslot-user-info-text">First Name: {formState.firstName}</p>
                   <p className="managetimeslot-user-info-text">Last Name: {formState.lastName}</p>
                   <p className="managetimeslot-user-info-text">Phone: {formState.phone}</p>
                   <p className="managetimeslot-user-info-text">Email: {formState.email}</p>
+                  <p className="managetimeslot-user-info-text">Booking ID: {formState.bookingId}</p>
+                  <p className="managetimeslot-user-info-text">Booked Slot ID: {formState.bookedSlotId}</p>
                 </div>
               </div>
             </div>
@@ -565,10 +587,10 @@ const TimeSlotManagement = () => {
               <div className="managetimeslot-add-slot-fields">
                 <div className="managetimeslot-add-slot-label-time-row">
                   <div className="time-input">
-                    <label htmlFor="branch" className="managetimeslot-add-slot-label">Branch:</label>
+                    <label htmlFor="branchId" className="managetimeslot-add-slot-label">Branch:</label>
                     <select
-                      id="branch"
-                      value={addFormState.branch}
+                      id="branchId"
+                      value={addFormState.branchId}
                       onChange={(e) => handleBranchChange(e.target.value)}
                       className="managetimeslot-add-slot-input"
                       required
@@ -582,14 +604,14 @@ const TimeSlotManagement = () => {
                     </select>
                   </div>
                   <div className="time-input">
-                    <label htmlFor="court" className="managetimeslot-add-slot-label">Court:</label>
+                    <label htmlFor="courtId" className="managetimeslot-add-slot-label">Court:</label>
                     <select
-                      id="court"
-                      value={addFormState.court}
+                      id="courtId"
+                      value={addFormState.courtId}
                       onChange={(e) => handleCourtChange(e.target.value)}
                       className="managetimeslot-add-slot-input"
                       required
-                      disabled={!addFormState.branch} // Disable until branch is selected
+                      disabled={!addFormState.branchId}
                     >
                       <option disabled selected hidden value="">Select court</option>
                       {courtsfilter.map((court) => (
@@ -613,11 +635,11 @@ const TimeSlotManagement = () => {
                     />
                   </div>
                   <div className="time-input">
-                    <label htmlFor="startTime" className="managetimeslot-add-slot-label">Start Time:</label>
+                    <label htmlFor="start" className="managetimeslot-add-slot-label">Start Time:</label>
                     <select
-                      id="startTime"
-                      value={addFormState.startTime}
-                      onChange={(e) => setAddFormState({ ...addFormState, startTime: e.target.value })}
+                      id="start"
+                      value={addFormState.start}
+                      onChange={(e) => setAddFormState({ ...addFormState, start: e.target.value })}
                       className="managetimeslot-add-slot-input time-select"
                       required
                     >
@@ -628,11 +650,11 @@ const TimeSlotManagement = () => {
                     </select>
                   </div>
                   <div className="time-input">
-                    <label htmlFor="endTime" className="managetimeslot-add-slot-label">End Time:</label>
+                    <label htmlFor="end" className="managetimeslot-add-slot-label">End Time:</label>
                     <select
-                      id="endTime"
-                      value={addFormState.endTime}
-                      onChange={(e) => setAddFormState({ ...addFormState, endTime: e.target.value })}
+                      id="end"
+                      value={addFormState.end}
+                      onChange={(e) => setAddFormState({ ...addFormState, end: e.target.value })}
                       className="managetimeslot-add-slot-input time-select"
                       required
                     >

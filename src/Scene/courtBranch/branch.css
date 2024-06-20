@@ -5,3 +5,9 @@
     font-size: 20px;
     font-family: 'Poppins', sans-serif;
 }
+.uploaded-branchimage-upload{
+    display: flex;
+}
+.button-branch-input{
+    margin-right: 50px;
+}

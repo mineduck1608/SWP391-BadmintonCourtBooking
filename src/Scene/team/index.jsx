@@ -65,7 +65,7 @@ const Team = () => {
     const userData = formState;
 
     // Gửi yêu cầu cập nhật cho bảng User
-    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&activeStatus=" + userData.activeStatus + "&balance=" + userData.balance, {
+    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
