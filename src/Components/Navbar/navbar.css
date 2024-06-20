@@ -1,4 +1,3 @@
-/* Color */
 :root {
   --PrimaryColor: hsl(26, 93%, 50%);
   --HoverColor: hsl(26, 90%, 42%);
@@ -11,34 +10,34 @@
   --inputColor: hsl(330, 12%, 97%);
 }
 
-.navBarSection .header {
+.navBarSection .header1 {
   position: fixed;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: transparent;
   width: 100%;
   padding: 1rem;
   z-index: 1000;
   border: none;
   box-shadow: none;
 }
-.navBarSection .header .logoDiv .logo {
+.navBarSection .header1 .logoDiv .logo {
   color: var(--whiteColor);
   font-weight: 500;
   cursor: pointer;
   justify-content: center;
 }
-.navBarSection .header .logoDiv .logo .flex {
-  font-size: 60px;
+.navBarSection .header1 .logoDiv .logo .flex {
+  font-size: 58px;
 }
-.navBarSection .header .logoDiv .logo .icon {
+.navBarSection .header1 .logoDiv .logo .icon {
   color: var(--PrimaryColor);
-  font-size: 55px;
-  margin-right: 10px;
+  font-size: 55px !important;
+  margin-right: 10px !important;
+  margin-left: 20px !important;
 }
 @media screen and (max-width: 768px) {
-  .navBarSection .header .navBar {
+  .navBarSection .header1 .navBar {
     background: var(--greyBg);
     position: absolute;
     height: -moz-max-content;
@@ -51,27 +50,27 @@
     transition: 0.5s ease;
     z-index: 1000;
   }
-  .navBarSection .header .navBar .navLists {
+  .navBarSection .header1 .navBar .navLists {
     flex-direction: column;
     justify-content: center;
     width: 100%;
     margin: auto;
   }
-  .navBarSection .header .navBar .navLists .navItem {
+  .navBarSection .header1 .navBar .navLists .navItem {
     padding: 1rem 0;
   }
-  .navBarSection .header .navBar .navLists .navItem .navLink {
+  .navBarSection .header1 .navBar .navLists .navItem .navLink {
     color: var(--textColor);
     font-size: 0.9rem;
     font-weight: 600;
   }
-  .navBarSection .header .navBar .navLists .navItem .navLink:hover {
+  .navBarSection .header1 .navBar .navLists .navItem .navLink:hover {
     color: var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .navLists .headerBtns {
+  .navBarSection .header1 .navBar .navLists .headerBtns {
     flex-direction: column;
   }
-  .navBarSection .header .navBar .navLists .headerBtns .btn {
+  .navBarSection .header1 .navBar .navLists .headerBtns .btn {
     margin-top: 1rem;
     display: flex;
     align-items: center;
@@ -79,45 +78,45 @@
     width: 110px;
     height: 35px;
   }
-  .navBarSection .header .navBar .navLists .headerBtns .btn a {
+  .navBarSection .header1 .navBar .navLists .headerBtns .btn a {
     font-weight: 600;
     font-size: 16px;
   }
-  .navBarSection .header .navBar .navLists .headerBtns .btn a:hover {
+  .navBarSection .header1 .navBar .navLists .headerBtns .btn a:hover {
     color: var(--whiteColor);
   }
-  .navBarSection .header .navBar .navLists .headerBtns .loginBtn {
+  .navBarSection .header1 .navBar .navLists .headerBtns .loginBtn {
     background: none;
     border: 1px solid var(--PrimaryColor);
     color: var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .navLists .headerBtns .loginBtn a {
+  .navBarSection .header1 .navBar .navLists .headerBtns .loginBtn a {
     color: var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .navLists .headerBtns .loginBtn:hover {
+  .navBarSection .header1 .navBar .navLists .headerBtns .loginBtn:hover {
     background: var(--HoverColor);
   }
-  .navBarSection .header .navBar .navLists .headerBtns .loginBtn:hover a {
+  .navBarSection .header1 .navBar .navLists .headerBtns .loginBtn:hover a {
     color: var(--whiteColor);
   }
-  .navBarSection .header .navBar .closeNavbar {
+  .navBarSection .header1 .navBar .closeNavbar {
     position: absolute;
     top: 1rem;
     right: 1.5rem;
     color: var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .closeNavbar:hover .icon {
+  .navBarSection .header1 .navBar .closeNavbar:hover .icon {
     color: var(--HoverColor);
   }
-  .navBarSection .header .activeNavbar {
+  .navBarSection .header1 .activeNavbar {
     left: 0;
   }
 }
-.navBarSection .header .toggleNavbar .icon {
+.navBarSection .header1 .toggleNavbar .icon {
   font-size: 30px;
   color: var(--whiteColor);
 }
-.navBarSection .header .toggleNavbar .icon:hover {
+.navBarSection .header1 .toggleNavbar .icon:hover {
   color: var(--PrimaryColor);
 }
 .navBarSection .activeHeader {
@@ -129,28 +128,28 @@
   .navBarSection .toggleNavbar, .navBarSection .closeNavbar {
     display: none;
   }
-  .navBarSection .header {
+  .navBarSection .header1 {
     padding: 2rem 2rem;
   }
-  .navBarSection .header .navBar .navLists {
+  .navBarSection .header1 .navBar .navLists {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: row;
   }
-  .navBarSection .header .navBar .navLists .navItem .navLink {
+  .navBarSection .header1 .navBar .navLists .navItem .navLink {
     color: var(--whiteColor);
     padding: 0 0.45rem;
     font-size: 1.2rem;
     font-weight: 400;
   }
-  .navBarSection .header .navBar .navLists .navItem .navLink:hover {
+  .navBarSection .header1 .navBar .navLists .navItem .navLink:hover {
     color: var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .navLists .headerBtns {
+  .navBarSection .header1 .navBar .navLists .headerBtns {
     margin-top: -12px;
   }
-  .navBarSection .header .navBar .navLists .btn {
+  .navBarSection .header1 .navBar .navLists .btn {
     margin-left: 1rem;
     display: flex;
     align-items: center;
@@ -159,29 +158,29 @@
     height: 35px;
     margin-top: 13px;
   }
-  .navBarSection .header .navBar .navLists .btn a {
+  .navBarSection .header1 .navBar .navLists .btn a {
     color: var(--whiteColor);
     font-weight: 500;
     font-size: 18px;
   }
-  .navBarSection .header .navBar .navLists .loginBtn {
+  .navBarSection .header1 .navBar .navLists .loginBtn {
     background: none;
     border: 1px solid var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .navLists .loginBtn:hover {
+  .navBarSection .header1 .navBar .navLists .loginBtn:hover {
     background: var(--PrimaryColor);
   }
-  .navBarSection .header .navBar .navLists .loginBtn:hover a {
+  .navBarSection .header1 .navBar .navLists .loginBtn:hover a {
     color: var(--whiteColor);
   }
 }
 @media screen and (min-width: 960px) {
-  .header .navBar .navLists .navItem {
+  .header1 .navBar .navLists .navItem {
     padding: 0 0.7rem;
   }
 }
 @media screen and (min-width: 1024px) {
-  .header {
-    padding: 1rem 8.5rem !important;
+  .header1 {
+    padding: 1rem 8.5rem;
   }
 }/*# sourceMappingURL=navbar.css.map */
