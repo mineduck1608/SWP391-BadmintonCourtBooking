@@ -10,6 +10,7 @@ using System.Text;
 using BadmintonCourtAPI.Utils;
 using Microsoft.IdentityModel.Tokens;
 using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.MoMo;
+using System.Diagnostics;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -121,22 +122,21 @@ namespace BadmintonCourtAPI.Controllers
 
 		public async Task<MoMoResponse> PayByMoMo(TransactionDTO model, UserDetail info)
 		{
+			Debug.WriteLine(model.Date);
 			string amount = model.Amount;
-			string orderInfo = $"User: {info.FirstName} {info.LastName}, date: {DateTime.Now.ToString("dd/MM/yyyy")}, type: {model.Type}.";
 			string type = model.Type;
+			string orderInfo = $"User: {info.FirstName} {info.LastName}, id: ${model.UserId}, date: {DateTime.Now.ToString("dd/MM/yyyy")}, type: {type}, at court: {model.CourtId}";
 			switch (type)
 			{
 				case FIXED:
-					orderInfo += $"Reserves for {model.NumMonth} month(s), from {model.Date} {model.Start}h - {model.End}h, at court: {model.CourtId}.";
+					orderInfo += $"Reserves for {model.NumMonth} month(s), from {model.Date:dd/MM/yyyy} {model.Start}h - {model.End}h.";
 					break;
 				case PLAY_ONCE:
-					orderInfo += $"Play on {model.Date.ToString("dd/MM/yyyy")}";
+					orderInfo += $"Play on {model.Date:dd/MM/yyyy}";
 					break;
-				case FLEXIBLE: 
-					//Not doing anything. The hour will be subtracted onto user's balance. This is here to check if the type is correct
-					break;
+				case FLEXIBLE:
 				case BUY_TIME:
-					orderInfo += $"\n";
+					//Not doing anything. The hour will be subtracted onto user's balance. This is here to check if the type is correct
 					break;
 				default: throw new NotImplementedException("Other booking types are not implemented yet");
 			}
@@ -146,8 +146,27 @@ namespace BadmintonCourtAPI.Controllers
 		}
 		[HttpGet]
 		[Route("/Payment/MoMoCallback")]
-		public ActionResult MoMoCallback(MoMoResponse response)
+		public ActionResult MoMoCallback(MoMoRedirectResult result)
 		{
+			if (result.Message == "Success")
+			{
+				string[] data = result.OrderInfo.Split(", ");
+				string userID = data[1].Split(": ")[1];
+				string courtID = data[4].Split(": ")[1];
+				string bookingID = "B" + _service.BookingService.GetAllBookings().Count.ToString("D7");
+				string transID = result.TransId;
+				string amount = result.Amount;
+				int method = 2;
+				string type = data[3].Split(": ")[1];
+				switch (type)
+				{
+					case FIXED:
+					case PLAY_ONCE:
+					case FLEXIBLE:
+					case BUY_TIME:
+						break;
+				}
+			}
 			return Ok();
 		}
 		[HttpPost]
