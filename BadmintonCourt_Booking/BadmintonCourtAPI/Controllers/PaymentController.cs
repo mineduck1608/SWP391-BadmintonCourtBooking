@@ -11,6 +11,8 @@ using BadmintonCourtAPI.Utils;
 using Microsoft.IdentityModel.Tokens;
 using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.MoMo;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using BadmintonCourtDAOs;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -21,8 +23,10 @@ namespace BadmintonCourtAPI.Controllers
 		private const string FLEXIBLE = "flexible";
 		private const string FIXED = "fixed";
 		private const string BUY_TIME = "buyTime";
+		private IConfiguration _configuration;
 		public PaymentController(IConfiguration configuration)
 		{
+			_configuration = configuration;
 			if (_service == null)
 				_service = new BadmintonCourtService(configuration);
 		}
@@ -125,14 +129,14 @@ namespace BadmintonCourtAPI.Controllers
 			Debug.WriteLine(model.Date);
 			string amount = model.Amount;
 			string type = model.Type;
-			string orderInfo = $"User: {info.FirstName} {info.LastName}, id: ${model.UserId}, date: {DateTime.Now.ToString("dd/MM/yyyy")}, type: {type}, at court: {model.CourtId}";
+			string orderInfo = $"user: {info.FirstName} {info.LastName}, id: {model.UserId}, date: {DateTime.Now:yyyy-MM-dd}, type: {type}, ";
 			switch (type)
 			{
-				case FIXED:
-					orderInfo += $"Reserves for {model.NumMonth} month(s), from {model.Date:dd/MM/yyyy} {model.Start}h - {model.End}h.";
-					break;
 				case PLAY_ONCE:
-					orderInfo += $"Play on {model.Date:dd/MM/yyyy}";
+					orderInfo += $"court: {model.CourtId}, on: {model.Date}, timeStart: {model.Start}, timeEnd: {model.End}";
+					break;
+				case FIXED:
+					orderInfo += $"court: {model.CourtId}, number of months: {model.NumMonth}, on: {model.Date}, timeStart: {model.Start}, timeEnd: {model.End}";
 					break;
 				case FLEXIBLE:
 				case BUY_TIME:
@@ -146,29 +150,167 @@ namespace BadmintonCourtAPI.Controllers
 		}
 		[HttpGet]
 		[Route("/Payment/MoMoCallback")]
-		public ActionResult MoMoCallback(MoMoRedirectResult result)
+		public async Task<ActionResult> MoMoCallback(MoMoRedirectResult result)
 		{
 			if (result.Message == "Success")
 			{
+				//Extract the common data
 				string[] data = result.OrderInfo.Split(", ");
-				string userID = data[1].Split(": ")[1];
-				string courtID = data[4].Split(": ")[1];
-				string bookingID = "B" + _service.BookingService.GetAllBookings().Count.ToString("D7");
-				string transID = result.TransId;
-				string amount = result.Amount;
-				int method = 2;
-				string type = data[3].Split(": ")[1];
-				switch (type)
+				string bookingId = "BK-" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
+				string typeStr = result.OrderInfo.Split(", ")[3].Split(": ")[1];
+				string paymentId = "P-" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7");
+				ExtractBookingInfo(result, out float amount, out int bookingType, out string userId, out DateTime bookingDate, out int numOfMonth);
+				//Save to DB
+				if (typeStr == FIXED || typeStr == PLAY_ONCE)
 				{
-					case FIXED:
-					case PLAY_ONCE:
-					case FLEXIBLE:
-					case BUY_TIME:
-						break;
+					string slotId = "BS-" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7");
+					string courtId = result.OrderInfo.Split(", ")[4].Split(": ")[1];
+					ExtractSlotTime(result.OrderInfo, bookingType, out DateTime start, out DateTime end);
+					_service.BookingService.AddBooking(new()
+					{
+						BookingId = bookingId,
+						Amount = amount,
+						BookingType = bookingType,
+						UserId = userId,
+						BookingDate = bookingDate
+					});
+					_service.PaymentService.AddPayment(new()
+					{
+						PaymentId = paymentId,
+						UserId = userId,
+						Date = DateTime.Now,
+						BookingId = bookingId,
+						Method = 2,
+						Amount = amount,
+						TransactionId = result.TransId,
+					});
+					await ScheduleSlot(start, end, courtId, bookingId, typeStr, numOfMonth, userId);
+				}
+				if(typeStr == FLEXIBLE)
+				{
+					_service.BookingService.AddBooking(new()
+					{
+						BookingId = bookingId,
+						Amount = amount,
+						BookingType = bookingType,
+						UserId = userId,
+						BookingDate = bookingDate
+					});
+					_service.PaymentService.AddPayment(new()
+					{
+						PaymentId = paymentId,
+						UserId = userId,
+						Date = DateTime.Now,
+						BookingId = bookingId,
+						Method = 2,
+						Amount = amount,
+						TransactionId = result.TransId,
+					});
+				}
+				if(typeStr == BUY_TIME)
+				{
+					_service.PaymentService.AddPayment(new()
+					{
+						PaymentId = paymentId,
+						UserId = userId,
+						Date = DateTime.Now,
+						BookingId = null,
+						Method = 2,
+						Amount = amount,
+						TransactionId = result.TransId,
+					});
+				}
+				return Ok("Success");
+			}
+			return BadRequest();
+		}
+
+		private async Task ScheduleSlot(DateTime start, DateTime end, string courtId, string bookingId, string typeStr, int numOfMonth, string userId)
+		{
+			SlotController controller = new(_configuration);
+			bool success = false;
+			if (typeStr == PLAY_ONCE)
+			{
+				_service.SlotService.AddSlot(new()
+				{
+					SlotId = "BS-" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"),
+					BookingId = bookingId,
+					CourtId = courtId,
+					StartTime = start,
+					EndTime = end,
+				});
+			}
+			else
+			{
+				int count = _service.SlotService.GetAllSlots().Count + 1;
+				//For every month...
+				for (int i = 0; i < numOfMonth; i++)
+				{
+					//Schedule 4 slots by...
+					for (int j = 0; j < 4; j++)
+					{
+						//Schedule it
+						_service.SlotService.AddSlot(new()
+						{
+							SlotId = "BS-" + count.ToString("D7"),
+							BookingId = bookingId,
+							CourtId = courtId,
+							StartTime = start,
+							EndTime = end,
+						});
+						//Step by 7 days
+						start = start.AddDays(7);
+						end = end.AddDays(7);
+						count++;
+					}
 				}
 			}
-			return Ok();
 		}
+
+		private void ExtractSlotTime(string infoStr, int type, out DateTime start, out DateTime end)
+		{
+			var orderInfo = infoStr.Split(", ");
+			//Day
+			int dateIndex = (type == 1) ? 5 : 6;
+			var dateStr = orderInfo[dateIndex].Split(": ")[1].Split("-");
+			int year = int.Parse(dateStr[0]);
+			int month = int.Parse(dateStr[1]);
+			int day = int.Parse(dateStr[2]);
+			//Start time
+			int h1 = int.Parse(orderInfo[dateIndex + 1].Split(": ")[1]);
+			start = new(year, month, day, h1, 0, 0);
+			//End time
+			int h2 = int.Parse(orderInfo[dateIndex + 2].Split(": ")[1]);
+			end = new(year, month, day, h2, 0, 0);
+		}
+
+		private void ExtractBookingInfo(MoMoRedirectResult result, out float amount, out int bookingType, out string userId, out DateTime bookingDate, out int numMonth)
+		{
+			amount = float.Parse(result.Amount);
+			var orderInfo = result.OrderInfo.Split(", ");
+			switch (orderInfo[3].Split(": ")[1])
+			{
+				case PLAY_ONCE: bookingType = 1; break;
+				case FIXED: bookingType = 2; break;
+				case FLEXIBLE: bookingType = 3; break;
+				default: bookingType = 0; break;
+			}
+			userId = orderInfo[1].Split(": ")[1];
+			var dateArray = orderInfo[2].Split(": ")[1].Split("-");
+			bookingDate = new DateTime(
+				int.Parse(dateArray[0]),
+				int.Parse(dateArray[1]),
+				int.Parse(dateArray[2])
+			);
+			if (bookingType == 2)
+			{
+				//5
+				string numOfMonth = orderInfo[5].Split(": ")[1];
+				numMonth = int.Parse(numOfMonth);
+			}
+			else numMonth = 0;
+		}
+
 		[HttpPost]
 		//[Authorize]
 		[Route("Payment/Result")]

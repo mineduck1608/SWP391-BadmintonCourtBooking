@@ -42,5 +42,30 @@ namespace BadmintonCourtServices
         public List<BookedSlot> GetSlotsByCourt(string id) => _slotDAO.GetSlotsByCourt(id);
 
         public void UpdateSlot(BookedSlot newSlot, string id) => _slotDAO.UpdateSlot(newSlot, id);
-    }
+
+        /// <summary>
+        /// Attempt to add a slot until it can be done
+        /// </summary>
+        /// <param name="slot"></param>
+		public void AddUntilOk(BookedSlot slot)
+		{
+            DateTime start = slot.StartTime;
+            DateTime end = slot.EndTime;
+            int length = end.Hour - start.Hour;
+            bool success = false;
+            do
+            {
+                var activeInInterval = _slotDAO.GetSlotsActiveInInterval(start, end, slot.CourtId);
+                if(activeInInterval?.Count > 0) // Some slots in this range
+                {
+                    success = false;
+                }
+                else
+                {
+                    success = true;
+                }
+            }
+            while (!success);
+		}
+	}
 }

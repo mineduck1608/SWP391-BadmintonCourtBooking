@@ -287,9 +287,9 @@ namespace BadmintonCourtAPI.Controllers
 				DateTime endDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, end.Value, 0, 0);
 				if (slot.CourtId == courtId && slot.StartTime == startDate && slot.EndTime == endDate) // Chọn nhầm lại y chang cũ ko khác gì
 					return Ok(new { msg = "Success" });
-					
 
-				
+
+
 				Court court = _service.CourtService.GetCourtByCourtId(courtId);
 				List<BookedSlot> tmpList = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
 				//--------------------------------------------------------------------------------------
