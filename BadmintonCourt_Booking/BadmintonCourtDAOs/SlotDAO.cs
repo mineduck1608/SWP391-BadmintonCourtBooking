@@ -42,8 +42,11 @@ namespace BadmintonCourtDAOs
 		// Note2: Start: 15h ngày x | End: 17h ngày x (X ở đây là ngày đầu tiên đặt sân - ngày đầu tiên chơi trong chuỗi 1, 2, 3 tháng | Vd: X là ngày 31/5/2024)
 		public List<BookedSlot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id) => _dbContext.BookedSlots.Where(x => x.StartTime >= start && x.EndTime <= end && x.CourtId == id).ToList();
 
-		public List<BookedSlot> GetSlotsActiveInInterval(DateTime start, DateTime end, string courtId) => _dbContext.BookedSlots.Where(x =>
-			x.EndTime > start || x.StartTime < end).ToList();
+		public List<BookedSlot> GetSlotsActiveInInterval(DateTime start, DateTime end, string courtId)
+		{
+			return _dbContext.BookedSlots.Where((x) =>
+			!(x.EndTime < start || x.StartTime > end)).ToList();
+		}
 
 		// Trả về danh sách các ngày đặt theo tháng để user confirm r mới đặt
 		public List<BookedSlot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id)

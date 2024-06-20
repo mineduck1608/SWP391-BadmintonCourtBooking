@@ -160,78 +160,75 @@ namespace BadmintonCourtAPI.Controllers
 				string typeStr = result.OrderInfo.Split(", ")[3].Split(": ")[1];
 				string paymentId = "P-" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7");
 				ExtractBookingInfo(result, out float amount, out int bookingType, out string userId, out DateTime bookingDate, out int numOfMonth);
+				var booking = new Booking()
+				{
+					BookingId = bookingId,
+					Amount = amount,
+					BookingType = bookingType,
+					UserId = userId,
+					BookingDate = bookingDate
+				};
+				var payment = new Payment()
+				{
+					PaymentId = paymentId,
+					UserId = userId,
+					Date = DateTime.Now,
+					BookingId = bookingId,
+					Method = 2,
+					Amount = amount,
+					TransactionId = result.TransId,
+				};
 				//Save to DB
 				if (typeStr == FIXED || typeStr == PLAY_ONCE)
 				{
 					string slotId = "BS-" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7");
 					string courtId = result.OrderInfo.Split(", ")[4].Split(": ")[1];
 					ExtractSlotTime(result.OrderInfo, bookingType, out DateTime start, out DateTime end);
-					_service.BookingService.AddBooking(new()
-					{
-						BookingId = bookingId,
-						Amount = amount,
-						BookingType = bookingType,
-						UserId = userId,
-						BookingDate = bookingDate
-					});
-					_service.PaymentService.AddPayment(new()
-					{
-						PaymentId = paymentId,
-						UserId = userId,
-						Date = DateTime.Now,
-						BookingId = bookingId,
-						Method = 2,
-						Amount = amount,
-						TransactionId = result.TransId,
-					});
-					await ScheduleSlot(start, end, courtId, bookingId, typeStr, numOfMonth, userId);
+					_service.BookingService.AddBooking(booking);
+					_service.PaymentService.AddPayment(payment);
+					await ScheduleSlot(start, end, courtId, bookingId, typeStr, numOfMonth);
 				}
 				if(typeStr == FLEXIBLE)
 				{
-					_service.BookingService.AddBooking(new()
-					{
-						BookingId = bookingId,
-						Amount = amount,
-						BookingType = bookingType,
-						UserId = userId,
-						BookingDate = bookingDate
-					});
-					_service.PaymentService.AddPayment(new()
-					{
-						PaymentId = paymentId,
-						UserId = userId,
-						Date = DateTime.Now,
-						BookingId = bookingId,
-						Method = 2,
-						Amount = amount,
-						TransactionId = result.TransId,
-					});
+					_service.BookingService.AddBooking(booking);
+					_service.PaymentService.AddPayment(payment);
 				}
 				if(typeStr == BUY_TIME)
 				{
-					_service.PaymentService.AddPayment(new()
-					{
-						PaymentId = paymentId,
-						UserId = userId,
-						Date = DateTime.Now,
-						BookingId = null,
-						Method = 2,
-						Amount = amount,
-						TransactionId = result.TransId,
-					});
+					payment.BookingId = null;
+					_service.PaymentService.AddPayment(payment);
 				}
 				return Ok("Success");
 			}
 			return BadRequest();
 		}
-
-		private async Task ScheduleSlot(DateTime start, DateTime end, string courtId, string bookingId, string typeStr, int numOfMonth, string userId)
+		[HttpGet]
+		[Route("/Slot/Attempt")]
+		/// <summary>
+		/// Schedule slots for once or fixed booking
+		/// </summary>
+		/// <param name="start">Date and time the user starts playing for that block</param>
+		/// <param name="end">Date and time it user stop playing for that block</param>
+		/// <param name="courtId"></param>
+		/// <param name="bookingId"></param>
+		/// <param name="typeStr">Type of booking</param>
+		/// <param name="numOfMonth"></param>
+		/// <returns></returns>
+		public async Task ScheduleSlot(DateTime start, DateTime end, string courtId, string bookingId, string typeStr, int numOfMonth)
 		{
 			SlotController controller = new(_configuration);
 			bool success = false;
 			if (typeStr == PLAY_ONCE)
 			{
-				_service.SlotService.AddSlot(new()
+				//_service.SlotService.AddSlot(new()
+				//{
+				//	SlotId = "BS-" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"),
+				//	BookingId = bookingId,
+				//	CourtId = courtId,
+				//	StartTime = start,
+				//	EndTime = end,
+				//});
+				_service.SlotService.AttemptToAdd(new()
 				{
 					SlotId = "BS-" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"),
 					BookingId = bookingId,
