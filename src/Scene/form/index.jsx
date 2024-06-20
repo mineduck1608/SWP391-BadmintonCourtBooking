@@ -19,6 +19,7 @@ const TimeSlotManagement = () => {
   const [branches, setBranches] = useState([]);
   const [courts, setCourts] = useState([]);
   const [slots, setSlots] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [addFormState, setAddFormState] = useState({
     branchId: '',
     courtId: '',
@@ -251,13 +252,12 @@ const TimeSlotManagement = () => {
       setBranches(branchesData);
       setCourts(courtsData);
       setSlots(slotsData);
-      console.log(branchesData)
+      setBookings(bookingsData);
 
-  
       const formattedData = slotsData.map((row, index) => {
-        const court = courts.find(court => court.courtId === row.courtId);
-        const branch = branches.find(branch => branch.branchId === court.branchId);
-        const booking = bookingsData.find(booking => booking.slotId === row.bookedSlotId);
+        const court = courtsData.find(court => court.courtId === row.courtId);
+        const branch = branchesData.find(branch => branch.branchId === court.branchId);
+        const booking = bookingsData.find(booking => booking.slotId === row.slotId);
 
         return {
           id: index + 1,
@@ -266,7 +266,7 @@ const TimeSlotManagement = () => {
           courtName: court ? court.courtName : 'Unknown',
           date: dayjs(row.date).format('DD-MM-YYYY'),
           timeRange: `${row.start}:00 - ${row.end}:00`,
-          totalPrice: booking ? booking.totalPrice : 'N/A',
+          totalPrice: booking ? booking.amount : 'N/A',
           bookingId: booking ? booking.bookingId : 'N/A',
           bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
@@ -274,7 +274,6 @@ const TimeSlotManagement = () => {
 
       setSlots(slotsData);
       setRows(formattedData);
-      console.log(formattedData)
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -288,16 +287,216 @@ const TimeSlotManagement = () => {
     fetchData();
   }, [token]);
 
-  const handleBranchChange = (value) => {
-    setAddFormState({ ...addFormState, branchId: value, courtId: '' });
+  const handleBranchChange = async (value) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      branchId: value,
+      courtId: 'all'
+    }));
 
-    const filteredCourts = courts.filter(court => court.branchId === value);
-    setCourtsFilter(filteredCourts);
+    try {
+      const [branchesRes, courtsRes, slotsRes, bookingsRes] = await Promise.all([
+        fetch(`http://localhost:5266/Branch/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Court/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Slot/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Booking/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      ]);
+
+      if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok || !bookingsRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const [branchesData, courtsData, slotsData, bookingsData] = await Promise.all([
+        branchesRes.json(),
+        courtsRes.json(),
+        slotsRes.json(),
+        bookingsRes.json()
+      ]);
+
+      setBranches(branchesData);
+      setCourts(courtsData);
+      setSlots(slotsData);
+      setBookings(bookingsData);
+
+      if (value === "all") {
+        setCourts([]);
+        const formattedData = slotsData.map((row, index) => {
+          const court = courtsData.find(court => court.courtId === row.courtId);
+          const branch = branchesData.find(branch => branch.branchId === court.branchId);
+          const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+
+          return {
+            id: index + 1,
+            ...row,
+            branchName: branch ? branch.branchName : 'Unknown',
+            courtName: court ? court.courtName : 'Unknown',
+            date: dayjs(row.date).format('DD-MM-YYYY'),
+            timeRange: `${row.start}:00 - ${row.end}:00`,
+            totalPrice: booking ? booking.amount : 'N/A',
+            bookingId: booking ? booking.bookingId : 'N/A',
+            bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
+          };
+        });
+        setRows(formattedData);
+      } else {
+        const filteredCourts = courtsData.filter(court => court.branchId === value);
+        setCourts(filteredCourts);
+
+        const filteredSlots = slotsData.filter(slot => {
+          const court = filteredCourts.find(court => court.courtId === slot.courtId);
+          return court && court.branchId === value;
+        });
+
+        const selectedBranch = branchesData.find(branch => branch.branchId === value);
+
+
+        const formattedData = filteredSlots.map((row, index) => {
+          const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+          return {
+            id: index + 1,
+            ...row,
+            branchName: selectedBranch ? selectedBranch.branchName : 'Unknown',
+            courtName: filteredCourts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown',
+            timeRange: `${row.start}:00 - ${row.end}:00`,
+            totalPrice: booking ? booking.amount : 'N/A',
+          }
+        });
+
+        setRows(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
-  const handleCourtChange = (value) => {
-    setAddFormState({ ...addFormState, courtId: value });
+
+
+  const handleCourtChange = async (value) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      courtId: value
+    }));
+
+    try {
+      const [branchesRes, courtsRes, slotsRes, bookingsRes] = await Promise.all([
+        fetch(`http://localhost:5266/Branch/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Court/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Slot/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`http://localhost:5266/Booking/GetAll`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      ]);
+
+      if (!branchesRes.ok || !courtsRes.ok || !slotsRes.ok || !bookingsRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const [branchesData, courtsData, slotsData, bookingsData] = await Promise.all([
+        branchesRes.json(),
+        courtsRes.json(),
+        slotsRes.json(),
+        bookingsRes.json()
+      ]);
+
+      setBranches(branchesData);
+      setCourts(courtsData);
+      setSlots(slotsData);
+      setBookings(bookingsData);
+
+      const filteredCourts = formState.branchId === "all"
+        ? courtsData
+        : courtsData.filter(court => court.branchId === formState.branchId);
+
+      if (value === "all") {
+        const formattedData = slotsData.map((row, index) => {
+          const court = filteredCourts.find(court => court.courtId === row.courtId);
+          const branch = branchesData.find(branch => branch.branchId === court.branchId);
+          const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+
+          return {
+            id: index + 1,
+            ...row,
+            branchName: branch ? branch.branchName : 'Unknown',
+            courtName: court ? court.courtName : 'Unknown',
+            date: dayjs(row.date).format('DD-MM-YYYY'),
+            timeRange: `${row.start}:00 - ${row.end}:00`,
+            totalPrice: booking ? booking.amount : 'N/A',
+            bookingId: booking ? booking.bookingId : 'N/A',
+            bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
+          };
+        });
+        setRows(formattedData);
+      } else {
+        const filteredSlots = slotsData.filter(slot => slot.courtId === value);
+
+        const formattedData = filteredSlots.map((row, index) => {
+          const court = filteredCourts.find(court => court.courtId === row.courtId);
+          const branch = branchesData.find(branch => branch.branchId === court.branchId);
+          const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+          return {
+            id: index + 1,
+            ...row,
+            branchName: branch ? branch.branchName : 'Unknown',
+            courtName: court ? court.courtName : 'Unknown',
+            timeRange: `${row.start}:00 - ${row.end}:00`,
+            totalPrice: booking ? booking.amount : 'N/A',
+          };
+        });
+
+        setRows(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+
+
 
   const handleDateChange = async (dateValue) => {
     setFormState({ ...formState, date: dateValue });
@@ -371,8 +570,8 @@ const TimeSlotManagement = () => {
       const formattedData = filteredSlots.map((row, index) => {
         const court = courtsData.find(court => court.courtId === row.courtId);
         const branch = branchesData.find(branch => branch.branchId === court.branchId);
-        const booking = bookingsData.find(booking => booking.slotId === row.bookedSlotId);
-        console.log(court)
+        const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+
         return {
           id: index + 1,
           ...row,
@@ -380,12 +579,11 @@ const TimeSlotManagement = () => {
           courtName: court ? court.courtName : 'Unknown',
           date: dayjs(row.date).format('DD-MM-YYYY'),
           timeRange: `${row.start}:00 - ${row.end}:00`,
-          totalPrice: booking ? booking.totalPrice : 'N/A',
+          totalPrice: booking ? booking.amount : 'N/A',
           bookingId: booking ? booking.bookingId : 'N/A',
           bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
       });
-      
 
       setRows(formattedData);
     } catch (error) {
@@ -393,9 +591,9 @@ const TimeSlotManagement = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    fetch(`http://localhost:5266/Slot/Delete?id=${id}`, {
-      method: "DELETE",
+  const handleUpdate = (id) => {
+    fetch(`http://localhost:5266/Slot/UpdateByStaff`, {
+      method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -418,7 +616,7 @@ const TimeSlotManagement = () => {
   };
 
   const columns = [
-    { field: "slotId", headerName: "ID", align: "center", headerAlign: "center" },
+    { field: "id", headerName: "ID", align: "center", headerAlign: "center" },
     { field: "branchName", headerName: "Branch", flex: 1, align: "center", headerAlign: "center" },
     { field: "courtName", headerName: "Court", flex: 1, align: "center", headerAlign: "center" },
     { field: "date", headerName: "Date", flex: 1, align: "center", headerAlign: "center" },
@@ -434,7 +632,8 @@ const TimeSlotManagement = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => (
-        <Box>
+        <Box
+        style={{marginRight: 20}}>
           <Button
             type="primary"
             onClick={() => showModal(params.row)}
@@ -448,7 +647,7 @@ const TimeSlotManagement = () => {
           <Button
             variant="contained"
             size="small"
-            onClick={() => handleDelete(params.row.id)}
+            onClick={() => handleUpdate(params.row.id)}
             style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
           >
             Update
@@ -482,16 +681,11 @@ const TimeSlotManagement = () => {
             onChange={(e) => handleBranchChange(e.target.value)}
             className="timeslotmanage-filter-branch-input-box-modal"
           >
-            <option disabled selected hidden value="Select branch">
-              {selectedRow ? selectedRow.branchName : ''}
-            </option>
-
             <option value="all">All</option>
             {branches.map((branch) => (
               <option key={branch.branchId} value={branch.branchId}>
                 {branch.branchName}
               </option>
-
             ))}
           </select>
 
@@ -503,15 +697,18 @@ const TimeSlotManagement = () => {
             onChange={(e) => handleCourtChange(e.target.value)}
             className="timeslotmanage-filter-court-input-box-modal"
           >
-            <option disabled selected hidden value="Select court">
-              {selectedRow ? selectedRow.courtName : ''}
-            </option>
-            <option value="all">All</option>
-            {courtsfilter.map((court) => (
-              <option key={court.courtId} value={court.courtId}>
-                {court.courtName}
-              </option>
-            ))}
+            {formState.branchId === 'all' ? (
+              <option value="all">All</option>
+            ) : (
+              <>
+                <option value="all">All</option>
+                {courts.map((court) => (
+                  <option key={court.courtId} value={court.courtId}>
+                    {court.courtName}
+                  </option>
+                ))}
+              </>
+            )}
           </select>
           <label htmlFor="" className="timeslotmanage-filter-date">
             Date:
@@ -550,7 +747,7 @@ const TimeSlotManagement = () => {
             <div className="managetimeslot-timeslot-modal">
               <div className="managetimeslot-user-info">
                 <img
-                  src={formState.img || 'https://firebasestorage.googleapis.com/v0/b/badmintoncourtbooking-183b2.appspot.com/o/files%2F22701a3e-720e-475d-aa47-c8c4040189e1?alt=media&token=e01180b0-300b-417f-9ef9-82fe648398d8'}
+                  src={formState.img}
                   alt={`${formState.firstName} ${formState.lastName}`}
                   className="managetimeslot-user-info-image"
                 />
@@ -559,8 +756,6 @@ const TimeSlotManagement = () => {
                   <p className="managetimeslot-user-info-text">Last Name: {formState.lastName}</p>
                   <p className="managetimeslot-user-info-text">Phone: {formState.phone}</p>
                   <p className="managetimeslot-user-info-text">Email: {formState.email}</p>
-                  <p className="managetimeslot-user-info-text">Booking ID: {formState.bookingId}</p>
-                  <p className="managetimeslot-user-info-text">Booked Slot ID: {formState.bookedSlotId}</p>
                 </div>
               </div>
             </div>
