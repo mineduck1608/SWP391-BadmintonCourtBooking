@@ -1,25 +1,37 @@
-import { Box, useTheme, Button } from "@mui/material";
+import { Box, useTheme, Button, TextField,Radio ,RadioGroup ,FormControlLabel, FormControl, FormLabel, MenuItem, Select, InputLabel} from "@mui/material";
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import React, { useState, useEffect } from 'react';
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { ConfigProvider, Modal, Form, Input, InputNumber, Radio } from 'antd';
+import { ConfigProvider, Modal, Spin } from 'antd';
+import {toast, ToastContainer} from 'react-toastify';
 
 const Court = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
     const [data, setData] = useState([]);
+    const [branches, setBranches] = useState([null]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [addModalVisible, setAddModalVisible] = useState(false); //Add court modal state
     const [selectedCourt, setSelectedCourt] = useState(null);
-    const [isAddMode, setIsAddMode] = useState(false);
-    const [refresh, setRefresh] = useState(false);
+    const [formData, setFormData] = useState({
+        courtId: '',
+        courtImg: '',
+        price: '',
+        courStatus: '',
+        description: '',
+        branchName: '',
+    });
 
-    const [form] = Form.useForm();
+    const [newCourtData, setNewCourtData] = useState({
+        courtImg: '',
+        branchId: '',
+        price: '',
+        description: '',
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,6 +60,7 @@ const Court = () => {
                 }));
 
                 setData(newData);
+                setBranches(branches);
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -56,82 +69,99 @@ const Court = () => {
         };
 
         fetchData();
-    }, [refresh]);
+        const interval = setInterval(fetchData, 1000); //Fetch data every 1000ms
+        return () => clearInterval(interval); // Cleanup interval on component unmount
+    }, []);
 
     const handleViewInfo = (id) => {
         const court = data.find((court) => court.courtId === id);
         setSelectedCourt(court);
-        setModalVisible(true);
-        setIsAddMode(false);
-        form.setFieldsValue({
+        setFormData({
+            courtId: court.courtId,
             courtImg: court.courtImg,
             price: court.price,
-            description: court.description,
             courtStatus: court.courtStatus,
-            branchName: court.branchName
+            description: court.description,
+            branchName: court.branchName,
+        });
+        setModalVisible(true);
+    };
+
+    const handleDelete = (id) => {
+        console.log(`Delete row with id: ${id}`);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === 'checkbox' ? checked : value,
         });
     };
 
-    const handleAddCourt = () => {
-        setSelectedCourt(null);
-        setModalVisible(true);
-        setIsAddMode(true);
-        form.resetFields();
+    const handleAddInputChange = (e) => {
+        const{name, value} = e.target;
+        setNewCourtData({
+            ...newCourtData,
+            [name]: value,
+        });
     };
 
-    const handleDelete = async (id) => {
-        const court = data.find((court) => court.id === id);
-        const url = `http://localhost:5266/Court/GetDeleted?courtId=${court.courtId}`;
-
+    const handleSave = async () => {
+        const { courtId, courtImg, price, courtStatus, description, branchName } = formData;
         try {
-            const response = await fetch(url, {
-                method: 'GET',
+            const response = await fetch(`http://localhost:5266/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${courtId}&activeStatus=${courtStatus}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                body: JSON.stringify({
+                    courtId,
+                    courtImg,
+                    price: parseFloat(price),
+                    description,
+                    activeStatus: courtStatus,
+                    branchName,
+                }),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Failed to delete court: ${errorData.message}`);
+                throw new Error('Failed to update court');
             }
 
-            // Update the court status in the state
-            setData((prevData) =>
-                prevData.filter((c) => c.id !== id)
-            );
-            toast.success("Court Deleted Successfully");
+            toast.success('Court updated successfully!');
+            setModalVisible(false);
         } catch (error) {
             console.error('Error:', error);
-            toast.error("Failed to delete court");
+            toast.error('Failed to update court');
         }
     };
 
-    const handleSubmit = async (values) => {
-        const { courtImg, price, description, courtStatus } = values;
-        const url = isAddMode 
-            ? `http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${selectedCourt?.branchId || 'someDefaultBranchId'}&price=${price}&description=${description}`
-            : `http://localhost:5266/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${selectedCourt.courtId}&activeStatus=${courtStatus}`;
-
-        try {
-            const response = await fetch(url, {
-                method: isAddMode ? 'POST' : 'PUT',
+    const handleAddCourt = async() => {
+        const {courtImg, branchId, price, description} = newCourtData;
+        try{
+            const response = await fetch(`http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    courtImg,
+                    branchId,
+                    price: parseFloat(price),
+                    description,
+                }),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Failed to ${isAddMode ? 'add' : 'update'} court: ${errorData.message}`);
+            if(!response.ok) {
+                throw new Error('Failed to add court');
             }
 
-            setModalVisible(false);
-            setRefresh(!refresh);
-            toast.success(`Court ${isAddMode ? 'Added' : 'Updated'} Successfully`);
+            toast.success('Court added successfully!');
+            setAddModalVisible(false);
         } catch (error) {
             console.error('Error:', error);
-            toast.error(`Failed to ${isAddMode ? 'add' : 'update'} court`);
+            toast.error('Failed to add court');
         }
     };
 
@@ -229,9 +259,11 @@ const Court = () => {
         }}>
             <Box m="20px">
                 <Head title="COURTS" subtitle="List of Badminton Courts" />
-                <Button variant="contained" color="primary" onClick={handleAddCourt}>
-                    Add Court
-                </Button>
+                <Box display="flex" justifyContent="flex-start" mb={2}>
+                    <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
+                        Add Court
+                    </Button>
+                </Box>
                 <Box
                     m="40px 0 0 0"
                     height="75vh"
@@ -275,60 +307,142 @@ const Court = () => {
                 </Box>
 
                 <Modal
-                    title={<span style={{ fontSize: '32px' }}>{isAddMode ? 'Add Court' : 'Edit Court'}</span>}
+                    title={<span style={{ fontSize: '32px' }}>Court Info</span>}
                     open={modalVisible}
                     onCancel={() => setModalVisible(false)}
-                    footer={null}
+                    footer={[
+                        <Button key="cancel" variant="contained" color="secondary" onClick={() => setModalVisible(false)}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" variant="contained" color="primary"  onClick={handleSave}>
+                            Save
+                        </Button>
+                    ]}
                 >
-                    <Form form={form} onFinish={handleSubmit} layout="vertical">
-                        <Form.Item
+                    {selectedCourt ? (
+                        <Box>
+                        <TextField
+                            label="Court ID"
+                            name="courtId"
+                            value={formData.courtId}
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Image URL"
                             name="courtImg"
-                            label="Image"
-                            rules={[{ required: true, message: 'Please input the image!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="courtStatus"
-                            label="Status"
-                            rules={[{ required: true, message: 'Please select the status!' }]}
-                        >
-                            <Radio.Group>
-                                <Radio value={true}>true</Radio>
-                                <Radio value={false}>false</Radio>
-                            </Radio.Group>
-                        </Form.Item>
-                        <Form.Item
-                            name="price"
+                            value={formData.courtImg}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
                             label="Price"
-                            rules={[{ required: true, message: 'Please input the price!' }]}
-                        >
-                            <InputNumber style={{ width: '100%' }} />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Description"
-                            rules={[{ required: true, message: 'Please input the description!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        {!isAddMode && (
-                            <Form.Item
-                                name="branchName"
+                            name="price"
+                            value={formData.price}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                            type="number"
+                        />
+                        <FormControl component="fieldset" margin="normal">
+                                <FormLabel component="legend">Status</FormLabel>
+                                <RadioGroup
+                                    row
+                                    name="courtStatus"
+                                    value={formData.courtStatus}
+                                    onChange={handleInputChange}
+                                >
+                                    <FormControlLabel value="true" control={<Radio />} label="True" />
+                                    <FormControlLabel value="false" control={<Radio />} label="False" />
+                                </RadioGroup>
+                            </FormControl>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
                                 label="Branch Name"
-                            >
-                                <Input disabled />
-                            </Form.Item>
-                        )}
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
+                                name="branchName"
+                                value={formData.branchName}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Box>
+                    ) : (
+                        <Spin />
+                    )}
                 </Modal>
+
+                <Modal
+                    title={<span style={{ fontSize: '32px' }}>Add Court</span>}
+                    open={addModalVisible}
+                    onCancel={() => setAddModalVisible(false)}
+                    footer={[
+                        <Button key="cancel" variant="contained" color="secondary" onClick={() => setAddModalVisible(false)}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" variant="contained" color="primary" onClick={handleAddCourt}>
+                            Add
+                        </Button>
+                    ]}
+                >
+                    <Box>
+                        <TextField
+                            label="Court Image URL"
+                            name="courtImg"
+                            value={newCourtData.courtImg}
+                            onChange={handleAddInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel id="branchId-label">Branch</InputLabel>
+                            <Select
+                                labelId="branchId-label"
+                                name="branchId"
+                                value={newCourtData.branchId}
+                                onChange={handleAddInputChange}
+                            >
+                                {branches.map((branch) => (
+                                    <MenuItem key={branch.branchId} value={branch.branchId}>
+                                        {branch.branchName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            label="Price"
+                            name="price"
+                            value={newCourtData.price}
+                            onChange={handleAddInputChange}
+                            fullWidth
+                            margin="normal"
+                            type="number"
+                        />
+                        <TextField
+                            label="Description"
+                            name="description"
+                            value={newCourtData.description}
+                            onChange={handleAddInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Box>
+                </Modal>
+
+                <ToastContainer />
             </Box>
-            <ToastContainer />
         </ConfigProvider>
     );
 };
