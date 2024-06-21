@@ -163,13 +163,16 @@
   margin-left: 10px;
   margin-top: 15px;
 }
-.timeslot-flex{
+.timeslotbutton-flex{
   width: auto;
   height: 50px;
+  padding: 0px 10px;
   margin-top: 10px;
   margin-left: 50px;
   color: #f0f0f0;
   background-color: black;
+  border-radius: 10px;
+  border: none;
 }
 .managetimeslot-custom-modal {
   border-radius: 10px;

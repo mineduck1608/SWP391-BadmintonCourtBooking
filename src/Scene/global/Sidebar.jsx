@@ -126,7 +126,7 @@ const Sidebar = () => {
                                 ml="15px"
                             >
 
-                                <Link to={'/'} className="logo">
+                                <Link className="logo">
                                     <MdSportsTennis className="iconSidebar" />
                                 </Link>
                                 <Typography className="webNameAdmin" variant="h4" color={colors.grey[100]}>
