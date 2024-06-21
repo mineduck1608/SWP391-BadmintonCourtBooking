@@ -144,6 +144,7 @@ namespace BadmintonCourtAPI.Controllers
 					break;
 				default: throw new NotImplementedException("Other booking types are not implemented yet");
 			}
+			orderInfo += ", type: momo";
 			var reqdata = MoMoServices.CreateRequestData(orderInfo, amount);
 			var response = await MoMoServices.SendMoMoRequest(reqdata);
 			return response;
