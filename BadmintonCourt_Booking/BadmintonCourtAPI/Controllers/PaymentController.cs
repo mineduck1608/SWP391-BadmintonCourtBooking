@@ -140,15 +140,32 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpGet]
 		[Route("Payment/GetByOrder")]
 		//[Authorize]
-		public async Task<ActionResult<IEnumerable<Payment>>> GetAllPaymentsByOrder(int order, DateOnly start, DateOnly end)
+		public async Task<ActionResult<IEnumerable<Payment>>> GetAllPaymentsByOrder(int? order, DateTime? start, DateTime? end, string userId)
 		{
+			start = start == null ? new DateTime(2000, 1, 1, 0, 0, 0) : start;
+			end = end == null ? new DateTime(3000, 1, 1, 23, 59, 59) : end;
 			if (start > end)
 				return BadRequest(new { msg = "Invalid time interval" });
 
-			if (order == 1) // Sort tăng dần theo ngày
-				return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
+			//-----------------------------------------------------------
+			if (!userId.IsNullOrEmpty())
+			{
+				if (order == 1) // Sort tăng dần theo ngày
+					return Ok(_service.PaymentService.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
 
-			return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Year, start.Month, start.Day, 0, 0, 0) && x.Date <= new DateTime(end.Year, end.Month, end.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+				else if (order == 2)
+					return Ok(_service.PaymentService.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+
+				return Ok(_service.PaymentService.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).ToList()); // Default
+			}
+
+			if (order == 1) // Sort tăng dần theo ngày
+				return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
+
+			else if (order == 2)
+				return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+
+			return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
 		}
 
 
@@ -156,26 +173,6 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Payment/GetByUser")]
 		//[Authorize]
 		public async Task<ActionResult<IEnumerable<Payment>>> GetUserPayments(string id) => Ok(_service.PaymentService.GetPaymentsByUserId(id));
-
-		[HttpGet]
-		[Route("Payment/GetByUserOrder")]
-		//[Authorize]
-		public async Task<ActionResult<IEnumerable<Payment>>> GetUserPaymentsByDemand(int? order, DateOnly? start, DateOnly? end, string id)
-		{
-			if (start > end)
-				return BadRequest(new { msg = "Invalid time interval" });
-			start = start == null ? new DateOnly(2000, 1, 1) : start;
-			end = end == null ? new DateOnly(2100, 1, 1) : end;
-
-
-			if (order == 1) // Sort tăng dần theo ngày
-				return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
-
-			else if (order == 2)
-				return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
-
-			return Ok(_service.PaymentService.GetPaymentsByUserId(id).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).ToList()); // Default
-		}
 
 
 		[HttpGet]

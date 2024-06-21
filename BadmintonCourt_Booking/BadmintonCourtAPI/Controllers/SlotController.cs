@@ -21,25 +21,6 @@ namespace BadmintonCourtAPI.Controllers
 			}
 		}
 
-		//[HttpPost]
-		//[Route("Slot/AddDefault")]
-		//public async Task<IActionResult> AddDefaultSlot(Slot slot)
-		//      {
-		//          service.slotService.AddSlot(slot);
-		//          return Ok();
-		//      }
-
-
-		//[HttpPost]
-		//[Route("Slot/AddBooked")]
-		//      //[Authorize(Roles = "Admin,Staff")]
-		//public async Task<IActionResult> AddBookedSLot(DateTime date, int start, int end, int bookingId, int courtId, int id)
-		//      {
-		//	service.slotService.AddSlot(new Slot(new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), false, courtId, bookingId));
-		//          return Ok();
-		//      }
-
-
 
 		[HttpGet]
 		[Route("Slot/GetAll")]
@@ -51,14 +32,14 @@ namespace BadmintonCourtAPI.Controllers
 		//[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByDemand(string? branchId, string? courtId, DateOnly? startDate, DateOnly? endDate)
 		{
-			DateTime start = startDate == null ? new DateTime(1900, 1, 1, 0, 0, 1) : new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day, 0, 0, 1);
-			DateTime end = endDate == null ? new DateTime(9000, 1, 1, 23, 59, 59) : new DateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day, 23, 59, 59);
+			DateTime start = startDate == null ? new DateTime(2000, 1, 1, 0, 0, 1) : new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day, 0, 0, 1);
+			DateTime end = endDate == null ? new DateTime(3000, 1, 1, 23, 59, 59) : new DateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day, 23, 59, 59);
 			if (start > end)
-				return BadRequest();
+				return BadRequest(new { msg = "Invalid time interval"});
 
 			// -----------------------------------------------------------
 			if (branchId.IsNullOrEmpty() && courtId.IsNullOrEmpty()) // Full
-				return Ok(_service.SlotService.GetAllSlots().Where(x => x.StartTime >= start && x.EndTime <= end).ToList());
+				return Ok(Util.FormatSlotList(_service.SlotService.GetAllSlots().Where(x => x.StartTime >= start && x.EndTime <= end).ToList()));
 			// -----------------------------------------------------------
 			else if (!branchId.IsNullOrEmpty() && courtId.IsNullOrEmpty()) // Theo chi nhánh
 			{
@@ -81,11 +62,14 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPost]
 		[Route("Slot/BookingByBalence")]
 		//[Authorize]
-		public async Task<IActionResult> AddBookedSLot(DateOnly date, int start, int end, string courtId, string userId)
+		public async Task<IActionResult> AddBookedSLot(DateTime? date, int start, int end, string courtId, string userId)
 		{
+			if (date == null || start > end || courtId.IsNullOrEmpty())
+				return BadRequest(new { msg = "Invalid" });
+			
 			User user = _service.UserService.GetUserById(userId);
-			DateTime startDate = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
-			DateTime endDate = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
+			DateTime startDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Year, start, 0, 0);
+			DateTime endDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Year, end, 0, 0);
 			List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
 			if (tmpStorage == null || tmpStorage.Count == 0)
 			{
@@ -106,7 +90,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Slot/GetSLotCourtInDay")]
-		public async Task<ActionResult<IEnumerable<BookedSlot>>> GetA_CourtSlotsInDay(DateTime date, string id) => _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(date.Year, date.Month, date.Day, 0, 0, 1), new DateTime(date.Year, date.Month, date.Day, 23, 59, 59), id).ToList();
+		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInDay(DateTime? date, string id) => date == null ? BadRequest(new { msg = "Date can't be empty" }) : Ok(Util.FormatSlotList(_service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(date.Value.Year, date.Value.Month, date.Value.Year, 0, 0, 1), new DateTime(date.Value.Year, date.Value.Year, date.Value.Year, 23, 59, 59), id).ToList()));
 
 
 		[HttpGet]
