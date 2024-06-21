@@ -4,6 +4,7 @@ import { TimePicker } from 'antd';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
+import userImg from '../../Assets/user.jpg';
 
 const { RangePicker } = TimePicker;
 
@@ -65,14 +66,24 @@ const FindCourt = () => {
 
   useEffect(() => {
     const fetchFeedback = async () => {
+      const feedbackUrl = 'http://localhost:5266/Feedback/GetAll'; 
+
       setLoadingFeedback(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const feedbackData = [
-          { id: 1, firstName: 'Tran', lastName: 'Quynh', comment: 'dep', rating: 4, courtId: 1 },
-          { id: 2, firstName: 'Quynh', lastName: 'Tran', comment: 'depp', rating: 5, courtId: 2 },
-          
-        ];
+        const response = await fetch(feedbackUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch feedback data: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const feedbackData = data.map(fb => ({
+          id: fb.feedbackId,
+          userId: fb.userId,
+          comment: fb.content,
+          rating: fb.rate,
+          courtId: fb.branchId,
+          userImage: null 
+        }));
         setFeedback(feedbackData);
       } catch (error) {
         setErrorFeedback('Failed to load feedback');
@@ -161,7 +172,7 @@ const FindCourt = () => {
                 </div>
 
                 <div className="findcourt-feedbackBox">
-                  <h2>User Feedback</h2>
+                  <h1>User Feedback</h1>
                   {loadingFeedback && <p>Loading feedback...</p>}
                   {errorFeedback && <p>{errorFeedback}</p>}
                   <div className="findcourt-feedbackGrid">
@@ -169,12 +180,16 @@ const FindCourt = () => {
                       const court = courts.find(court => court.courtId === fb.courtId);
                       return (
                         <div key={fb.id} className="findcourt-feedbackCard">
-                          <div className="findcourt-feedbackImage">
+                          {/* <div className="findcourt-feedbackImage">
                             <img src={court ? court.image : image2} alt={`Court ${fb.courtId}`} />
-                          </div>
+                          </div> */}
                           <div className="findcourt-feedbackInfo">
-                            <h2>Court Id: {fb.courtId}</h2>
-                            <p><strong>{fb.firstName} {fb.lastName}</strong>: {fb.comment}</p>
+                            
+                            <div className="findcourt-user-info">
+                                <img src={fb.userImage || userImg} alt={`User ${fb.firstName} ${fb.lastName}`} className="findcourt-user-image" />
+                                <p><strong>{fb.firstName} {fb.lastName}</strong></p>
+                            </div>
+                            <p>{fb.comment}</p>
                             <p>Rating: {fb.rating}/5</p>
                             {court && <p>Court No: {court.courtId}</p>}
                           </div>
