@@ -43,11 +43,10 @@
 /* dashboard.css */
 
 .download-button {
-  font-size: 14px !important;
+  font-size: 15px !important;
   font-weight: bold !important;
   display: flex;
-  padding: 10px 120px !important;
+  padding: 10px 80px !important;
   align-items: center !important;
-  margin-right: -180px !important;
 }
 
