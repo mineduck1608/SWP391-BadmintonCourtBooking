@@ -56,19 +56,6 @@
   background-color: hsl(26, 93%, 50%);
 }
 
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root {
-  color: var(--textColor);
-}
 
 .css-ahj2mt-MuiTypography-root,
 .css-ahj2mt-MuiTypography-root,
@@ -81,5 +68,5 @@
 .css-ahj2mt-MuiTypography-root,
 .css-ahj2mt-MuiTypography-root,
 .css-ahj2mt-MuiTypography-root :hover {
-  color: var(--textColorHover) !important;
+  color: var(--textColorHover);
 }
