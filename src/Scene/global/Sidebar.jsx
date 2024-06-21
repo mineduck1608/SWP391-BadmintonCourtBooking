@@ -25,8 +25,6 @@ import { jwtDecode } from 'jwt-decode';
 
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
- 
-    
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
@@ -142,7 +140,6 @@ const Sidebar = () => {
                     {/* USER */}
                     {!isCollapsed && (
                         <Box mb="25px" mr="50px" ml="50px">
-
                             <Box textAlign="center">
                                 <button onClick={handleLogout} className="admin-button-logout">Logout</button>
                                 <Typography
@@ -173,6 +170,7 @@ const Sidebar = () => {
                         />
 
                         <Typography
+                            className='sidebar-section-title'
                             color={colors.grey[300]}
                             sx={{ m: "15px 0 5px 20px" }}
                         >
@@ -201,6 +199,7 @@ const Sidebar = () => {
                         />
 
                         <Typography
+                            className='sidebar-section-title2'
                             color={colors.grey[300]}
                             sx={{ m: "15px 0 5px 20px" }}
                         >
@@ -230,6 +229,7 @@ const Sidebar = () => {
                         />
 
                         <Typography
+                            className='sidebar-section-title3'
                             color={colors.grey[300]}
                             sx={{ m: "15px 0 5px 20px" }}
                         >

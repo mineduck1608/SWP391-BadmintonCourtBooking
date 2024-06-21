@@ -20,7 +20,14 @@
 .webNameAdmin {
   padding-top: 10px;
   font-size: 30px !important;
-  margin-left: 25px !important;
+  margin-left: 5px !important;
+}
+
+.css-i4bv87-MuiSvgIcon-root{
+  margin-top: 8px;
+}
+p.MuiTypography-root.MuiTypography-body1.css-ahj2mt-MuiTypography-root{
+  margin-top: 4.3px;
 }
 
 .adminName {
@@ -69,4 +76,29 @@
 .css-ahj2mt-MuiTypography-root,
 .css-ahj2mt-MuiTypography-root :hover {
   color: var(--textColorHover);
+}
+
+.sidebar-section-title{
+  font-size: 1rem !important;
+  color: var(--greyText) !important;
+  margin: 15px 0 5px 16px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-section-title2{
+  font-size: 1rem !important;
+  color: var(--greyText) !important;
+  margin: 15px 0 5px 16px !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-section-title3{
+  font-size: 1rem !important;
+  color: var(--greyText) !important;
+  margin: 15px 0 5px 13px !important;
+  white-space: nowrap;
+  overflow: hidden;
 }
