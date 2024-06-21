@@ -290,7 +290,7 @@ namespace BadmintonCourtAPI.Controllers
 				if (slot.CourtId == courtId && slot.StartTime == startDate && slot.EndTime == endDate) // Chọn nhầm lại y chang cũ ko khác gì
 					return Ok(new { msg = "Success" });
 
-			
+
 				Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
 				Court court = _service.CourtService.GetCourtByCourtId(courtId);
 				List<BookedSlot> tmpList = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
@@ -333,8 +333,8 @@ namespace BadmintonCourtAPI.Controllers
 						booking.Amount += newAmount; // Thêm giá trị của slot mới vừa thay đổi
 					}
 					_service.BookingService.UpdatBooking(booking, booking.BookingId); // Update
-					//-------------------------------------------------
-					// Update slot
+																					  //-------------------------------------------------
+																					  // Update slot
 					slot.StartTime = startDate;
 					slot.EndTime = endDate;
 					slot.CourtId = courtId;
@@ -448,7 +448,7 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok(new { msg = "Success" });
 		}
 
-		
+
 		[HttpGet]
 		[Route("Slot/UpdateResultProcessMomo")]
 		public async Task<ActionResult> ProcessResultMomo(MoMoRedirectResult result)

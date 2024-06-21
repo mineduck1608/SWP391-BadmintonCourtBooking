@@ -333,7 +333,7 @@ namespace BadmintonCourtAPI.Controllers
 			//-------------------------------------------------------------
 			else // Mua so du
 			{
-				user.Balance += amount/1000;
+				user.Balance += amount / 1000;
 				_service.UserService.UpdateUser(user, userId);
 			}
 			// ----------------
