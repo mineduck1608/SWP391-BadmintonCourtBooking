@@ -252,14 +252,15 @@ button {
     border-radius: 8px;
     max-height: 750px;
     overflow-y: auto;
-    width: 100%;
-    max-width: 1200px;
+    width: 200%;
+    max-width: 1500px;
 }
 
-.findcourt-feedbackBox h2 {
+.findcourt-feedbackBox h1 {
     margin-bottom: 20px;
     color: #000;
     text-align: center;
+    font-size: 40px;
 }
 
 .findcourt-feedbackGrid {
@@ -283,14 +284,14 @@ button {
 }
 
 .findcourt-feedbackImage img {
-    max-width: 300px;
+    max-width: 400px;
     height: auto;
     border-radius: 8px;
 }
 
 .findcourt-feedbackInfo {
     text-align: left;
-    margin-left: 15px;
+    margin-left: 10px;
     max-width: 1000px;
     white-space: nowrap;
     overflow: hidden;
@@ -300,7 +301,22 @@ button {
 .findcourt-feedbackInfo p {
     color: #000;
     margin: 5px 0;
+    margin-left: 15px ;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.findcourt-feedbackBox h2 {
+    margin-bottom: 20px;
+    color: #000;
+    margin-left: 15px;
+}
+
+.findcourt-feedbackBox .findcourt-user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+
+  
