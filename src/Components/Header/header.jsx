@@ -45,7 +45,7 @@ const Header = () => {
         navigate('/'); // Redirect to home on logout
     };
     return (
-        <div className="header">
+        <div className="header-component">
             <Link to={'/'}>
                 <h1 className='logo-header'><MdSportsTennis className="icon" />BMTC</h1>
             </Link>
