@@ -43,12 +43,22 @@
 }
 .admin-button-logout{
   background-color: #70D8BD;
+  border: none;
+  border-radius: 50px;
+  padding: 5% 12% 5% 12%;
+  font-size: 100%;
 }
 .admin-button-logout:hover{
   background-color: hsl(26, 93%, 50%);
 }
 
+.css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root {
+  color: var(--textColor);
+}
 
+.css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root, .css-ahj2mt-MuiTypography-root :hover {
+  color: var(--textColorHover) !important;
+}
 
 
   

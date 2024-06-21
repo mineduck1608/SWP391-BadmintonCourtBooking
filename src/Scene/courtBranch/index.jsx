@@ -184,7 +184,7 @@ const Branch = () => {
           </Button>
           <Button
             variant="contained"
-            color="secondary"
+            style={{backgroundColor: '#b22222', color: 'white'}}
             onClick={() => handleDelete(params.row.id)}
           >
             Delete

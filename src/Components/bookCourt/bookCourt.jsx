@@ -208,7 +208,7 @@ const BookCourt = () => {
                 <div className="bookCourt-section bookCourt-right-section">
                     <h2 className="notes">3. TIME AND DATE</h2>
                     <div className="bookCourt-form-group4">
-                        <label htmlFor="time-start">Time:</label>
+                        <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => validateTime()}>
                             <option value="" hidden>Select Time</option>
                             {
@@ -217,7 +217,7 @@ const BookCourt = () => {
                                 ))
                             }
                         </select>
-                        <span>to</span>
+                        <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => validateTime()}>
                             <option value="" hidden>Select Time</option>
                             {

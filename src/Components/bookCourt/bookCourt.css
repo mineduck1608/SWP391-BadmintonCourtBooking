@@ -37,8 +37,7 @@
   margin: 0 20px;
 }
 
-.bookCourt-form-group4 label,
-span {
+.text {
   color: var(--textColor);
   margin-top: 5px;
 }
