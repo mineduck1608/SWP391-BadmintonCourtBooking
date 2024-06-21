@@ -1,82 +1,18 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\git\\BE\\BadmintonCourt_Booking\\",
+  "WorkspaceRootPath": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\slotservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\slotservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\csharp_projects\\swp391\\v1\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8296D55A-F0BD-470A-B1E7-F40B5A53A544}|BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtdaos\\slotdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8296D55A-F0BD-470A-B1E7-F40B5A53A544}|BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj|solutionrelative:badmintoncourtdaos\\slotdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\courtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\courtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\branchcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\branchcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtbusinessobjects\\entities\\bookedslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|solutionrelative:badmintoncourtbusinessobjects\\entities\\bookedslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\csharp_projects\\swp391\\v1\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\courtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\courtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\feedbackcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\feedbackcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\momoservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\momoservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtbusinessobjects\\externalserviceentities\\externalpayment\\momo\\momoresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|solutionrelative:badmintoncourtbusinessobjects\\externalserviceentities\\externalpayment\\momo\\momoresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtbusinessobjects\\externalserviceentities\\externalpayment\\momo\\momorequestdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|solutionrelative:badmintoncourtbusinessobjects\\externalserviceentities\\externalpayment\\momo\\momorequestdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtbusinessobjects\\externalserviceentities\\externalpayment\\momo\\momoredirectresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|solutionrelative:badmintoncourtbusinessobjects\\externalserviceentities\\externalpayment\\momo\\momoredirectresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\iservice\\imomoservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\iservice\\imomoservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\badmintoncourtservices.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\badmintoncourtservices.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\csharp_projects\\swp391\\v1\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -86,249 +22,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "SlotDAO.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\SlotDAO.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtDAOs\\SlotDAO.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\SlotDAO.cs",
-              "RelativeToolTip": "BadmintonCourtDAOs\\SlotDAO.cs",
-              "ViewState": "AQIAABwAAAAAAAAAAIA2wC8AAAArAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T14:32:08.858Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "SlotService.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\SlotService.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtRepositories\\SlotService.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\SlotService.cs",
-              "RelativeToolTip": "BadmintonCourtRepositories\\SlotService.cs",
-              "ViewState": "AQIAADkAAAAAAAAAAAAwwEUAAAAfAAAA",
+              "Title": "BookingController.cs",
+              "DocumentMoniker": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BookingController.cs",
+              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\BookingController.cs",
+              "ToolTip": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BookingController.cs",
+              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\BookingController.cs",
+              "ViewState": "AQIAACcAAAAAAAAAAAAIwDUAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T14:32:39.794Z",
+              "WhenOpened": "2024-06-21T19:11:39.092Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "CourtService.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\CourtService.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtRepositories\\CourtService.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\CourtService.cs",
-              "RelativeToolTip": "BadmintonCourtRepositories\\CourtService.cs",
-              "ViewState": "AQIAABMAAAAAAAAAAAAgwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T14:30:49.939Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CourtController.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\CourtController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\CourtController.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\CourtController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\CourtController.cs",
-              "ViewState": "AQIAAC8AAAAAAAAAAAA8wAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T13:53:49.597Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "BranchController.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BranchController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\BranchController.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BranchController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\BranchController.cs",
-              "ViewState": "AQIAAEoAAAAAAAAAAAAmwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T13:53:40.938Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "SlotController.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\SlotController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\SlotController.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\SlotController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\SlotController.cs",
-              "ViewState": "AQIAAIcBAAAAAAAAAADwv40BAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T13:49:01.994Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "BookedSlot.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\Entities\\BookedSlot.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtBusinessObjects\\Entities\\BookedSlot.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\Entities\\BookedSlot.cs",
-              "RelativeToolTip": "BadmintonCourtBusinessObjects\\Entities\\BookedSlot.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAUAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T12:53:36.484Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "MoMoRequestData.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRequestData.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRequestData.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRequestData.cs",
-              "RelativeToolTip": "BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRequestData.cs",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAzwA8AAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T07:12:51.132Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "MoMoRedirectResult.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRedirectResult.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRedirectResult.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRedirectResult.cs",
-              "RelativeToolTip": "BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoRedirectResult.cs",
-              "ViewState": "AQIAABMAAAAAAAAAAAAAABkAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T07:15:18.518Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "MoMoResponse.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoResponse.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoResponse.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoResponse.cs",
-              "RelativeToolTip": "BadmintonCourtBusinessObjects\\ExternalServiceEntities\\ExternalPayment\\MoMo\\MoMoResponse.cs",
-              "ViewState": "AQIAAAgAAAAAAAAAAAAAABUAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T06:39:40.945Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Program.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Program.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Program.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-19T13:31:12.511Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\appsettings.json",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\appsettings.json",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\appsettings.json",
-              "RelativeToolTip": "BadmintonCourtAPI\\appsettings.json",
-              "ViewState": "AQIAABwAAAAAAAAAAAAYwCMAAAAWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-06-19T09:24:07.016Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\appsettings.json",
-              "RelativeDocumentMoniker": "BadmintonCourtRepositories\\appsettings.json",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\appsettings.json",
-              "RelativeToolTip": "BadmintonCourtRepositories\\appsettings.json",
-              "ViewState": "AQIAAAQAAAAAAAAAAAAswBYAAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-06-19T09:20:45.164Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "FeedbackController.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\FeedbackController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\FeedbackController.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\FeedbackController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\FeedbackController.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAAAQwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-19T09:11:26.194Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RoleController.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\RoleController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\RoleController.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\RoleController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\RoleController.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAqwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-19T09:12:06.572Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "IMoMoServices.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\IService\\IMoMoServices.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtRepositories\\IService\\IMoMoServices.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\IService\\IMoMoServices.cs",
-              "RelativeToolTip": "BadmintonCourtRepositories\\IService\\IMoMoServices.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAcAAABAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-19T09:00:53.556Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "MoMoServices.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\MoMoServices.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtRepositories\\MoMoServices.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\MoMoServices.cs",
-              "RelativeToolTip": "BadmintonCourtRepositories\\MoMoServices.cs",
-              "ViewState": "AQIAADIAAAAAAAAAAAAiwBoAAAAlAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-19T08:59:37.412Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "BadmintonCourtServices.csproj",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
-              "RelativeDocumentMoniker": "BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
-              "RelativeToolTip": "BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-06-19T08:29:30.363Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "PaymentController.cs",
-              "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\PaymentController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\PaymentController.cs",
-              "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\PaymentController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\PaymentController.cs",
-              "ViewState": "AQIAAM8AAAAAAAAAAAAqwOYAAAAlAAAA",
+              "Title": "SlotController.cs",
+              "DocumentMoniker": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\SlotController.cs",
+              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\SlotController.cs",
+              "ToolTip": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\SlotController.cs",
+              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\SlotController.cs",
+              "ViewState": "AQIAAK8AAAAAAAAAAAAqwOcBAAAHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T21:19:30.339Z",
+              "WhenOpened": "2024-06-21T18:20:08.666Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PaymentController.cs",
+              "DocumentMoniker": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\PaymentController.cs",
+              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\PaymentController.cs",
+              "ToolTip": "D:\\CSharp_Projects\\SWP391\\V1\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\PaymentController.cs",
+              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\PaymentController.cs",
+              "ViewState": "AQIAABUBAAAAAAAAAAAkwCEBAAA4AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-21T17:04:20.457Z",
               "EditorCaption": ""
             }
           ]

@@ -40,6 +40,7 @@ namespace BadmintonCourtAPI.Controllers
         //[Authorize]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(_service.BookingService.GetBookingsByType(id).ToList());
 
+
         [HttpDelete]
         [Route("Booking/Delete")]
         //[Authorize(Roles = "Admin")]
@@ -49,14 +50,14 @@ namespace BadmintonCourtAPI.Controllers
             return Ok();
         }
 
-        [HttpPost]
-        [Route("Booking/Add")]
-        //[Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> AddBooking(double amount, int bookingType, string userId, DateTime date)
-        {   
-            _service.BookingService.AddBooking(new Booking { BookingId = "B" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D5"), Amount =  amount, BookingDate = date, BookingType = bookingType, UserId = userId});
-            return Ok(new { msg = "Success" });
-        }
+        //[HttpPost]
+        //[Route("Booking/Add")]
+        ////[Authorize(Roles = "Admin,Staff")]
+        //public async Task<IActionResult> AddBooking(double amount, int bookingType, string userId, DateTime date)
+        //{   
+        //    _service.BookingService.AddBooking(new Booking { BookingId = "B" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D5"), Amount =  amount, BookingDate = date, BookingType = bookingType, UserId = userId});
+        //    return Ok(new { msg = "Success" });
+        //}
 
         [HttpPut]
         [Route("Booking/Update")]

@@ -10,7 +10,7 @@ namespace BadmintonCourtServices.IService
 {
 	public interface IVnPayService
 	{
-		public string CreatePaymentUrl(HttpContext context, VnPayRequestDTO vnPayRequestDTO);
+		public string CreatePaymentUrl(HttpContext context, VnPayRequestDTO vnPayRequestDTO, string? returnUrl);
 
 		public VnPayResponseDTO PaymentExecute(IQueryCollection collection);
 

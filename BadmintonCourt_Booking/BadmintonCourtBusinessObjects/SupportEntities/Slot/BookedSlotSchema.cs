@@ -13,6 +13,7 @@ namespace BadmintonCourtBusinessObjects.SupportEntities.Slot
 		public int End { get; set; }
 		public string BookingId { get; set; }
 		public string BookedSlotId { get; set; }
+		public string CourtId { get; set; }	
 
 	}
 }

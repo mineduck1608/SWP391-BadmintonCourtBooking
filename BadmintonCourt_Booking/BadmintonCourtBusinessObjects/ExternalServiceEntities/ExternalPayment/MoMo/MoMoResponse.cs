@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.MoMo
+namespace BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo
 {
 	public class MoMoResponse
 	{

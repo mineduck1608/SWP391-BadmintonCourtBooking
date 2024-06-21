@@ -5,7 +5,7 @@ namespace BadmintonCourtBusinessObjects.Entities;
 
 public partial class BookedSlot
 {
-    public string SlotId { get; set; } = null!;
+    public string? SlotId { get; set; } = null!;
 
     public DateTime StartTime { get; set; }
 
