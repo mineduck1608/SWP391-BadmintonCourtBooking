@@ -10,7 +10,7 @@ import { ref } from 'firebase/storage';
 import { imageDb } from '../../Components/googleSignin/config.js';
 import { ConfigProvider, Modal, Spin, Form } from 'antd';
 import { toast, ToastContainer } from 'react-toastify';
-
+import './court.css';
 const Court = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -262,7 +262,7 @@ const Court = () => {
                     </Button>
                     <Button
                         variant="contained"
-                        color="secondary"
+                        style={{backgroundColor: '#b22222', color: 'white'}}
                         onClick={() => handleDelete(params.row.id)}
                     >
                         Delete
@@ -344,10 +344,10 @@ const Court = () => {
                     open={modalVisible}
                     onCancel={() => setModalVisible(false)}
                     footer={[
-                        <Button key="cancel" variant="contained" color="secondary" onClick={() => setModalVisible(false)}>
+                        <Button key="cancel" variant="contained" color="primary" onClick={() => setModalVisible(false)}>
                             Cancel
                         </Button>,
-                        <Button key="submit" variant="contained" color="primary" onClick={handleSave}>
+                        <Button key="submit" variant="contained" color="secondary" onClick={handleSave} style={{marginLeft: 8}}>
                             Save
                         </Button>
                     ]}
@@ -364,12 +364,22 @@ const Court = () => {
                                 fullWidth
                                 margin="normal"
                             />
-                            <Form.Item label="Image URL" name="courtImg" rules={[{ required: true, message: 'Please input the image!' }]}>
-                                <div className="uploaded-branchimage-upload">
-                                    <input className="button-branch-input" type="file" onChange={handleImageChange} />
-                                    <button className="button upload" onClick={handleClick}>Upload</button>
-                                </div>
-                            </Form.Item>
+                            <div className="uploaded-image-container">
+                                <TextField
+                                    label="Image URL"
+                                    name="courtImg"
+                                    value={formData.courtImg}    
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}                            
+                                    fullWidth    
+                                    margin="normal"
+                                />
+                            </div>
+                            <div className="uploaded-courtimage-upload">
+                            <input className="button-court-input" type="file" onChange={handleImageChange}/>
+                            <button className="button upload" onClick={handleClick}>Upload</button>
+                            </div>
                             <TextField
                                 label="Price"
                                 name="price"
