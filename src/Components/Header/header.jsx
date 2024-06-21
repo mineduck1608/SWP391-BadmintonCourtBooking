@@ -46,7 +46,7 @@ const Header = () => {
     };
     return (
         <div className="header-component">
-            <Link to={'/'}>
+            <Link to={'/home'}>
                 <h1 className='logo-header'><MdSportsTennis className="icon" />BMTC</h1>
             </Link>
             <a href="" className="user-pic">
@@ -55,7 +55,7 @@ const Header = () => {
                 </Link>
             </a>
             <div className="text-header">
-                <a href="./">Home</a>
+                <Link to={'/home'}><a>Home</a></Link>
                 <a href="">Booking</a>
                 <a className="long" href="">Time Balance</a>
                 <a href="" onClick={handleLogout} >Logout</a>
