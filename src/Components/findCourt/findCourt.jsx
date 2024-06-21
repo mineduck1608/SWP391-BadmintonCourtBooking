@@ -99,60 +99,62 @@ const FindCourt = () => {
       <div className="findCourt-wrapper">
         <div className="background">
           <div>
-            <section className="find">
+            <section className="findCourt-find">
               <div className="secContainer container">
-                <div className="homeText">
-                  <h1 className="findcourt-Title">Find a Court</h1>
+                <div className="findCourt-homeText">
+                    <h1 className="findcourt-Title">Find a Court</h1>
                 </div>
 
-{/*                 <div className="searchCard grid">
+                <div className="findCourt-searchCard grid">
                   <div className="branchDiv">
                     <label htmlFor="branch">Branch</label>
                     <select required>
                       <option value="">Select Branch</option>
-                      {branches.map((branch) => (
-                        <option key={branch.branchId} value={branch.branchId}>
-                          {branch.branchName}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
-
-                  <div className="courtDiv">
-                    <label htmlFor="court">Court</label>
-                    <select>
-                      <option value="" disabled selected hidden>
-                        Court Number
+                        {branches.map((branch) => (
+                      <option key={branch.branchId} value={branch.branchId}>
+                        {branch.branchName}
                       </option>
-                      {courts.map((court) => (
-                        <option key={court.courtId} value={court.courtId}>
-                          {court.courtName}
-                        </option>
-                      ))}
+                        ))}
                     </select>
                   </div>
+                  
+                    <div className="findCourt-courtDiv">
+                      <label htmlFor="court">Court</label>
+                        <select>
+                          <option value="" disabled selected hidden>
+                              Court Number
+                          </option>
+                          {courts.map((court) => (
+                            <option key={court.courtId} value={court.courtId}>
+                                {court.courtName}
+                              </option>
+                            ))}
+                        </select>
+                    </div>
 
-                  <button className="Btn">
-                    <a href="#">Search</a>
-                  </button>
-                </div>
-
-                <div className="courtList">
+                      <button className="Btn">
+                      <a href="#">Search</a>
+                      </button>
+                      </div>          
+                  </div>
+                  
+                
+                <div className="findCourt-courtList">
                   {loading && <p>Loading...</p>}
                   {error && <p>{error}</p>}
                   {courts.map((court) => (
-                    <div className="courtCard" key={court.courtId}>
-                      <div className="courtImage">
+                    <div className="findCourt-courtCard" key={court.courtId}>
+                      <div className="findCourt-courtImage">
                         <img src={court.image} alt={`Court ${court.courtId}`} />
                       </div>
-                      <div className="courtInfo">
+                      <div className="findCourt-courtInfo">
                         <h2>Court No: {court.courtId}</h2>
                         <p>Address: {court.address}</p>
                         <p>Time: {court.time}</p>
                         <p>Price: {court.price}</p>
                         <p>Description: {court.description}</p>
                         <p>Rating: {court.rating}/5</p>
-                        <button className="bookBtn">Book</button>
+                        <button className="findCourt-bookBtn">Book</button>
                       </div>
                     </div>
                   ))}
