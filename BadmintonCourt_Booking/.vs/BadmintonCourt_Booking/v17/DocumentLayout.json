@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "D:\\git\\BE\\BadmintonCourt_Booking\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{8296D55A-F0BD-470A-B1E7-F40B5A53A544}|BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtdaos\\slotdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8296D55A-F0BD-470A-B1E7-F40B5A53A544}|BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj|solutionrelative:badmintoncourtdaos\\slotdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\slotservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|solutionrelative:badmintoncourtrepositories\\slotservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8296D55A-F0BD-470A-B1E7-F40B5A53A544}|BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtdaos\\slotdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8296D55A-F0BD-470A-B1E7-F40B5A53A544}|BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj|solutionrelative:badmintoncourtdaos\\slotdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -33,10 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtbusinessobjects\\entities\\bookedslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97CF8279-9328-44A6-980B-7DA74CFA2BE5}|BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj|solutionrelative:badmintoncourtbusinessobjects\\entities\\bookedslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\slotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{220270B1-56BE-4E40-8074-B6B4C38E1791}|BadmintonCourtRepositories\\BadmintonCourtServices.csproj|d:\\git\\be\\badmintoncourt_booking\\badmintoncourtrepositories\\courtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -86,7 +86,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -94,26 +94,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "SlotDAO.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\SlotDAO.cs",
               "RelativeDocumentMoniker": "BadmintonCourtDAOs\\SlotDAO.cs",
               "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\SlotDAO.cs",
               "RelativeToolTip": "BadmintonCourtDAOs\\SlotDAO.cs",
-              "ViewState": "AQIAABwAAAAAAAAAAIA2wC8AAAArAAAA",
+              "ViewState": "AQIAAB0AAAAAAAAAAAAuwDoAAABGAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-20T14:32:08.858Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "SlotService.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\SlotService.cs",
               "RelativeDocumentMoniker": "BadmintonCourtRepositories\\SlotService.cs",
               "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\SlotService.cs",
               "RelativeToolTip": "BadmintonCourtRepositories\\SlotService.cs",
-              "ViewState": "AQIAADkAAAAAAAAAAAAwwEUAAAAfAAAA",
+              "ViewState": "AQIAAB0AAAAAAAAAAAAwwCgAAACKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-20T14:32:39.794Z",
               "EditorCaption": ""
@@ -133,7 +133,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "CourtController.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\CourtController.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\CourtController.cs",
@@ -146,7 +146,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "BranchController.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BranchController.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\BranchController.cs",
@@ -159,20 +159,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 2,
               "Title": "SlotController.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\SlotController.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\SlotController.cs",
               "ToolTip": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\SlotController.cs",
               "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\SlotController.cs",
-              "ViewState": "AQIAAIcBAAAAAAAAAADwv40BAAADAAAA",
+              "ViewState": "AQIAAF8AAAAAAAAAAAAgwHAAAADmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-20T13:49:01.994Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "BookedSlot.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\Entities\\BookedSlot.cs",
               "RelativeDocumentMoniker": "BadmintonCourtBusinessObjects\\Entities\\BookedSlot.cs",
@@ -221,7 +221,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Program.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Program.cs",
@@ -271,7 +271,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "RoleController.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\RoleController.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\RoleController.cs",
@@ -320,7 +320,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "PaymentController.cs",
               "DocumentMoniker": "D:\\git\\BE\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\PaymentController.cs",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\PaymentController.cs",

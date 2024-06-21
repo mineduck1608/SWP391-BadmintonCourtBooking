@@ -45,7 +45,7 @@ namespace BadmintonCourtDAOs
 		public List<BookedSlot> GetSlotsActiveInInterval(DateTime start, DateTime end, string courtId)
 		{
 			return _dbContext.BookedSlots.Where((x) =>
-			!(x.EndTime < start || x.StartTime > end)).ToList();
+			!(x.EndTime < start || x.StartTime > end) && x.CourtId == courtId).ToList();
 		}
 
 		// Trả về danh sách các ngày đặt theo tháng để user confirm r mới đặt
