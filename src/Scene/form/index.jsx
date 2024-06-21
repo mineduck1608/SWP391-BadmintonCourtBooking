@@ -31,6 +31,35 @@ const TimeSlotManagement = () => {
     bookedSlotId: ''
   });
   const [addOpen, setAddOpen] = useState(false);
+
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const [updateFormState, setUpdateFormState] = useState({
+    branchId: '',
+    courtId: '',
+    date: '',
+    start: '',
+    end: '',
+    price: '',
+    slotId: '',
+    bookedSlotId: ''
+  });
+
+  const openUpdateModal = (row) => {
+    setUpdateFormState({
+      branchId: row.branchId,
+      courtId: row.courtId,
+      date: dayjs(row.date).format('YYYY-MM-DD'), // Ensure date is in correct format
+      start: row.start,
+      end: row.end,
+      price: row.price,
+      slotId: row.slotId,
+      bookedSlotId: row.bookedSlotId // Add this line to include bookedSlotId
+    });
+    console.log(row)
+    setUpdateOpen(true);
+  };
+  
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -114,9 +143,30 @@ const TimeSlotManagement = () => {
     }
   };
 
-  const handleOk = () => {
-    const slotData = formState;
-    fetch(`http://localhost:5266/Slot/Update?id=${slotData.id}&branchId=${slotData.branchId}&courtId=${slotData.courtId}&date=${slotData.date}&start=${slotData.start}&end=${slotData.end}`, {
+
+  const handleCancel = () => {
+    setOpen(false);
+    setFormState(initialState);
+  };
+
+  const convertDateStringToObject = (dateString) => {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay(); // Get the day of the week (0 for Sunday, 6 for Saturday)
+
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1, // Months are zero-indexed in JavaScript
+      day: date.getDate(),
+      dayOfWeek: dayOfWeek
+    };
+  };
+
+  const handleAddOk = () => {
+    const slotData = {
+      ...formState,
+      date: convertDateStringToObject(formState.date) // Convert date string to the required format
+    };
+    fetch(`http://localhost:5266/Slot/UpdateByStaff?year=${slotData.year}&month=${slotData.month}&day=${slotData.day}&dayOfWeek=${slotData.dayOfWeek}&start=${slotData.start}&end=${slotData.end}&slotId=${slotData.slotId}&courtId=${slotData.courtId}`, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -139,54 +189,6 @@ const TimeSlotManagement = () => {
     }, 1000);
   };
 
-  const handleCancel = () => {
-    setOpen(false);
-    setFormState(initialState);
-  };
-
-  const handleAddOk = () => {
-    if (!addFormState.branchId || !addFormState.courtId || !addFormState.date || !addFormState.start || !addFormState.end) {
-      toast.error('All fields are required.');
-      return;
-    }
-
-    const newSlot = {
-      branchId: addFormState.branchId,
-      courtId: addFormState.courtId,
-      date: addFormState.date,
-      start: addFormState.start,
-      end: addFormState.end
-    };
-    console.log(newSlot);
-    fetch(`http://localhost:5266/Slot/Add`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newSlot)
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to add slot');
-        }
-        return response.json();
-      })
-      .then(data => {
-        toast.success('Slot added successfully');
-        fetchData();
-      })
-      .catch(error => {
-        console.error('Error adding slot:', error);
-        toast.error('Failed to add slot');
-      });
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setAddOpen(false);
-    }, 1000);
-  };
-
   const handleAddCancel = () => {
     setAddOpen(false);
     setAddFormState({
@@ -201,6 +203,16 @@ const TimeSlotManagement = () => {
   };
 
   const addSlot = () => {
+    // Prepopulate the form state with existing or default values if needed
+    setAddFormState({
+      branchId: addFormState.branchId || '',
+      courtId: addFormState.courtId || '',
+      date: addFormState.date || '',
+      start: addFormState.start || '',
+      end: addFormState.end || '',
+      phone: addFormState.phone || '',
+      userId: addFormState.userId || ''
+    });
     setAddOpen(true);
   };
 
@@ -277,6 +289,30 @@ const TimeSlotManagement = () => {
       console.error('Error fetching data:', error);
     }
   };
+  //UserDetail for add slot
+  const [userDetails, setUserDetails] = useState([]);
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await fetch(`http://localhost:5266/UserDetail/GetAll`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user details');
+      }
+
+      const data = await response.json();
+      setUserDetails(data);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      toast.error('Failed to fetch user details');
+    }
+  };
 
   useEffect(() => {
     if (!token) {
@@ -284,6 +320,7 @@ const TimeSlotManagement = () => {
       return;
     }
     fetchData();
+    fetchUserDetails();
   }, [token]);
 
   const handleBranchChange = (value) => {
@@ -492,29 +529,63 @@ const TimeSlotManagement = () => {
     }
   };
 
-  const handleUpdate = (id) => {
-    fetch(`http://localhost:5266/Slot/UpdateByStaff`, {
-      method: "PUT",
+  const handlePhoneChange = (e) => {
+    const phone = e.target.value;
+    const userDetail = userDetails.find(user => user.phone === phone);
+    const userId = userDetail ? userDetail.userId : '';
+
+    setAddFormState(prevState => ({
+      ...prevState,
+      phone: phone,
+      userId: userId
+    }));
+  };
+
+  const handleUpdateOk = () => {
+    if (!updateFormState.courtId || !updateFormState.date || !updateFormState.start || !updateFormState.end || !updateFormState.bookedSlotId) {
+      toast.error('All fields are required.');
+      return;
+    }
+  
+    const updatedSlot = {
+      slotId: updateFormState.bookedSlotId, // Use bookedSlotId here
+      courtId: updateFormState.courtId,
+      date: convertDateStringToObject(updateFormState.date), // Convert date string to the required format
+      start: updateFormState.start,
+      end: updateFormState.end,
+      price: updateFormState.price // Include the price if needed
+    };
+  
+    fetch(`http://localhost:5266/Slot/UpdateByStaff?year=${updatedSlot.date.year}&month=${updatedSlot.date.month}&day=${updatedSlot.date.day}&dayOfWeek=${updatedSlot.date.dayOfWeek}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
+      method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify(updatedSlot)
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to delete slot');
+          throw new Error('Failed to update slot');
         }
         return response.json();
       })
       .then(data => {
-        toast.success('Slot deleted successfully.');
-        setRows(prevRows => prevRows.filter(row => row.id !== id));
+        toast.success('Slot updated successfully');
+        fetchData();
       })
       .catch(error => {
-        console.error('Failed to delete slot:', error);
-        toast.error('Failed to delete slot');
+        console.error('Error updating slot:', error);
+        toast.error('Failed to update slot');
       });
+  
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setUpdateOpen(false);
+    }, 1000);
   };
+
 
   const columns = [
     { field: "id", headerName: "ID", align: "center", headerAlign: "center" },
@@ -548,7 +619,7 @@ const TimeSlotManagement = () => {
           <Button
             variant="contained"
             size="small"
-            onClick={() => handleUpdate(params.row.id)}
+            onClick={() => openUpdateModal(params.row)} // Open update modal
             style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
           >
             Update
@@ -559,6 +630,7 @@ const TimeSlotManagement = () => {
   ];
 
   const hours = [...Array(24).keys()].map(i => i.toString().padStart(2, '0') + ':00');
+  console.log(rows)
 
   return (
     <ConfigProvider theme={{
@@ -629,7 +701,6 @@ const TimeSlotManagement = () => {
             width={700}
             open={open}
             title="User Infomation"
-            onOk={handleOk}
             onCancel={handleCancel}
             className="managetimeslot-custom-modal"
             footer={[
@@ -674,7 +745,6 @@ const TimeSlotManagement = () => {
             centered
           >
             <div className="managetimeslot-add-slot-modal">
-
               <div className="managetimeslot-add-slot-fields">
                 <div className="managetimeslot-add-slot-label-time-row">
                   <div className="time-input">
@@ -768,10 +838,98 @@ const TimeSlotManagement = () => {
                       type="text"
                       id="phone"
                       value={addFormState.phone}
-                      onChange={(e) => setAddFormState({ ...addFormState, phone: e.target.value })}
+                      onChange={handlePhoneChange}
                       className="managetimeslot-add-slot-input"
                       required
                     />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal>
+
+          <Modal
+            width={700}
+            open={updateOpen}
+            title="Update Time Slot"
+            onOk={handleUpdateOk}
+            onCancel={() => setUpdateOpen(false)}
+            className="managetimeslot-custom-modal"
+            footer={[null]}
+            centered
+          >
+            <div className="managetimeslot-update-slot-modal">
+              <div className="managetimeslot-update-slot-fields">
+                <div className="managetimeslot-update-slot-label-time-row">
+                  <div className="time-input">
+                    <label htmlFor="updateCourtId" className="managetimeslot-update-slot-label">Court:</label>
+                    <select
+                      id="updateCourtId"
+                      value={updateFormState.courtId}
+                      onChange={(e) => setUpdateFormState({ ...updateFormState, courtId: e.target.value })}
+                      className="managetimeslot-update-slot-input"
+                      required
+                    >
+                      <option disabled selected hidden value="">Select court</option>
+                      {courts.map((court) => (
+                        <option key={court.courtId} value={court.courtId}>
+                          {court.courtName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="managetimeslot-update-slot-label-time-row">
+                  <div className="time-input">
+                    <label htmlFor="updateDate" className="managetimeslot-update-slot-label">Date:</label>
+                    <input
+                      type="date"
+                      id="updateDate"
+                      value={updateFormState.date}
+                      onChange={(e) => setUpdateFormState({ ...updateFormState, date: e.target.value })}
+                      className="managetimeslot-update-slot-input"
+                      required
+                    />
+                  </div>
+                  <div className="time-input-flexing">
+                    <div className="time-input">
+                      <label htmlFor="updateStart" className="managetimeslot-update-slot-label">Start Time:</label>
+                      <select
+                        id="updateStart"
+                        value={updateFormState.start}
+                        onChange={(e) => setUpdateFormState({ ...updateFormState, start: e.target.value })}
+                        className="managetimeslot-update-slot-input time-select"
+                        required
+                      >
+                        <option disabled selected hidden value="">Select start time</option>
+                        {hours.map(hour => (
+                          <option key={hour} value={hour}>{hour}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="time-input">
+                      <label htmlFor="updateEnd" className="managetimeslot-update-slot-label">End Time:</label>
+                      <select
+                        id="updateEnd"
+                        value={updateFormState.end}
+                        onChange={(e) => setUpdateFormState({ ...updateFormState, end: e.target.value })}
+                        className="managetimeslot-update-slot-input time-select"
+                        required
+                      >
+                        <option disabled selected hidden value="">Select end time</option>
+                        {hours.map(hour => (
+                          <option key={hour} value={hour}>{hour}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="updatetimeslot-footer-flex">
+                    <button key="submit" onClick={handleUpdateOk} className="managetimeslot-button-hover-black">
+                      Update
+                    </button>
+                    <button key="back" onClick={() => setUpdateOpen(false)} className="managetimeslot-button-hover-black">
+                      Cancel
+                    </button>
                   </div>
                 </div>
               </div>
