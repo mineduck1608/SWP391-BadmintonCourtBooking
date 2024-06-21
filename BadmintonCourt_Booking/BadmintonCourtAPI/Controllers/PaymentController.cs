@@ -247,7 +247,7 @@ namespace BadmintonCourtAPI.Controllers
 					for (int j = 0; j < 4; j++)
 					{
 						//Schedule it
-						_service.SlotService.AddSlot(new()
+						_service.SlotService.AttemptToAdd(new()
 						{
 							SlotId = "BS-" + count.ToString("D7"),
 							BookingId = bookingId,
