@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo;
 using BadmintonCourtServices.IService;
 using Azure;
+using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -40,11 +42,11 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				if (model.Start != null && model.End != null)
 				{
-					if (model.Start > model.End)
+					if (model.Start < model.End)
 					{
-						if (model.Date != null)
+						if ((new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0) - DateTime.Now).TotalMinutes >= 30)
 						{
-							if (model.Date > DateOnly.Parse(DateTime.Now.ToString()))
+							if (model.Date > DateTime.Parse(DateTime.Now.ToString()))
 							{
 								if (!model.CourtId.IsNullOrEmpty())
 								{
@@ -83,6 +85,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		private string GenerateMomoUrl(TransactionDTO model)
 		{
+			Debug.WriteLine(model.Date);
 			UserDetail info = _service.UserDetailService.GetUserDetailById(model.UserId);
 			string content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} |";
 			//---------------------------------------------------------
@@ -93,25 +96,26 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				if (model.Start != null && model.End != null)
 				{
-					if (model.Start > model.End)
+					if (model.Start < model.End)
 					{
-						if (model.Date != null)
+						if ((new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0) - DateTime.Now).TotalMinutes >= 30)
 						{
-							if (model.Date > DateOnly.Parse(DateTime.Now.ToString()))
+							if (model.Date > DateTime.Parse(DateTime.Now.ToString()))
 							{
 								if (!model.CourtId.IsNullOrEmpty())
 								{
 									Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
 									List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), model.CourtId);
+									tmpStorage.ForEach(x => Debug.WriteLine(x.SlotId + ", " + x.StartTime + ", " + x.EndTime));
 									//---------------------------------------------------------
-									if (tmpStorage.Count > 0 || tmpStorage != null) // Nếu sân có người đặt trước
+									if (tmpStorage.Count > 0) // Nếu sân có người đặt trước
 										return "Slot";
 									//---------------------------------------------------------
 									if (model.Type == "playonce") // Đặt loại 1 lần chơi
-										content += $" Date: {DateOnly.Parse(model.Date.ToString())} {model.Start}h - {model.End}h | Court: {model.CourtId}";
+										content += $" Date: {DateTime.Parse(model.Date.ToString())} {model.Start}h - {model.End}h | Court: {model.CourtId}";
 									//---------------------------------------------------------
 									else  // Cố định. Vd: ngày 1/1/2001 15h-17h 2 tháng sân A	
-										content += $" Start date on schedule: {DateOnly.Parse(model.Date.ToString())} {model.Start}h - {model.End}h | Court: {model.CourtId} | Number of months: {model.NumMonth}";
+										content += $" Starting date: {DateTime.Parse(model.Date.ToString())} {model.Start}h - {model.End}h | Court: {model.CourtId} | Number of months: {model.NumMonth}";
 
 								}
 								else return "Court";
@@ -127,6 +131,7 @@ namespace BadmintonCourtAPI.Controllers
 			//---------------------------------------------------------
 			var reqdata = _service.MomoService.CreateRequestData(content, (model.Amount * 1000).ToString(), "");
 			var response = _service.MomoService.SendMoMoRequest(reqdata);
+			Task.WaitAll(response);
 			return response.Result.PayUrl;
 		}
 
@@ -198,7 +203,7 @@ namespace BadmintonCourtAPI.Controllers
 			else if (url == "Court")
 				return BadRequest(new { msg = "Court can't be empty" });
 			else if (url == "Slot")
-				return BadRequest(new { msg = $"Court {model.CourtId} on {DateOnly.Parse(model.Date.ToString())} {model.Start}h - {model.End}h has been booked" });
+				return BadRequest(new { msg = $"Court {model.CourtId} on {DateTime.Parse(model.Date.ToString())} {model.Start}h - {model.End}h has been booked" });
 			return Ok(new { url = url });
 		}
 
@@ -286,8 +291,9 @@ namespace BadmintonCourtAPI.Controllers
 			if (result.Message == "Fail")
 				return BadRequest(new { msg = "Transaction fail" });
 			//-------------------------------------------------------
+			Debug.WriteLine(result.OrderInfo);
 			string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
-			string courtId = result.OrderInfo.Split('|')[5].Trim().Split(':')[1].Trim();
+			string courtId;
 			double amount = double.Parse(result.Amount);
 			User user = _service.UserService.GetUserById(userId);
 			// Loc bang keyword: date
@@ -298,17 +304,23 @@ namespace BadmintonCourtAPI.Controllers
 			Payment payment = new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), Date = DateTime.Parse(result.ResponseTime), Method = 1, UserId = userId, TransactionId = result.TransId, Amount = amount };
 			if (result.OrderInfo.ToLower().Contains("date")) // Loc dc loai flexible
 			{
+				courtId = result.OrderInfo.Split('|')[5].Trim().Split(':')[1].Trim();
 				string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
 				payment.BookingId = bookingId; // Nếu 1 lần chơi hoặc cố định thì payment sẽ có bookingId
 											   //---------------------------------------------------------------------
-				string rawDate = result.OrderInfo.Split('|')[4].Trim().Split(':')[1].Trim();
-				DateOnly date = DateOnly.Parse(rawDate.Split(' ')[0].Trim());
-				int start = int.Parse(new string(rawDate.Split(' ')[1].Where(char.IsDigit).ToArray()));
-				int end = int.Parse(new string(rawDate.Split(' ')[3].Where(char.IsDigit).ToArray()));
+											   
+				// Date:, yyyy-MM-dd, uneededHour, AM/PM, <start>h, -, <end>h
+				//or Starting, Date, ...
+				//=> need to up by 1 if fixed
+				int d = result.OrderInfo.Contains("Starting date") ? 1 : 0;
+				string[] rawDate = result.OrderInfo.Split('|')[4].Trim().Split(' ');
+				DateTime date; date = DateTime.Parse(rawDate[1 + d]);
+				int start = int.Parse(rawDate[4 + d].Substring(0, rawDate[4 + d].Length - 1));
+				int end = int.Parse(rawDate[6 + d].Substring(0, rawDate[6 + d].Length - 1));
 
-				if (result.OrderInfo.Contains("Start date on schedule")) // Choi thang
+				if (result.OrderInfo.Contains("Starting date")) // Choi thang
 				{
-					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 2, Amount = amount / 1000, UserId = userId }); // Tạo booking
+					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 2, Amount = amount / 1000, UserId = userId, BookingDate = date });  // Tạo booking
 																																						 //-------------------------------------------------------------
 					string[] tmpArr = result.OrderInfo.Split('|');
 					int numMonth = int.Parse(tmpArr[tmpArr.Length - 1].Trim().Split(':')[1].Trim());
@@ -323,7 +335,7 @@ namespace BadmintonCourtAPI.Controllers
 				//-------------------------------------------------------------
 				else // Choi ngay`, choi 1 lan
 				{
-					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 1, Amount = amount / 1000, UserId = userId });
+					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 1, Amount = amount / 1000, UserId = userId, BookingDate = date });
 					_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
 				}
 			}
