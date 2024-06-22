@@ -317,6 +317,10 @@ button {
     display: flex;
     align-items: center;
   }
+
+.findcourt-user-image{
+    width: 80px;
+}
   
 
   
