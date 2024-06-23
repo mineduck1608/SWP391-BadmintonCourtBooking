@@ -57,7 +57,7 @@ const Header = () => {
             <div className="text-header">
                 <Link to={'/home'}><a>Home</a></Link>
                 <a href="">Booking</a>
-                <a className="long" href="">Time Balance</a>
+                <Link to={'/buyTime'}><a className="long" href="">Time Balance</a></Link>
                 <a href="" onClick={handleLogout} >Logout</a>
             </div>
         </div>
