@@ -561,9 +561,8 @@ const TimeSlotManagement = () => {
       end: updateFormState.end,
     };
   
-    console.log(updatedSlot);
   
-    fetch(`http://localhost:5266/Slot/UpdateByStaff?day=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
+    fetch(`http://localhost:5266/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -573,12 +572,12 @@ const TimeSlotManagement = () => {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to update slot');
+          toast.error(response.msg);
         }
         return response.json();
       })
       .then(data => {
-        toast.success('Slot updated successfully');
+        toast.success(data.msg);
         fetchData();
         setUpdateOpen(false);
         setUpdateFormState({
@@ -593,8 +592,7 @@ const TimeSlotManagement = () => {
         });
       })
       .catch(error => {
-        console.error('Error updating slot:', error);
-        toast.error('Failed to update slot');
+        toast.error(error.msg);
         setUpdateOpen(false);
       });
   
@@ -954,7 +952,6 @@ const TimeSlotManagement = () => {
                       onChange={(e) => setUpdateFormState({ ...updateFormState, courtId: e.target.value })}
                       className="managetimeslot-update-slot-input"
                       required
-                      disabled={!updateFormState.branchId}
                     >
                       <option disabled selected hidden value="">Select court</option>
                       {filteredCourts.map((court) => (

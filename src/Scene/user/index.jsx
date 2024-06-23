@@ -10,7 +10,7 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 
 
-const Team = () => {
+const User = () => {
   const [rows, setRows] = useState([]);
   const token = sessionStorage.getItem('token');
   const [loading, setLoading] = useState(false);
@@ -496,4 +496,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default User;
