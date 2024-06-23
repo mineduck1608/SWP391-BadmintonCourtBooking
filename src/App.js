@@ -16,11 +16,11 @@ import { ToastContainer } from 'react-toastify';
 import ForgetPassword from './Components/ForgetPassword/forgetPassword';
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import Team from "./Scene/team";
+import User from "./Scene/user";
 import Branch from "./Scene/courtBranch";
 import Court from "./Scene/court";
-import SlotManagement from "./Scene/form";
-import Calendar from "./Scene/calendar";
+import SlotManagement from "./Scene/timeSlot";
+import BadmintonCourtHours from "./Scene/calendar";
 import FAQ from "./Scene/faq";
 import Bar from "./Scene/bar";
 import Pie from "./Scene/pie";
@@ -58,11 +58,11 @@ const App = () => {
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="team" element={<Team />} />
+            <Route path="user" element={<User />} />
             <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
-            <Route path="form" element={<SlotManagement/>} />
-            <Route path="calendar" element={<Calendar />} />
+            <Route path="timeSlot" element={<SlotManagement/>} />
+            <Route path="timeManage" element={<BadmintonCourtHours />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="bar" element={<Bar />} />
             <Route path="pie" element={<Pie />} />
