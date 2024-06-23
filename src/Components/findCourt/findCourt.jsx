@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './findcourt.css';
 import { TimePicker } from 'antd';
+import { useLocation } from 'react-router-dom';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
@@ -16,12 +17,20 @@ const FindCourt = () => {
   const [error, setError] = useState(null);
   const [selectedBranch, setSelectedBranch] = useState('');
   const [selectedCourt, setSelectedCourt] = useState('');
-
   const [feedback, setFeedback] = useState([]);
   const [users, setUsers] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState('');
-  const [expandedFeedback, setExpandedFeedback] = useState({});
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const branchId = params.get('branch');
+    if (branchId) {
+      setSelectedBranch(branchId);
+    }
+  }, [location]);
 
   const onChange = (time) => {
     setTimeRange(time);
@@ -30,16 +39,20 @@ const FindCourt = () => {
   const handleBranchChange = (event) => {
     const branchId = event.target.value;
     setSelectedBranch(branchId);
+    setSelectedCourt(''); // Reset selected court when branch changes
   };
-
-  const filteredCourts = selectedBranch
-    ? courts.filter((court) => court.branchId === selectedBranch)
-    : courts;
 
   const handleCourtChange = (event) => {
     const courtId = event.target.value;
     setSelectedCourt(courtId);
   };
+
+  const filteredCourts = courts.filter((court) => {
+    return (
+      (selectedBranch === '' || court.branchId === selectedBranch) &&
+      (selectedCourt === '' || court.courtId === selectedCourt)
+    );
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,7 +151,6 @@ const FindCourt = () => {
                   <div className="branchDiv">
                     <label htmlFor="branch">Branch</label>
                     <select
-                      required
                       onChange={handleBranchChange}
                       value={selectedBranch}
                     >
@@ -154,15 +166,16 @@ const FindCourt = () => {
                   <div className="findCourt-courtDiv">
                     <label htmlFor="court">Court</label>
                     <select
-                      required
                       onChange={handleCourtChange}
                       value={selectedCourt}
                     >
                       <option value="">Court Number</option>
-                      {filteredCourts.map((court) => (
-                        <option key={court.courtId} value={court.courtId}>
-                          {court.courtId}
-                        </option>
+                      {courts
+                        .filter(court => !selectedBranch || court.branchId === selectedBranch)
+                        .map((court) => (
+                          <option key={court.courtId} value={court.courtId}>
+                            {court.courtId}
+                          </option>
                       ))}
                     </select>
                   </div>
@@ -206,7 +219,7 @@ const FindCourt = () => {
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
                         <div className="findcourt-feedbackInfo">
                           <div className="findcourt-user-info">
-                            <img src={user ? user.userImage || userImg : userImg} alt={`User ${user ? user.userName : 'Unknow User'}`} className="findcourt-user-image" />
+                            <img src={user ? user.userImage || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
                             <p><strong>{user ? user.userName : 'Anonymous'}</strong></p>
                           </div>
                           <p>{fb.content}</p>
