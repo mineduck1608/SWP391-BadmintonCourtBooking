@@ -42,7 +42,7 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				if (model.Start != null && model.End != null)
 				{
-					if (model.Start < model.End)
+					if (model.Start > model.End)
 					{
 						if ((new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0) - DateTime.Now).TotalMinutes >= 30)
 						{
@@ -51,7 +51,10 @@ namespace BadmintonCourtAPI.Controllers
 								if (!model.CourtId.IsNullOrEmpty())
 								{
 									Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
-									List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), model.CourtId);
+									List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(
+										new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), 
+										new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), 
+										model.CourtId);
 									//---------------------------------------------------------
 									if (tmpStorage.Count > 0 || tmpStorage != null) // Nếu sân có người đặt trước
 										return "Slot";
@@ -105,7 +108,11 @@ namespace BadmintonCourtAPI.Controllers
 								if (!model.CourtId.IsNullOrEmpty())
 								{
 									Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
-									List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), model.CourtId);
+									List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(
+										new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), 
+										new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), 
+										model.CourtId
+										);
 									tmpStorage.ForEach(x => Debug.WriteLine(x.SlotId + ", " + x.StartTime + ", " + x.EndTime));
 									//---------------------------------------------------------
 									if (tmpStorage.Count > 0) // Nếu sân có người đặt trước
@@ -244,7 +251,10 @@ namespace BadmintonCourtAPI.Controllers
 																																						 //-------------------------------------------------------------
 					string[] tmpArr = result.Description.Split('|');
 					int numMonth = int.Parse(tmpArr[tmpArr.Length - 1].Trim().Split(':')[1].Trim());
-					List<BookedSlot> slotList = _service.SlotService.GetSlotsByFixedBooking(numMonth, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), courtId);
+					List<BookedSlot> slotList = _service.SlotService.GetSlotsByFixedBooking(
+						numMonth, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), 
+						new DateTime(date.Year, date.Month, date.Day, end, 0, 0), 
+						courtId);
 					foreach (var item in slotList)
 					{
 						item.BookingId = bookingId;
@@ -256,7 +266,13 @@ namespace BadmintonCourtAPI.Controllers
 				else // Choi ngay`, choi 1 lan
 				{
 					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 1, Amount = amount / 1000, UserId = userId });
-					_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
+					_service.SlotService.AddSlot(new BookedSlot { 
+						SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), 
+						BookingId = bookingId, 
+						CourtId = courtId, 
+						StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), 
+						EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) 
+					});
 				}
 			}
 			//-------------------------------------------------------------
@@ -301,14 +317,22 @@ namespace BadmintonCourtAPI.Controllers
 			// lop cuoi cung con lai la flexible
 			//-----------------------------------------------------------------------------
 			// Tạo payment
-			Payment payment = new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), Date = DateTime.Parse(result.ResponseTime), Method = 1, UserId = userId, TransactionId = result.TransId, Amount = amount };
+			Payment payment = new Payment
+			{
+				PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"),
+				Date = DateTime.Parse(result.ResponseTime),
+				Method = 1,
+				UserId = userId,
+				TransactionId = result.TransId,
+				Amount = amount
+			};
 			if (result.OrderInfo.ToLower().Contains("date")) // Loc dc loai flexible
 			{
 				courtId = result.OrderInfo.Split('|')[5].Trim().Split(':')[1].Trim();
 				string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
 				payment.BookingId = bookingId; // Nếu 1 lần chơi hoặc cố định thì payment sẽ có bookingId
 											   //---------------------------------------------------------------------
-											   
+
 				// Date:, yyyy-MM-dd, uneededHour, AM/PM, <start>h, -, <end>h
 				//or Starting, Date, ...
 				//=> need to up by 1 if fixed
@@ -320,11 +344,23 @@ namespace BadmintonCourtAPI.Controllers
 
 				if (result.OrderInfo.Contains("Starting date")) // Choi thang
 				{
-					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 2, Amount = amount / 1000, UserId = userId, BookingDate = date });  // Tạo booking
-																																						 //-------------------------------------------------------------
+					_service.BookingService.AddBooking(new Booking
+					{
+						BookingId = bookingId,
+						BookingType = 2,
+						Amount = amount / 1000,
+						UserId = userId,
+						BookingDate = date
+					});  // Tạo booking
+						 //-------------------------------------------------------------
 					string[] tmpArr = result.OrderInfo.Split('|');
 					int numMonth = int.Parse(tmpArr[tmpArr.Length - 1].Trim().Split(':')[1].Trim());
-					List<BookedSlot> slotList = _service.SlotService.GetSlotsByFixedBooking(numMonth, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), courtId);
+					List<BookedSlot> slotList = _service.SlotService.GetSlotsByFixedBooking(
+						numMonth,
+						new DateTime(date.Year, date.Month, date.Day, start, 0, 0),
+						new DateTime(date.Year, date.Month, date.Day, end, 0, 0),
+						courtId
+						);
 					foreach (var item in slotList)
 					{
 						item.BookingId = bookingId;
@@ -335,8 +371,20 @@ namespace BadmintonCourtAPI.Controllers
 				//-------------------------------------------------------------
 				else // Choi ngay`, choi 1 lan
 				{
-					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 1, Amount = amount / 1000, UserId = userId, BookingDate = date });
-					_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
+					_service.BookingService.AddBooking(new Booking { 
+						BookingId = bookingId, 
+						BookingType = 1, 
+						Amount = amount / 1000, 
+						UserId = userId, 
+						BookingDate = date 
+					});
+					_service.SlotService.AddSlot(new BookedSlot { 
+						SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), 
+						BookingId = bookingId, 
+						CourtId = courtId, 
+						StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), 
+						EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) 
+					});
 				}
 			}
 			//-------------------------------------------------------------
