@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import './popular.css'
-import { BsArrowLeftShort } from 'react-icons/bs'
-import { BsArrowRightShort } from 'react-icons/bs'
-import { BsDot } from 'react-icons/bs'
+import React, { useState, useEffect } from 'react';
+import './popular.css';
+import { BsArrowLeftShort, BsArrowRightShort, BsDot } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
-
-
-//Use high order array method to display all the destination
-
-
-
-
+// Use high order array method to display all the destination
 const Popular = () => {
     const [courtBranches, setCourtBranches] = useState([]);
     const token = sessionStorage.getItem('token');
@@ -34,7 +26,6 @@ const Popular = () => {
     return (
         <section className='popular section container'>
             <div className="secContainer">
-
                 <div className="secHeader flex">
                     <div className="textDiv">
                         <h2 className="secTitle">
@@ -51,10 +42,10 @@ const Popular = () => {
                         <BsArrowRightShort className="icon" />
                     </div>
                 </div>
-                <Link to={'/findCourt'}>
-                    <div className="mainContent grid" >
-                        {courtBranches.map(branch => (
-                            <div className="singleDestination" key={branch.branchId}>
+                <div className="mainContent grid">
+                    {courtBranches.map(branch => (
+                        <Link to={`/findCourt?branch=${branch.branchId}`} key={branch.branchId}>
+                            <div className="singleDestination">
                                 <div className="destImage">
                                     <img src={branch.branchImg} alt="Image title" />
                                     <div className="overlayInfo black-text">
@@ -82,12 +73,12 @@ const Popular = () => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </Link>
+                        </Link>
+                    ))}
+                </div>
             </div>
         </section>
-    )
+    );
 }
 
-export default Popular
+export default Popular;
