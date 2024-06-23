@@ -10,6 +10,9 @@ const Header = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        let path = window.location.pathname;
+        console.log(path);
+        if(path === '/paySuccess') return
         let token = sessionStorage.getItem('token');
         if (!token) {
             navigate('/signin'); // Redirect to home if token is not present
