@@ -9,7 +9,7 @@
     font-size: 70px;
     margin-right: 10px;
 }
-.logo h1{
+.logo .signin-h1{
     font-size: 70px;
     color: #fff;
 }
@@ -32,15 +32,15 @@
     padding: 112px;
     margin-left: 20px;
 }
-.text-element{
+.signin-text-element{
     margin-left: 75px;
     margin-top: 80px;
     font-family: "Poetsen One", sans-serif;
 }
-.text-element h1, h2, h3, h4, h5, p, a{
+.signin-h1, .signin-h2, .signin-h3, .signin-p, .signin-a{
     color: #fff;
 }
-p{
+.signin-p{
     text-align: justify;
 }
 

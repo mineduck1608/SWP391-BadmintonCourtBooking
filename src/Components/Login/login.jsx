@@ -66,7 +66,7 @@ const Login = () => {
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Password' required />
           <FaLock className='icon' />
         </div>
-        <button type="submit">Login</button>
+        <button className='login-submit' type="submit">Login</button>
       </form>
       <div className="register-link">
         <p>Don't have an account? <Link to={'/signup'}>Register</Link></p>

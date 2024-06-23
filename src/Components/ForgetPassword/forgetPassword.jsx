@@ -57,7 +57,7 @@ const ForgetPassword = () => {
           required
         />
       </div>
-      <button onClick={handleSendOtp}>Send OTP</button>
+      <button className='forget-button' onClick={handleSendOtp}>Send OTP</button>
       {otpSent && !otpVerified && (
         <div className="otp-box">
           <input
@@ -67,7 +67,7 @@ const ForgetPassword = () => {
             placeholder='Enter OTP'
             required
           />
-          <button onClick={handleVerifyOtp}>Verify OTP</button>
+          <button className='forget-button' onClick={handleVerifyOtp}>Verify OTP</button>
         </div>
       )}
       {otpVerified && (
@@ -79,7 +79,7 @@ const ForgetPassword = () => {
             placeholder='Enter new password'
             required
           />
-          <button onClick={handleResetPassword}>Reset Password</button>
+          <button className='forget-button' onClick={handleResetPassword}>Reset Password</button>
         </div>
       )}
       {message && <p>{message}</p>}

@@ -63,7 +63,7 @@ const Register = () => {
           <input value={lastName} onChange={e => lastNameChange(e.target.value)} className="input-box" type="text" placeholder="Last name" required /><br></br>
           <input value={email} onChange={e => emailChange(e.target.value)} className="input-box" type="email" placeholder="Email" required /><br></br>
           <input value={phone} onChange={e => phoneChange(e.target.value)} className="input-box" type="phone" placeholder="Phone" required /><br></br>
-          <button type="submit">Register</button><br></br>
+          <button className='register-submit' type="submit">Register</button><br></br>
           <p className="login-link">You already have an account?<Link to={'/signin'}>Login</Link></p>
         </div>
       </form>

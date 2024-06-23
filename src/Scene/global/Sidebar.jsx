@@ -124,8 +124,8 @@ const Sidebar = () => {
                                 ml="15px"
                             >
 
-                                <Link className="logo">
-                                    <MdSportsTennis className="iconSidebar" />
+                                <Link className="logo" to="/">
+                                    <MdSportsTennis className="iconSidebar"/>
                                 </Link>
                                 <Typography className="webNameAdmin" variant="h4" color={colors.grey[100]}>
                                     BMTC

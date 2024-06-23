@@ -23,41 +23,41 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
         <div>
             <div className="body">
                 <div className="body-element">
-                    <div className="text-element">
+                    <div className="signin-text-element">
                             <Link to={'/'} className="logo">                            
-                            <h1><MdSportsTennis className="icon" />
+                            <h1 className="signin-h1"><MdSportsTennis className="icon" />
                                 BMTC
                             </h1></Link>
-                        <h1>
+                        <h1 className="signin-h1">
                             BMTC Badminton Court Chain System
                         </h1>
-                        <h2>Description</h2>
-                        <p>Welcome to the BMTC badminton court chain system, which brings you top sports experiences and comfortable practice space. With three branches located in convenient locations, we are proud to be the top choice of the badminton-loving community in the area.</p>                        <br />
-                        <h3>Branch 1: </h3>
-                        <p>Address: </p>
+                        <h2 className="signin-h2">Description</h2>
+                        <p className="signin-p">Welcome to the BMTC badminton court chain system, which brings you top sports experiences and comfortable practice space. With three branches located in convenient locations, we are proud to be the top choice of the badminton-loving community in the area.</p>                        <br />
+                        <h3 className="signin-h3">Branch 1: </h3>
+                        <p className="signin-p">Address: </p>
+                        <p className="signin-p">Phone: </p>
+                        <h3 className="signin-h3">Branch 2: </h3>
+                        <p className="signin-p">Address: </p>
                         <p>Phone: </p>
-                        <h3>Branch 2: </h3>
-                        <p>Address: </p>
-                        <p>Phone: </p>
-                        <h3>Branch 3: </h3>
-                        <p>Address: </p>
-                        <p>Phone: </p>
+                        <h3 className="signin-h3">Branch 3: </h3>
+                        <p className="signin-p">Address: </p>
+                        <p className="signin-p">Phone: </p>
                         <br />
-                        <h3>Contact</h3>
-                        <p>Hotline:</p>
-                        <p>Email:</p>
-                        <p>Website:</p>
+                        <h3 className="signin-h3">Contact</h3>
+                        <p className="signin-p">Hotline:</p>
+                        <p className="signin-p">Email:</p>
+                        <p className="signin-p">Website:</p>
                     </div>
 
                     <div className="login">
                         {isLoginVisible ? (
                             <>
-                                <a className="change-1" onClick={showRegister}></a>
+                                <a className="signin-a" onClick={showRegister}></a>
                                 <Login />
                             </>
                         ) : (
                             <>
-                                <a className="change-2" onClick={showLogin}></a>
+                                <a className="signin-a" onClick={showLogin}></a>
                                 <Register />
                             </>
                         )}

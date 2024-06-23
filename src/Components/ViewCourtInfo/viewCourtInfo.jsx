@@ -3,6 +3,8 @@ import Header from "../Header/header";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
 import image2 from '../../Assets/image2.jpg';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { format, addDays, subDays, startOfWeek } from 'date-fns';
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -10,6 +12,10 @@ const ViewCourtInfo = () => {
     const [branch, setBranch] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date()));
+    const [currentHourIndex, setCurrentHourIndex] = useState(0);
+    const maxVisibleHours = 5; // Số khung giờ hiển thị tối đa
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,9 +43,7 @@ const ViewCourtInfo = () => {
                 console.log('Court Data:', courtData);
 
                 const mainCourtData = courtData[0];
-
                 const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
-
                 const recommendedCourtsData = courtData.filter(court => court.branchId === mainCourtData.branchId && court.courtId !== mainCourtData.courtId).slice(0, 2);
 
                 setBranch(mainBranchData);
@@ -57,13 +61,65 @@ const ViewCourtInfo = () => {
     }, []);
 
     const handleBookCourt = (courtId) => {
-        // Handle the booking logic here
         console.log(`Booking court with ID: ${courtId}`);
         alert(`Court No: ${courtId} booked successfully!`);
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    const handleDateClick = (date) => {
+        if (selectedDate && selectedDate.toDateString() === date.toDateString()) {
+            setSelectedDate(null);
+        } else {
+            setSelectedDate(date);
+        }
+        console.log('Selected date:', date);
+    };
+
+    const handlePrevWeek = () => {
+        setCurrentWeekStart(subDays(currentWeekStart, 7));
+    };
+
+    const handleNextWeek = () => {
+        setCurrentWeekStart(addDays(currentWeekStart, 7));
+    };
+
+    const handlePrevHour = () => {
+        setCurrentHourIndex((prev) => Math.max(prev - 1, 0));
+    };
+
+    const handleNextHour = () => {
+        setCurrentHourIndex((prev) => Math.min(prev + 1, 24 - maxVisibleHours));
+    };
+
+    const generateWeekDates = (startOfWeek) => {
+        const dates = [];
+        for (let i = 0; i < 7; i++) {
+            const date = addDays(startOfWeek, i);
+            dates.push({
+                day: format(date, 'EEE'),
+                date: format(date, 'dd'),
+                month: format(date, 'MMM'),
+                fullDate: date,
+            });
+        }
+        return dates;
+    };
+
+    const generateHourTimeline = (startHour) => {
+        const hours = [];
+        for (let i = startHour; i < startHour + maxVisibleHours; i++) {
+            const hourStart = i % 24;
+            const hourEnd = (i + 1) % 24;
+            hours.push({
+                start: hourStart.toString().padStart(2, '0') + ':00',
+                end: hourEnd.toString().padStart(2, '0') + ':00',
+                status: Math.random() > 0.5 ? 'available' : 'booked' // Randomly set as booked or available
+            });
+        }
+        return hours;
+    };
+
+    const weekDates = generateWeekDates(currentWeekStart);
+    const hours = generateHourTimeline(currentHourIndex);
 
     return (
         <div className="viewcourtinfo">
@@ -75,60 +131,84 @@ const ViewCourtInfo = () => {
                             <img className="viewcourtinfo-img" src={image2} alt="" />
                             <div className="viewcourtinfo-body-courtId-des">
                                 <div className="viewcourtinfo-body-courtId">
-                                    <h1>Court No: {mainCourt.courtId}</h1>
+                                    <h1>Court No: {mainCourt?.courtId}</h1>
                                 </div>
                                 <div className="viewcourtinfo-body-des">
-                                    <h1>Description:</h1>
-                                    <p>{mainCourt.description}</p>
+                                    <h1 className='viewcourtinfo-des-h1'>Description:</h1>
+                                    <p className='viewcourtinfo-des-p'>{mainCourt?.description}</p>
+                                </div>
+                                <div className='chooseTimeLine'>
+                                <div className="chooseDate">CHOOSE DATE</div>
+                                    <div className="date-slider-wrapper">
+                                        <button className="arrow-left" onClick={handlePrevWeek}>
+                                            <FaArrowLeft />
+                                        </button>
+                                        <div className="date-slider">
+                                            {weekDates.map((date, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={`date-item ${selectedDate && selectedDate.toDateString() === date.fullDate.toDateString() ? 'selected' : ''}`}
+                                                    onClick={() => handleDateClick(date.fullDate)}
+                                                >
+                                                    <div>{date.day}</div>
+                                                    <div className="line-separator"></div>
+                                                    <div className="viewcourt-date">{date.date}</div>
+                                                    <div className="viewcourt-month">{date.month}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <button className="arrow-right" onClick={handleNextWeek}>
+                                            <FaArrowRight />
+                                        </button>
+                                    </div>
+                                    <div className="chooseTime">CHOOSE TIME</div>
+                                    <div className="schedule-legend-wrapper">
+                                        <div className="schedule">
+                                            <div className="court">
+                                                <button className="arrow-left-timeline" onClick={handlePrevHour}>
+                                                    <FaArrowLeft />
+                                                </button>
+                                                <div className="court-timeline">
+                                                    {hours.map((hour, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className={`time-slot ${hour.status}`}
+                                                        >
+                                                            {hour.start} - {hour.end}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <button className="arrow-right-timeline" onClick={handleNextHour}>
+                                                    <FaArrowRight />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="legend">
+                                            <div className="legend-item">
+                                                <div className="legend-color booked"></div>
+                                                <div className="legend-text">Booked</div>
+                                            </div>
+                                            <div className="legend-item">
+                                                <div className="legend-color available"></div>
+                                                <div className="legend-text">Available</div>
+                                            </div>
+                                            <div className="legend-item">
+                                                <div className="legend-color maintenance"></div>
+                                                <div className="legend-text">maintenance</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="viewcourtinfo-info-status">
                             <div className="viewcourtinfo-info">
-                                
-                                <p>Address: {branch.location}</p>
-                                <p>Time: AAAAA</p>
-                                <p>Branch: {branch.branchName}</p>
-                                <p>Status: FREE</p>
-                                <button className='viewCourt' onClick={() => handleBookCourt(mainCourt.courtId)}>Book</button>
+                                <p className='viewcourt-title'>Address: {branch?.location}</p>
+                                <p className='viewcourt-title'>Time: 9:00 AM - 9:00 PM</p>
+                                <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
+                                <p className='viewcourt-title'>Status: FREE</p>
+                                <button className='viewCourt' onClick={() => handleBookCourt(mainCourt?.courtId)}>Book</button>
                             </div>
-                        </div>
-                    </div>
-                    <div className="schedule">
-                        <div className="court">
-                            <div className="court-name">Sân số 1</div>
-                            <div className="court-timeline">
-                                <div className="available" style={{ flex: 7 }}>0h - 7h</div>
-                                <div className="booked" style={{ flex: 4.5 }}>11:30h - 12</div>
-                                <div className="available" style={{ flex: 3.5 }}>13:30h - 17h</div>
-                                <div className="booked" style={{ flex: 5 }}>19h - 0h</div>
-                            </div>
-                        </div>
-                        <div className="court">
-                            <div className="court-name">Sân số 2</div>
-                            <div className="court-timeline">
-                                <div className="available" style={{ flex: 7 }}>0h - 7h</div>
-                                <div className="booked" style={{ flex: 10.5 }}>10h - 15:30h</div>
-                                <div className="available" style={{ flex: 6.5 }}>17:30h - 0h</div>
-                            </div>
-                        </div>
-                        <div className="court">
-                            <div className="court-name">Sân số 3</div>
-                            <div className="court-timeline">
-                                <div className="available" style={{ flex: 7 }}>0h - 7h</div>
-                                <div className="booked" style={{ flex: 10.5 }}>10h - 15h</div>
-                                <div className="available" style={{ flex: 8 }}>16h - 0h</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="legend">
-                        <div className="legend-item">
-                            <div className="legend-color booked"></div>
-                            <div className="legend-text">Đã được book</div>
-                        </div>
-                        <div className="legend-item">
-                            <div className="legend-color available"></div>
-                            <div className="legend-text">Sân trống</div>
                         </div>
                     </div>
                     <div className="viewcourtinfo-othercourts">
@@ -139,16 +219,16 @@ const ViewCourtInfo = () => {
                                     <img className="viewcourtinfo-other-img" src={image2} alt="" />
                                     <div className="viewcourtinfo-other-info">
                                         <h2>Court No: {court.courtId}</h2>
-                                        <p>Address: {branch.location}</p>
-                                        <p>Time: AAAAA</p>
-                                        <p>Branch: {branch.branchName}</p>
+                                        <p>Address: {branch?.location}</p>
+                                        <p>Time: 9:00 AM - 9:00 PM</p>
+                                        <p>Branch: {branch?.branchName}</p>
                                         <p>Status: FREE</p>
                                         <div className="viewcourtinfo-other-des">
                                             <h1>Description:</h1>
                                             <p>{court.description}</p>
                                         </div>
                                         <div className="other-court-button">
-                                        <button className='viewCourt' onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                            <button className='viewCourt' onClick={() => handleBookCourt(court.courtId)}>Book</button>
                                         </div>
                                     </div>
                                 </div>

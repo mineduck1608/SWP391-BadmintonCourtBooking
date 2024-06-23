@@ -1,3 +1,24 @@
+:root {
+    --gold-color: #d4af37;
+    --white-color: #fff;
+    --grey-color: #ccc;
+    --green-color: #00C389;
+    --red-color: #FF4D4D;
+    --primary-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --border-radius: 15px;
+    --light-gradient: linear-gradient(145deg, #ffffff, #e6e6e6);
+    --orange-color: #FFA500;
+    --PrimaryColor: hsl(26, 93%, 50%);
+    --HoverColor: hsl(26, 90%, 42%);
+    --whiteColor: hsl(0, 0%, 100%);
+    --blackColor: hsl(0%, 0%, 18%);
+    --textColor: hsl(240, 1%, 48%);
+    --whiteColorDeam: hsl(0, 0%, 93%);
+    --greyBg: hsl(0, 0%, 96%);
+    --greyText: rgb(190, 190, 190);
+    --inputColor: hsl(330, 12%, 97%);
+}
+
 .viewCourtInfo-wrapper::before {
     content: '';
     position: fixed;
@@ -15,17 +36,11 @@
 
 .viewcourtinfo {
     width: 100%;
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
-.viewcourtinfo-info-status{
+.viewcourtinfo-info-status {
     display: flex;
-    
-}
-
-.viewcourtinfo-info h2,
-.viewcourtinfo-info p {
-    color: black;
 }
 
 .viewcourtinfo-body {
@@ -37,17 +52,15 @@
     left: 20px;
     z-index: 1;
     margin: 10px auto;
-    border: 1px solid #d4af37; /* Gold border */
-    border-radius: 15px; /* Rounded corners */
-    padding: 15px; /* Padding between the border and content */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
-    background: linear-gradient(145deg, #ffffff, #e6e6e6); /* Light gradient background */
-    margin-left: auto; /* Center the box horizontally */
+    padding: 15px;
+    border: 1px solid var(--gold-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--primary-shadow);
+    background: var(--light-gradient);
+    margin-left: auto;
     margin-right: auto;
     margin-left: 10px;
     flex-grow: 1;
-    box-shadow: 2px 2px 2px 2px #92741b;
-    
 }
 
 .viewcourtinfo-body-pic {
@@ -58,29 +71,26 @@
 .viewcourtinfo-img {
     width: 100%;
     max-width: 500px;
-    height: auto; /* Maintain aspect ratio */
+    height: auto;
     margin-right: 20px;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow for images */
+    border-radius: 10px;
+    box-shadow: var(--primary-shadow);
 }
 
 .viewcourtinfo-body-des {
-    
     margin-left: 20px;
 }
 
-.viewcourtinfo-body-des h1, 
-.viewcourtinfo-body-des p {
-    color: black;
-    font-family: 'Times New Roman', Times, serif;
+.viewcourtinfo-des-h1,
+.viewcourtinfo-des-p {
+    color: var(--black-color);
 }
 
 .viewcourtinfo-info {
     margin-left: 20px;
     margin-top: 20px;
-    color: black;
+    color: var(--black-color);
     font-size: larger;
-    
 }
 
 .viewcourtinfo-info h2,
@@ -104,36 +114,35 @@
 
 .viewcourtinfo-othercourts-content {
     display: flex;
-    flex-direction: row; 
-    gap: 20px; /* Keeps the existing gap */
+    flex-direction: row;
+    gap: 20px;
     overflow-x: auto;
     width: 100%;
     padding-bottom: 20px;
     box-sizing: border-box;
-    
 }
 
 .viewcourtinfo-other-pic {
     display: flex;
     flex-direction: row;
     width: calc(50% - 10px);
-    height: auto; 
-    margin-right: 20px; 
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background: #fff;
+    height: auto;
+    margin-right: 20px;
     padding: 15px;
+    border: 1px solid var(--grey-color);
+    border-radius: 10px;
+    box-shadow: var(--primary-shadow);
+    background: var(--white-color);
     box-sizing: border-box;
 }
 
 .viewcourtinfo-other-img {
     margin-top: 5px;
     width: 58%;
-    height: 290px; 
-    border-radius: 8px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    object-fit: cover; 
+    height: 290px;
+    border-radius: 8px;
+    box-shadow: var(--primary-shadow);
+    object-fit: cover;
     display: flex;
 }
 
@@ -143,90 +152,190 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 45%; 
-    height: auto; 
+    width: 45%;
+    height: auto;
     font-size: 1.2em;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* dai qua se thanh dau '...' */
+    text-overflow: ellipsis;
 }
 
-.viewcourtinfo-other-info h2, 
+.viewcourtinfo-other-info h2,
 .viewcourtinfo-other-info p {
-    color: black;
+    color: var(--black-color);
     margin-left: 20px;
     margin-bottom: 2px;
-    max-width: 100%; 
-    white-space: nowrap;
-    overflow: hidden; 
-    text-overflow: ellipsis; /* dai qua se thanh dau '...' */
+    max-width: 100%;
 }
 
 .viewCourt {
-    background-color: #d4af37; 
+    background-color: var(--gold-color);
     border: none;
-    color: white;
+    color: var(--white-color);
     padding: 5px 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
-    margin: px 0;
+    margin: 0;
     cursor: pointer;
-    border-radius: 5px; 
+    border-radius: 5px;
     transition: background-color 0.3s;
     width: 50%;
 }
 
 .viewCourt:hover {
-    background-color: #c89e33; 
+    background-color: hsl(26, 90%, 42%);
 }
 
-.viewcourtinfo-othercourts-body{
+.viewcourtinfo-othercourts-body {
     width: 100%;
     display: flex;
-    max-width: 100px;
+}
+
+.schedule-legend-wrapper {
+    margin-top: 20px;
+    max-width: 100%;
+}
+
+.date-slider-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.date-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth; /* Adds smooth scrolling */
+    transition: transform 0.3s ease-in-out; /* Add a transition for smooth sliding */
+}
+
+.date-item {
+    min-width: 100px;
+    border: 2px solid var(--PrimaryColor);
+    color: var(--black-color);
+    text-align: center;
+    margin: 0 5px;
+    padding: 10px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.viewcourt-date {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.date-item.selected {
+    background-color: var(--PrimaryColor);
+    color: var(--white-color);
+}
+
+.arrow-left,
+.arrow-right,
+.arrow-left-timeline,
+.arrow-right-timeline {
+    color: var(--black-color);
+    background-color: var(--light-gradient);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.arrow-left:hover,
+.arrow-right:hover,
+.arrow-left-timeline:hover,
+.arrow-right-timeline:hover {
+    color: var(--PrimaryColor);
+    transition: 0.1s ease;
+}
+
+.arrow-left-timeline,
+.arrow-right-timeline {
+    margin-top: 1%;
 }
 
 .schedule {
-    margin: 20px;
+    margin-top: 10px;
+    width: 100%;
 }
 
 .court {
     display: flex;
+    align-items: center;
     margin-bottom: 10px;
 }
 
-.court-name {
-    width: 100px;
+.chooseTime {
+    width: 100%;
+    text-align: center;
     font-weight: bold;
+    font-size: 20px;
+    position:relative;
+    top: 25px;
+    font-size: 23px;
+    color: var(--PrimaryColor);
+}
+
+.chooseDate {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+    font-size: 23px;
+    color: var(--PrimaryColor)
+}
+
+.chooseTimeLine {
+    position: relative;
+    top: 35%;
 }
 
 .court-timeline {
     display: flex;
     flex-grow: 1;
     height: 30px;
+    overflow-x: auto;
 }
 
-.court-timeline > div {
+.time-slot {
+    flex: 1;
     text-align: center;
-    color: white;
+    color: var(--white-color);
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 0 3px;
 }
 
 .available {
-    background-color: #00C389;
+    background-color: var(--green-color);
 }
 
 .booked {
-    background-color: #FF4D4D;
+    background-color: var(--greyText);
+}
+
+.maintenance{
+    background-color: var(--red-color);
 }
 
 .legend {
     display: flex;
-    margin-top: 20px;
+    justify-content: center;
+    margin: 16px 0;
+    width: 100%;
 }
 
 .legend-item {
@@ -242,35 +351,13 @@
 }
 
 .legend-color.booked {
-    background-color: #FF4D4D;
+    background-color: var(--greyText);
 }
 
 .legend-color.available {
-    background-color: #00C389;
+    background-color: var(--green-color);
 }
 
 .legend-text {
     font-size: 14px;
-}
-
-.other-court-button{
-    width: 50%;
-    margin-left: 250px;
-}
-
-.viewcourtinfo-other-des h1{
-    font-size: 30px;
-}
-
-.viewcourtinfo-other-des{
-    margin-left: 20px;
-    
-}
-
-.viewcourtinfo-body-courtId-des{
-    display: column;
-}
-
-.viewcourtinfo-body-courtId h1{
-    margin-left: 19px;
 }
