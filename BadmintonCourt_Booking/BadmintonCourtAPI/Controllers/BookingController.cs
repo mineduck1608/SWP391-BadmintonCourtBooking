@@ -19,19 +19,6 @@ namespace BadmintonCourtAPI.Controllers
             }
         }
 
-		string GenerateId()
-		{
-			string number = $"{_service.BookingService.GetAllBookings().Count()}";
-			int length = number.Length;
-			while (length < 17)
-			{
-				string tmp = $"0{number}";
-				number = tmp;
-				length++;
-			}
-			return $"BK{number}";
-		}
-
 
         [HttpGet]
         [Route("Booking/GetAll")]
@@ -53,22 +40,14 @@ namespace BadmintonCourtAPI.Controllers
         //[Authorize]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(_service.BookingService.GetBookingsByType(id).ToList());
 
+
         [HttpDelete]
         [Route("Booking/Delete")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBooking(string id)
         {
             _service.BookingService.DeleteBooking(id);
-            return Ok();
-        }
-
-        [HttpPost]
-        [Route("Booking/Add")]
-        //[Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> AddBooking(Booking booking)
-        {
-            _service.BookingService.AddBooking(booking);
-            return NoContent();
+            return Ok(new { msg = "Success"});
         }
 
         [HttpPut]

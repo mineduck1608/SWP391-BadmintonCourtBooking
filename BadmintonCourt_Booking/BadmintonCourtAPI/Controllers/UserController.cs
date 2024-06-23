@@ -13,6 +13,7 @@ using BadmintonCourtAPI.Utils;
 using BadmintonCourtBusinessObjects.SupportEntities.Account;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Identity.Client.Extensions.Msal;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -30,12 +31,17 @@ namespace BadmintonCourtAPI.Controllers
 			_config = config;
 		}
 
+		//[HttpGet]
+		//[Route("User/GetAll")]
+		////[Authorize]
+		//public async Task<ActionResult<IEnumerable<UserDetail>>> GetAllUsers() => Ok(_service.UserDetailService.GetAllUserDetails());
+
 		[HttpGet]
 		[Route("User/GetAll")]
-        //[Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers() => Ok(_service.UserService.GetAllUsers());
+		//[Authorize]
+		public async Task<ActionResult<IEnumerable<User>>> GetAllUsers() => Ok(_service.UserService.GetAllUsers());
 
-        [HttpGet]
+		[HttpGet]
 		[Route("User/GetStaffsInBranch")]
 		//[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<User>>> GetStaffsByBranch(string id) => Ok(_service.UserService.GetStaffsByBranch(id).ToList());
@@ -89,30 +95,30 @@ namespace BadmintonCourtAPI.Controllers
 				string id = _service.UserService.GetRecentAddedUser().UserId;
 
 				_service.UserDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email });
-				return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", _config) });
+				return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", true, _config) });
 			}
 
 			// Co acc
 			User user = _service.UserService.GetUserById(info.UserId);
-			return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+			return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
 		}
 
 		[HttpPost]
 		[Route("User/LoginAuth")]
 		public async Task<IActionResult> LoginAuth(string username, string password)
 		{
-			//User user = service.userService.GetUserByLogin(username, password);
-			User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username && x.Password == password);
+            //User user = service.userService.GetUserByLogin(username, password);
+            User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username && x.Password == password);
 
-			// Nhập đúng username + pass
-			if (user != null)
+            // Nhập đúng username + pass
+            if (user != null)
 			{
 				UserDetail info = _service.UserDetailService.GetUserDetailById(user.UserId);
 				if (user.AccessFail == 0)
 				{
 					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 					_service.UserService.UpdateUser(user, user.UserId);
-					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
 				}   // Legit, nhập đúng từ lần đầu
 
 				else if (user.AccessFail < 3) // Trước đó nhập sai chưa tới lần 3
@@ -121,7 +127,7 @@ namespace BadmintonCourtAPI.Controllers
 					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 					user.ActiveStatus = true;
 					_service.UserService.UpdateUser(user, user.UserId);
-					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
 				}
 
 				else if (user.AccessFail == 3) // Trước đó nhập sai tới lần 3
@@ -132,9 +138,9 @@ namespace BadmintonCourtAPI.Controllers
 						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 						user.ActiveStatus = true;
 						_service.UserService.UpdateUser(user, user.UserId);
-						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
 					}
-					return Ok("Temporarily locked");
+					return BadRequest(new { msg = "Temporaly locked" });
 				}
 
 				else if (user.AccessFail == 4)  // Trước đó nhập sai tới lần 4
@@ -145,9 +151,9 @@ namespace BadmintonCourtAPI.Controllers
 						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 						user.ActiveStatus = true;
 						_service.UserService.UpdateUser(user, user.UserId);
-						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
 					}
-					return Ok("Temporarily locked");
+					return BadRequest(new { msg = "Temporaly locked" });
 				}
 
 				else if (user.AccessFail == 5)  // Trước đó nhập sai tới lần 5
@@ -158,12 +164,12 @@ namespace BadmintonCourtAPI.Controllers
 						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 						user.ActiveStatus = true;
 						_service.UserService.UpdateUser(user, user.UserId);
-						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+						return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
 					}
-					return Ok("Temporarily locked");
+					return BadRequest(new { msg = "Temporaly locked" });
 				}
 
-				else return Ok("Locked! Contact Admin");
+				else return BadRequest(new { msg = "Locked. Contact" });
 			}
 
 			else
@@ -179,11 +185,11 @@ namespace BadmintonCourtAPI.Controllers
 						if (failCase.AccessFail > 2)
 							failCase.ActiveStatus = false;
 						_service.UserService.UpdateUser(failCase, failCase.UserId);
-						return Ok("Incorrect username or password!");
+						return BadRequest(new { msg = "Incorrect username or password!" });
 					}
-					return Ok("Locked! Contact Admin"); // Từ lần sai thứ 6 đổ đi đã khóa acc, liên hệ admin để giải quyết
+					return BadRequest(new { msg = "Locked! Contact" }); // Từ lần sai thứ 6 đổ đi đã khóa acc, liên hệ admin để giải quyết
 				}
-				return NotFound("Incorrect username or password!"); // Sai username, ko quan tâm pass
+				return BadRequest(new { msg = "Incorrect username or password!" }); // Sai username, ko quan tâm pass
 			}
 		}
 
@@ -216,7 +222,7 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPut]
 		[Route("User/Update")]
 		//[Authorize]
-		public async Task<IActionResult> UpdateUser(string id, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string email, string facebook, float balence, int? accessFail, bool activeStatus)
+		public async Task<IActionResult> UpdateUser(string id, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string? email, string facebook, float balance, int? accessFail, bool status, string img)
 		{
 			List<User> storage = _service.UserService.GetAllUsers();
 			List<UserDetail> infoStorage = _service.UserDetailService.GetAllUserDetails();
@@ -224,10 +230,12 @@ namespace BadmintonCourtAPI.Controllers
 			User user = _service.UserService.GetUserById(id);
 			if (!username.IsNullOrEmpty())
 			{
-				if (storage.FirstOrDefault(x => x.UserName == username) == null)
+				if (user.UserName == username)
+					user.UserName = username;
+				else if (storage.FirstOrDefault(x => x.UserName == username) == null)
 					user.UserName = username;
 				else return BadRequest(new { msg = "Username existed" });
-			}	
+			}
 			if (Util.IsPasswordSecure(password))
 				//if (user.Password != Util.ToHashString(password)) // hash pass
 				user.Password = Util.ToHashString(password); // Lay lai pass cu
@@ -245,20 +253,18 @@ namespace BadmintonCourtAPI.Controllers
 						return BadRequest(new { msg = "Only staffs can contain working place" });
 			}
 			user.BranchId = branchId;
-			if (balence != null)
+			if (balance != null)
 			{
-				if (balence >= 0)
-				{
-					user.Balance = balence;
-				}
+				if (balance >= 0)
+					user.Balance = balance;
+				else return BadRequest(new { msg = "Balence must be at least 0" });
 			}
-			else return BadRequest(new { msg = "Balence must be at least 0" });
-			if (activeStatus != null)
+			if (status != null)
 			{
-				if (activeStatus == true)
+				if (status == true)
 					if (accessFail.HasValue && accessFail == 0)
 						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-				user.ActiveStatus = activeStatus;
+				user.ActiveStatus = status;
 			}
 			_service.UserService.UpdateUser(user, id);
 
@@ -268,24 +274,34 @@ namespace BadmintonCourtAPI.Controllers
 				info.FirstName = firstName;
 			if (!lastName.IsNullOrEmpty())
 				info.LastName = lastName;
-            if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
-                info.Email = email;
-            if (!facebook.IsNullOrEmpty())
+			if (!img.IsNullOrEmpty())
+				info.Img = img;
+			if (!email.IsNullOrEmpty())
 			{
-				if (infoStorage.FirstOrDefault(x => x.Facebook == facebook) == null)
+				if (info.Email == email)
+					info.Email = email;
+				else if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
+					info.Email = email;
+				else return BadRequest(new { msg = "Email registered" });
+			}
+			if (!phone.IsNullOrEmpty())
+			{
+				if (info.Phone == phone)
+					info.Phone = phone;
+				else if (infoStorage.FirstOrDefault(x => x.Phone == phone) == null)
+					info.Phone = phone;
+				else return BadRequest(new { msg = "Phone number registered" });
+			}
+			if (!facebook.IsNullOrEmpty())
+			{
+				if (info.Facebook == facebook)
+					info.Facebook = facebook;
+				else if (infoStorage.FirstOrDefault(x => x.Facebook == facebook) == null)
 					info.Facebook = facebook;
 				else return BadRequest(new { msg = "Facebook registered" });
 			}
-
-			if (!phone.IsNullOrEmpty()) 
-			{
-				if (Util.IsPhoneFormatted(phone))
-				{
-					if (infoStorage.FirstOrDefault(x => x.Phone == phone) == null)
-						info.Phone = phone;
-					else return BadRequest(new { msg = "Phone registered" });
-				}
-			}
+			if (Util.IsPhoneFormatted(phone))
+				info.Phone = phone;
 			_service.UserDetailService.UpdateUserDetail(info, id);
 			return Ok(new { msg = "Success" });
 		}
@@ -295,32 +311,43 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("User/Register")]
 		public async Task<IActionResult> Register(string username, string password, string firstName, string lastName, string email, string phone)
 		{
-			UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) && x.Phone.Equals(phone));
+			UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) || x.Phone == phone);
 			if (info == null)
 			{
-				if (Util.IsPhoneFormatted(phone))
+				if (!username.IsNullOrEmpty())
 				{
-					if (password!=null)
+					if (_service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(username)) == null)
 					{
-						//Hash pass
-						//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-						_service.UserService.AddUser(new User { UserId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-						User user = _service.UserService.GetRecentAddedUser();
-						_service.UserDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
-						return Ok(Util.GenerateToken(user.UserId, _service.UserDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config));
+						if (Util.IsPhoneFormatted(phone))
+						{
+
+							if (Util.IsPasswordSecure(password))
+							{
+								//Hash pass
+								//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+							
+								_service.UserService.AddUser(new User { UserId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+								User user = _service.UserService.GetRecentAddedUser();
+								_service.UserDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
+								return Ok(Util.GenerateToken(user.UserId, _service.UserDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config));
+							}
+							return BadRequest(new { msg = "Password is not properly secured" });
+						}
+						return BadRequest(new { msg = "Phone number is not properly formatted" });
 					}
-					return Json(new { msg = "Password is not properly secured" });
+					return BadRequest(new { msg = "Username existed" });
 				}
-				return Json(new { msg = "Phone number is not properly formatted" });
+				return BadRequest(new { msg = "Username can't be empty" });
+
 			}
-			return Json(new { msg = "User has already existed" });
+			return BadRequest(new { msg = "Email registered" });
 		}
 
 
-        [HttpPost]
+		[HttpPost]
 		[Route("User/Add")]
 		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> AddUser(ProvideAccount account)
+		public async Task<IActionResult> AddUser(ProvideAccount account) 
 		{
 			List<User> storage = _service.UserService.GetAllUsers();
 			List<UserDetail> infoStorage = _service.UserDetailService.GetAllUserDetails();
@@ -350,7 +377,7 @@ namespace BadmintonCourtAPI.Controllers
 			else balence = account.Balance.Value;
 			string id = "U" + (storage.Count + 1).ToString("D7");
 			_service.UserService.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = account.Password, Balance = balence, BranchId = account.BranchId, RoleId = account.RoleId });
-			_service.UserDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = account.Phone, UserId = id });
+			_service.UserDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = Util.IsPhoneFormatted(account.Phone) ? account.Phone : null, UserId = id, Img = account.Img });
 			return Ok(new { msg = "Success" });
 		}
 

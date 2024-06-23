@@ -26,7 +26,7 @@ namespace BadmintonCourtDAOs
 
         public List<Feedback> GetFeedbacksByContent(string content) => _dbContext.Feedbacks.Where(x => x.Content.ToLower().Contains(content.ToLower())).ToList();
 
-        public List<Feedback> GetFeedbacksByRate(int rate) => _dbContext.Feedbacks.Where(x => x.Rate == rate).ToList();
+        public List<Feedback> GetFeedbacksByRate(int rate) => _dbContext.Feedbacks.Where(x => x.Rating == rate).ToList();
 
         public List<Feedback> GetA_UserFeedbacks(string id) => _dbContext.Feedbacks.Where(x => x.UserId == id).ToList();
 
@@ -37,7 +37,7 @@ namespace BadmintonCourtDAOs
             Feedback tmp = GetFeedbackByFeedbackId(id);
             if (tmp != null)
             {
-                tmp.Rate = newFeedback.Rate;
+                tmp.Rating = newFeedback.Rating;
                 tmp.Content = newFeedback.Content;
                 _dbContext.Feedbacks.Update(tmp);
                 _dbContext.SaveChanges();

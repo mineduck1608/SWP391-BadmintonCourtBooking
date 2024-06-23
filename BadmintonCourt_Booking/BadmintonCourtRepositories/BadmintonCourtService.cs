@@ -18,7 +18,9 @@ namespace BadmintonCourtServices
 
         public readonly CourtBranchService BranchService = null;
 
-        public readonly FeedbackService FeedbackService = null;
+		public readonly DiscountService DiscountService = null;
+
+		public readonly FeedbackService FeedbackService = null;
 
         public readonly PaymentService PaymentService = null;
 
@@ -32,6 +34,7 @@ namespace BadmintonCourtServices
 
         public readonly VnPayService VnPayService = null;
 
+        public readonly MoMoService MomoService = null;
      
 
         public BadmintonCourtService(IConfiguration config)
@@ -74,6 +77,10 @@ namespace BadmintonCourtServices
             }
             if (VnPayService == null)
                 VnPayService = new VnPayService(config);
+            if (DiscountService == null)
+                DiscountService = new DiscountService();
+            if (MomoService == null)
+                MomoService = new MoMoService();
         }
 
     }

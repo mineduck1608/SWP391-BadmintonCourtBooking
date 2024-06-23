@@ -29,16 +29,11 @@ const BuyTime = () => {
         let method = document.getElementById('method').value
         var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
           + `Method=${method}&`
-          + `Start=4&`
-          + `End=5&`
           + `UserId=${userID}&`
-          + `Date=2024%2F06%2F24&`
-          + `CourtId=C-001&`
-          + `Type=buyTime&`
-          + `NumMonth=12&`
-          + `Amount=${amount * 1000}`,
+          + `Type=flexible&`
+          + `Amount=${amount}`,
           {
-            method: 'post',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             }
@@ -46,6 +41,7 @@ const BuyTime = () => {
         try {
           var data = await (res.json())
           window.location.replace(data['url'])
+          
         }
         catch (err) {
 
