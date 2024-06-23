@@ -31,7 +31,7 @@ import BookCourt from './Components/bookCourt/bookCourt';
 import AdminLayout from './Components/AdminLayout';
 import BuyTime from './Components/BuyTime/BuyTime';
 import BookingHistory from './Components/ViewHistory/ViewHistory';
-
+import PaySuccess from './Components/PaySuccess/PaySuccess';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -53,7 +53,9 @@ const App = () => {
           <Route path="/forget" element={<ForgetPassword />} />
           <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
           <Route path="/buyTime" element={<div><Header/><BuyTime/><Footer/></div>}/>
+          <Route path="/paySuccess" element={<div><Header/><PaySuccess/><Footer/></div>}/>
           <Route path="/bookingHistory" element={<BookingHistory/>}/>
+          
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
