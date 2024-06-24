@@ -447,8 +447,8 @@ namespace BadmintonCourtAPI.Controllers
         [Route("Payment/MomoResult")]
         //[Authorize]
         public async Task<ActionResult> MoMoCallback(MoMoRedirectResult result)
-        {
-            if (result.Message == "Fail")
+		{
+			if (result.Message == "Fail")
                 return Redirect(resultRedirectUrl + "?msg=fail");
             //-------------------------------------------------------
             string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();

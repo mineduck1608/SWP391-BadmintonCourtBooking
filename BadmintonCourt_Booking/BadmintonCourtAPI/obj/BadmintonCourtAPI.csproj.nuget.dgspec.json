@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj": {}
+    "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj": {}
   },
   "projects": {
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj": {
+    "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
+        "projectUniqueName": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
         "projectName": "BadmintonCourtAPI",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\obj\\",
+        "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
+        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+        "outputPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,14 +22,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
-                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj"
+              "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
+                "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj"
               }
             }
           }
@@ -99,21 +100,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
+    "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
+        "projectUniqueName": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
         "projectName": "BadmintonCourtBusinessObjects",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\obj\\",
+        "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj",
+        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+        "outputPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -121,6 +122,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -185,21 +187,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
+    "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
+        "projectUniqueName": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
         "projectName": "BadmintonCourtDAOs",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\obj\\",
+        "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj",
+        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+        "outputPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -207,14 +209,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
-                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj"
+              "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj": {
+                "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtBusinessObjects\\BadmintonCourtBusinessObjects.csproj"
               }
             }
           }
@@ -263,21 +266,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
+    "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
+        "projectUniqueName": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
         "projectName": "BadmintonCourtServices",
-        "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
-        "packagesPath": "C:\\Users\\ducco\\.nuget\\packages\\",
-        "outputPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\obj\\",
+        "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\BadmintonCourtServices.csproj",
+        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+        "outputPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtRepositories\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ducco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -285,14 +288,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
-                "projectPath": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj"
+              "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj": {
+                "projectPath": "D:\\git\\bmtc\\BENew\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtDAOs\\BadmintonCourtDAOs.csproj"
               }
             }
           }
@@ -333,7 +337,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
