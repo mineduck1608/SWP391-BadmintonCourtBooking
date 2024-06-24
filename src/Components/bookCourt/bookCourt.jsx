@@ -18,7 +18,7 @@ const BookCourt = () => {
     const [courtId, setCourtId] = useState('')
     const [courtPrice, setCourtPrice] = useState(0)
     const [amount, setAmount] = useState(0) //court price
-    const apiUrl = "http://localhost:5266/"
+    const apiUrl = "https://localhost:7233/"
 
     const fetchBranches = async () => {
         try {
@@ -135,7 +135,7 @@ const BookCourt = () => {
         return amount / 1000
     }
     function getPrice(courtId, startTime, endTime, monthNum){
-        
+
     }
     const fetchApi = async () => {
         console.log('fetchBegin');
