@@ -40,7 +40,7 @@ const App = () => {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <CssBaseline/>
+        <CssBaseline />
         <Routes>
           <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>} />
           <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>} />
@@ -52,10 +52,10 @@ const App = () => {
           <Route path="/findCourt" element={<FindCourt />} />
           <Route path="/forget" element={<ForgetPassword />} />
           <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
-          <Route path="/buyTime" element={<div><Header/><BuyTime/><Footer/></div>}/>
-          <Route path="/paySuccess" element={<div><Header/><PaySuccess/><Footer/></div>}/>
-          <Route path="/bookingHistory" element={<BookingHistory/>}/>
-          
+          <Route path="/buyTime" element={<div><Header /><BuyTime /><Footer /></div>} />
+          <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />
+          <Route path="/bookingHistory" element={<BookingHistory />} />
+          <Route path="/ViewCourtInfo" element={<ViewCourtInfo />} />
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
@@ -63,7 +63,7 @@ const App = () => {
             <Route path="user" element={<User />} />
             <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
-            <Route path="timeSlot" element={<SlotManagement/>} />
+            <Route path="timeSlot" element={<SlotManagement />} />
             <Route path="timeManage" element={<BadmintonCourtHours />} />
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
@@ -72,7 +72,7 @@ const App = () => {
             <Route path="geography" element={<Geography />} />
           </Route>
         </Routes>
-        <ToastContainer theme='colored'/>
+        <ToastContainer theme='colored' />
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
