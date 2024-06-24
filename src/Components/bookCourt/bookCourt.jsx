@@ -5,20 +5,22 @@ import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 
 const BookCourt = () => {
-    const [bookingType, setBookingType] = useState('fixed-time');
-    const [branches, setBranches] = useState([])
-    const [courts, setCourts] = useState([])
-    const [paymentType, setPaymentType] = useState('balance');
-    const [timeBound, setTimeBound] = useState([])
-    const [curDate, setCurDate] = useState('')
-    const [validDate, setValidDate] = useState(false)
-    const [validTimeRange, setValidTimeRange] = useState(false)
-    const [transferMethod, setTransferMethod] = useState('Momo')
-    const [validBooking, setValidBooking] = useState(false)
-    const [userID, setUserID] = useState('');
+    const [bookingType, setBookingType] = useState('fixed'); //once, fixed, flexible
+    const [branches, setBranches] = useState([]) //all active branches (status = 1)
+    const [courts, setCourts] = useState([]) //all courts of that branch, if active
+    const [paymentType, setPaymentType] = useState(''); //banking or not
+    const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
+    const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
+    const [validDate, setValidDate] = useState(false) //is booking date valid? (not in the past)
+    const [validTimeRange, setValidTimeRange] = useState(false) //is booking time range valid (start < end)
+    const [transferMethod, setTransferMethod] = useState('Momo') //momo, vnpay
+    const [validBooking, setValidBooking] = useState(false) //is booking valid
+    const [numMonth, setNumMonth] = useState(''); //num of month
+    const [courtPrice, setCourtPrice] = useState(0) //court price
     const apiUrl = "http://localhost:5266/"
 
     const fetchBranches = async () => {
+        await setBranches(b => [])
         const branchData = await (
             await fetch(`${apiUrl}Branch/GetAll`)
         ).json()
@@ -85,6 +87,7 @@ const BookCourt = () => {
             const data = await response.json();
             const courtActive = data["courtStatus"];
             setValidBooking(t => t && courtActive);
+            setCourtPrice(data['price'])
             return validBooking;
 
         } catch (error) {
@@ -99,73 +102,65 @@ const BookCourt = () => {
         try {
             const result = await validateBooking();
             if (result) {
-                window.location.assign("https://www.google.com/")
+                document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
+                fetchApi()
             }
         } catch (error) {
             console.error('Error validating booking:', error);
         }
     };
     const getFromJwt = () => {
-        async function fetchData() {
-            var token = sessionStorage.getItem('token')
-            if (!token) {
-                //alert('Please log in')
-            } else {
-                try {
-                    var decodedToken = jwtDecode(token)
-                    setUserID(u => decodedToken.UserId)
-                    var res = await fetch(`${apiUrl}User/GetById?id=${decodedToken.UserId}`)
-                    var data = await res.json()
-                    if (decodedToken.UserId !== data['userId']) {
-                        throw new Error('Authorize failed')
-                    } else {
-                        setUserID(data['userId'])
-                    }
-                }
-                catch (err) {
-                    console.log(err)
-                }
+
+        var token = sessionStorage.getItem('token')
+        if (!token) {
+            //alert('Please log in')
+        } else {
+            try {
+                var decodedToken = jwtDecode(token)
+                return decodedToken['UserId']
+            }
+            catch (err) {
+                console.log(err)
             }
         }
-        fetchData()
+        return ''
     }
     const fetchApi = async () => {
+        console.log('fetchBegin');
+        function calcAmount(bkType, price, start, end, month) {
+            var amount = price * (end - start)
+            if (bkType === 'fixed') amount *= 4 * month
+            return amount / 1000
+        }
         try {
-            let method = document.getElementById('transfer').value
-            let time_start = document.getElementById('time_start').value
-            let time_end = document.getElementById('time_end').value
-            getFromJwt()
-            let bookedDate = document.getElementById('datePicker').value
-            let courtId = document.getElementById('court').value
-            let monthNum = document.getElementById('fixed-time-month')
-            let amount = 0
-            let type = ''
-            var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
-                + `Method=${method}&`
-                + `Start=${time_start}&`
-                + `End=${time_end}&`
-                + `UserId=${userID}&`
-                + `Date=${bookedDate}&`
-                + `CourtId=${courtId}&`
-                + `Type=${type}&`
-                + `NumMonth=${monthNum}&`
-                + `Amount=${amount}`,
-                {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
+            //Get slots in day
+            console.log(bookingType + ", " + paymentType + ", " + transferMethod);
             try {
-                var data = await (res.json())
-                window.location.assign(data['url'])
+                // var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
+                //     + `Method=${method}&`
+                //     + `Start=${time_start}&`
+                //     + `End=${time_end}&`
+                //     + `UserId=${getFromJwt()}&`
+                //     + `Date=${bookedDate}&`
+                //     + `CourtId=${courtId}&`
+                //     + `Type=${bookingType}&`
+                //     + `NumMonth=${monthNum}&`
+                //     + `Amount=${amount}`,
+                //     {
+                //         method: 'post',
+                //         headers: {
+                //             'Content-Type': 'application/json'
+                //         }
+                //     })
+                // var data = await (res.json())
+                //window.location.assign(data['url'])
             }
             catch (err) {
 
             }
         }
         catch (err) {
-            alert(err)
+            console.log(err)
         }
     }
 
@@ -180,7 +175,6 @@ const BookCourt = () => {
 
                         <select id="branch" name="branch" onChange={() => {
                             fetchCourts()
-                            validateBooking()
                         }}>
                             <option value="" hidden selected>Choose a branch</option>
                             {
@@ -208,9 +202,11 @@ const BookCourt = () => {
                     </div>
                     <h2 className="notes">2. TYPE OF BOOKING</h2>
                     <p>SELECT ONE TYPE OF BOOKING:</p>
+                    {/*
+                    FIXED
+                    */}
                     <div className="bookCourt-radio-group">
                         <div className="bookCourt-form-group1">
-
                             <input className="inputradio" type="radio" id="fixed-time" name="booking-type"
                                 value="fixed-time" onChange={() => setBookingType('fixed')}
                                 checked={bookingType === 'fixed'}
@@ -219,56 +215,20 @@ const BookCourt = () => {
                             {bookingType === 'fixed' && (
                                 <div className="bookCourt-form-subgroup">
                                     <label htmlFor="fixed-time-months">For:</label>
-                                    <select id="fixed-time-months" name="fixed-time-months">
-                                        <option value="1">1 month</option>
-                                        <option value="2">2 months</option>
-                                        <option value="3">3 months</option>
-                                        {/* Add more options as needed */}
+                                    <select id='monthNum' name="fixed-time-months">
+                                        <option value={1}>1 month</option>
+                                        <option value={2}>2 months</option>
+                                        <option value={3}>3 months</option>
                                     </select>
                                     <span>month(s)</span>
                                 </div>
                             )}
                         </div>
                         <div className="bookCourt-form-group2">
-                            <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => { setBookingType('playonce') }} />
+                            <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => { setBookingType('playonce') }}
+                                checked={bookingType === 'playonce'}
+                            />
                             <label htmlFor="once">Once (reserves at the specified time and date)</label>
-                            {
-                                bookingType === 'playonce' && (
-                                    <div id="nowrap">
-                                        <label htmlFor="payMethod">Select a method to pay</label>
-                                        <input className="inputradio" type="radio" id="balance" value="balance" onChange={() => setPaymentType('balance')} name="onceMethod"
-                                            checked={paymentType === 'balance'}
-                                        />
-                                        <label htmlFor="balance" id="balanceLabel" >Account time balance</label>
-                                        {
-                                            paymentType === 'balance' && (
-                                                <button className="buyTimeBtn">Buy more time into balance!</button>
-                                            )
-                                        }
-                                        <input className="inputradio" type="radio" id="transfer" value="transfer" name="onceMethod" onChange={() => setPaymentType('transfer')}
-                                            checked={paymentType === 'transfer'}
-                                        />
-                                        <label htmlFor="transfer" id="transferLabel">Transfer by bank</label>
-                                        {
-                                            paymentType === "transfer" && (
-                                                <div id="nowrapper">
-                                                    <input className="inputradio tab1" type="radio" id="Momo" value={2}
-                                                        onChange={() => setTransferMethod("Momo")} name="transferMethod"
-                                                        checked={transferMethod === "Momo"}
-                                                    />
-                                                    <img htmlFor="Momo" src={momoLogo} alt="Momo" id="MomoLogo" className="tab2"></img>
-
-                                                    <input className="inputradio tab1" type="radio" id="Vnpay" value={1}
-                                                        onChange={() => setTransferMethod("Vnpay")} name="transferMethod"
-                                                        checked={transferMethod === "Vnpay"}
-                                                    />
-                                                    <img htmlFor="Vnpay" src={vnpayLogo} alt="Vnpay" id="VnpayLogo" className="tab2"></img>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                )
-                            }
                         </div>
                     </div>
                 </div>
@@ -309,11 +269,61 @@ const BookCourt = () => {
                             <p id="dateError">Cannot create a booking for a date in the past</p>
                         )
                     }
-                    <h2 className="notes">4. NOTES</h2>
-                    <textarea id="notes" name="notes" placeholder="Enter your notes here"></textarea>
+
                     <div className="bookcourt-status">
-                        <h2 className="notes">5. STATUS: </h2>
-                        <h2 className="notes">ON GOING</h2>
+                        <h2 className="notes">5. STATUS:</h2>
+                        <label htmlFor="paymentType">Payment type</label>
+                        <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
+                            onChange={() => { setPaymentType(p => 'banking') }}
+                            checked={paymentType === 'banking'}
+                        />
+                        <span className="bookCourt_span">Banking</span>
+                        <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
+                            onChange={() => {
+                                setBookingType(p => 'flexible');
+                                setPaymentType(p => '')
+                            }}
+                            checked={bookingType === 'flexible'}
+                        />
+                        <span>Time balance</span>
+                        {
+                            //Banking
+                            paymentType === 'banking' &&
+                            <div id="bankingMethod">
+                                <input
+                                    type='radio'
+                                    className="inputradioRight"
+                                    name='transferMethod'
+                                    value='vnpay'
+                                    id="vnpayRadio"
+                                    onChange={() => setTransferMethod(1)}
+                                    checked={transferMethod === 1}
+                                />
+                                <label
+                                    htmlFor="vnpayRadio"
+                                    className={`bookCourt_span ${transferMethod === 1 ? 'selected' : ''}`}
+                                >
+                                    <img id='VnpayLogo' src={vnpayLogo} alt="Vnpay" />
+                                </label>
+
+                                <input
+                                    type='radio'
+                                    className="inputradioRight"
+                                    name='transferMethod'
+                                    value='momo'
+                                    id="momoRadio"
+                                    onChange={() => setTransferMethod(2)}
+                                    checked={transferMethod === 2}
+                                />
+                                <label
+                                    htmlFor="momoRadio"
+                                    className={`bookCourt_span ${transferMethod === 2 ? 'selected' : ''}`}
+                                >
+                                    <img id='MomoLogo' src={momoLogo} alt="Momo" />
+                                </label>
+                            </div>
+                        }
+
                     </div>
                 </div>
             </div>

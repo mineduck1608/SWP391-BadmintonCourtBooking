@@ -15,7 +15,7 @@ const BuyTime = () => {
     console.log(temp);
     if (!Object.is(temp, undefined) && intRegex.test(temp)) {
       amount = parseInt(temp)
-      setValidAmount(amount > 0)
+      setValidAmount(amount >= 10)
     }
     else
       setValidAmount(false)
@@ -30,18 +30,17 @@ const BuyTime = () => {
         var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
-          + `Type=flexible&`
-          + `Amount=${amount}`,
+          + `Type=buyTime&`
+          + `Amount=${amount * 1000}`,
           {
-            method: 'POST',
+            method: 'post',
             headers: {
               'Content-Type': 'application/json'
             }
           })
         try {
           var data = await (res.json())
-          window.location.replace(data['url'])
-          
+          //window.location.replace(data['url'])
         }
         catch (err) {
 
@@ -84,11 +83,12 @@ const BuyTime = () => {
         <h1 className='buyTime_title'>Buy more time for a flexible plan</h1>
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining time: {remainingTime}</p>
+          <p className='buyTime_p'>Convert rate: 1.000đ = 1 coin</p>
           <div className='buyTime_centerDiv'>
-            <input className='buyTime_counter1' id='amount' type='number' min='1' onChange={() => validateAmount()} />
+            <input className='buyTime_counter1' id='amount' type='number' min='10' onChange={() => validateAmount()} />
           </div>
           {!validAmount && (
-            <p className='buyTime_err'>Input a valid number of money to buy!</p>
+            <p className='buyTime_err'>Input a valid number of coins to buy!</p>
           )}
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>

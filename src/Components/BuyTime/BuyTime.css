@@ -1,6 +1,6 @@
 /* Nền */
 .buyTime {
-    background: linear-gradient(to bottom right, #0072b1, #58a14e); 
+    background: linear-gradient(to bottom right, #0072b1, #58a14e);
     background-size: cover;
     height: 75cqh;
     display: flex;
@@ -104,7 +104,7 @@
         width: 90%;
         padding: 1.5em;
     }
-    
+
     .buyTime_select,
     .buyTime_counter1 {
         width: 80%;

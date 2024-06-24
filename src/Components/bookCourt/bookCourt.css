@@ -1,3 +1,6 @@
+*{
+  /* border: 1px black solid; */
+}
 /* Styles for the bookCourt container */
 .bookCourt-container {
   width: 80%;
@@ -78,7 +81,6 @@
   margin-top: 7px;
   display: inline;
 }
-
 .tab1 {
   left: -40%;
 }
@@ -121,13 +123,6 @@ select {
 }
 
 /* Styles for textareas */
-textarea {
-  width: 100%;
-  height: 50%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
 
 /* Styles for hidden elements */
 [hidden] {
@@ -207,7 +202,7 @@ textarea {
 }
 
 .bookcourt-status {
-  display: flex;
+  display: flexbox;
 }
 
 .buyTimeBtn {
@@ -227,17 +222,56 @@ textarea {
 #dateError{
   color: red;
 }
-#MomoLogo{
-  width: 5%;
-  display: block;
-}
-#VnpayLogo{
-  width: 5%;
-}
 .tab2 {
   /* position: relative; */
   margin-left: 7.5%;
 }
 #nowrap{
   white-space: nowrap;
+}
+/*--------------------Changed from here---------------------------------*/
+.inputradioRight2 {
+  display: flexbox;
+  width: 10%;
+}
+.inputradioRight {
+  display: none;
+}
+
+.bookCourt_span {
+  position: relative;
+  display: flex;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  height: auto;
+  width: 40%;
+}
+
+.bookCourt_span img {
+  width: 15%; /* Adjust the size as needed */
+  height: 15%;
+  object-fit: contain;
+  display: flex;
+}
+
+.bookCourt_span.selected {
+  border: 2px solid #007bff; /* Change color as needed */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  height: auto;
+  width: 40%;
+}
+
+.bookCourt_span::after {
+  content: '✓';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: #007bff; /* Change color as needed */
+  display: none;
+}
+
+.bookCourt_span.selected::after {
+  display: block;
 }
