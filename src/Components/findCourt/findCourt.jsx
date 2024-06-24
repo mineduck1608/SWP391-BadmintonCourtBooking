@@ -63,8 +63,8 @@ const FindCourt = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const branchUrl = 'http://localhost:5266/Branch/GetAll';
-      const courtUrl = 'http://localhost:5266/Court/GetAll';
+      const branchUrl = 'https://localhost:7233/Branch/GetAll';
+      const courtUrl = 'https://localhost:7233/Court/GetAll';
 
       try {
         setLoading(true);
@@ -103,8 +103,8 @@ const FindCourt = () => {
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      const feedbackUrl = 'http://localhost:5266/Feedback/GetAll'; 
-      const userUrl = 'http://localhost:5266/User/GetAll';
+      const feedbackUrl = 'https://localhost:7233/Feedback/GetAll'; 
+      const userUrl = 'https://localhost:7233/User/GetAll';
 
       setLoadingFeedback(true);
       try {

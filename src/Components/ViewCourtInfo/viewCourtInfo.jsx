@@ -25,8 +25,8 @@ const ViewCourtInfo = () => {
 
     useEffect(() => {
         const fetchInitialData = async () => {
-            const branchUrl = 'http://localhost:5266/Branch/GetAll';
-            const courtUrl = 'http://localhost:5266/Court/GetAll';
+            const branchUrl = 'https://localhost:7233/Branch/GetAll';
+            const courtUrl = 'https://localhost:7233/Court/GetAll';
 
             try {
                 setLoading(true);
@@ -70,7 +70,7 @@ const ViewCourtInfo = () => {
     }, [selectedDate]);
 
     const fetchBookingData = async (date) => {
-        const slotUrl = 'http://localhost:5266/Slot/GetAll';
+        const slotUrl = 'https://localhost:7233/Slot/GetAll';
 
         try {
             setLoading(true);

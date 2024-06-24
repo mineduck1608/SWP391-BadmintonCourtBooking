@@ -301,7 +301,7 @@ const TimeSlotManagement = () => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:5266/UserDetail/GetAll`, {
+      const response = await fetch(`https://localhost:7233/UserDetail/GetAll`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -448,28 +448,28 @@ const TimeSlotManagement = () => {
 
     try {
       const [branchesRes, courtsRes, slotsRes, bookingsRes] = await Promise.all([
-        fetch(`http://localhost:5266/Branch/GetAll`, {
+        fetch(`https://localhost:7233/Branch/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`http://localhost:5266/Court/GetAll`, {
+        fetch(`https://localhost:7233/Court/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`http://localhost:5266/Slot/GetAll`, {
+        fetch(`https://localhost:7233/Slot/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`http://localhost:5266/Booking/GetAll`, {
+        fetch(`https://localhost:7233/Booking/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -563,7 +563,7 @@ const TimeSlotManagement = () => {
     };
   
   
-    fetch(`http://localhost:5266/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
+    fetch(`https://localhost:7233/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,

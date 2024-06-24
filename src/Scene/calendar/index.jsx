@@ -22,7 +22,7 @@ const BadmintonCourtHours = () => {
   const [end, setEnd] = useState('');
 
   const fetchWorkingHours = () => {
-    fetch('http://localhost:5266/Slot/GetAll')
+    fetch('https://localhost:7233/Slot/GetAll')
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch slot data');
@@ -72,7 +72,7 @@ const BadmintonCourtHours = () => {
       end: endHour
     };
   
-    fetch(`http://localhost:5266/Slot/UpdateOfficeHours?start=${data.start}&end=${data.end}`, {
+    fetch(`https://localhost:7233/Slot/UpdateOfficeHours?start=${data.start}&end=${data.end}`, {
       method: 'PUT', // or 'PUT' depending on your API
       headers: {
         'Content-Type': 'application/json',
