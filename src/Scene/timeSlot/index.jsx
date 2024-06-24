@@ -188,15 +188,16 @@ const TimeSlotManagement = () => {
       .then(data => {
         toast.success(data.msg);
         fetchData();
+        setAddOpen(false);
       })
       .catch(error => {
-        toast.error('Failed to update slot');
+        toast.error('Failed to update slot' + error);
+        setAddOpen(false);
       });
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOpen(false);
-    }, 1000);
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
   };
 
   const handleAddCancel = () => {
@@ -276,8 +277,8 @@ const TimeSlotManagement = () => {
       const formattedData = slotsData.map((row, index) => {
         const court = courtsData.find(court => court.courtId === row.courtId);
         const branch = branchesData.find(branch => branch.branchId === court.branchId);
-        const booking = bookingsData.find(booking => booking.slotId === row.slotId);
-
+        const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
+        console.log(booking)
         return {
           id: index + 1,
           ...row,
@@ -604,7 +605,7 @@ const TimeSlotManagement = () => {
   
 
   const columns = [
-    { field: "id", headerName: "ID", align: "center", headerAlign: "center" },
+    { field: "bookingId", headerName: "ID", align: "center", headerAlign: "center" },
     { field: "branchName", headerName: "Branch", flex: 1, align: "center", headerAlign: "center" },
     { field: "courtName", headerName: "Court", flex: 1, align: "center", headerAlign: "center" },
     { field: "date", headerName: "Date", flex: 1, align: "center", headerAlign: "center" },

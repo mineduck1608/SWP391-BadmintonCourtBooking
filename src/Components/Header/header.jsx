@@ -59,10 +59,10 @@ const Header = () => {
             </a>
             <div className="text-header">
 
-                <Link to={'/home'}><a>Home</a></Link>
-                <a href="">Booking</a>
-                <Link to={'/buyTime'}><a className="long" href="">Time Balance</a></Link>
-                <a href="" onClick={handleLogout} >Logout</a>
+            <Link to={'/home'}><a className="header-link">Home</a></Link>
+                <a className="header-link" href="">Booking</a>
+            <Link to={'/buyTime'}><a className="header-link" href="">Time Balance</a></Link>
+                <a className="header-link time-balance" href="" onClick={handleLogout} >Logout</a>
             </div>
         </div>
     );

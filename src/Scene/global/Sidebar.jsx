@@ -10,7 +10,7 @@ import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
+import PaymentIcon from '@mui/icons-material/Payment';
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
@@ -221,9 +221,9 @@ const Sidebar = () => {
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
-                            title="FAQ Page"
-                            to="faq"
-                            icon={<HelpOutlinedIcon />}
+                            title="Payment"
+                            to="payment"
+                            icon={<PaymentIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />

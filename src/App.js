@@ -21,7 +21,7 @@ import Branch from "./Scene/courtBranch";
 import Court from "./Scene/court";
 import SlotManagement from "./Scene/timeSlot";
 import BadmintonCourtHours from "./Scene/calendar";
-import FAQ from "./Scene/faq";
+import Payment from "./Scene/payment";
 import Bar from "./Scene/bar";
 import Pie from "./Scene/pie";
 import Line from "./Scene/line";
@@ -65,7 +65,7 @@ const App = () => {
             <Route path="court" element={<Court />} />
             <Route path="timeSlot" element={<SlotManagement/>} />
             <Route path="timeManage" element={<BadmintonCourtHours />} />
-            <Route path="faq" element={<FAQ />} />
+            <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
             <Route path="pie" element={<Pie />} />
             <Route path="line" element={<Line />} />

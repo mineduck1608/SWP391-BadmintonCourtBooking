@@ -84,12 +84,11 @@ const BuyTime = () => {
         <h1 className='buyTime_title'>Buy more time for a flexible plan</h1>
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining time: {remainingTime}</p>
-          <p className='buyTime_p'>Convert rate: 1.000đ = 1 coin</p>
           <div className='buyTime_centerDiv'>
             <input className='buyTime_counter1' id='amount' type='number' min='1' onChange={() => validateAmount()} />
           </div>
           {!validAmount && (
-            <p className='buyTime_err'>Input a valid number of coins to buy!</p>
+            <p className='buyTime_err'>Input a valid number of money to buy!</p>
           )}
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>

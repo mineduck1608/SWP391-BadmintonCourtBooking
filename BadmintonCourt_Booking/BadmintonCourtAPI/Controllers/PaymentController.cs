@@ -135,7 +135,7 @@ namespace BadmintonCourtAPI.Controllers
                 else return "Time";
             }
             //---------------------------------------------------------
-            var reqdata = _service.MomoService.CreateRequestData(content, $"{amount}000" , "");
+            var reqdata = _service.MomoService.CreateRequestData(content, $"{amount}" , "");
             var response = _service.MomoService.SendMoMoRequest(reqdata);
             response.Wait();
             return response.Result.PayUrl;
