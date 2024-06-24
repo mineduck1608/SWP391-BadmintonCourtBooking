@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from "../Header/header";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
@@ -17,6 +18,10 @@ const ViewCourtInfo = () => {
     const [currentHourIndex, setCurrentHourIndex] = useState(0);
     const [bookingData, setBookingData] = useState([]); // State cho dữ liệu booking
     const maxVisibleHours = 5; // Số khung giờ hiển thị tối đa
+
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const courtId = params.get('courtId'); 
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -40,7 +45,7 @@ const ViewCourtInfo = () => {
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
 
-                const mainCourtData = courtData[0];
+                const mainCourtData = courtData.find(court => court.courtId === courtId);
                 const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
                 const recommendedCourtsData = courtData.filter(court => court.branchId === mainCourtData.branchId && court.courtId !== mainCourtData.courtId).slice(0, 2);
 
@@ -56,7 +61,7 @@ const ViewCourtInfo = () => {
         };
 
         fetchInitialData();
-    }, []);
+    }, [courtId]); 
 
     useEffect(() => {
         if (selectedDate) {
@@ -280,6 +285,6 @@ const ViewCourtInfo = () => {
             <Footer />
         </div>
     );
-}
+};
 
 export default ViewCourtInfo;

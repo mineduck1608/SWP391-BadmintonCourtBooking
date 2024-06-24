@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './findcourt.css';
 import { TimePicker } from 'antd';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
@@ -23,6 +23,7 @@ const FindCourt = () => {
   const [errorFeedback, setErrorFeedback] = useState('');
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -51,6 +52,12 @@ const FindCourt = () => {
     return (
       (selectedBranch === '' || court.branchId === selectedBranch) &&
       (selectedCourt === '' || court.courtId === selectedCourt)
+    );
+  });
+
+  const filteredFeedback = feedback.filter((fb) => {
+    return (
+      selectedBranch === '' || fb.branchId === selectedBranch
     );
   });
 
@@ -133,6 +140,10 @@ const FindCourt = () => {
     fetchFeedback();
   }, []);
 
+  const handleBook = (courtId) => {
+    navigate(`/viewCourtInfo?courtId=${courtId}`);
+  };
+
   return (
     <div className="findCourt">
       <div className="findCourtHeader">
@@ -179,10 +190,6 @@ const FindCourt = () => {
                       ))}
                     </select>
                   </div>
-
-                  <button className="Btn">
-                    <a href="#">Search</a>
-                  </button>
                 </div>
               </div>
 
@@ -201,7 +208,7 @@ const FindCourt = () => {
                       <p>Price: {court.price}</p>
                       <p>Description: {court.description}</p>
                       <p>Rating: {court.rating}/5</p>
-                      <button className="findCourt-bookBtn">Book</button>
+                      <button className="findCourt-bookBtn" onClick={() => handleBook(court.courtId)}>Book</button>
                     </div>
                   </div>
                 ))}
@@ -212,8 +219,7 @@ const FindCourt = () => {
                 {loadingFeedback && <p>Loading feedback...</p>}
                 {errorFeedback && <p>{errorFeedback}</p>}
                 <div className="findcourt-feedbackGrid">
-                  {feedback.map((fb) => {
-                    const court = courts.find(court => court.courtId === fb.branchId);
+                  {filteredFeedback.map((fb) => {
                     const user = users.find(user => user.userId === fb.userId);
                     return (
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
@@ -223,8 +229,8 @@ const FindCourt = () => {
                             <p><strong>{user ? user.userName : 'Anonymous'}</strong></p>
                           </div>
                           <p>{fb.content}</p>
-                          <p>Rating: {fb.rate}/5</p>
-                          {court && <p>Court No: {court.courtId}</p>}
+                          <p>Rating: {fb.rating}/5</p>
+                          {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                         </div>
                       </div>
                     );

@@ -118,30 +118,6 @@ button {
     margin-top: 2.1%;
 }
 
-.Btn {
-    width: auto; /* Changed width to auto */
-    background: var(--PrimaryColor);
-    border: none;
-    outline: none;
-    border-radius: 3rem;
-    cursor: pointer;
-    min-width: 120px;
-    padding: 10px 20px; /* Added padding to make the button larger */
-}
-
-.Btn a {
-    color: var(--whiteColor);
-    font-weight: 500;
-}
-
-.Btn:hover a {
-    color: var(--whiteColor);
-}
-
-.Btn:hover {
-    background: var(--HoverColor);
-}
-
 .custom-time-picker-dropdown {
     position: absolute;
     top: 100% !important;
