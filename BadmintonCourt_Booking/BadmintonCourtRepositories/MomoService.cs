@@ -85,6 +85,7 @@ namespace BadmintonCourtServices
 				return null;
 			}
 		}
+
 		public MoMoRequestData CreateRequestData(string orderInfo, string amount, string returnUrl) => new MoMoRequestData()
 		{
 			OrderInfo = orderInfo,
@@ -99,6 +100,9 @@ namespace BadmintonCourtServices
 			ExtraData = _config["MoMoRequest:ExtraData"],
 			OrderID = DateTime.UtcNow.Ticks.ToString() + orderInfo.GetHashCode(),
 		};
+
+
+
 
 	}
 }

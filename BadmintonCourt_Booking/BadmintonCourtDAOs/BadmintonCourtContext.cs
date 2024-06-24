@@ -221,7 +221,7 @@ public partial class BadmintonCourtContext : DbContext
 
 			entity.ToTable("Payment");
 
-			entity.HasIndex(e => e.BookingId, "UQ__Payment__C6D03BEC06FA1B73").IsUnique();
+			entity.HasIndex(e => e.BookingId, "UQ__Payment__C6D03BEC06FA1B73");
 
 			entity.Property(e => e.PaymentId)
 				.HasMaxLength(30)

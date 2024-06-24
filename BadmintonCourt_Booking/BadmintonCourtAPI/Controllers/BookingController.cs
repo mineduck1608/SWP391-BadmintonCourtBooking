@@ -50,6 +50,8 @@ namespace BadmintonCourtAPI.Controllers
             return Ok(new { msg = "Success"});
         }
 
+ 
+
         [HttpPut]
         [Route("Booking/Update")]
         //[Authorize(Roles = "Admin,Staff")]

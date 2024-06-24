@@ -108,7 +108,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<IActionResult> LoginAuth(string username, string password)
 		{
 			//User user = service.userService.GetUserByLogin(username, password);
-			User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(username) && x.Password.Equals(password));
+			User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username && x.Password == password);
 
 			// Nhập đúng username + pass
 			if (user != null)
@@ -325,11 +325,12 @@ namespace BadmintonCourtAPI.Controllers
 							{
 								//Hash pass
 								//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-							
-								_service.UserService.AddUser(new User { UserId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-								User user = _service.UserService.GetRecentAddedUser();
-								_service.UserDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
-								return Ok(Util.GenerateToken(user.UserId, _service.UserDetailService.GetUserDetailById(user.UserId).LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config));
+
+								string userId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7");
+								_service.UserService.AddUser(new User { UserId = userId, UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
+								User user = _service.UserService.GetUserById(userId);
+								_service.UserDetailService.AddUserDetail(new UserDetail { UserId = userId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
+								return Ok(Util.GenerateToken(userId, _service.UserDetailService.GetUserDetailById(userId).LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config));
 							}
 							return BadRequest(new { msg = "Password is not properly secured" });
 						}

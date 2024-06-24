@@ -19,7 +19,7 @@ public partial class User
 
     public int? AccessFail { get; set; }
 
-    public DateTime? LastFail { get; set; }
+    public DateTime? LastFail { get; set; } 
 
     public bool? ActiveStatus { get; set; }
 
