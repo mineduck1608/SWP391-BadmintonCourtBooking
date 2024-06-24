@@ -633,8 +633,5 @@ namespace BadmintonCourtAPI.Controllers
 			return Redirect(resultRedirectUrl + "?msg=success");
 		}
 
-
-
-
 	}
 }
