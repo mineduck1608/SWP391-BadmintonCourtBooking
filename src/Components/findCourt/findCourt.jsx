@@ -190,10 +190,6 @@ const FindCourt = () => {
                       ))}
                     </select>
                   </div>
-
-                  <button className="Btn">
-                    <a href="#">Search</a>
-                  </button>
                 </div>
               </div>
 
