@@ -12,10 +12,11 @@ using Microsoft.IdentityModel.Tokens;
 using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo;
 using BadmintonCourtServices.IService;
 using Azure;
+using System.Diagnostics;
 
 namespace BadmintonCourtAPI.Controllers
 {
-	public class PaymentController : Controller
+	public class PaymentController : Controller, IEnvironment
 	{
 		private readonly BadmintonCourtService _service = null;
 		private const string resultRedirectUrl = "url";
@@ -41,8 +42,7 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				if (model.Start != null && model.End != null)
 				{
-					BookedSlot primitive = _service.SlotService.GetSlotById("S1");
-					if (model.Start < model.End && model.Start >= primitive.StartTime.Hour && model.End <= primitive.EndTime.Hour)
+					if (model.Start < model.End && model.Start >= IEnvironment._startHour && model.End <= IEnvironment._endHour)
 					{
 						if (model.Date != null)
 						{
@@ -91,16 +91,14 @@ namespace BadmintonCourtAPI.Controllers
 			//---------------------------------------------------------
 			if (model.Type == "flexible")
 			{
-				amount = $"{model.Amount}";
-				content += $" Amount: {amount}";
+				content += $" Amount: {model.Amount}";
 			}
 			//---------------------------------------------------------
 			else
 			{
 				if (model.Start != null && model.End != null)
 				{
-					BookedSlot primitive = _service.SlotService.GetSlotById("S1");
-					if (model.Start < model.End && model.Start >= primitive.StartTime.Hour && model.End <= primitive.EndTime.Hour)
+					if (model.Start < model.End && model.Start >= IEnvironment._startHour && model.End <= IEnvironment._endHour)
 					{
 						if (model.Date != null)
 						{

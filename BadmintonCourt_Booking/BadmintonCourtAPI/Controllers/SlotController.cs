@@ -94,7 +94,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Slot/GetSLotCourtInDay")]
-		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInDay(DateTime? date, string id) => date == null ? BadRequest(new { msg = "Date can't be empty" }) : Ok(Util.FormatSlotList(_service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(date.Value.Year, date.Value.Month, date.Value.Year, 0, 0, 1), new DateTime(date.Value.Year, date.Value.Year, date.Value.Year, 23, 59, 59), id).ToList()));
+		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInDay(DateTime? date, string id) => date == null ? BadRequest(new { msg = "Date can't be empty" }) : Ok(Util.FormatSlotList(_service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, 0, 0, 1), new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, 23, 59, 59), id).ToList()));
 
 
 		[HttpGet]

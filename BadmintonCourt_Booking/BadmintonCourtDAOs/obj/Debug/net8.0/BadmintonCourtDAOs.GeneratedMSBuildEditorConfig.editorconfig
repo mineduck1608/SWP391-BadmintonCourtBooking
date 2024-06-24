@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BadmintonCourtDAOs
-build_property.ProjectDir = D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtDAOs\
+build_property.ProjectDir = D:\git\bmtc\BENew\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtDAOs\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
