@@ -17,6 +17,8 @@ public partial class BadmintonCourtContext : DbContext
 	{
 	}
 
+	public virtual DbSet<BookedSlot> BookedSlots { get; set; }
+
 	public virtual DbSet<Booking> Bookings { get; set; }
 
 	public virtual DbSet<Court> Courts { get; set; }
@@ -31,8 +33,6 @@ public partial class BadmintonCourtContext : DbContext
 
 	public virtual DbSet<Role> Roles { get; set; }
 
-	public virtual DbSet<Slot> Slots { get; set; }
-
 	public virtual DbSet<User> Users { get; set; }
 
 	public virtual DbSet<UserDetail> UserDetails { get; set; }
@@ -42,9 +42,45 @@ public partial class BadmintonCourtContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		modelBuilder.Entity<BookedSlot>(entity =>
+		{
+			entity.HasKey(e => e.SlotId).HasName("PK__BookedSl__9C4A67F321159244");
+
+			entity.ToTable("BookedSlot");
+
+			entity.Property(e => e.SlotId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("slotID");
+			entity.Property(e => e.BookingId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("bookingID");
+			entity.Property(e => e.CourtId)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("courtID");
+			entity.Property(e => e.EndTime)
+				.HasColumnType("datetime")
+				.HasColumnName("endTime");
+			entity.Property(e => e.StartTime)
+				.HasColumnType("datetime")
+				.HasColumnName("startTime");
+
+			entity.HasOne(d => d.Booking).WithMany(p => p.BookedSlots)
+				.HasForeignKey(d => d.BookingId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("FKBookedSlot690847");
+
+			entity.HasOne(d => d.Court).WithMany(p => p.BookedSlots)
+				.HasForeignKey(d => d.CourtId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("FKBookedSlot778580");
+		});
+
 		modelBuilder.Entity<Booking>(entity =>
 		{
-			entity.HasKey(e => e.BookingId).HasName("PK__Booking__C6D03BEDF7FB8DF5");
+			entity.HasKey(e => e.BookingId).HasName("PK__Booking__C6D03BEDD4816F61");
 
 			entity.ToTable("Booking");
 
@@ -53,6 +89,9 @@ public partial class BadmintonCourtContext : DbContext
 				.IsUnicode(false)
 				.HasColumnName("bookingID");
 			entity.Property(e => e.Amount).HasColumnName("amount");
+			entity.Property(e => e.BookingDate)
+				.HasColumnType("datetime")
+				.HasColumnName("bookingDate");
 			entity.Property(e => e.BookingType).HasColumnName("bookingType");
 			entity.Property(e => e.UserId)
 				.HasMaxLength(30)
@@ -67,7 +106,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Court>(entity =>
 		{
-			entity.HasKey(e => e.CourtId).HasName("PK__Court__4E6E3688A4FF7267");
+			entity.HasKey(e => e.CourtId).HasName("PK__Court__4E6E36881B2384A8");
 
 			entity.ToTable("Court");
 
@@ -83,6 +122,10 @@ public partial class BadmintonCourtContext : DbContext
 				.HasMaxLength(500)
 				.IsUnicode(false)
 				.HasColumnName("courtImg");
+			entity.Property(e => e.CourtName)
+				.HasMaxLength(30)
+				.IsUnicode(false)
+				.HasColumnName("courtName");
 			entity.Property(e => e.CourtStatus).HasColumnName("courtStatus");
 			entity.Property(e => e.Description)
 				.HasMaxLength(500)
@@ -98,7 +141,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<CourtBranch>(entity =>
 		{
-			entity.HasKey(e => e.BranchId).HasName("PK__CourtBra__751EBD3FAEDC69BA");
+			entity.HasKey(e => e.BranchId).HasName("PK__CourtBra__751EBD3F0F444703");
 
 			entity.ToTable("CourtBranch");
 
@@ -127,7 +170,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Discount>(entity =>
 		{
-			entity.HasKey(e => e.DiscountId).HasName("PK__Discount__D2130A06928F806A");
+			entity.HasKey(e => e.DiscountId).HasName("PK__Discount__D2130A069DBF1604");
 
 			entity.ToTable("Discount");
 
@@ -141,7 +184,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Feedback>(entity =>
 		{
-			entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__2613FDC490CA2798");
+			entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__2613FDC4DCD46E40");
 
 			entity.ToTable("Feedback");
 
@@ -156,7 +199,7 @@ public partial class BadmintonCourtContext : DbContext
 			entity.Property(e => e.Content)
 				.HasMaxLength(500)
 				.HasColumnName("content");
-			entity.Property(e => e.Rate).HasColumnName("rating");
+			entity.Property(e => e.Rating).HasColumnName("rating");
 			entity.Property(e => e.UserId)
 				.HasMaxLength(30)
 				.IsUnicode(false)
@@ -174,11 +217,11 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Payment>(entity =>
 		{
-			entity.HasKey(e => e.PaymentId).HasName("PK__Payment__A0D9EFA6F6988FB8");
+			entity.HasKey(e => e.PaymentId).HasName("PK__Payment__A0D9EFA602C9C8D1");
 
 			entity.ToTable("Payment");
 
-			entity.HasIndex(e => e.BookingId, "UQ__Payment__C6D03BEC34D16611").IsUnique();
+			entity.HasIndex(e => e.BookingId, "UQ__Payment__C6D03BEC06FA1B73").IsUnique();
 
 			entity.Property(e => e.PaymentId)
 				.HasMaxLength(30)
@@ -204,7 +247,6 @@ public partial class BadmintonCourtContext : DbContext
 
 			entity.HasOne(d => d.Booking).WithOne(p => p.Payment)
 				.HasForeignKey<Payment>(d => d.BookingId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
 				.HasConstraintName("FKPayment887923");
 
 			entity.HasOne(d => d.User).WithMany(p => p.Payments)
@@ -215,7 +257,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Role>(entity =>
 		{
-			entity.HasKey(e => e.RoleId).HasName("PK__Role__CD98460A9B8A6701");
+			entity.HasKey(e => e.RoleId).HasName("PK__Role__CD98460AFF22B87B");
 
 			entity.ToTable("Role");
 
@@ -229,45 +271,9 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnName("role");
 		});
 
-		modelBuilder.Entity<Slot>(entity =>
-		{
-			entity.HasKey(e => e.SlotId).HasName("PK__Slot__9C4A67F3EA1DDAFF");
-
-			entity.ToTable("Slot");
-
-			entity.Property(e => e.SlotId)
-				.HasMaxLength(30)
-				.IsUnicode(false)
-				.HasColumnName("slotID");
-			entity.Property(e => e.BookingId)
-				.HasMaxLength(30)
-				.IsUnicode(false)
-				.HasColumnName("bookingID");
-			entity.Property(e => e.CourtId)
-				.HasMaxLength(30)
-				.IsUnicode(false)
-				.HasColumnName("courtID");
-			entity.Property(e => e.EndTime)
-				.HasColumnType("datetime")
-				.HasColumnName("endTime");
-			entity.Property(e => e.StartTime)
-				.HasColumnType("datetime")
-				.HasColumnName("startTime");
-			entity.Property(e => e.Status).HasColumnName("status");
-
-			entity.HasOne(d => d.Booking).WithMany(p => p.Slots)
-				.HasForeignKey(d => d.BookingId)
-				.HasConstraintName("FKSlot690847");
-
-			entity.HasOne(d => d.Court).WithMany(p => p.Slots)
-				.HasForeignKey(d => d.CourtId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FKSlot778580");
-		});
-
 		modelBuilder.Entity<User>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CDF80A50B1E");
+			entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CDF911DBF79");
 
 			entity.ToTable("User");
 
@@ -310,7 +316,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<UserDetail>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("PK__UserDeta__CB9A1CDF2F803839");
+			entity.HasKey(e => e.UserId).HasName("PK__UserDeta__CB9A1CDF65250D55");
 
 			entity.ToTable("UserDetail");
 
@@ -330,6 +336,10 @@ public partial class BadmintonCourtContext : DbContext
 				.HasMaxLength(50)
 				.IsUnicode(false)
 				.HasColumnName("firstName");
+			entity.Property(e => e.Img)
+				.HasMaxLength(500)
+				.IsUnicode(false)
+				.HasColumnName("img");
 			entity.Property(e => e.LastName)
 				.HasMaxLength(50)
 				.IsUnicode(false)

@@ -1,3 +1,11 @@
+.findCourt-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
 .findCourt-wrapper::before {
     content: '';
     position: fixed;
@@ -8,9 +16,9 @@
     background-image: url('../../Assets/image3.jpg');
     background-size: cover;
     background-position: center;
-    filter: blur(10px); 
-    z-index: -1; 
-    opacity: 0.6; 
+    filter: blur(10px);
+    z-index: -1;
+    opacity: 0.6;
 }
 
 :root {
@@ -25,19 +33,20 @@
     --inputColor: hsl(330, 12%, 97%);
 }
 
-.find {
-    height: auto;
+.findCourt-find {
+    width: 100%;
+    max-width: 1200px;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    margin: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     position: relative;
-    top: -50px;
     padding-bottom: 50px;
 }
 
-.secContainer .homeText {
+.secContainer .findCourt-homeText {
     text-align: center;
+    color: white;
 }
 
 .secContainer .homeText .Title {
@@ -45,11 +54,11 @@
     font-weight: 700;
     line-height: 2.5rem;
     margin-bottom: 10px;
-    width: 146%;
+    width: 150%;
     transform: translate(-16%);
 }
 
-.searchCard {
+.findCourt-searchCard {
     width: 95vw;
     border-radius: 1rem;
     padding: 2rem;
@@ -65,11 +74,12 @@
     margin-top: 10px; 
 }
 
+
 .branchDiv,
-.courtDiv,
+.findCourt-courtDiv,
 .dateDiv,
 .custom-time-picker {
-    width: 100%;
+    flex: 1; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -109,13 +119,14 @@ button {
 }
 
 .Btn {
-    width: 10%;
+    width: auto; /* Changed width to auto */
     background: var(--PrimaryColor);
     border: none;
     outline: none;
     border-radius: 3rem;
     cursor: pointer;
     min-width: 120px;
+    padding: 10px 20px; /* Added padding to make the button larger */
 }
 
 .Btn a {
@@ -156,86 +167,84 @@ button {
     font-weight: 500;
 }
 
-.courtList {
+.findCourt-courtList {
     
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 20px; 
-    width: 100%; 
-    justify-content: center; 
-    margin-top: 200px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 150%;
+    justify-content: center;
+    margin-top: 200px; 
 }
 
-
-
-.courtCard {
+.findCourt-courtCard {
     display: flex;
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 8px;
     background: var(--whiteColor);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 700px; 
+    width: 100%; 
+    max-width: 900px;
     white-space: nowrap;
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.courtImage img {
-    width: 400px; 
-    height: 250px;
+.findCourt-courtImage img {
+    width: 500px;
+    height: 300px;
     margin-right: 20px;
     border-radius: 8px;
 }
 
-.courtInfo {
-    flex: 1; 
-    
-    
+.findCourt-courtInfo {
+    flex: 1;
     white-space: nowrap;
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.courtInfo h2 {
+.findCourt-courtInfo h2 {
     margin: 0;
     font-size: 1.5em;
     color: var(--blackColor);
 }
 
-.courtInfo p {
+.findCourt-courtInfo p {
     margin: 5px 0;
     color: var(--textColor);
 }
 
-.bookBtn {
+.findCourt-bookBtn {
     align-self: flex-start;
-    padding: 15px 20px; 
+    padding: 15px 20px;
     background-color: var(--PrimaryColor);
     color: var(--whiteColor);
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
-    font-size: 16px; 
-    width: 100px;
+    font-size: 16px;
+    width: 150px;
+    margin-top: 60px;
+    margin-left: 178px
 }
 
 .bookBtn:hover {
     background-color: var(--HoverColor);
 }
 
-.homeText h1{
+.homeText h1 {
     margin-top: 40px;
     color: white;
 }
 
 .findcourt-Title {
     font-size: 50px;
-    
-  }
-  
- .findcourt-feedbackBox {
+}
+
+.findcourt-feedbackBox {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     padding: 20px;
@@ -243,16 +252,20 @@ button {
     border-radius: 8px;
     max-height: 750px;
     overflow-y: auto;
-    
+    width: 200%;
+    max-width: 1500px;
 }
 
-.findcourt-feedbackBox h2 {
+.findcourt-feedbackBox h1 {
     margin-bottom: 20px;
-    
+    color: #000;
+    text-align: center;
+    font-size: 40px;
 }
 
 .findcourt-feedbackGrid {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
     overflow-y: auto;
 }
@@ -271,14 +284,14 @@ button {
 }
 
 .findcourt-feedbackImage img {
-    max-width: 300px;
+    max-width: 400px;
     height: auto;
     border-radius: 8px;
 }
 
 .findcourt-feedbackInfo {
     text-align: left;
-    margin-left: 15px;
+    margin-left: 10px;
     max-width: 1000px;
     white-space: nowrap;
     overflow: hidden;
@@ -288,10 +301,26 @@ button {
 .findcourt-feedbackInfo p {
     color: #000;
     margin: 5px 0;
+    margin-left: 15px ;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+.findcourt-feedbackBox h2 {
+    margin-bottom: 20px;
+    color: #000;
+    margin-left: 15px;
+}
 
+.findcourt-feedbackBox .findcourt-user-info {
+    display: flex;
+    align-items: center;
+  }
 
+.findcourt-user-image{
+    width: 80px;
+}
+  
+
+  

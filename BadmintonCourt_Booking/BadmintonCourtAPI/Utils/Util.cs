@@ -1,7 +1,9 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
+using BadmintonCourtBusinessObjects.SupportEntities.Slot;
 using BadmintonCourtServices;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -17,7 +19,7 @@ namespace BadmintonCourtAPI.Utils
 
 		public static bool IsPasswordSecure(string password) => password != null ? new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password) : false;
 
-		public static string GenerateToken(string id, string lastName, string username, string roleName, IConfiguration config)
+		public static string GenerateToken(string id, string lastName, string username, string roleName, bool status, IConfiguration config)
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -34,7 +36,9 @@ namespace BadmintonCourtAPI.Utils
 				//new Claim(ClaimTypes.Surname, lastName),
 				new Claim("Lastname", lastName),
 				//new Claim(ClaimTypes.Role, roleName)
-				new Claim("Role", roleName)
+				new Claim("Role", roleName),
+
+				new Claim("Status", $"{status}"),
 			};
 			var token = new JwtSecurityToken(
 				issuer: config["Jwt:Issuer"],
@@ -65,6 +69,14 @@ namespace BadmintonCourtAPI.Utils
 		}
 
 		public static DateTime CustomizeDate(int period) => new DateTime(1900, 1, 1, period, 0, 0);
+
+		public static List<BookedSlotSchema> FormatSlotList(List<BookedSlot> slots)
+		{
+			List <BookedSlotSchema> result = new List<BookedSlotSchema>();
+			foreach (var slot in slots)
+				result.Add(new BookedSlotSchema { BookedSlotId = slot.SlotId, BookingId = slot.BookingId, Date = new DateOnly(slot.StartTime.Year, slot.StartTime.Month, slot.StartTime.Day), Start = slot.StartTime.Hour, End = slot.EndTime.Hour, CourtId = slot.CourtId });
+			return result;
+		}
 
 		public static bool ArePricesValid(double? min, double? max) => min < max;
 	}

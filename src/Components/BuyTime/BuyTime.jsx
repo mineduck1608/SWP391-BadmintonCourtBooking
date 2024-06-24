@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import './BuyTime.css'
 import { jwtDecode } from 'jwt-decode';
 
-//Need to fetch userID, bookingID and add new balance
-
 const BuyTime = () => {
   const [userID, setUserID] = useState('');
   const [remainingTime, setRemainingTime] = useState(0);
@@ -15,45 +13,43 @@ const BuyTime = () => {
   const validateAmount = () => {
     var temp = (document.getElementById('amount').value).toString()
     console.log(temp);
-    if (intRegex.test(temp)) {
-      console.log(true);
+    if (!Object.is(temp, undefined) && intRegex.test(temp)) {
       amount = parseInt(temp)
-      setValidAmount(true)
+      setValidAmount(amount > 0)
     }
     else
       setValidAmount(false)
   }
   const completeBooking = async () => {
-    try {
-      validateAmount()
-      let method = document.getElementById('method').value
-      var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
-        + `Method=${method}&`
-        + `Start=&`
-        + `End=&`
-        + `UserId=${userID}&`
-        + `Date=&`
-        + `CourtId=&`
-        + `Type=buyTime&`
-        + `NumMonth=&`
-        + `Amount=${amount * 1000}&`
-        + `DaysList=`, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
+    validateAmount()
+    if (validAmount) {
+      //Create a cookie
+      document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
+      try {
+        let method = document.getElementById('method').value
+        var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
+          + `Method=${method}&`
+          + `UserId=${userID}&`
+          + `Type=flexible&`
+          + `Amount=${amount}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        try {
+          var data = await (res.json())
+          window.location.replace(data['url'])
+          
         }
-      })
-      var data = await (res.json())
-      if (method === 'momo') handleMoMo(data)
-    }
-    catch (err) {
-      alert(err)
-    }
-  }
-  const handleMoMo = (data) => {
-    if (data['message'] === 'Success') {
-      var redirect = data['payUrl']
-      window.location.assign(redirect)
+        catch (err) {
+
+        }
+      }
+      catch (err) {
+        alert(err)
+      }
     }
   }
   //Get the userID
@@ -97,8 +93,8 @@ const BuyTime = () => {
           )}
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>
-            <option value='momo'>MoMo</option>
-            <option value='vnpay'>VnPay</option>
+            <option value={2}>MoMo</option>
+            <option value={1}>VnPay</option>
           </select>
           <div className='buyTime_centerDiv'>
             <button className='buyTime_btn' onClick={() => window.history.back()}>Cancel</button>

@@ -1,72 +1,112 @@
-.buyTime{
-    background-image: url('../../Assets/login.jpg');
-    background-repeat: no-repeat;
+/* Nền */
+.buyTime {
+    background: linear-gradient(to bottom right, #0072b1, #58a14e); 
     background-size: cover;
-    /* object-fit: fill; */
     height: 75cqh;
-}
-.buyTime_title {
-    display: flexbox;
-    text-align: center;
-}
-.buyTime_centerDiv{
     display: flex;
     justify-content: center;
-    margin: 1%;
+    align-items: center;
 }
+
+/* Tiêu đề */
+.buyTime_title {
+    text-align: center;
+    color: #000;
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 1em;
+}
+
+/* Hộp chính */
+.buyTime_bodyContainer {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    height: auto;
+    width: 80%;
+    max-width: 600px;
+    padding: 2em;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Bài viết */
+.buyTime_article {
+    display: block;
+    text-align: center;
+}
+
+/* Các đoạn văn */
+.buyTime_p {
+    color: #333;
+    font-weight: 600;
+    margin: 0.5em 0;
+    text-align: center;
+}
+
+/* Lỗi */
+.buyTime_err {
+    color: red;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 0.5em;
+}
+
+/* Chọn phương thức thanh toán */
+.buyTime_select {
+    width: 60%;
+    padding: 0.5em;
+    margin: 1em auto;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1em;
+}
+
+/* Ô nhập liệu */
+.buyTime_counter1 {
+    text-align: center;
+    width: 120px;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Trung tâm */
+.buyTime_centerDiv {
+    display: flex;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+/* Nút */
 .buyTime_btn {
-    padding: 1%;
-    margin: 1%;
-    background: hsl(26, 93%, 50%);
+    padding: 0.75em 1.5em;
+    margin: 0.5em;
+    background: #ff9900;
     outline: none;
     border-radius: 5px;
     cursor: pointer;
     color: #fff;
     font-weight: 700;
+    border: none;
+    transition: background 0.3s, transform 0.3s;
 }
+
 .buyTime_btn:hover {
-    background-color: hsl(26, 92%, 45%);
-    color: #fff;
+    background-color: #e68a00;
+    transform: translateY(-2px);
 }
-.buyTime_article{
+
+/* Nhỏ */
+@media (max-width: 600px) {
+    .buyTime_bodyContainer {
+        width: 90%;
+        padding: 1.5em;
+    }
     
-    box-shadow: -1px 1px 10px 5px #888888;
-    border-radius: 5px;
-    display: block;
-    position: relative;
-    width: 80%;
-    left: 10%;
-    height: 30cqh;
-    top: 5%;
-}
-.buyTime_bodyContainer{
-    /* border: black 5px solid; */
-    position: relative;
-    overflow: hidden;
-    border-radius: 5px;
-    top: 15cqh;
-    height: 45cqh;
-    width: 80%;
-    left: 10cqw;
-    background-color: #fff;
-}
-.buyTime_counter1{
-    text-align: center;
-    width: 100px;
-    border: 1px black solid;
-}
-.buyTime_p{
-    color: black;
-    text-align: center;
-    font-weight: 600;
-}
-.buyTime_err{
-    color: red;
-    text-align: center;
-    font-weight: 600;
-}
-.buyTime_select{
-    width: 50%;
-    left: 25%;
-    position: relative;
+    .buyTime_select,
+    .buyTime_counter1 {
+        width: 80%;
+    }
 }

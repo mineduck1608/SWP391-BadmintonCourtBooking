@@ -29,21 +29,28 @@ const Login = () => {
             sessionStorage.setItem('token', resp.token);
             const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
             const roleToken = decodedToken.Role; // Extract userId from the decoded token
+            const status = decodedToken.Status
             if (roleToken == "Customer") {
-              navigate('/home');
-              toast.success("Login successful!");
+              if (status == 'True') {
+                navigate('/home');
+                toast.success("Login successful!");
+              } else {
+                navigate('/signin');
+                toast.warning('Banned. Please contact admin.')
+              }
             }
             if (roleToken == "Admin") {
-              navigate('/admin');
-              toast.success("Login successful!");
+              if (status == 'True') {
+                navigate('/admin');
+                toast.success("Login successful!");
+              } else {
+                navigate('/signin');
+                toast.warning('Banned. Please contact admin.')
+              }
             }
-
-          } else {
-            toast.error('Invalid username or password.');
           }
         }).catch((err) => {
           toast.error('Login failed. Please try again.');
-          console.log(err);
         });
     } else {
       toast.error('Please fill in all fields.');

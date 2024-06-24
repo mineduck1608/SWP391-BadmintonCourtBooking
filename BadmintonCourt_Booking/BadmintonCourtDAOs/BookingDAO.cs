@@ -24,7 +24,7 @@ namespace BadmintonCourtDAOs
 
         public Booking GetBookingByBookingId(string id) => _dbContext.Bookings.FirstOrDefault(x => x.BookingId == id);
 
-        public Booking GetRecentAddedBooking() => _dbContext.Bookings.OrderBy(x => int.Parse(x.BookingId.Substring(1))).LastOrDefault();
+        public Booking GetRecentAddedBooking() => _dbContext.Bookings.AsEnumerable().OrderBy(x => int.Parse(x.BookingId.Substring(1))).LastOrDefault();
 
         public List<Booking> GetBookingsByUserId(string id) => _dbContext.Bookings.Where(x => x.UserId == id).ToList();
 

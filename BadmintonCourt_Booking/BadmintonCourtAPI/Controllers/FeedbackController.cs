@@ -53,7 +53,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (content.IsNullOrEmpty())
 				return BadRequest("Full fill your comment");
-			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rate = rate });
+			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rating = rate });
 			return Ok();
 		}
 
@@ -63,7 +63,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<IActionResult> UpdateFeedback(int rate, string content, string id)
 		{
 			Feedback feedback = _service.FeedbackService.GetFeedbackByFeedbackId(id);
-			feedback.Rate = int.Parse(rate.ToString());
+			feedback.Rating = int.Parse(rate.ToString());
 			if (!content.IsNullOrEmpty())
 				feedback.Content = content;
 			_service.FeedbackService.UpdateFeedback(feedback, id);

@@ -21,7 +21,9 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Court/GetAll")]
+		//[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<Court>>> GettAllCourts() => Ok(_service.CourtService.GetAllCourts().ToList());
+
 
 		[HttpGet]
 		[Route("Court/GetDeleted")]
@@ -33,6 +35,15 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<Court>> GetCourtById(string id) => Ok(_service.CourtService.GetCourtByCourtId(id));
 
 		[HttpGet]
+		[Route("Court/GetActive")]
+		public async Task<ActionResult<IEnumerable<Court>>> GetActiveCourts() => Ok(_service.CourtService.GetCourtsByStatus(true));
+
+		[HttpGet]
+		[Route("Court/GetByStatus")]
+		//[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsByStatus(bool status) => Ok(_service.CourtService.GetCourtsByStatus(status));
+
+		[HttpGet]
 		[Route("Court/GetByBranch")]
 		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsByBranch(string id) => Ok(_service.CourtService.GetCourtsByBranchId(id));
 
@@ -42,8 +53,8 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			try
 			{
-				float min = string.IsNullOrEmpty(txtMin) ? 0 : float.Parse(txtMin);
-				float max = string.IsNullOrEmpty(txtMax) ? float.MaxValue : float.Parse(txtMax);
+				double min = string.IsNullOrEmpty(txtMin) ? 0 : Double.Parse(txtMin);
+				double max = string.IsNullOrEmpty(txtMax) ? float.MaxValue : Double.Parse(txtMax);
 				bool status = Util.ArePricesValid(min, max);
 				if (status)
 					return Ok(_service.CourtService.GetCourtsByPriceInterval(min, max).ToList());
@@ -62,17 +73,17 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPost]
 		[Route("Court/Add")]
 		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> AddCourt(string courtImg, string branchId, float price, string description)
+		public async Task<IActionResult> AddCourt(string courtImg, string branchId, string description)
 		{
-			_service.CourtService.AddCourt(new Court { CourtId = "C" + (_service.CourtService.GetAllCourts().Count + 1).ToString("D3"), BranchId = branchId, CourtImg = courtImg, Price = price, CourtStatus = true, Description = description });
-			Slot primitive = _service.SlotService.GetSlotById("S1");
+			
+			_service.CourtService.AddCourt(new Court { CourtId = "C" + (_service.CourtService.GetAllCourts().Count + 1).ToString("D3"), BranchId = branchId, CourtImg = courtImg, Price = _service.CourtService.GetCourtByCourtId("C1").Price, CourtStatus = true, Description = description, CourtName = $"Court {_service.CourtService.GetCourtsByBranchId(branchId).Count + 1}"  });
 			return Ok();
 		}
 
 		[HttpPut]
 		[Route("Court/Update")]
 		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> UpdateCourt(string courtImg, float price, string description, string id, bool activeStatus)
+		public async Task<IActionResult> UpdateCourt(string courtImg, string description, string id, bool activeStatus)
 		{
 			try
 			{
@@ -82,11 +93,8 @@ namespace BadmintonCourtAPI.Controllers
 					tmp.CourtImg = courtImg;
 				if (!description.IsNullOrEmpty())
 					tmp.Description = description;
-				if (price != null)
-					if (Util.ArePricesValid(0, price))
-						tmp.Price = price;
 				_service.CourtService.UpdateCourt(tmp, id);
-				return Ok();
+				return Ok(new { msg = "Success" });
 			}
 			catch (Exception ex)
 			{

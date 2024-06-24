@@ -58,7 +58,10 @@
   width: calc(100% - 20px);
 }
 
-.managetimeslot-button-hover-black {
+.managetimeslot-button-hover-black1 {
+  margin-right: 10px;
+}
+.managetimeslot-button-hover-black2 {
   margin-right: 10px;
 }
 
@@ -241,6 +244,7 @@
   background-color: hsl(26, 93%, 50%);
 }
 
+
 .managetimeslot-button-hover-black-addslot {
   background-color: black;
   color: white;
@@ -276,3 +280,27 @@
 .time-select {
   text-align: center; /* Center the text in the dropdown */
 }
+.time-input-flexing {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px; /* Adjust the gap as needed */
+}
+
+.time-input-flexing .time-input {
+  flex: 1; /* Ensures each time input takes equal space */
+}
+.update-timeslot-flex{
+  display: flex;
+}
+.updatetimeslot-footer-flex {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0px; /* Adjust the gap for closer buttons */
+  margin-top: 20px; /* Add some margin to separate from the form */
+}
+
+.updatetimeslot-footer-flex button {
+  margin-left: 20px; /* Minimal space between buttons */
+  flex: none; /* Ensure buttons don't stretch */
+}
+

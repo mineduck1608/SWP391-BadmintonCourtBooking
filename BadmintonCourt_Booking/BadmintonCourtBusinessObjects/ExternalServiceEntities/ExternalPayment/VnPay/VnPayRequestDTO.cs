@@ -8,13 +8,10 @@ namespace BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.
 {
 	public class VnPayRequestDTO
 	{
-		public int UserId { get; set; }
+		public string UserId { get; set; }
 		public string Content { get; set; }
-		public double Amount { get; set; }
+		public float? Amount { get; set; }
 		public string OrderId { get; set; }
-		public string Type { get; set; }
-		public string DaysList { get; set; }
-		public string Interval { get; set; }
 		public DateTime Date { get; set; }
 	}
 }
