@@ -1,3 +1,5 @@
+/* viewCourtInfo.css */
+
 :root {
     --gold-color: #d4af37;
     --white-color: #fff;
@@ -336,6 +338,10 @@
     justify-content: center;
     margin: 16px 0;
     width: 100%;
+}
+
+.viewcourtinfo-body-courtId{
+    margin-left: 1.65%;
 }
 
 .legend-item {

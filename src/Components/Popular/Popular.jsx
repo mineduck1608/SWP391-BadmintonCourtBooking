@@ -56,19 +56,13 @@ const Popular = () => {
                                 <div className="destFooter black-text">
                                     <div className="number">{branch.branchName}</div>
                                     <div className="destText flex black-text">
-                                        <h6>Location: {branch.location}</h6>
+                                        <h6 className="popular-location">Location: {branch.location}</h6>
                                         <span className='flex'>
-                                            <span className="dot">
-                                                <BsDot className="icon" />
-                                            </span>
                                         </span>
                                     </div>
                                     <div className="destText flex black-text">
-                                        <h6>Phone: {branch.branchPhone}</h6>
+                                        <h6 className="popular-phone">Phone: {branch.branchPhone}</h6>
                                         <span className='flex'>
-                                            <span className="dot">
-                                                <BsDot className="icon" />
-                                            </span>
                                         </span>
                                     </div>
                                 </div>

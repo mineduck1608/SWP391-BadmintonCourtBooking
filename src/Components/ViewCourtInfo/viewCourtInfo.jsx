@@ -15,10 +15,11 @@ const ViewCourtInfo = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date()));
     const [currentHourIndex, setCurrentHourIndex] = useState(0);
+    const [bookingData, setBookingData] = useState([]); // State cho dữ liệu booking
     const maxVisibleHours = 5; // Số khung giờ hiển thị tối đa
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchInitialData = async () => {
             const branchUrl = 'http://localhost:5266/Branch/GetAll';
             const courtUrl = 'http://localhost:5266/Court/GetAll';
 
@@ -39,9 +40,6 @@ const ViewCourtInfo = () => {
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
 
-                console.log('Branch Data:', branchData);
-                console.log('Court Data:', courtData);
-
                 const mainCourtData = courtData[0];
                 const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
                 const recommendedCourtsData = courtData.filter(court => court.branchId === mainCourtData.branchId && court.courtId !== mainCourtData.courtId).slice(0, 2);
@@ -57,21 +55,44 @@ const ViewCourtInfo = () => {
             }
         };
 
-        fetchData();
+        fetchInitialData();
     }, []);
 
-    const handleBookCourt = (courtId) => {
-        console.log(`Booking court with ID: ${courtId}`);
-        alert(`Court No: ${courtId} booked successfully!`);
+    useEffect(() => {
+        if (selectedDate) {
+            fetchBookingData(selectedDate);
+        }
+    }, [selectedDate]);
+
+    const fetchBookingData = async (date) => {
+        const slotUrl = 'http://localhost:5266/Slot/GetAll';
+
+        try {
+            setLoading(true);
+            const response = await fetch(slotUrl);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch slot data: ${response.statusText}`);
+            }
+
+            const slotData = await response.json();
+
+            // Filter slot data based on the selected date
+            const filteredSlotData = slotData.filter(slot => {
+                const slotStartDate = new Date(slot.startTime);
+                return slotStartDate.toDateString() === date.toDateString();
+            });
+
+            setBookingData(filteredSlotData); // Update booking data
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleDateClick = (date) => {
-        if (selectedDate && selectedDate.toDateString() === date.toDateString()) {
-            setSelectedDate(null);
-        } else {
-            setSelectedDate(date);
-        }
-        console.log('Selected date:', date);
+        setSelectedDate(date);
     };
 
     const handlePrevWeek = () => {
@@ -88,6 +109,11 @@ const ViewCourtInfo = () => {
 
     const handleNextHour = () => {
         setCurrentHourIndex((prev) => Math.min(prev + 1, 24 - maxVisibleHours));
+    };
+
+    const handleBookCourt = (courtId) => {
+        console.log(`Booking court with ID: ${courtId}`);
+        alert(`Court No: ${courtId} booked successfully!`);
     };
 
     const generateWeekDates = (startOfWeek) => {
@@ -109,10 +135,24 @@ const ViewCourtInfo = () => {
         for (let i = startHour; i < startHour + maxVisibleHours; i++) {
             const hourStart = i % 24;
             const hourEnd = (i + 1) % 24;
+
+            // Determine status for the time slot based on bookingData
+            let status = 'available';
+            const matchingSlot = bookingData.find(slot => {
+                const slotStartTime = new Date(slot.startTime).getHours();
+                const slotEndTime = new Date(slot.endTime).getHours();
+                return slotStartTime <= hourStart && slotEndTime >= hourEnd;
+            });
+
+            if (matchingSlot) {
+                // Assuming slot status is included in bookingData
+                status = matchingSlot.bookingID ? 'booked' : 'available';
+            }
+
             hours.push({
                 start: hourStart.toString().padStart(2, '0') + ':00',
                 end: hourEnd.toString().padStart(2, '0') + ':00',
-                status: Math.random() > 0.5 ? 'available' : 'booked' // Randomly set as booked or available
+                status: status,
             });
         }
         return hours;
@@ -138,7 +178,7 @@ const ViewCourtInfo = () => {
                                     <p className='viewcourtinfo-des-p'>{mainCourt?.description}</p>
                                 </div>
                                 <div className='chooseTimeLine'>
-                                <div className="chooseDate">CHOOSE DATE</div>
+                                    <div className="chooseDate">CHOOSE DATE</div>
                                     <div className="date-slider-wrapper">
                                         <button className="arrow-left" onClick={handlePrevWeek}>
                                             <FaArrowLeft />
@@ -194,7 +234,7 @@ const ViewCourtInfo = () => {
                                             </div>
                                             <div className="legend-item">
                                                 <div className="legend-color maintenance"></div>
-                                                <div className="legend-text">maintenance</div>
+                                                <div className="legend-text">Maintenance</div>
                                             </div>
                                         </div>
                                     </div>
