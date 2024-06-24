@@ -15,40 +15,46 @@ const BookCourt = () => {
     const [validTimeRange, setValidTimeRange] = useState(false) //is booking time range valid (start < end)
     const [transferMethod, setTransferMethod] = useState('Momo') //momo, vnpay
     const [validBooking, setValidBooking] = useState(false) //is booking valid
-    const [numMonth, setNumMonth] = useState(''); //num of month
-    const [courtPrice, setCourtPrice] = useState(0) //court price
+    const [courtId, setCourtId] = useState('')
+    const [courtPrice, setCourtPrice] = useState(0)
+    const [amount, setAmount] = useState(0) //court price
     const apiUrl = "http://localhost:5266/"
 
     const fetchBranches = async () => {
-        await setBranches(b => [])
-        const branchData = await (
-            await fetch(`${apiUrl}Branch/GetAll`)
-        ).json()
-        for (let index = 0; index < branchData.length; index++) {
-            if ((branchData[index])["branchStatus"] === 1) {
-                setBranches(b => [...b, branchData[index]])
+        try {
+            await setBranches(b => [])
+            const branchData = await (
+                await fetch(`${apiUrl}Branch/GetAll`)
+            ).json()
+            for (let index = 0; index < branchData.length; index++) {
+                if ((branchData[index])["branchStatus"] === 1) {
+                    setBranches(b => [...b, branchData[index]])
+                }
             }
+        }
+        catch (err) {
+            //
         }
     }
     const fetchCourts = async () => {
-        var branchId = document.getElementById("branch").value
-        setCourts([])
-        const courtData = await (
-            await fetch(`${apiUrl}Court/GetByBranch?id=${branchId}`)
-        ).json()
-        for (let index = 0; index < courtData.length; index++) {
-            if ((courtData[index])["courtStatus"] === true) {
-                setCourts(c => [...c, courtData[index]])
+        try {
+            var branchId = document.getElementById("branch").value
+            setCourts([])
+            const courtData = await (
+                await fetch(`${apiUrl}Court/GetByBranch?id=${branchId}`)
+            ).json()
+            for (let index = 0; index < courtData.length; index++) {
+                if ((courtData[index])["courtStatus"] === true) {
+                    setCourts(c => [...c, courtData[index]])
+                }
             }
+        }
+        catch (err) {
+            //Toast: ko fetch dc branch
         }
     }
     useEffect(() => {
-        try {
-            fetchBranches()
-        }
-        catch (err) {
-            console.log(err)
-        }
+        fetchBranches()
         for (let i = 0; i <= 23; i++) {
             setTimeBound(t => [...t, i])
         }
@@ -73,7 +79,6 @@ const BookCourt = () => {
         setValidTimeRange(t1 < t2)
     }
     const validateBooking = async () => {
-        console.log("Running");
         setValidBooking(t => t || true);
         validateDate();
         validateTime();
@@ -113,7 +118,6 @@ const BookCourt = () => {
 
         var token = sessionStorage.getItem('token')
         if (!token) {
-            //alert('Please log in')
         } else {
             try {
                 var decodedToken = jwtDecode(token)
@@ -125,35 +129,42 @@ const BookCourt = () => {
         }
         return ''
     }
+    function calcAmount(bkType, price, start, end, month) {
+        var amount = price * (end - start)
+        if (bkType === 'fixed') amount *= 4 * month
+        return amount / 1000
+    }
+    function getPrice(courtId, startTime, endTime, monthNum){
+        
+    }
     const fetchApi = async () => {
         console.log('fetchBegin');
-        function calcAmount(bkType, price, start, end, month) {
-            var amount = price * (end - start)
-            if (bkType === 'fixed') amount *= 4 * month
-            return amount / 1000
-        }
         try {
             //Get slots in day
             console.log(bookingType + ", " + paymentType + ", " + transferMethod);
+            let t = document.getElementById('monthNum').value;
+            let monthNum = t == null ? -1 : t.value
+            let startTime = document.getElementById('time-start').value
+            let endTime = document.getElementById('time-end').value
             try {
-                // var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
-                //     + `Method=${method}&`
-                //     + `Start=${time_start}&`
-                //     + `End=${time_end}&`
-                //     + `UserId=${getFromJwt()}&`
-                //     + `Date=${bookedDate}&`
-                //     + `CourtId=${courtId}&`
-                //     + `Type=${bookingType}&`
-                //     + `NumMonth=${monthNum}&`
-                //     + `Amount=${amount}`,
-                //     {
-                //         method: 'post',
-                //         headers: {
-                //             'Content-Type': 'application/json'
-                //         }
-                //     })
-                // var data = await (res.json())
-                //window.location.assign(data['url'])
+                var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
+                    + `Method=${transferMethod}&`
+                    + `Start=${startTime}&`
+                    + `End=${endTime}&`
+                    + `UserId=${getFromJwt()}&`
+                    + `Date=${document.getElementById('datePicker').value}&`
+                    + `CourtId=${courtId}&`
+                    + `Type=${bookingType}&`
+                    + `NumMonth=${monthNum}&`
+                    + `Amount=${calcAmount(bookingType, getPrice(courtId, startTime, endTime, monthNum), startTime, endTime)}`,
+                    {
+                        method: 'post',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                var data = await (res.json())
+                window.location.assign(data['url'])
             }
             catch (err) {
 
@@ -190,6 +201,7 @@ const BookCourt = () => {
                         <label htmlFor="court">COURT:</label>
 
                         <select id="court" name="court" onChange={() => {
+                            setCourtId(c => document.getElementById('court').value)
                             validateBooking()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
@@ -288,7 +300,7 @@ const BookCourt = () => {
                         <span>Time balance</span>
                         {
                             //Banking
-                            paymentType === 'banking' &&
+                            paymentType === 'banking' && bookingType !== 'flexible' &&
                             <div id="bankingMethod">
                                 <input
                                     type='radio'

@@ -17,7 +17,7 @@ const Login = () => {
     const loginData = { username, password };
 
     if (validate()) {
-      fetch("http://localhost:5266/User/LoginAuth?username=" + username + '&password=' + password, {
+      fetch("https://localhost:7233/User/LoginAuth?username=" + username + '&password=' + password, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

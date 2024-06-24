@@ -6,8 +6,7 @@ const BuyTime = () => {
   const [userID, setUserID] = useState('');
   const [remainingTime, setRemainingTime] = useState(0);
   const [validAmount, setValidAmount] = useState(false)
-  const apiUrl = 'http://localhost:5266/'
-  const returnUrl = 'http://localhost:3000/home'
+  const apiUrl = 'https://localhost:7233/'
   const intRegex = /^(0{0,})[1-9]{1}[0-9]*$/
   var amount
   const validateAmount = () => {
@@ -30,8 +29,8 @@ const BuyTime = () => {
         var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
-          + `Type=buyTime&`
-          + `Amount=${amount * 1000}`,
+          + `Type=flexible&`
+          + `Amount=${amount}`,
           {
             method: 'post',
             headers: {
@@ -40,7 +39,7 @@ const BuyTime = () => {
           })
         try {
           var data = await (res.json())
-          //window.location.replace(data['url'])
+          window.location.replace(data['url'])
         }
         catch (err) {
 
