@@ -110,8 +110,21 @@
     margin: 50px 30px 0 30px;
 }
 
-.viewcourtinfo-othercourts h1 {
+.viewcourtinfo-othercourts-h1 {
     margin-bottom: 20px;
+}
+
+.viewcourtinfo-other-des-p{
+    margin-bottom: 3%;
+}
+
+.viewcourtinfo-other-des-h1{
+    font-size: 28.8px;
+    margin-left: 4.78%;
+}
+
+.other-court-button{
+    margin-left: 4.78%;
 }
 
 .viewcourtinfo-othercourts-content {
@@ -140,7 +153,7 @@
 
 .viewcourtinfo-other-img {
     margin-top: 5px;
-    width: 58%;
+    width: 50%;
     height: 290px;
     border-radius: 8px;
     box-shadow: var(--primary-shadow);
@@ -162,11 +175,11 @@
     text-overflow: ellipsis;
 }
 
+
 .viewcourtinfo-other-info h2,
 .viewcourtinfo-other-info p {
     color: var(--black-color);
     margin-left: 20px;
-    margin-bottom: 2px;
     max-width: 100%;
 }
 
@@ -299,7 +312,7 @@
 
 .chooseTimeLine {
     position: relative;
-    top: 35%;
+    top: 20%;
 }
 
 .court-timeline {
