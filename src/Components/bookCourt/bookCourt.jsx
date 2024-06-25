@@ -15,9 +15,8 @@ const BookCourt = () => {
     const [validTimeRange, setValidTimeRange] = useState(false) //is booking time range valid (start < end)
     const [transferMethod, setTransferMethod] = useState('Momo') //momo, vnpay
     const [validBooking, setValidBooking] = useState(false) //is booking valid
-    const [courtId, setCourtId] = useState('')
-    const [courtPrice, setCourtPrice] = useState(0)
-    const [amount, setAmount] = useState(0) //court price
+    const [courtInfo, setCourtInfo] = useState({})
+    const [isOccupied, setIsOccupied] = useState(true)
     const apiUrl = "https://localhost:7233/"
 
     const fetchBranches = async () => {
@@ -43,6 +42,7 @@ const BookCourt = () => {
             const courtData = await (
                 await fetch(`${apiUrl}Court/GetByBranch?id=${branchId}`)
             ).json()
+            console.log('done fetching courts');
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
                     setCourts(c => [...c, courtData[index]])
@@ -61,38 +61,61 @@ const BookCourt = () => {
         setCurDate(new Date())
     }, [])
     useEffect(() => {
-        validateBooking()
-    }, [validDate, validTimeRange])
+        async function checkAvailableSlot() {
+            let courtId = courtInfo['id']
+            if (validateDate() && validateTime()) {
+                var bookingDate = document.getElementById("datePicker").value.replace(/-/g, "/")
+                var t1 = parseInt(document.getElementById("time-start").value)
+                var t2 = parseInt(document.getElementById("time-end").value)
+                const res = await fetch(`${apiUrl}Slot/GetSLotCourtInDay?
+                    date=${bookingDate}&
+                    id=${courtId}`)
+                const data = await res.json()
+            }
+        }
+        try {
 
+        }
+        catch (err) {
+
+        }
+    }, [courtInfo])
+    const loadCourtInfo = async () => {
+        try {
+            const selectedCourt = document.getElementById("court").value;
+            const response = await fetch(`${apiUrl}Court/GetById?id=${selectedCourt}`);
+            const data = await response.json();
+            setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
+        } catch (error) {
+            console.error('Error fetching court data:', error);
+        }
+    }
 
     const validateDate = () => {
         var value = document.getElementById("datePicker").value.replace(/-/g, "/")
         var selectedDate = Date.parse(value)
         if (!Object.is(selectedDate, NaN)) {
             setValidDate(!(selectedDate < curDate))
+            return !(selectedDate < curDate)
         }
-        else { setValidDate(false) }
+        else {
+            setValidDate(false)
+            return false;
+        }
     }
     const validateTime = () => {
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
         setValidTimeRange(t1 < t2)
+        return t1 < t2
     }
     const validateBooking = async () => {
-        setValidBooking(t => t || true);
+        setValidBooking(t => true);
         validateDate();
         validateTime();
 
         try {
-            const selectedCourt = document.getElementById("court").value;
-            const response = await fetch(`${apiUrl}Court/GetById?id=${selectedCourt}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch court data');
-            }
-            const data = await response.json();
-            const courtActive = data["courtStatus"];
-            setValidBooking(t => t && courtActive);
-            setCourtPrice(data['price'])
+            setValidBooking(t => t && courtInfo['status']);
             return validBooking;
 
         } catch (error) {
@@ -132,17 +155,14 @@ const BookCourt = () => {
     function calcAmount(bkType, price, start, end, month) {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= 4 * month
-        return amount / 1000
-    }
-    function getPrice(courtId, startTime, endTime, monthNum){
-
+        return amount
     }
     const fetchApi = async () => {
         console.log('fetchBegin');
         try {
             //Get slots in day
             console.log(bookingType + ", " + paymentType + ", " + transferMethod);
-            let t = document.getElementById('monthNum').value;
+            let t = document.getElementById('monthNum');
             let monthNum = t == null ? -1 : t.value
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
@@ -153,10 +173,10 @@ const BookCourt = () => {
                     + `End=${endTime}&`
                     + `UserId=${getFromJwt()}&`
                     + `Date=${document.getElementById('datePicker').value}&`
-                    + `CourtId=${courtId}&`
+                    + `CourtId=${courtInfo['id']}&`
                     + `Type=${bookingType}&`
                     + `NumMonth=${monthNum}&`
-                    + `Amount=${calcAmount(bookingType, getPrice(courtId, startTime, endTime, monthNum), startTime, endTime)}`,
+                    + `Amount=${calcAmount(bookingType, courtInfo['price'], startTime, endTime)}`,
                     {
                         method: 'post',
                         headers: {
@@ -201,8 +221,7 @@ const BookCourt = () => {
                         <label htmlFor="court">COURT:</label>
 
                         <select id="court" name="court" onChange={() => {
-                            setCourtId(c => document.getElementById('court').value)
-                            validateBooking()
+                            loadCourtInfo()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
@@ -283,7 +302,7 @@ const BookCourt = () => {
                     }
 
                     <div className="bookcourt-status">
-                        <h2 className="notes">5. STATUS:</h2>
+                        <h2 className="notes">4. STATUS: </h2>
                         <label htmlFor="paymentType">Payment type</label>
                         <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
                             onChange={() => { setPaymentType(p => 'banking') }}

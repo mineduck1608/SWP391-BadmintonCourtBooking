@@ -20,7 +20,7 @@ export default function EditInfo() {
     phone: '',
     img: ''
   });
-
+  const apiUrl = 'https://localhost:7233/'
   const [img, setImg] = useState(null);
   const [imgPreview, setImgPreview] = useState('');
 
@@ -29,7 +29,7 @@ export default function EditInfo() {
   const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
 
   useEffect(() => {
-    fetch(`http://localhost:5266/UserDetail/GetAll`, { // Fetch all user details
+    fetch(`${apiUrl}UserDetail/GetAll`, { // Fetch all user details
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -53,7 +53,7 @@ export default function EditInfo() {
   }, [token]);
 
   const handleSave = () => {
-    fetch(`http://localhost:5266/User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}&img=${userInfo.img}`, {
+    fetch(`${apiUrl}User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}&img=${userInfo.img}`, {
       method: "PUT",
       headers: {
         'Content-Type': 'application/json'

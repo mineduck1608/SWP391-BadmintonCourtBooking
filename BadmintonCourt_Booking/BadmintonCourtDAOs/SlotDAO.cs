@@ -40,7 +40,7 @@ namespace BadmintonCourtDAOs
 		// TH2: Tra tình trạng sân trong 1 khoảng thời gian cụ thể trong cùng 1 ngày (xài để phục vụ nhu cầu đặt lịch theo tháng - +7 từng cục)
 		// KQ2: Trả về 1 list các slot đã đặt trong khoảng thời gian cụ thể cần tìm nhầm tiếp tục +7 nếu khoảng thời gian đó của sân đó đã bị đặt
 		// Note2: Start: 15h ngày x | End: 17h ngày x (X ở đây là ngày đầu tiên đặt sân - ngày đầu tiên chơi trong chuỗi 1, 2, 3 tháng | Vd: X là ngày 31/5/2024)
-		public List<BookedSlot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id) => _dbContext.BookedSlots.Where(x => x.StartTime >= start && x.EndTime <= end && x.CourtId == id).ToList();
+		public List<BookedSlot> GetA_CourtSlotsInTimeInterval(DateTime start, DateTime end, string id) => _dbContext.BookedSlots.Where(x => !(x.EndTime <= start || x.StartTime >= end) && x.CourtId == id).ToList();
 
 		// Trả về danh sách các ngày đặt theo tháng để user confirm r mới đặt
 		public List<BookedSlot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id)
