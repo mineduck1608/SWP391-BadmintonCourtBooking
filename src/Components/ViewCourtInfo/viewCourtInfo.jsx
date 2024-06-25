@@ -15,18 +15,21 @@ const ViewCourtInfo = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date()));
     const [currentHourIndex, setCurrentHourIndex] = useState(0);
+    const [slots, setSlots] = useState([]); // New state variable
     const maxVisibleHours = 5; // Số khung giờ hiển thị tối đa
 
     useEffect(() => {
         const fetchData = async () => {
             const branchUrl = 'https://localhost:7233/Branch/GetAll';
             const courtUrl = 'https://localhost:7233/Court/GetAll';
+            const slotUrl = 'https://localhost:7233/Slot/GetAll'; // New API
 
             try {
                 setLoading(true);
-                const [branchResponse, courtResponse] = await Promise.all([
+                const [branchResponse, courtResponse, slotResponse] = await Promise.all([
                     fetch(branchUrl),
                     fetch(courtUrl),
+                    fetch(slotUrl), // Fetching new API
                 ]);
 
                 if (!branchResponse.ok) {
@@ -35,12 +38,17 @@ const ViewCourtInfo = () => {
                 if (!courtResponse.ok) {
                     throw new Error(`Failed to fetch court data: ${courtResponse.statusText}`);
                 }
+                if (!slotResponse.ok) {
+                    throw new Error(`Failed to fetch slot data: ${slotResponse.statusText}`);
+                }
 
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
+                const slotData = await slotResponse.json(); // Parsing new API data
 
                 console.log('Branch Data:', branchData);
                 console.log('Court Data:', courtData);
+                console.log('Slot Data:', slotData); // Logging new API data
 
                 const mainCourtData = courtData[0];
                 const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
@@ -49,6 +57,7 @@ const ViewCourtInfo = () => {
                 setBranch(mainBranchData);
                 setMainCourt(mainCourtData);
                 setRecommendedCourts(recommendedCourtsData);
+                setSlots(slotData); // Store the slot data
 
             } catch (error) {
                 setError(error.message);
@@ -66,12 +75,8 @@ const ViewCourtInfo = () => {
     };
 
     const handleDateClick = (date) => {
-        if (selectedDate && selectedDate.toDateString() === date.toDateString()) {
-            setSelectedDate(null);
-        } else {
-            setSelectedDate(date);
-        }
-        console.log('Selected date:', date);
+        setSelectedDate(date);
+        setCurrentHourIndex(0); // Reset the hour index to the beginning
     };
 
     const handlePrevWeek = () => {
@@ -104,22 +109,29 @@ const ViewCourtInfo = () => {
         return dates;
     };
 
-    const generateHourTimeline = (startHour) => {
+    const generateHourTimeline = (startHour, date) => {
         const hours = [];
         for (let i = startHour; i < startHour + maxVisibleHours; i++) {
             const hourStart = i % 24;
             const hourEnd = (i + 1) % 24;
+            const isBooked = slots.some(slot => 
+                slot.courtId === mainCourt?.courtId &&
+                new Date(slot.date).toDateString() === new Date(date).toDateString() &&
+                slot.start === hourStart &&
+                slot.end === hourEnd
+            );
+
             hours.push({
                 start: hourStart.toString().padStart(2, '0') + ':00',
                 end: hourEnd.toString().padStart(2, '0') + ':00',
-                status: Math.random() > 0.5 ? 'available' : 'booked' // Randomly set as booked or available
+                status: isBooked ? 'booked' : 'available' // Mark as booked if the slot matches
             });
         }
         return hours;
     };
 
     const weekDates = generateWeekDates(currentWeekStart);
-    const hours = generateHourTimeline(currentHourIndex);
+    const hours = generateHourTimeline(currentHourIndex, selectedDate);
 
     return (
         <div className="viewcourtinfo">
@@ -194,7 +206,7 @@ const ViewCourtInfo = () => {
                                             </div>
                                             <div className="legend-item">
                                                 <div className="legend-color maintenance"></div>
-                                                <div className="legend-text">maintenance</div>
+                                                <div className="legend-text">Maintenance</div>
                                             </div>
                                         </div>
                                     </div>
