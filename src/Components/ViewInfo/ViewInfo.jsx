@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import { jwtDecode } from 'jwt-decode';
+import userImg from '../../Assets/user.jpg';
 
 export default function ViewInfo() {
   const [userInfo, setUserInfo] = useState({
@@ -43,8 +44,6 @@ export default function ViewInfo() {
       const matchingUser = data.find(user => user.userId == userIdToken);
       if (matchingUser) {
         setUserInfo(matchingUser);
-        console.log('Fetched user info:', matchingUser); // Log fetched user info
-        console.log('Image URL:', matchingUser.img); // Log the image URL
       }
     })
     .catch(error => console.error('Lỗi khi lấy thông tin người dùng:', error));
@@ -60,11 +59,10 @@ export default function ViewInfo() {
           <div className="profile-container1">
             <div className="profile-sidebar">
               <img 
-                src={userInfo.img || 'default-avatar.png'} // Use a default image if img is empty
+                src={userInfo.img || userImg} // Use a default image if img is empty
                 alt="User Avatar" 
                 className="profile-avatar" 
-                onError={(e) => e.target.src = 'default-avatar.png'} // Fallback if image fails to load
-                style={{ maxWidth: '100%', height: 'auto' }} // Ensure the image is responsive
+                onError={(e) => e.target.src = userImg} // Fallback if image fails to load
               />
             </div>
             <div className="profile-content">

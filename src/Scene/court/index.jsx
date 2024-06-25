@@ -83,14 +83,6 @@ const Court = () => {
     const handleViewInfo = (id) => {
         const court = data.find((court) => court.courtId === id);
         setSelectedCourt(court);
-        setFormData({
-            courtId: court.courtId,
-            courtImg: court.courtImg,
-            price: court.price,
-            courtStatus: court.courtStatus,
-            description: court.description,
-            branchName: court.branchName,
-        });
         setModalVisible(true);
     };
 
@@ -99,11 +91,11 @@ const Court = () => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value,
-        });
+        const { name, value } = e.target;
+        setSelectedCourt((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
 
     const handleAddInputChange = (e) => {
@@ -115,9 +107,10 @@ const Court = () => {
     };
 
     const handleSave = async () => {
-        const { courtId, courtImg, price, courtStatus, description, branchName } = formData;
+        const { courtId, courtImg, price, courtStatus, description, branchName } = selectedCourt;
+        console.log(selectedCourt)
         try {
-            const response = await fetch(`https://localhost:7233/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${courtId}&activeStatus=${courtStatus}`, {
+            const response = await fetch(`https://localhost:7233/Court/Update?courtImg=${selectedCourt.courtImg}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -172,25 +165,29 @@ const Court = () => {
         }
     };
 
-    const handleClick = async (e) => {
+    const handleClick = (e) => {
         e.preventDefault();
         if (!img) {
             toast.error('No image selected');
             return;
         }
         const imgRef = ref(imageDb, `files/${v4()}`);
-        try {
-            await uploadBytes(imgRef, img);
-            const url = await getDownloadURL(imgRef);
-            const encodedUrl = encodeURIComponent(url);
-            form.setFieldsValue({ courtImg: encodedUrl });
-            toast.success('Image uploaded successfully');
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            toast.error('Image upload failed');
-        }
+        uploadBytes(imgRef, img)
+            .then(() => getDownloadURL(imgRef))
+            .then(url => {
+                const encodedUrl = encodeURIComponent(url);
+                if (modalVisible) {
+                    setSelectedCourt(courtImg => ({ ...courtImg, courtImg: encodedUrl }));
+                } else {
+                    setNewCourtData(courtImg => ({ ...courtImg, courtImg: encodedUrl }));
+                }
+                toast.success('Image uploaded successfully');
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+                toast.error('Image upload failed');
+            });
     };
-
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -262,7 +259,7 @@ const Court = () => {
                     </Button>
                     <Button
                         variant="contained"
-                        style={{backgroundColor: '#b22222', color: 'white'}}
+                        style={{ backgroundColor: '#b22222', color: 'white' }}
                         onClick={() => handleDelete(params.row.id)}
                     >
                         Delete
@@ -347,17 +344,17 @@ const Court = () => {
                         <Button key="cancel" variant="contained" color="primary" onClick={() => setModalVisible(false)}>
                             Cancel
                         </Button>,
-                        <Button key="submit" variant="contained" color="secondary" onClick={handleSave} style={{marginLeft: 8}}>
+                        <Button key="submit" variant="contained" color="secondary" onClick={handleSave} style={{ marginLeft: 8 }}>
                             Save
                         </Button>
                     ]}
                 >
                     {selectedCourt ? (
-                        <Box>
+                        <Box component="form" noValidate autoComplete="off">
                             <TextField
                                 label="Court ID"
                                 name="courtId"
-                                value={formData.courtId}
+                                value={selectedCourt.courtId}
                                 InputProps={{
                                     readOnly: true,
                                 }}
@@ -368,22 +365,22 @@ const Court = () => {
                                 <TextField
                                     label="Image URL"
                                     name="courtImg"
-                                    value={formData.courtImg}    
+                                    value={selectedCourt.courtImg}
                                     InputProps={{
                                         readOnly: true,
-                                    }}                            
-                                    fullWidth    
+                                    }}
+                                    fullWidth
                                     margin="normal"
                                 />
                             </div>
                             <div className="uploaded-courtimage-upload">
-                            <input className="button-court-input" type="file" onChange={handleImageChange}/>
-                            <button className="button upload" onClick={handleClick}>Upload</button>
+                                <input className="button-court-input" type="file" onChange={handleImageChange} />
+                                <button className="button upload" onClick={handleClick}>Upload</button>
                             </div>
                             <TextField
                                 label="Price"
                                 name="price"
-                                value={formData.price}
+                                value={selectedCourt.price}
                                 onChange={handleInputChange}
                                 fullWidth
                                 margin="normal"
@@ -394,7 +391,7 @@ const Court = () => {
                                 <RadioGroup
                                     row
                                     name="courtStatus"
-                                    value={formData.courtStatus}
+                                    value={selectedCourt.courtStatus}
                                     onChange={handleInputChange}
                                 >
                                     <FormControlLabel value="true" control={<Radio />} label="True" />
@@ -404,7 +401,7 @@ const Court = () => {
                             <TextField
                                 label="Description"
                                 name="description"
-                                value={formData.description}
+                                value={selectedCourt.description}
                                 onChange={handleInputChange}
                                 fullWidth
                                 margin="normal"
@@ -412,7 +409,7 @@ const Court = () => {
                             <TextField
                                 label="Branch Name"
                                 name="branchName"
-                                value={formData.branchName}
+                                value={selectedCourt.branchName}
                                 InputProps={{
                                     readOnly: true,
                                 }}
@@ -424,6 +421,7 @@ const Court = () => {
                         <Spin />
                     )}
                 </Modal>
+
 
                 <Modal
                     title={<span style={{ fontSize: '32px' }}>Add Court</span>}

@@ -43,14 +43,17 @@ const Login = () => {
               if (status == 'True') {
                 navigate('/admin');
                 toast.success("Login successful!");
-              } else {
-                navigate('/signin');
-                toast.warning('Banned. Please contact admin.')
               }
             }
+          } else if(resp.msg == 'Temporaly locked'){
+            toast.warning("Please contact admin")
+          }
+           else {
+            toast.warning("Wrong username or password!")
           }
         }).catch((err) => {
           toast.error('Login failed. Please try again.');
+          console.log(err);
         });
     } else {
       toast.error('Please fill in all fields.');

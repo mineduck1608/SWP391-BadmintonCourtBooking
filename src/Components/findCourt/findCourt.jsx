@@ -82,10 +82,11 @@ const FindCourt = () => {
 
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
+        console.log(courtData)
 
         const courtsWithImages = courtData.map(court => ({
           ...court,
-          image: court.image || image2
+          image: court.courtImg
         }));
 
         setBranches(branchData);
