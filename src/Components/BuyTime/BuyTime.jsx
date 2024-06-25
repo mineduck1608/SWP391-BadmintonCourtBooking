@@ -14,7 +14,7 @@ const BuyTime = () => {
     console.log(temp);
     if (!Object.is(temp, undefined) && intRegex.test(temp)) {
       amount = parseInt(temp)
-      setValidAmount(amount >= 10)
+      setValidAmount(amount >= 10000)
     }
     else
       setValidAmount(false)
@@ -79,15 +79,14 @@ const BuyTime = () => {
   return (
     <div className='buyTime'>
       <div className='buyTime_bodyContainer'>
-        <h1 className='buyTime_title'>Buy more time for a flexible plan</h1>
+        <h1 className='buyTime_title'>Buy more flexible money</h1>
         <article className='buyTime_article'>
-          <p className='buyTime_p'>Remaining time: {remainingTime}</p>
-          <p className='buyTime_p'>Convert rate: 1.000đ = 1 coin</p>
+          <p className='buyTime_p'>Remaining money: {remainingTime}</p>
           <div className='buyTime_centerDiv'>
             <input className='buyTime_counter1' id='amount' type='number' min='10' onChange={() => validateAmount()} />
           </div>
           {!validAmount && (
-            <p className='buyTime_err'>Input a valid number of coins to buy!</p>
+            <p className='buyTime_err'>Input a valid number of money to buy!<br/>Min: 10.000VND</p>
           )}
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>

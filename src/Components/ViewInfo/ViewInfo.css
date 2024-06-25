@@ -54,12 +54,13 @@ html, body {
 }
 
 .profile-avatar {
-  width: 200px;
-  height: auto;
+  width: 250px; /* Đặt kích thước cụ thể cho hình tròn */
+  height: 250px;
   border-radius: 50%;
   object-fit: cover;
   margin-top: 120px;
   border: 2px solid #ccc;
+  overflow: hidden;
 }
 
 .profile-sidebar p {
