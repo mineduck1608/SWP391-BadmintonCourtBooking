@@ -31,6 +31,7 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpGet]
 		[Route("Slot/GetByDemand")]
 		//[Authorize(Roles = "Admin,Staff")]
+		
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByDemand(string? branchId, string? courtId, DateOnly? startDate, DateOnly? endDate)
 		{
 			DateTime start = startDate == null ? new DateTime(2000, 1, 1, 0, 0, 1) : new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day, 0, 0, 1);
@@ -65,8 +66,7 @@ namespace BadmintonCourtAPI.Controllers
 		//[Authorize]
 		public async Task<IActionResult> AddBookedSLot(string? date, int start, int end, string courtId, string userId)
 		{
-			BookedSlot primitive = _service.SlotService.GetSlotById("S1");
-			if (date.IsNullOrEmpty() || start >= end || courtId.IsNullOrEmpty() || start < primitive.StartTime.Hour || end > primitive.EndTime.Hour)
+			if (date.IsNullOrEmpty() || start >= end || courtId.IsNullOrEmpty() || start < Utils.Environment.StartHour || end > Utils.Environment.EndHour)
 				return BadRequest(new { msg = "Invalid time" });
 
 			string[] dateComponents = date.Split('-');
@@ -124,8 +124,7 @@ namespace BadmintonCourtAPI.Controllers
 		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateSlotByStaff(string date, int start, int end, string slotId, string courtId)
 		{
-			BookedSlot primitive = _service.SlotService.GetSlotById("S1");
-			if (date.IsNullOrEmpty() || start > end || courtId.IsNullOrEmpty() || start < primitive.StartTime.Hour || end > primitive.EndTime.Hour)
+			if (date.IsNullOrEmpty() || start > end || courtId.IsNullOrEmpty() || start < Utils.Environment.StartHour || end > Utils.Environment.EndHour)
 				return BadRequest(new { msg = "Invalid time" });
 
 			string[] dateComponents = date.Split('-');
@@ -267,8 +266,7 @@ namespace BadmintonCourtAPI.Controllers
 		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateSlotByUser(int? start, int? end, string? date, string userId, string courtId, string slotId, int? paymentMethod) // Khách đổi ý muốn thay đổi sân / thời gian / ....
 		{
-			BookedSlot primitive = _service.SlotService.GetSlotById("S1");
-			if (date.IsNullOrEmpty() || start > end || courtId.IsNullOrEmpty() || start < primitive.StartTime.Hour || end > primitive.EndTime.Hour)
+			if (date.IsNullOrEmpty() || start > end || courtId.IsNullOrEmpty() || start < Utils.Environment.StartHour || end > Utils.Environment.EndHour)
 				return BadRequest(new { msg = "Invalid time" });
 
 			string[] componentDate = date.Split('-');
@@ -415,13 +413,13 @@ namespace BadmintonCourtAPI.Controllers
 		//	// Giao dịch update đã cấn ra và còn chưa tới 10k để giao dịch trên vnpay - Ko thể giao dịch với số tiền nhỏ hơn 10k -> giao dịch full tiền của slot mới mà ko đc cấn từ balance giả định đã hoàn
 		//	else
 		//	{
-		//		user.Balance += (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
+		//		user.Balance += (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
 		//		if (booking.BookingType == 1) // 1 lần chơi -> Thay luôn giá trị đơn cũ thành đơn mới
 		//			booking.Amount = result.Amount / 1000;
 		//		//-----------------------------------------------------			
 		//		else if (booking.BookingType == 2) // Chơi tháng
 		//		{
-		//			booking.Amount -= (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
+		//			booking.Amount -= (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
 		//			booking.Amount += result.Amount / 1000; // Thêm giá trị của slot mới vào
 		//		}
 		//	}
@@ -434,8 +432,8 @@ namespace BadmintonCourtAPI.Controllers
 		//	//-----------------------------------------
 		//	// Update lại slot sau khi update booking hoàn tất
 		//	slot.CourtId = courtId;
-		//	slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
-		//	slot.EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
+		//	slot.StartHour = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
+		//	slot.EndHour = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
 		//	_service.SlotService.UpdateSlot(slot, slotId);
 		//	return Ok(new { msg = "Success" });
 		//}
@@ -545,13 +543,13 @@ namespace BadmintonCourtAPI.Controllers
 		//	// Ko  giao dịch với số tiền nhỏ hơn 10k -> giao dịch full tiền của slot mới mà ko đc cấn từ balance giả định đã hoàn
 		//	else
 		//	{
-		//		user.Balance += (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
+		//		user.Balance += (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
 		//		if (booking.BookingType == 1) // 1 lần chơi -> Thay luôn giá trị đơn cũ thành đơn mới
 		//			booking.Amount = double.Parse(result.Amount) / 1000;
 		//		//-----------------------------------------------------			
 		//		else if (booking.BookingType == 2) // Chơi tháng
 		//		{
-		//			booking.Amount -= (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
+		//			booking.Amount -= (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
 		//			booking.Amount += double.Parse(result.Amount) / 1000; // Thêm giá trị của slot mới vào
 		//		}
 		//	}
@@ -564,8 +562,8 @@ namespace BadmintonCourtAPI.Controllers
 		//	//-----------------------------------------
 		//	// Update lại slot sau khi update booking hoàn tất
 		//	slot.CourtId = courtId;
-		//	slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
-		//	slot.EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
+		//	slot.StartHour = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
+		//	slot.EndHour = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
 		//	_service.SlotService.UpdateSlot(slot, slotId);
 		//	return Ok(new { msg = "Success" });
 		//}

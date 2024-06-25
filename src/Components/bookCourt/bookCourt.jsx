@@ -163,7 +163,19 @@ const BookCourt = () => {
         }
         return ''
     }
-    const calcAmount = (bkType, price, start, end, month) => {
+    function handleCalcAmount() {
+        try {
+            let startTime = document.getElementById('time-start').value
+            let endTime = document.getElementById('time-end').value
+            let t = document.getElementById('monthNum');
+            let monthNum = t == null ? null : t.value
+            return calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
+        }
+        catch (err) {
+
+        }
+    }
+    function calcAmount(bkType, price, start, end, month) {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= 4 * month
         return amount
@@ -171,10 +183,10 @@ const BookCourt = () => {
     const fetchApi = async () => {
 
         try {
-            let t = document.getElementById('monthNum');
-            let monthNum = t == null ? null : t.value
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
+            let t = document.getElementById('monthNum');
+            let monthNum = t == null ? null : t.value
             try {
                 var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
                     + `Method=${transferMethod}&`
@@ -185,7 +197,7 @@ const BookCourt = () => {
                     + `CourtId=${courtInfo['id']}&`
                     + `Type=${bookingType}&`
                     + `NumMonth=${monthNum}&`
-                    + `Amount=${calcAmount(bookingType, courtInfo['price'], startTime, endTime)}`,
+                    + `Amount=${handleCalcAmount()}`,
                     {
                         method: 'post',
                         headers: {
@@ -230,6 +242,7 @@ const BookCourt = () => {
 
                         <select id="court" name="court" onChange={() => {
                             loadCourtInfo()
+                            handleCalcAmount()
                             checkAvailableSlot()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
@@ -280,7 +293,10 @@ const BookCourt = () => {
                     <div className="bookCourt-form-group4">
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
-                            if (validateTime()) checkAvailableSlot()
+                            if (validateTime()) {
+                                checkAvailableSlot()
+                                handleCalcAmount()
+                            }
                         }}>
                             <option value="" hidden>Select Time</option>
                             {
@@ -291,7 +307,10 @@ const BookCourt = () => {
                         </select>
                         <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => {
-                            if (validateTime()) checkAvailableSlot()
+                            if (validateTime()) {
+                                checkAvailableSlot()
+                                handleCalcAmount()
+                            }
                         }}>
                             <option value="" hidden>Select Time</option>
                             {
@@ -309,7 +328,10 @@ const BookCourt = () => {
                     <div className="bookCourt-form-group5">
                         <label htmlFor="day">Day: </label>
                         <input type="date" id="datePicker" onChange={() => {
-                            if (validateTime()) checkAvailableSlot()
+                            if (validateTime()) {
+                                checkAvailableSlot()
+                                handleCalcAmount()
+                            }
                         }} />
 
                     </div>
@@ -321,6 +343,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
+                        {handleCalcAmount()}
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
@@ -386,6 +409,7 @@ const BookCourt = () => {
             </div>
             <button type="submit" className="bookCourt-complete-booking-button"
                 onClick={() => {
+                    handleCalcAmount()
                     completeBooking()
                 }}
             >

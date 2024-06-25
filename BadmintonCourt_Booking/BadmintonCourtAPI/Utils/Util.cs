@@ -4,6 +4,7 @@ using BadmintonCourtServices;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -14,27 +15,26 @@ namespace BadmintonCourtAPI.Utils
 {
 	public class Util
 	{
-
-		public static bool IsPhoneFormatted(string phone) => phone != null ? new Regex(@"\d{10}").IsMatch(phone) : false ;
+		public static bool IsPhoneFormatted(string phone) => phone != null ? new Regex(@"\d{10}").IsMatch(phone) : false;
 
 		public static bool IsPasswordSecure(string password) => password != null ? new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}").IsMatch(password) : false;
 
-		public static string GenerateToken(string id, string lastName, string username, string roleName, bool status, IConfiguration config)
+		public static string GenerateToken(string id, string password, string username, string roleName, bool status, IConfiguration config)
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 			if (username.IsNullOrEmpty())
 				username = "";
-			if (lastName.IsNullOrEmpty())
-				lastName = "";
+			if (password.IsNullOrEmpty())
+				password = "";
 			var claims = new[]
 			{
 				new Claim("UserId", id.ToString()),
 				//new Claim(ClaimTypes.NameIdentifier, username),
-				
+		
 				new Claim("Username" , username),
 				//new Claim(ClaimTypes.Surname, lastName),
-				new Claim("Lastname", lastName),
+				new Claim("Password", password),
 				//new Claim(ClaimTypes.Role, roleName)
 				new Claim("Role", roleName),
 
@@ -72,7 +72,7 @@ namespace BadmintonCourtAPI.Utils
 
 		public static List<BookedSlotSchema> FormatSlotList(List<BookedSlot> slots)
 		{
-			List <BookedSlotSchema> result = new List<BookedSlotSchema>();
+			List<BookedSlotSchema> result = new List<BookedSlotSchema>();
 			foreach (var slot in slots)
 				result.Add(new BookedSlotSchema { BookedSlotId = slot.SlotId, BookingId = slot.BookingId, Date = new DateOnly(slot.StartTime.Year, slot.StartTime.Month, slot.StartTime.Day), Start = slot.StartTime.Hour, End = slot.EndTime.Hour, CourtId = slot.CourtId });
 			return result;

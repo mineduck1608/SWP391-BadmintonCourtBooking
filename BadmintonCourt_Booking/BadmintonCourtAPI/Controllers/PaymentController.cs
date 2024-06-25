@@ -21,8 +21,6 @@ namespace BadmintonCourtAPI.Controllers
 	{
 		private readonly BadmintonCourtService _service = null;
 		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
-		private const int StartHour = 7;
-		private const int EndHour = 23;
 		private const string flexibleBooking = "Flexible";
 		private const string playonceBooking = "One-time";
 		private const string fixedBooking = "Fixed";
@@ -176,6 +174,7 @@ namespace BadmintonCourtAPI.Controllers
 				case "playonce": type = playonceBooking; break;
 				case "buyTime": type = buyTime; break;
 			}
+			transactionDTO.Type = type;
 			sb.Append($"Type: {type}, ");
 			sb.Append($"User id: {userId}, ");
 			sb.Append($"Email: {_service.UserDetailService.GetUserDetailById(userId).Email}");
@@ -213,6 +212,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (!court.CourtStatus) return "Court inactive";
 			//Basic verification on date
 			if (bookingDate == null || start == null || end == null || start >= end) return "Time error";
+			if (start < 7 || end > 23) return "Outside allowed time";
 			int year = bookingDate.Value.Year;
 			int month = bookingDate.Value.Month;
 			int day = bookingDate.Value.Day;
@@ -386,7 +386,7 @@ namespace BadmintonCourtAPI.Controllers
 		//		else // Choi ngay`, choi 1 lan
 		//		{
 		//			_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 1, Amount = amount / 1000, UserId = userId, BookingDate = DateTime.Now });
-		//			_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
+		//			_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartHour = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndHour = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
 		//		}
 		//	}
 		//	//-------------------------------------------------------------
@@ -459,7 +459,7 @@ namespace BadmintonCourtAPI.Controllers
 		//		else // Choi ngay`, choi 1 lan
 		//		{
 		//			_service.BookingService.AddBooking(new Booking { BookingId = bookingId, BookingType = 1, Amount = amount / 1000, UserId = userId });
-		//			_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
+		//			_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartHour = new DateTime(date.Year, date.Month, date.Day, start, 0, 0), EndHour = new DateTime(date.Year, date.Month, date.Day, end, 0, 0) });
 		//		}
 		//	}
 		//	//-------------------------------------------------------------

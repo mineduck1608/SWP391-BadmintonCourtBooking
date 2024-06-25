@@ -94,6 +94,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
+using System.Diagnostics;
 using System.Text;
 
 namespace BadmintonCourtAPI
@@ -164,7 +165,6 @@ namespace BadmintonCourtAPI
 				endpoints.MapControllers();
 				endpoints.MapRazorPages();
 			});
-
 			app.Run();
 		}
 	}

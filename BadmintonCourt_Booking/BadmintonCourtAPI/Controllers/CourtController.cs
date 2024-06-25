@@ -73,10 +73,15 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPost]
 		[Route("Court/Add")]
 		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> AddCourt(string courtImg, string branchId, string description)
+		public async Task<IActionResult> AddCourt(string courtImg, string branchId, string price, string description)
 		{
-			
-			_service.CourtService.AddCourt(new Court { CourtId = "C" + (_service.CourtService.GetAllCourts().Count + 1).ToString("D3"), BranchId = branchId, CourtImg = courtImg, Price = _service.CourtService.GetCourtByCourtId("C1").Price, CourtStatus = true, Description = description, CourtName = $"Court {_service.CourtService.GetCourtsByBranchId(branchId).Count + 1}"  });
+			_service.CourtService.AddCourt(new Court { 
+				CourtId = "C" + (_service.CourtService.GetAllCourts().Count + 1).ToString("D3"), 
+				BranchId = branchId, CourtImg = courtImg, 
+				Price = float.Parse(price), 
+				CourtStatus = true, Description = description, 
+				CourtName = $"Court {_service.CourtService.GetCourtsByBranchId(branchId).Count + 1}"  
+			});
 			return Ok();
 		}
 

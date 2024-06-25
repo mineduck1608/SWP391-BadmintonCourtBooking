@@ -1301,3 +1301,7 @@ D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\D
 D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.pdb
 D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.genruntimeconfig.cache
 D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\ref\BadmintonCourtAPI.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\functionSettings.json
