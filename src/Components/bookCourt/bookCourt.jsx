@@ -55,31 +55,45 @@ const BookCourt = () => {
     }
     useEffect(() => {
         fetchBranches()
+        setTimeBound(t => [])
         for (let i = 0; i <= 23; i++) {
             setTimeBound(t => [...t, i])
         }
         setCurDate(new Date())
     }, [])
-    useEffect(() => {
-        async function checkAvailableSlot() {
-            let courtId = courtInfo['id']
-            if (validateDate() && validateTime()) {
-                var bookingDate = document.getElementById("datePicker").value.replace(/-/g, "/")
-                var t1 = parseInt(document.getElementById("time-start").value)
-                var t2 = parseInt(document.getElementById("time-end").value)
-                const res = await fetch(`${apiUrl}Slot/GetSLotCourtInDay?
-                    date=${bookingDate}&
-                    id=${courtId}`)
-                const data = await res.json()
-            }
-        }
-        try {
+    async function checkAvailableSlot() {
+        console.log("Check");
+        let courtId = courtInfo['id']
+        if (validateDate() && validateTime()) {
+            var bookingDate = document.getElementById("datePicker").value
+            var t1 = parseInt(document.getElementById("time-start").value)
+            var t2 = parseInt(document.getElementById("time-end").value)
 
+            let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
+            let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
+            console.log(startTime + ", " + endTime);
+            const res = await fetch(`${apiUrl}Slot/GetSlotCourtInInterval?`
+                + `startTime=${startTime}&`
+                + `endTime=${endTime}&`
+                + `id=${courtId}`, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            const data = await res.json()
+            setIsOccupied(data.length > 0)
+            return (data.length > 0)
+        }
+    }
+    useEffect(() => {
+        try {
+            checkAvailableSlot()
         }
         catch (err) {
 
         }
-    }, [courtInfo])
+    }, [courtInfo, validTimeRange, validDate])
     const loadCourtInfo = async () => {
         try {
             const selectedCourt = document.getElementById("court").value;
@@ -222,6 +236,7 @@ const BookCourt = () => {
 
                         <select id="court" name="court" onChange={() => {
                             loadCourtInfo()
+                            checkAvailableSlot()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
@@ -267,7 +282,9 @@ const BookCourt = () => {
                     <h2 className="notes">3. TIME AND DATE</h2>
                     <div className="bookCourt-form-group4">
                         <label className="text" htmlFor="time-start">Time:</label>
-                        <select id="time-start" name="time-start" onChange={() => validateTime()}>
+                        <select id="time-start" name="time-start" onChange={() => {
+                            if (validateTime()) checkAvailableSlot()
+                        }}>
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
@@ -276,7 +293,9 @@ const BookCourt = () => {
                             }
                         </select>
                         <span className="text">to</span>
-                        <select id="time-end" name="time-end" onChange={() => validateTime()}>
+                        <select id="time-end" name="time-end" onChange={() => {
+                            if (validateTime()) checkAvailableSlot()
+                        }}>
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
@@ -292,7 +311,9 @@ const BookCourt = () => {
                     }
                     <div className="bookCourt-form-group5">
                         <label htmlFor="day">Day: </label>
-                        <input type="date" id="datePicker" onChange={() => validateDate()} />
+                        <input type="date" id="datePicker" onChange={() => {
+                            if (validateTime()) checkAvailableSlot()
+                        }} />
 
                     </div>
                     {
@@ -302,7 +323,7 @@ const BookCourt = () => {
                     }
 
                     <div className="bookcourt-status">
-                        <h2 className="notes">4. STATUS: </h2>
+                        <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
                         <label htmlFor="paymentType">Payment type</label>
                         <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
                             onChange={() => { setPaymentType(p => 'banking') }}
