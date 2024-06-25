@@ -42,7 +42,6 @@ const BookCourt = () => {
             const courtData = await (
                 await fetch(`${apiUrl}Court/GetByBranch?id=${branchId}`)
             ).json()
-            console.log('done fetching courts');
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
                     setCourts(c => [...c, courtData[index]])
@@ -61,8 +60,8 @@ const BookCourt = () => {
         }
         setCurDate(new Date())
     }, [])
-    async function checkAvailableSlot() {
-        console.log("Check");
+    const checkAvailableSlot = async () => {
+
         let courtId = courtInfo['id']
         if (validateDate() && validateTime()) {
             var bookingDate = document.getElementById("datePicker").value
@@ -71,7 +70,6 @@ const BookCourt = () => {
 
             let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
             let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
-            console.log(startTime + ", " + endTime);
             const res = await fetch(`${apiUrl}Slot/GetSlotCourtInInterval?`
                 + `startTime=${startTime}&`
                 + `endTime=${endTime}&`
@@ -101,7 +99,7 @@ const BookCourt = () => {
             const data = await response.json();
             setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
         } catch (error) {
-            console.error('Error fetching court data:', error);
+
         }
     }
 
@@ -123,36 +121,35 @@ const BookCourt = () => {
         setValidTimeRange(t1 < t2)
         return t1 < t2
     }
-    const validateBooking = async () => {
+    const validateBooking = () => {
         setValidBooking(t => true);
         validateDate();
         validateTime();
 
         try {
-            setValidBooking(t => t && courtInfo['status']);
+            setValidBooking(t => t && courtInfo['status'] && !isOccupied);
             return validBooking;
 
         } catch (error) {
-            console.error('Error fetching court data:', error);
+
             setValidBooking(false);
             return false;
         }
     };
 
     const completeBooking = async () => {
-        console.log("Complete booking");
+
         try {
-            const result = await validateBooking();
+            const result = validateBooking();
             if (result) {
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
                 fetchApi()
             }
         } catch (error) {
-            console.error('Error validating booking:', error);
+
         }
     };
     const getFromJwt = () => {
-
         var token = sessionStorage.getItem('token')
         if (!token) {
         } else {
@@ -161,23 +158,21 @@ const BookCourt = () => {
                 return decodedToken['UserId']
             }
             catch (err) {
-                console.log(err)
+
             }
         }
         return ''
     }
-    function calcAmount(bkType, price, start, end, month) {
+    const calcAmount = (bkType, price, start, end, month) => {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= 4 * month
         return amount
     }
     const fetchApi = async () => {
-        console.log('fetchBegin');
+
         try {
-            //Get slots in day
-            console.log(bookingType + ", " + paymentType + ", " + transferMethod);
             let t = document.getElementById('monthNum');
-            let monthNum = t == null ? -1 : t.value
+            let monthNum = t == null ? null : t.value
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
             try {
@@ -205,7 +200,6 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            console.log(err)
         }
     }
 
@@ -254,7 +248,10 @@ const BookCourt = () => {
                     <div className="bookCourt-radio-group">
                         <div className="bookCourt-form-group1">
                             <input className="inputradio" type="radio" id="fixed-time" name="booking-type"
-                                value="fixed-time" onChange={() => setBookingType('fixed')}
+                                value="fixed-time" onChange={() => {
+                                    setBookingType('fixed')
+                                    setPaymentType('banking')
+                                }}
                                 checked={bookingType === 'fixed'}
                             />
                             <label htmlFor="fixed-time">Fixed Time (reserves at the specified time for the entire months)</label>
@@ -325,22 +322,30 @@ const BookCourt = () => {
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
                         <label htmlFor="paymentType">Payment type</label>
-                        <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
-                            onChange={() => { setPaymentType(p => 'banking') }}
-                            checked={paymentType === 'banking'}
-                        />
-                        <span className="bookCourt_span">Banking</span>
-                        <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
-                            onChange={() => {
-                                setBookingType(p => 'flexible');
-                                setPaymentType(p => '')
-                            }}
-                            checked={bookingType === 'flexible'}
-                        />
-                        <span>Time balance</span>
+                        <div className='inlineDiv'>
+                            <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
+                                onChange={() => { setPaymentType(p => 'banking') }}
+                                checked={paymentType === 'banking'}
+                            />
+                            <span>Banking</span>
+                        </div>
+                        {
+                            bookingType === 'playonce' &&
+                            (
+                                <div className='inlineDiv'>
+                                    <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
+                                        onChange={() => {
+                                            setPaymentType(p => 'flexible')
+                                        }}
+                                        checked={paymentType === 'flexible'}
+                                    />
+                                    <span>Time balance</span>
+                                </div>
+                            )
+                        }
                         {
                             //Banking
-                            paymentType === 'banking' && bookingType !== 'flexible' &&
+                            paymentType === 'banking' &&
                             <div id="bankingMethod">
                                 <input
                                     type='radio'
