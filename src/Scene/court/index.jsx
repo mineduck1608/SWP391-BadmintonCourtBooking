@@ -44,8 +44,8 @@ const Court = () => {
         const fetchData = async () => {
             try {
                 const [courtResponse, branchResponse] = await Promise.all([
-                    fetch('http://localhost:5266/Court/GetAll'),
-                    fetch('http://localhost:5266/Branch/GetAll')
+                    fetch('https://localhost:7233/Court/GetAll'),
+                    fetch('https://localhost:7233/Branch/GetAll')
                 ]);
 
                 if (!courtResponse.ok || !branchResponse.ok) {
@@ -117,7 +117,7 @@ const Court = () => {
     const handleSave = async () => {
         const { courtId, courtImg, price, courtStatus, description, branchName } = formData;
         try {
-            const response = await fetch(`http://localhost:5266/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${courtId}&activeStatus=${courtStatus}`, {
+            const response = await fetch(`https://localhost:7233/Court/Update?courtImg=${courtImg}&price=${price}&description=${description}&id=${courtId}&activeStatus=${courtStatus}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ const Court = () => {
     const handleAddCourt = async () => {
         const { courtImg, branchId, price, description } = newCourtData;
         try {
-            const response = await fetch(`http://localhost:5266/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
+            const response = await fetch(`https://localhost:7233/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

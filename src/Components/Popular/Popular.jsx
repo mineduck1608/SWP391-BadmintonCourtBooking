@@ -9,7 +9,7 @@ const Popular = () => {
     const token = sessionStorage.getItem('token');
 
     useEffect(() => {
-        fetch("http://localhost:5266/Branch/GetAll", {
+        fetch("https://localhost:7233/Branch/GetAll", {
             method: "GET",
             headers: {
                 'Authorization': `Bearer ${token}`,  // Attach token to Authorization header

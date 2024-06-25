@@ -25,7 +25,7 @@ export default function ViewInfo() {
     const decodedToken = jwtDecode(token); // Giải mã JWT token để lấy thông tin người dùng
     const userIdToken = decodedToken.UserId; // Trích xuất userId từ token đã giải mã
 
-    fetch(`http://localhost:5266/UserDetail/GetAll`, { // Lấy tất cả thông tin người dùng
+    fetch(`https://localhost:7233/UserDetail/GetAll`, { // Lấy tất cả thông tin người dùng
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,

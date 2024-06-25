@@ -20,7 +20,7 @@ const UserTable = () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5266/Payment/GetAll`, {
+                const response = await fetch(`https://localhost:7233/Payment/GetAll`, {
                     method: "GET",
                     headers: {
                         'Authorization': `Bearer ${token}`,

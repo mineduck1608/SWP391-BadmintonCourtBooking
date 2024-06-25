@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import Header from "../Header/header";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
@@ -16,23 +15,21 @@ const ViewCourtInfo = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date()));
     const [currentHourIndex, setCurrentHourIndex] = useState(0);
-    const [bookingData, setBookingData] = useState([]); // State cho dữ liệu booking
+    const [slots, setSlots] = useState([]); // New state variable
     const maxVisibleHours = 5; // Số khung giờ hiển thị tối đa
 
-    const location = useLocation();
-    const params = new URLSearchParams(location.search);
-    const courtId = params.get('courtId'); 
-
     useEffect(() => {
-        const fetchInitialData = async () => {
-            const branchUrl = 'http://localhost:5266/Branch/GetAll';
-            const courtUrl = 'http://localhost:5266/Court/GetAll';
+        const fetchData = async () => {
+            const branchUrl = 'https://localhost:7233/Branch/GetAll';
+            const courtUrl = 'https://localhost:7233/Court/GetAll';
+            const slotUrl = 'https://localhost:7233/Slot/GetAll'; // New API
 
             try {
                 setLoading(true);
-                const [branchResponse, courtResponse] = await Promise.all([
+                const [branchResponse, courtResponse, slotResponse] = await Promise.all([
                     fetch(branchUrl),
                     fetch(courtUrl),
+                    fetch(slotUrl), // Fetching new API
                 ]);
 
                 if (!branchResponse.ok) {
@@ -41,17 +38,26 @@ const ViewCourtInfo = () => {
                 if (!courtResponse.ok) {
                     throw new Error(`Failed to fetch court data: ${courtResponse.statusText}`);
                 }
+                if (!slotResponse.ok) {
+                    throw new Error(`Failed to fetch slot data: ${slotResponse.statusText}`);
+                }
 
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
+                const slotData = await slotResponse.json(); // Parsing new API data
 
-                const mainCourtData = courtData.find(court => court.courtId === courtId);
+                console.log('Branch Data:', branchData);
+                console.log('Court Data:', courtData);
+                console.log('Slot Data:', slotData); // Logging new API data
+
+                const mainCourtData = courtData[0];
                 const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
                 const recommendedCourtsData = courtData.filter(court => court.branchId === mainCourtData.branchId && court.courtId !== mainCourtData.courtId).slice(0, 2);
 
                 setBranch(mainBranchData);
                 setMainCourt(mainCourtData);
                 setRecommendedCourts(recommendedCourtsData);
+                setSlots(slotData); // Store the slot data
 
             } catch (error) {
                 setError(error.message);
@@ -60,44 +66,17 @@ const ViewCourtInfo = () => {
             }
         };
 
-        fetchInitialData();
-    }, [courtId]); 
+        fetchData();
+    }, []);
 
-    useEffect(() => {
-        if (selectedDate) {
-            fetchBookingData(selectedDate);
-        }
-    }, [selectedDate]);
-
-    const fetchBookingData = async (date) => {
-        const slotUrl = 'http://localhost:5266/Slot/GetAll';
-
-        try {
-            setLoading(true);
-            const response = await fetch(slotUrl);
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch slot data: ${response.statusText}`);
-            }
-
-            const slotData = await response.json();
-
-            // Filter slot data based on the selected date
-            const filteredSlotData = slotData.filter(slot => {
-                const slotStartDate = new Date(slot.startTime);
-                return slotStartDate.toDateString() === date.toDateString();
-            });
-
-            setBookingData(filteredSlotData); // Update booking data
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
+    const handleBookCourt = (courtId) => {
+        console.log(`Booking court with ID: ${courtId}`);
+        alert(`Court No: ${courtId} booked successfully!`);
     };
 
     const handleDateClick = (date) => {
         setSelectedDate(date);
+        setCurrentHourIndex(0); // Reset the hour index to the beginning
     };
 
     const handlePrevWeek = () => {
@@ -116,11 +95,6 @@ const ViewCourtInfo = () => {
         setCurrentHourIndex((prev) => Math.min(prev + 1, 24 - maxVisibleHours));
     };
 
-    const handleBookCourt = (courtId) => {
-        console.log(`Booking court with ID: ${courtId}`);
-        alert(`Court No: ${courtId} booked successfully!`);
-    };
-
     const generateWeekDates = (startOfWeek) => {
         const dates = [];
         for (let i = 0; i < 7; i++) {
@@ -135,36 +109,29 @@ const ViewCourtInfo = () => {
         return dates;
     };
 
-    const generateHourTimeline = (startHour) => {
+    const generateHourTimeline = (startHour, date) => {
         const hours = [];
         for (let i = startHour; i < startHour + maxVisibleHours; i++) {
             const hourStart = i % 24;
             const hourEnd = (i + 1) % 24;
-
-            // Determine status for the time slot based on bookingData
-            let status = 'available';
-            const matchingSlot = bookingData.find(slot => {
-                const slotStartTime = new Date(slot.startTime).getHours();
-                const slotEndTime = new Date(slot.endTime).getHours();
-                return slotStartTime <= hourStart && slotEndTime >= hourEnd;
-            });
-
-            if (matchingSlot) {
-                // Assuming slot status is included in bookingData
-                status = matchingSlot.bookingID ? 'booked' : 'available';
-            }
+            const isBooked = slots.some(slot => 
+                slot.courtId === mainCourt?.courtId &&
+                new Date(slot.date).toDateString() === new Date(date).toDateString() &&
+                slot.start === hourStart &&
+                slot.end === hourEnd
+            );
 
             hours.push({
                 start: hourStart.toString().padStart(2, '0') + ':00',
                 end: hourEnd.toString().padStart(2, '0') + ':00',
-                status: status,
+                status: isBooked ? 'booked' : 'available' // Mark as booked if the slot matches
             });
         }
         return hours;
     };
 
     const weekDates = generateWeekDates(currentWeekStart);
-    const hours = generateHourTimeline(currentHourIndex);
+    const hours = generateHourTimeline(currentHourIndex, selectedDate);
 
     return (
         <div className="viewcourtinfo">
@@ -257,7 +224,7 @@ const ViewCourtInfo = () => {
                         </div>
                     </div>
                     <div className="viewcourtinfo-othercourts">
-                        <h1>OTHER COURTS</h1>
+                        <h1 className='viewcourtinfo-othercourts-h1'>OTHER COURTS</h1>
                         <div className="viewcourtinfo-othercourts-content">
                             {recommendedCourts.map((court, index) => (
                                 <div key={index} className="viewcourtinfo-other-pic">
@@ -269,8 +236,8 @@ const ViewCourtInfo = () => {
                                         <p>Branch: {branch?.branchName}</p>
                                         <p>Status: FREE</p>
                                         <div className="viewcourtinfo-other-des">
-                                            <h1>Description:</h1>
-                                            <p>{court.description}</p>
+                                            <h1 className='viewcourtinfo-other-des-h1'>Description:</h1>
+                                            <p className='viewcourtinfo-other-des-p'>{court.description}</p>
                                         </div>
                                         <div className="other-court-button">
                                             <button className='viewCourt' onClick={() => handleBookCourt(court.courtId)}>Book</button>
@@ -285,6 +252,6 @@ const ViewCourtInfo = () => {
             <Footer />
         </div>
     );
-};
+}
 
 export default ViewCourtInfo;

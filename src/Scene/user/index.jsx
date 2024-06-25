@@ -65,7 +65,7 @@ const User = () => {
     const userData = formState;
 
     // Gửi yêu cầu cập nhật cho bảng User
-    fetch(`http://localhost:5266/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance, {
+    fetch(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -107,7 +107,7 @@ const User = () => {
     };
   
     // Send a POST request to the API endpoint to add the new user
-    fetch(`http://localhost:5266/User/Add?UserName=` + newUser.username + "&Password=" + newUser.password + "&FirstName=" + newUser.firstName + "&LastName=" + newUser.lastName + "&Branch=" + newUser.branch + "&RoleId=" + newUser.role + "&Email=" + newUser.email + "&Phone=" + newUser.phone, {
+    fetch(`https://localhost:7233/User/Add?UserName=` + newUser.username + "&Password=" + newUser.password + "&FirstName=" + newUser.firstName + "&LastName=" + newUser.lastName + "&Branch=" + newUser.branch + "&RoleId=" + newUser.role + "&Email=" + newUser.email + "&Phone=" + newUser.phone, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -154,28 +154,28 @@ const User = () => {
     const fetchData = async () => {
       try {
         const [userDetailsRes, rolesRes, usersRes, branchesRes] = await Promise.all([
-          fetch(`http://localhost:5266/UserDetail/GetAll`, {
+          fetch(`https://localhost:7233/UserDetail/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(`http://localhost:5266/Role/GetAll`, {
+          fetch(`https://localhost:7233/Role/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(`http://localhost:5266/User/GetAll`, {
+          fetch(`https://localhost:7233/User/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(`http://localhost:5266/Branch/GetAll`, {
+          fetch(`https://localhost:7233/Branch/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -240,7 +240,7 @@ const User = () => {
   }, [token]);
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:5266/User/Delete?id=${id}`, {
+    fetch(`https://localhost:7233/User/Delete?id=${id}`, {
       method: "DELETE",
       headers: {
         'Authorization': `Bearer ${token}`,

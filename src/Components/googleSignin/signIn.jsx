@@ -13,7 +13,7 @@ const SignIn = () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
     e.preventDefault();
-    fetch("http://localhost:5266/User/ExternalLogAuth?token=" + result.user.getIdToken(), {
+    fetch("https://localhost:7233/User/ExternalLogAuth?token=" + result.user.getIdToken(), {
         method: "POST",
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(result.user.getIdToken()),

@@ -29,7 +29,7 @@ export default function EditInfo() {
   const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
 
   useEffect(() => {
-    fetch(`${apiUrl}UserDetail/GetAll`, { // Fetch all user details
+    fetch(`https://localhost:7233/UserDetail/GetAll`, { // Fetch all user details
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -53,7 +53,7 @@ export default function EditInfo() {
   }, [token]);
 
   const handleSave = () => {
-    fetch(`${apiUrl}User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}&img=${userInfo.img}`, {
+    fetch(`https://localhost:7233/User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}&img=${userInfo.img}`, {
       method: "PUT",
       headers: {
         'Content-Type': 'application/json'

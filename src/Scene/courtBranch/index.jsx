@@ -33,13 +33,13 @@ const Branch = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const branchResponse = await fetch('http://localhost:5266/Branch/GetAll');
+        const branchResponse = await fetch('https://localhost:7233/Branch/GetAll');
         if (!branchResponse.ok) {
           throw new Error('Failed to fetch branch data');
         }
         const branchData = await branchResponse.json();
 
-        const feedbackResponse = await fetch('http://localhost:5266/Feedback/GetAll');
+        const feedbackResponse = await fetch('https://localhost:7233/Feedback/GetAll');
         if (!feedbackResponse.ok) {
           throw new Error('Failed to fetch feedback data');
         }
@@ -102,7 +102,7 @@ const Branch = () => {
     const { location, branchImg, branchName, branchPhone, branchStatus, branchId } = selectedBranch;
     const statusValue = branchStatus ? 1 : 0; // Convert boolean to 1 or 0
     try {
-      const response = await fetch(`http://localhost:5266/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}`, {
+      const response = await fetch(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}`, {
         method: 'PUT',
       });
 
@@ -124,7 +124,7 @@ const Branch = () => {
   const handleAddBranch = async () => {
     const { location, branchImg, branchName, branchPhone } = newBranch;
     try {
-      const response = await fetch(`http://localhost:5266/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}`, {
+      const response = await fetch(`https://localhost:7233/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
