@@ -371,7 +371,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        <span><h3>{amount}</h3></span>
+                        <span>Price: <h3>{amount}</h3></span>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'

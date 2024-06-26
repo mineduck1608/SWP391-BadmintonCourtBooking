@@ -26,7 +26,7 @@ const BuyTime = () => {
       document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
       try {
         let method = document.getElementById('method').value
-        var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
+        var res = await fetch(`${apiUrl}/Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
           + `Type=buyTime&`
