@@ -34,7 +34,7 @@ namespace BadmintonCourtServices
 			_vnPayLib.AddRequestData("vnp_Version", VnPayLib.VERSION);
 			_vnPayLib.AddRequestData("vnp_Command", "pay");
 			_vnPayLib.AddRequestData("vnp_TmnCode", _config["VnPay:TmnCode"]);
-			_vnPayLib.AddRequestData("vnp_Amount", (vnPayRequestDTO.Amount).ToString());
+			_vnPayLib.AddRequestData("vnp_Amount", (vnPayRequestDTO.Amount * 100).ToString());
 			//Số tiền thanh toán. Số tiền không 
 			//mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Để gửi số tiền thanh toán là 100,000 VND
 			//(một trăm nghìn VNĐ) thì merchant cần nhân thêm 100 lần(khử phần thập phân), sau đó gửi sang VNPAY

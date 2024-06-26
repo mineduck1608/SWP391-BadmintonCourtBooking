@@ -1,42 +1,60 @@
 .pay-success-background{
     background: linear-gradient(to bottom right, #0072b1, #58a14e);
-    background-size: cover;
-    height: 61cqh;
+    height: 61vh;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-.pay-success {
+    color: #333; /* Darker text for better readability */
+  }
+  
+  .pay-success-paymentresult {
+    background-color: #fff; /* Pure white background for the content box */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for 3D effect */
+    width: 90%; /* Responsive width */
+    max-width: 500px; /* Maximum width */
+    padding: 20px;
     text-align: center;
-    padding: 50px;
-    background-color: rgba(249, 249, 249, 0.9);
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    max-width: 600px;
-    margin: 50px auto;
   }
   
-  .pay-success h1 {
-    color: #4CAF50;
+  .pay-success-container-paymentresult h1 {
+    color: #4CAF50; /* Green color for a successful heading */
+    margin-bottom: 10px;
   }
   
-  .pay-success p {
-    font-size: 18px;
-    margin: 20px 0;
-  }
-  
-  .pay-success button {
-    padding: 10px 20px;
+  .pay-success-container-paymentresult p {
     font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .pay-success-container-paymentresult button {
+    background-color: #4CAF50; /* Green button */
     color: white;
-    background-color: #4CAF50;
     border: none;
     border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 18px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
   }
   
-  .pay-success button:hover {
-    background-color: #45a049;
+  .pay-success-container-paymentresult button:hover {
+    background-color: #388e3c; /* Darker green on hover */
   }
   
+  /* Styles for failure case */
+  .failure {
+    background: linear-gradient(to top right, #e53935, #ef9a9a); /* Red gradient for failure */
+  }
+  
+  .failure h1 {
+    color: #e53935; /* Red color for failure heading */
+  }
+  
+  .failure button {
+    background-color: #e53935; /* Red button for failures */
+  }
+  
+  .failure button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+  }
