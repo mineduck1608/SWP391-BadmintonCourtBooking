@@ -71,7 +71,7 @@
     display: flex;
     flex-direction: row;
     box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
-    margin-top: 10px; 
+    margin-top: 10px;
 }
 
 
@@ -79,7 +79,7 @@
 .findCourt-courtDiv,
 .dateDiv,
 .custom-time-picker {
-    flex: 1; 
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -144,13 +144,13 @@ button {
 }
 
 .findCourt-courtList {
-    
+
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     width: 150%;
     justify-content: center;
-    margin-top: 200px; 
+    margin-top: 200px;
 }
 
 .findCourt-courtCard {
@@ -160,7 +160,7 @@ button {
     border-radius: 8px;
     background: var(--whiteColor);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 100%; 
+    width: 100%;
     max-width: 900px;
     white-space: nowrap;
     overflow: hidden;
@@ -190,6 +190,10 @@ button {
 .findCourt-courtInfo p {
     margin: 5px 0;
     color: var(--textColor);
+    word-wrap: break-word;
+    /* Ensures text wraps to the next line */
+    white-space: pre-wrap;
+    /* Preserves whitespace and wraps text */
 }
 
 .findCourt-bookBtn {
@@ -277,7 +281,7 @@ button {
 .findcourt-feedbackInfo p {
     color: #000;
     margin: 5px 0;
-    margin-left: 15px ;
+    margin-left: 15px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -292,11 +296,8 @@ button {
 .findcourt-feedbackBox .findcourt-user-info {
     display: flex;
     align-items: center;
-  }
+}
 
-.findcourt-user-image{
+.findcourt-user-image {
     width: 80px;
 }
-  
-
-  
