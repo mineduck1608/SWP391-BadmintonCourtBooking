@@ -238,7 +238,9 @@ const BookCourt = () => {
         catch (err) {
         }
     }
-
+    const formatPrice = (n) => {
+        var rs = ''
+    }
     return (
         <div className="bookCourt-container">
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
@@ -371,7 +373,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        <span>Price: <h3>{amount}</h3></span>
+                        <span>Price: <span className='priceSpan'>{amount}</span></span>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
