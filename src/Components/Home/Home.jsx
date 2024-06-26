@@ -16,7 +16,7 @@ const Home = () => {
                     </p>
 
                     <button className='btn'>
-                        <Link to={'./findCourt'}>Book Now!</Link>
+                        <Link to={'/findCourt'}>Book Now!</Link>
                     </button>
                 </div>
 

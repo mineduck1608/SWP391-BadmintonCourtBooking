@@ -300,4 +300,12 @@ button {
 
 .findcourt-user-image {
     width: 80px;
+    height: 80px; /* Ensure the height is the same as the width to make a perfect circle */
+    border-radius: 50%;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    display: block;
+}
+.stars {
+    color: #ffcc00; /* Gold color for stars */
+    font-size: 20px; /* Adjust size as needed */
 }

@@ -82,7 +82,6 @@ const FindCourt = () => {
 
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
-        console.log(courtData)
 
         const courtsWithImages = courtData.map(court => ({
           ...court,
@@ -106,12 +105,14 @@ const FindCourt = () => {
     const fetchFeedback = async () => {
       const feedbackUrl = 'https://localhost:7233/Feedback/GetAll';
       const userUrl = 'https://localhost:7233/User/GetAll';
+      const userDetailsUrl = 'https://localhost:7233/UserDetail/GetAll';
 
       setLoadingFeedback(true);
       try {
-        const [feedbackResponse, userResponse] = await Promise.all([
+        const [feedbackResponse, userResponse, userDetailsResponse] = await Promise.all([
           fetch(feedbackUrl),
-          fetch(userUrl)
+          fetch(userUrl),
+          fetch(userDetailsUrl)
         ]);
 
         if (!feedbackResponse.ok) {
@@ -120,14 +121,25 @@ const FindCourt = () => {
         if (!userResponse.ok) {
           throw new Error(`Failed to fetch user data: ${userResponse.statusText}`);
         }
+        if (!userDetailsResponse.ok) {
+          throw new Error(`Failed to fetch user details: ${userDetailsResponse.statusText}`);
+        }
 
         const feedbackData = await feedbackResponse.json();
         const userData = await userResponse.json();
+        const userDetailsData = await userDetailsResponse.json();
 
-        const feedbackWithUserDetails = feedbackData.map(fb => ({
-          ...fb,
-          user: userData.find(user => user.userId === fb.userId)
-        }));
+        const feedbackWithUserDetails = feedbackData.map(fb => {
+          const user = userData.find(user => user.userId === fb.userId);
+          const userDetails = userDetailsData.find(detail => detail.userId === fb.userId);
+          return {
+            ...fb,
+            user: {
+              ...user,
+              image: userDetails ? userDetails.img : null
+            }
+          };
+        });
 
         setFeedback(feedbackWithUserDetails);
         setUsers(userData);
@@ -143,6 +155,16 @@ const FindCourt = () => {
 
   const handleBook = (courtId) => {
     navigate(`/viewCourtInfo?courtId=${courtId}`);
+  };
+
+  const renderStars = (rating) => {
+    const fullStar = '★';
+    const emptyStar = '☆';
+    return (
+      <span className="stars">
+        {fullStar.repeat(rating) + emptyStar.repeat(5 - rating)}
+      </span>
+    );
   };
 
   return (
@@ -166,7 +188,7 @@ const FindCourt = () => {
                       onChange={handleBranchChange}
                       value={selectedBranch}
                     >
-                      <option value="">Select Branch</option>
+                      <option value="">All</option>
                       {branches.map((branch) => (
                         <option key={branch.branchId} value={branch.branchId}>
                           {branch.branchName}
@@ -181,7 +203,7 @@ const FindCourt = () => {
                       onChange={handleCourtChange}
                       value={selectedCourt}
                     >
-                      <option value="">Court Number</option>
+                      <option value="">All</option>
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
@@ -202,7 +224,7 @@ const FindCourt = () => {
                   return (
                     <div className="findCourt-courtCard" key={court.courtId}>
                       <div className="findCourt-courtImage">
-                      <img src={court.image || image2} alt={`Court ${court.courtId}`} />
+                        <img src={court.image || image2} alt={`Court ${court.courtId}`} />
                       </div>
                       <div className="findCourt-courtInfo">
                         <h2>Court Name: {court.courtName}</h2>
@@ -223,16 +245,16 @@ const FindCourt = () => {
                 {errorFeedback && <p>{errorFeedback}</p>}
                 <div className="findcourt-feedbackGrid">
                   {filteredFeedback.map((fb) => {
-                    const user = users.find(user => user.userId === fb.userId);
+                    const user = fb.user;
                     return (
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
                         <div className="findcourt-feedbackInfo">
                           <div className="findcourt-user-info">
-                            <img src={user ? user.userImage || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
+                            <img src={user ? user.image || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
                             <p><strong>{user ? user.userName : 'Anonymous'}</strong></p>
                           </div>
                           <p>{fb.content}</p>
-                          <p>Rating: {fb.rating}/5</p>
+                          <p>Rating: <span className="stars">{renderStars(fb.rating)}</span></p>
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                         </div>
                       </div>
