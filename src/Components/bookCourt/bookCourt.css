@@ -226,7 +226,6 @@ select {
 #nowrap{
   white-space: nowrap;
 }
-/*--------------------Changed from here---------------------------------*/
 .inputradioRight2 {
   display: flexbox;
   width: 10%;
@@ -272,4 +271,7 @@ select {
 
 .bookCourt_span.selected::after {
   display: block;
+}
+.priceSpan{
+  font-weight: 600;
 }
