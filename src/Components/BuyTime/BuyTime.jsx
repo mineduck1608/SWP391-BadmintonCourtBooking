@@ -6,7 +6,7 @@ const BuyTime = () => {
   const [userID, setUserID] = useState('');
   const [remainingTime, setRemainingTime] = useState(0);
   const [validAmount, setValidAmount] = useState(false)
-  const apiUrl = 'https://localhost:7233/'
+  const apiUrl = 'https://localhost:7233'
   const intRegex = /^(0{0,})[1-9]{1}[0-9]*$/
   var amount
   const validateAmount = () => {
@@ -29,7 +29,7 @@ const BuyTime = () => {
         var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
-          + `Type=flexible&`
+          + `Type=buyTime&`
           + `Amount=${amount}`,
           {
             method: 'POST',
@@ -60,7 +60,7 @@ const BuyTime = () => {
         try {
           var decodedToken = jwtDecode(token)
           setUserID(u => decodedToken.UserId)
-          var res = await fetch(`${apiUrl}User/GetById?id=${decodedToken.UserId}`)
+          var res = await fetch(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`)
           var data = await res.json()
           if (decodedToken.UserId !== data['userId']) {
             throw new Error('Authorize failed')

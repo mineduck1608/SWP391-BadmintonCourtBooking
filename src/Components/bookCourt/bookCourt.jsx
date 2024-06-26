@@ -17,7 +17,8 @@ const BookCourt = () => {
     const [validBooking, setValidBooking] = useState(false) //is booking valid
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
-    const apiUrl = "https://localhost:7233/"
+    const [amount, setAmount] = useState(0)
+    const apiUrl = "https://localhost:7233"
 
     const fetchBranches = async () => {
         try {
@@ -70,7 +71,8 @@ const BookCourt = () => {
 
             let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
             let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
-            const res = await fetch(`${apiUrl}Slot/GetSlotCourtInInterval?`
+            
+            const res = await fetch(`${apiUrl}/Slot/GetSlotCourtInInterval?`
                 + `startTime=${startTime}&`
                 + `endTime=${endTime}&`
                 + `id=${courtId}`, {
@@ -172,12 +174,13 @@ const BookCourt = () => {
             return calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
         }
         catch (err) {
-
+            return -1
         }
     }
     function calcAmount(bkType, price, start, end, month) {
         var amount = price * (end - start)
-        if (bkType === 'fixed') amount *= 4 * month
+        if (bkType === 'fixed') amount *= (4 * month)
+        setAmount(a => amount)
         return amount
     }
     const fetchApi = async () => {
@@ -187,17 +190,25 @@ const BookCourt = () => {
             let endTime = document.getElementById('time-end').value
             let t = document.getElementById('monthNum');
             let monthNum = t == null ? null : t.value
-            try {
-                var res = await fetch(`${apiUrl}Booking/TransactionProcess?`
+            let date = document.getElementById('datePicker').value
+            const urlTransfer = `${apiUrl}/Booking/TransactionProcess?`
                     + `Method=${transferMethod}&`
                     + `Start=${startTime}&`
                     + `End=${endTime}&`
                     + `UserId=${getFromJwt()}&`
-                    + `Date=${document.getElementById('datePicker').value}&`
+                    + `Date=${date}&`
                     + `CourtId=${courtInfo['id']}&`
                     + `Type=${bookingType}&`
                     + `NumMonth=${monthNum}&`
-                    + `Amount=${handleCalcAmount()}`,
+                    + `Amount=${handleCalcAmount()}`
+            const urlFlexible = `${apiUrl}/Slot/BookingByBalance?`
+            + `date=${date}&`
+            + `start=${startTime}&`
+            + `end=${endTime}&`
+            + `courtId=${courtInfo['id']}&`
+            + `userId=${getFromJwt()}`
+            try {
+                var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
                     {
                         method: 'post',
                         headers: {
@@ -343,7 +354,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        {handleCalcAmount()}
+                        {amount}
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
@@ -409,7 +420,6 @@ const BookCourt = () => {
             </div>
             <button type="submit" className="bookCourt-complete-booking-button"
                 onClick={() => {
-                    handleCalcAmount()
                     completeBooking()
                 }}
             >

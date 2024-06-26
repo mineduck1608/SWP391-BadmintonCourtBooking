@@ -207,7 +207,7 @@ namespace BadmintonCourtAPI.Controllers
 			var detail = _service.UserDetailService.GetUserDetailById(userId);
 			if (detail == null) return "Detail error";
 			//court exist and is active?
-			if (courtId == null) return "Court error";
+			if (courtId == null) return "Court not found";
 			var court = _service.CourtService.GetCourtByCourtId(courtId);
 			if (!court.CourtStatus) return "Court inactive";
 			//Basic verification on date
