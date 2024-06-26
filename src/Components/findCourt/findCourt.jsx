@@ -104,7 +104,7 @@ const FindCourt = () => {
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      const feedbackUrl = 'https://localhost:7233/Feedback/GetAll'; 
+      const feedbackUrl = 'https://localhost:7233/Feedback/GetAll';
       const userUrl = 'https://localhost:7233/User/GetAll';
 
       setLoadingFeedback(true);
@@ -186,9 +186,9 @@ const FindCourt = () => {
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
                           <option key={court.courtId} value={court.courtId}>
-                            {court.courtId}
+                            {court.courtName}
                           </option>
-                      ))}
+                        ))}
                     </select>
                   </div>
                 </div>
@@ -197,22 +197,24 @@ const FindCourt = () => {
               <div className="findCourt-courtList">
                 {loading && <p>Loading...</p>}
                 {error && <p>{error}</p>}
-                {filteredCourts.map((court) => (
-                  <div className="findCourt-courtCard" key={court.courtId}>
-                    <div className="findCourt-courtImage">
-                      <img src={court.image} alt={`Court ${court.courtId}`} />
+                {filteredCourts.map((court) => {
+                  const branch = branches.find(branch => branch.branchId === court.branchId);
+                  return (
+                    <div className="findCourt-courtCard" key={court.courtId}>
+                      <div className="findCourt-courtImage">
+                      <img src={court.image || image2} alt={`Court ${court.courtId}`} />
+                      </div>
+                      <div className="findCourt-courtInfo">
+                        <h2>Court Name: {court.courtName}</h2>
+                        <p>Branch: {branch ? branch.branchName : 'Unknown Branch'}</p>
+                        <p>Address: {branch ? branch.location : 'Unknown Address'}</p>
+                        <p>Price: {court.price}</p>
+                        <p>Description: {court.description}</p>
+                        <button className="findCourt-bookBtn" onClick={() => handleBook(court.courtId)}>Book</button>
+                      </div>
                     </div>
-                    <div className="findCourt-courtInfo">
-                      <h2>Court No: {court.courtId}</h2>
-                      <p>Address: {court.address}</p>
-                      <p>Time: {court.time}</p>
-                      <p>Price: {court.price}</p>
-                      <p>Description: {court.description}</p>
-                      <p>Rating: {court.rating}/5</p>
-                      <button className="findCourt-bookBtn" onClick={() => handleBook(court.courtId)}>Book</button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="findcourt-feedbackBox">
