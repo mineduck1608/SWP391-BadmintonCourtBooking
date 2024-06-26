@@ -140,7 +140,7 @@ const ViewCourtInfo = () => {
                 <div className="background">
                     <div className="viewcourtinfo-body">
                         <div className="viewcourtinfo-body-pic">
-                            <img className="viewcourtinfo-img" src={image2} alt="" />
+                            <img className="viewcourtinfo-img" src={mainCourt?.courtImg || image2} alt="" />
                             <div className="viewcourtinfo-body-courtId-des">
                                 <div className="viewcourtinfo-body-courtId">
                                     <h1>Court Name: {mainCourt?.courtName}</h1>
@@ -217,9 +217,8 @@ const ViewCourtInfo = () => {
                         <div className="viewcourtinfo-info-status">
                             <div className="viewcourtinfo-info">
                                 <p className='viewcourt-title'>Address: {branch?.location}</p>
-                                <p className='viewcourt-title'>Time: 9:00 AM - 9:00 PM</p>
                                 <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
-                                <p className='viewcourt-title'>Status: FREE</p>
+                                <p className='viewcourt-title'>Price: {mainCourt?.price}</p>
                                 
                             </div>
                         </div>
@@ -233,9 +232,8 @@ const ViewCourtInfo = () => {
                                     <div className="viewcourtinfo-other-info">
                                         <h2>Court Name: {court.courtName}</h2>
                                         <p>Address: {branch?.location}</p>
-                                        <p>Time: 9:00 AM - 9:00 PM</p>
                                         <p>Branch: {branch?.branchName}</p>
-                                        <p>Status: FREE</p>
+                                        <p>Price: {mainCourt?.price}</p>
                                         <div className="viewcourtinfo-other-des">
                                             <h1 className='viewcourtinfo-other-des-h1'>Description:</h1>
                                             <p className='viewcourtinfo-other-des-p'>{court.description}</p>

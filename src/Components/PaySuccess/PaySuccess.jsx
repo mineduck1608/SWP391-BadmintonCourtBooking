@@ -1,48 +1,53 @@
 import React, { useEffect, useState } from 'react'
 import './PaySuccess.css'
+
 const PaySuccess = () => {
-  //0 = fetching, 1 = ok, -1 = fail
   const [success, setSuccess] = useState(0)
-  
+
   useEffect(() => {
     async function saveToDB() {
       const queryStr = window.location.search
       const urlParams = new URLSearchParams(queryStr)
-      alert(urlParams.get('msg'))
-      // var bankResult = queryStr.indexOf("orderInfo") === -1 ? "MomoResult" : "PaymentResult"
-      // const resp = await fetch(`${apiUrl}Payment/${bankResult}${queryStr}`)
-      // if (resp.ok) {
-      //   alert('Good!')
-      // }
-      // else {
-      //   alert('Oops')
-      // }
-      // window.location.replace('/home')
+      const msg = urlParams.get('msg')
     }
     saveToDB()
-    //Find the token
     let token = getCookie('token')
     sessionStorage.setItem('token', token)
     document.cookie = 'x='
-    alert('You\'ll be redirected to main page!')
   }, [])
+
+  const handleConfirm = () => {
+    alert("You'll be redirected to the main page!")
+    window.location.replace('/home') // Change '/home' to your desired redirect URL
+  }
+
   return (
-    <div>Thank you for using our services</div>
+    <div className='pay-success-background'>
+      <div className="pay-success">
+        <h1>Thank You for Your Purchase!</h1>
+        <p>Your transaction has been successfully completed.</p>
+        {success === 1 && <p>Payment was successful!</p>}
+        {success === -1 && <p>There was an issue with your payment. Please try again.</p>}
+        <button onClick={handleConfirm}>Go to Home Page</button>
+      </div>
+    </div>
   )
+
   function getCookie(cname) {
-    let name = cname + '=';
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
+    let name = cname + '='
+    let decodedCookie = decodeURIComponent(document.cookie)
+    let ca = decodedCookie.split(';')
     for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
+      let c = ca[i]
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1)
       }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length)
       }
     }
-    return "";
+    return ""
   }
 }
+
 export default PaySuccess

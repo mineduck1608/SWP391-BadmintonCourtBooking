@@ -1,0 +1,42 @@
+.pay-success-background{
+    background: linear-gradient(to bottom right, #0072b1, #58a14e);
+    background-size: cover;
+    height: 61cqh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.pay-success {
+    text-align: center;
+    padding: 50px;
+    background-color: rgba(249, 249, 249, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-width: 600px;
+    margin: 50px auto;
+  }
+  
+  .pay-success h1 {
+    color: #4CAF50;
+  }
+  
+  .pay-success p {
+    font-size: 18px;
+    margin: 20px 0;
+  }
+  
+  .pay-success button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pay-success button:hover {
+    background-color: #45a049;
+  }
+  

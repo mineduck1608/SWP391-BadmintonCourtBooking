@@ -32,7 +32,7 @@ const BuyTime = () => {
           + `Type=flexible&`
           + `Amount=${amount}`,
           {
-            method: 'post',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             }
@@ -83,7 +83,7 @@ const BuyTime = () => {
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining money: {remainingTime}</p>
           <div className='buyTime_centerDiv'>
-            <input className='buyTime_counter1' id='amount' type='number' min='10' onChange={() => validateAmount()} />
+            <input className='buyTime_counter1' id='amount' type='number' min='10000' onChange={() => validateAmount()} />
           </div>
           {!validAmount && (
             <p className='buyTime_err'>Input a valid number of money to buy!<br/>Min: 10.000VND</p>
