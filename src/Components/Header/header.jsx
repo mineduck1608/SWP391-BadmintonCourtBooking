@@ -60,7 +60,7 @@ const Header = () => {
             <div className="text-header">
 
             <Link to={'/home'}><a className="header-link">Home</a></Link>
-                <a className="header-link" href="">Booking</a>
+            <Link to={'/bookingHistory'}>  <a className="header-link" href="">Booking</a></Link>
             <Link to={'/buyTime'}><a className="header-link" href="">Time Balance</a></Link>
                 <a className="header-link time-balance" href="" onClick={handleLogout} >Logout</a>
             </div>

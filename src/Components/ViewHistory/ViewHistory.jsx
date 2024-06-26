@@ -20,7 +20,7 @@ export default function ViewHistory() {
 
     const fetchBookings = async () => {
       try {
-        const response = await fetch('http://localhost:5266/Booking/GetAll', {
+        const response = await fetch('https://localhost:7233/Booking/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -39,7 +39,7 @@ export default function ViewHistory() {
 
     const fetchSlots = async () => {
       try {
-        const response = await fetch('http://localhost:5266/Slot/GetAll', {
+        const response = await fetch('https://localhost:7233/Slot/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -58,7 +58,7 @@ export default function ViewHistory() {
 
     const fetchCourts = async () => {
       try {
-        const response = await fetch('http://localhost:5266/Court/GetAll', {
+        const response = await fetch('https://localhost:7233/Court/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -77,7 +77,7 @@ export default function ViewHistory() {
 
     const fetchBranches = async () => {
       try {
-        const response = await fetch('http://localhost:5266/Branch/GetAll', {
+        const response = await fetch('https://localhost:7233/Branch/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -133,8 +133,8 @@ export default function ViewHistory() {
 
       return (
         <tr key={booking.bookingId}>
-          <td>{`#${booking.bookingId}`}</td>
-          <td>£{booking.amount}</td>
+          <td>{booking.bookingId}</td>
+          <td>{booking.amount}</td>
           <td>{booking.bookingType}</td>
           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
           <td>{slotDate}</td>
@@ -171,7 +171,7 @@ export default function ViewHistory() {
                           <thead>
                             <tr>
                               <th>BOOKING ID</th>
-                              <th>AMOUNT</th>
+                              <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
                               <th>SLOT DATE</th>
@@ -195,7 +195,7 @@ export default function ViewHistory() {
                           <thead>
                             <tr>
                               <th>BOOKING ID</th>
-                              <th>AMOUNT</th>
+                              <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
                               <th>SLOT DATE</th>
