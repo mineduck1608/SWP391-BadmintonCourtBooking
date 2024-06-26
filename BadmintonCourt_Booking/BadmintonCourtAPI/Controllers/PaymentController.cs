@@ -576,7 +576,7 @@ namespace BadmintonCourtAPI.Controllers
 			string expected = "00";
 			string actual = result.VnPayResponseCode;
 			bool success = SaveToDB(info, date, transId, amount, expected, actual);
-			return Redirect(resultRedirectUrl + "?msg" + (success ? "Success" : "Fail"));
+			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 		[HttpGet]
 		[Route("Payment/MomoResult")]
@@ -586,7 +586,7 @@ namespace BadmintonCourtAPI.Controllers
 			var rawdate = timeStr.Split(' ')[0].Split('-');
 			DateTime date = new(int.Parse(rawdate[0]), int.Parse(rawdate[1]), int.Parse(rawdate[2]));
 			bool success = SaveToDB(result.OrderInfo, date, result.TransId, result.Amount, result.Message, "Success");
-			return Redirect(resultRedirectUrl + "?msg" + (success ? "Success" : "Fail"));
+			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
 		// Create info for both methods.It will have the following format:

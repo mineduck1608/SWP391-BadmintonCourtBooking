@@ -22,9 +22,9 @@ const BookCourt = () => {
 
     const fetchBranches = async () => {
         try {
-            await setBranches(b => [])
+            setBranches(b => [])
             const branchData = await (
-                await fetch(`${apiUrl}Branch/GetAll`)
+                await fetch(`${apiUrl}/Branch/GetAll`)
             ).json()
             for (let index = 0; index < branchData.length; index++) {
                 if ((branchData[index])["branchStatus"] === 1) {
@@ -41,7 +41,7 @@ const BookCourt = () => {
             var branchId = document.getElementById("branch").value
             setCourts([])
             const courtData = await (
-                await fetch(`${apiUrl}Court/GetByBranch?id=${branchId}`)
+                await fetch(`${apiUrl}/Court/GetByBranch?id=${branchId}`)
             ).json()
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
@@ -54,6 +54,7 @@ const BookCourt = () => {
         }
     }
     useEffect(() => {
+        console.log('aaa');
         fetchBranches()
         setTimeBound(t => [])
         for (let i = 0; i <= 23; i++) {
@@ -71,7 +72,7 @@ const BookCourt = () => {
 
             let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
             let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
-            
+
             const res = await fetch(`${apiUrl}/Slot/GetSlotCourtInInterval?`
                 + `startTime=${startTime}&`
                 + `endTime=${endTime}&`
@@ -93,7 +94,7 @@ const BookCourt = () => {
         catch (err) {
 
         }
-    }, [courtInfo, validTimeRange, validDate])
+    }, [courtInfo])
     const loadCourtInfo = async () => {
         try {
             const selectedCourt = document.getElementById("court").value;
@@ -180,7 +181,7 @@ const BookCourt = () => {
     function calcAmount(bkType, price, start, end, month) {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
-        setAmount(a => amount)
+        setAmount(a => Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
     const fetchApi = async () => {
@@ -192,21 +193,21 @@ const BookCourt = () => {
             let monthNum = t == null ? null : t.value
             let date = document.getElementById('datePicker').value
             const urlTransfer = `${apiUrl}/Booking/TransactionProcess?`
-                    + `Method=${transferMethod}&`
-                    + `Start=${startTime}&`
-                    + `End=${endTime}&`
-                    + `UserId=${getFromJwt()}&`
-                    + `Date=${date}&`
-                    + `CourtId=${courtInfo['id']}&`
-                    + `Type=${bookingType}&`
-                    + `NumMonth=${monthNum}&`
-                    + `Amount=${handleCalcAmount()}`
+                + `Method=${transferMethod}&`
+                + `Start=${startTime}&`
+                + `End=${endTime}&`
+                + `UserId=${getFromJwt()}&`
+                + `Date=${date}&`
+                + `CourtId=${courtInfo['id']}&`
+                + `Type=${bookingType}&`
+                + `NumMonth=${monthNum}&`
+                + `Amount=${handleCalcAmount()}`
             const urlFlexible = `${apiUrl}/Slot/BookingByBalance?`
-            + `date=${date}&`
-            + `start=${startTime}&`
-            + `end=${endTime}&`
-            + `courtId=${courtInfo['id']}&`
-            + `userId=${getFromJwt()}`
+                + `date=${date}&`
+                + `start=${startTime}&`
+                + `end=${endTime}&`
+                + `courtId=${courtInfo['id']}&`
+                + `userId=${getFromJwt()}`
             try {
                 var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
                     {
@@ -216,7 +217,10 @@ const BookCourt = () => {
                         }
                     })
                 var data = await (res.json())
-                window.location.assign(data['url'])
+                var payUrl = data['url']
+                if (payUrl !== undefined) {
+                    window.location.assign(payUrl)
+                }
             }
             catch (err) {
 
@@ -354,7 +358,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        {amount}
+                        <div>{amount}</div>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
