@@ -1,50 +1,226 @@
-import React from 'react';
-//import './ViewHistory.css';
+import React, { useState, useEffect } from 'react';
+import Header from '../Header/header';
+import Footer from '../Footer/Footer';
+import './ViewHistory.css';
 
+export default function ViewHistory() {
+  const [bookings, setBookings] = useState([]);
+  const [slots, setSlots] = useState([]);
+  const [courts, setCourts] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const token = sessionStorage.getItem('token');
 
-const BookingHistory = () => {
-  const bookings = [
-    { date: '1/5/2024', court: 'c1', courtType: 'Indoor', time: '15:00-18:00', price: 'p1' },
-    { date: '8/5/2024', court: 'c2', courtType: 'Outdoor', time: '15:00-16:30', price: 'p2' },
-    { date: '28/4/2024', court: 'c3', courtType: 'Synthetic', time: 'Flexible (90/100 hrs left)', price: 'p3' },
-  ];
+  useEffect(() => {
+    if (!token) {
+      console.error('Token not found. Please log in.');
+      return;
+    }
+
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch('http://localhost:5266/Booking/GetAll', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch bookings');
+        }
+
+        const data = await response.json();
+        setBookings(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    const fetchSlots = async () => {
+      try {
+        const response = await fetch('http://localhost:5266/Slot/GetAll', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch slots');
+        }
+
+        const data = await response.json();
+        setSlots(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    const fetchCourts = async () => {
+      try {
+        const response = await fetch('http://localhost:5266/Court/GetAll', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch courts');
+        }
+
+        const data = await response.json();
+        setCourts(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    const fetchBranches = async () => {
+      try {
+        const response = await fetch('http://localhost:5266/Branch/GetAll', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch branches');
+        }
+
+        const data = await response.json();
+        setBranches(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchBookings();
+      await fetchSlots();
+      await fetchCourts();
+      await fetchBranches();
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [token]);
+
+  const formatTime = (time) => {
+    const hours = time.toString().padStart(2, '0');
+    return `${hours}:00:00`;
+  };
+
+  const currentDate = new Date();
+
+  const renderTableRows = (isUpcoming) => {
+    const filteredBookings = bookings.filter((booking) => {
+      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
+      const slotDate = slot ? new Date(slot.date) : null;
+      return isUpcoming ? slotDate && slotDate >= currentDate : slotDate && slotDate < currentDate;
+    });
+
+    return filteredBookings.slice(0, 5).map((booking) => {
+      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
+      const slotDate = slot ? new Date(slot.date).toLocaleDateString() : 'N/A';
+      const startTime = slot ? formatTime(slot.start) : 'N/A';
+      const endTime = slot ? formatTime(slot.end) : 'N/A';
+      const courtId = slot ? slot.courtId : 'Unknown Court';
+      const court = courts.find(court => court.courtId === courtId);
+      const courtName = court ? court.courtName : 'Unknown Court';
+      const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+      const branchName = branch ? branch.branchName : 'Unknown Branch';
+
+      return (
+        <tr key={booking.bookingId}>
+          <td>{`#${booking.bookingId}`}</td>
+          <td>£{booking.amount}</td>
+          <td>{booking.bookingType}</td>
+          <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+          <td>{slotDate}</td>
+          <td>{startTime}</td>
+          <td>{endTime}</td>
+          <td>{courtName}</td>
+          <td>{branchName}</td>
+        </tr>
+      );
+    });
+  };
 
   return (
-    <div className="booking-history">
-      <header className="header">
-        <h1>Booking History of: AAAAAAAAAAAAAAAA</h1>
-      </header>
-      <table className="booking-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Court</th>
-            <th>Court Type</th>
-            <th>Time</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bookings.map((booking, index) => (
-            <tr key={index}>
-              <td>{booking.date}</td>
-              <td>{booking.court}</td>
-              <td>{booking.courtType}</td>
-              <td>{booking.time}</td>
-              <td>{booking.price}</td>
-              <td className="actions">
-                <button className="view-button">View</button>
-                <button className="view-button">View</button>
-                <button className="buy-more-time-button">Buy More Time</button>
-                <button className="view-button">View</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className='view-history'>
+      <div className='view-history-header'>
+        <Header />
+      </div>
+      <div className='view-history-wrapper'>
+        <div className='view-history-background'>
+          <div className="view-history-profile-container">
+            <div className="view-history-profile-content">
+              <h2>Booking History</h2>
+              <div className="view-history-booking-history">
+                {loading ? (
+                  <p>Loading bookings...</p>
+                ) : error ? (
+                  <p className="view-history-error-message">Error: {error}</p>
+                ) : (
+                  <div className="view-history-table">
+                    <div className="upcoming-table">
+                      <h3>Upcoming Bookings</h3>
+                      <div className="view-history-table-wrapper">
+                        <table className="view-history-booking-table">
+                          <thead>
+                            <tr>
+                              <th>BOOKING ID</th>
+                              <th>AMOUNT</th>
+                              <th>BOOKING TYPE</th>
+                              <th>BOOKING DATE</th>
+                              <th>SLOT DATE</th>
+                              <th>START TIME</th>
+                              <th>END TIME</th>
+                              <th>COURT NAME</th>
+                              <th>BRANCH NAME</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {renderTableRows(true)}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="past-table">
+                      <h3>Past Bookings</h3>
+                      <div className="view-history-table-wrapper">
+                        <table className="view-history-booking-table view-history-booking-second-table">
+                          <thead>
+                            <tr>
+                              <th>BOOKING ID</th>
+                              <th>AMOUNT</th>
+                              <th>BOOKING TYPE</th>
+                              <th>BOOKING DATE</th>
+                              <th>SLOT DATE</th>
+                              <th>START TIME</th>
+                              <th>END TIME</th>
+                              <th>COURT NAME</th>
+                              <th>BRANCH NAME</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {renderTableRows(false)}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='view-history-footer'>
+        <Footer />
+      </div>
     </div>
   );
-};
-
-export default BookingHistory;
+}

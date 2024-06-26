@@ -76,12 +76,35 @@ const BuyTime = () => {
     }
     fetchData()
   }, [])
+
+  const formatNumber = (n) => {
+    function formatTo3Digits(n, stop) {
+        var rs = ''
+        console.log('n=' + n);
+        if (!stop)
+            for (var i = 1; i <= 3; i++) {
+                rs = (n % 10) + rs
+                n = Math.floor(n / 10)
+                console.log(rs);
+            }
+        else rs = n + rs
+        return rs
+    }
+    var rs = ''
+    do {
+        rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
+        n = Math.floor(n / 1000)
+        if (n > 0) rs = '.' + rs
+    }
+    while (n > 0)
+    return rs
+}
   return (
     <div className='buyTime'>
       <div className='buyTime_bodyContainer'>
         <h1 className='buyTime_title'>Buy more flexible money</h1>
         <article className='buyTime_article'>
-          <p className='buyTime_p'>Remaining money: {remainingTime}</p>
+          <p className='buyTime_p'>Remaining money: {formatNumber(Math.floor(remainingTime))}</p>
           <div className='buyTime_centerDiv'>
             <input className='buyTime_counter1' id='amount' type='number' min='10000' onChange={() => validateAmount()} />
           </div>

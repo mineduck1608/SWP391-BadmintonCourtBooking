@@ -1,85 +1,97 @@
-body {
-  font-family: 'Arial', sans-serif;
-  background-image: url('../../Assets/login.jpg'); 
-  background-repeat: no-repeat;
+
+.view-history-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../../Assets/image5.jpg');
   background-size: cover;
   background-position: center;
-  margin: 0;
-  padding: 0;
+  filter: blur(10px);
+  z-index: -1;
+  opacity: 0.6;
 }
 
-.booking-history {
+.view-history-booking-history {
   width: 80%;
   margin: 50px auto;
   background-color: #ffffff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  padding: 20px;
 }
 
-.header {
-  background-color: #4caf50;
-  color: white;
-  text-align: center;
-  padding: 20px 0;
+.view-history-table-wrapper {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 20px;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.booking-table {
+.view-history-booking-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
+  margin: 0;
+  padding: 0;
 }
 
-.booking-table th,
-.booking-table td {
+.view-history-booking-table th,
+.view-history-booking-table td {
   padding: 15px;
   text-align: left;
 }
 
-.booking-table th {
+.view-history-booking-table th {
   background-color: #4caf50;
   color: white;
 }
 
-.booking-table tr:nth-child(even) {
+.view-history-booking-second-table th {
+  background-color: red;
+  color: white;
+}
+
+.view-history-booking-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.booking-table tr:hover {
+.view-history-booking-table tr:hover {
   background-color: #ddd;
 }
 
-.booking-table .actions {
+.view-history-booking-table .actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-.view-button,
-.buy-more-time-button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
+.view-history-error-message {
+  color: red;
+  text-align: center;
 }
 
-.view-button {
-  background-color: #4caf50;
+.view-history-profile-content h2 {
+  text-align: center;
+  margin: 50px 0;
+  font-size: 40px;
   color: white;
 }
 
-.buy-more-time-button {
-  background-color: #ff9800;
-  color: white;
+.upcoming-table {
+  margin-bottom: 40px;
 }
 
-.view-button:hover,
-.buy-more-time-button:hover {
-  opacity: 0.8;
+.past-table {
+  margin-top: 40px;
+}
+
+.view-history-header, .view-history-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.view-history-table h3{
+  font-size: 30px;
 }
