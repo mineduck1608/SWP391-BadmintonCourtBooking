@@ -111,7 +111,9 @@
 }
 
 .viewcourtinfo-othercourts-h1 {
-    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-bottom: 30px;
+    color: white;
 }
 
 .viewcourtinfo-other-des-p{
@@ -153,7 +155,7 @@
 
 .viewcourtinfo-other-img {
     margin-top: 5px;
-    width: 50%;
+    width: 55%;
     height: 290px;
     border-radius: 8px;
     box-shadow: var(--primary-shadow);
@@ -184,23 +186,43 @@
 }
 
 .viewCourt {
-    background-color: var(--gold-color);
+    background-color: var(--PrimaryColor);
     border: none;
     color: var(--white-color);
     padding: 5px 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 14px;
+    font-size: 16px;
     margin: 0;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
-    width: 50%;
+    width: 30%;
+}
+
+.timeline-viewCourt{
+    background-color: var(--PrimaryColor);
+    border: none;
+    color: var(--white-color);
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    width: 20%;
+    position: relative;
+    left: 40%;
+}
+
+.timeline-viewCourt:hover{
+    background-color: var(--HoverColor);
 }
 
 .viewCourt:hover {
-    background-color: hsl(26, 90%, 42%);
+    background-color: var(--HoverColor);
 }
 
 .viewcourtinfo-othercourts-body {
@@ -350,6 +372,7 @@
 .legend {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin: 16px 0;
     width: 100%;
 }

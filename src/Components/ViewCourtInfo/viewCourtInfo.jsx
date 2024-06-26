@@ -143,7 +143,7 @@ const ViewCourtInfo = () => {
                             <img className="viewcourtinfo-img" src={image2} alt="" />
                             <div className="viewcourtinfo-body-courtId-des">
                                 <div className="viewcourtinfo-body-courtId">
-                                    <h1>Court No: {mainCourt?.courtId}</h1>
+                                    <h1>Court Name: {mainCourt?.courtName}</h1>
                                 </div>
                                 <div className="viewcourtinfo-body-des">
                                     <h1 className='viewcourtinfo-des-h1'>Description:</h1>
@@ -207,8 +207,9 @@ const ViewCourtInfo = () => {
                                             <div className="legend-item">
                                                 <div className="legend-color maintenance"></div>
                                                 <div className="legend-text">Maintenance</div>
-                                            </div>
+                                            </div>                                         
                                         </div>
+                                        <button className='timeline-viewCourt' onClick={() => handleBookCourt(mainCourt?.courtId)}>Book</button>
                                     </div>
                                 </div>
                             </div>
@@ -219,7 +220,7 @@ const ViewCourtInfo = () => {
                                 <p className='viewcourt-title'>Time: 9:00 AM - 9:00 PM</p>
                                 <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
                                 <p className='viewcourt-title'>Status: FREE</p>
-                                <button className='viewCourt' onClick={() => handleBookCourt(mainCourt?.courtId)}>Book</button>
+                                
                             </div>
                         </div>
                     </div>
@@ -230,7 +231,7 @@ const ViewCourtInfo = () => {
                                 <div key={index} className="viewcourtinfo-other-pic">
                                     <img className="viewcourtinfo-other-img" src={image2} alt="" />
                                     <div className="viewcourtinfo-other-info">
-                                        <h2>Court No: {court.courtId}</h2>
+                                        <h2>Court Name: {court.courtName}</h2>
                                         <p>Address: {branch?.location}</p>
                                         <p>Time: 9:00 AM - 9:00 PM</p>
                                         <p>Branch: {branch?.branchName}</p>
