@@ -9,11 +9,11 @@ const BookCourt = () => {
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts of that branch, if active
     const [paymentType, setPaymentType] = useState(''); //banking or not
-    const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
+    const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00. Hardcoded
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
     const [validDate, setValidDate] = useState(false) //is booking date valid? (not in the past)
     const [validTimeRange, setValidTimeRange] = useState(false) //is booking time range valid (start < end)
-    const [transferMethod, setTransferMethod] = useState('Momo') //momo, vnpay
+    const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
     const [validBooking, setValidBooking] = useState(false) //is booking valid
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
@@ -54,7 +54,6 @@ const BookCourt = () => {
         }
     }
     useEffect(() => {
-        console.log('aaa');
         fetchBranches()
         setTimeBound(t => [])
         for (let i = 0; i <= 23; i++) {
@@ -95,15 +94,22 @@ const BookCourt = () => {
 
         }
     }, [courtInfo])
+
+    useEffect(()=>{
+        handleCalcAmount()
+    }, [courtInfo, bookingType])
+
     const loadCourtInfo = async () => {
         try {
             const selectedCourt = document.getElementById("court").value;
-            const response = await fetch(`${apiUrl}Court/GetById?id=${selectedCourt}`);
+            const response = await fetch(`${apiUrl}/Court/GetById?id=${selectedCourt}`);
             const data = await response.json();
+            console.log(data);
             setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
         } catch (error) {
 
         }
+        console.log(courtInfo);
     }
 
     const validateDate = () => {
@@ -171,7 +177,8 @@ const BookCourt = () => {
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
             let t = document.getElementById('monthNum');
-            let monthNum = t == null ? null : t.value
+            let monthNum = t == null ? 1 : t.value
+            console.log(startTime + ", " + endTime + ", " + t + ", " + monthNum);
             return calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
         }
         catch (err) {
@@ -179,8 +186,10 @@ const BookCourt = () => {
         }
     }
     function calcAmount(bkType, price, start, end, month) {
+        console.log(bkType + ', ' + price + ', ' + start + ', ' + end + ', ' + month);
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
+        console.log('=>' + amount);
         setAmount(a => Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
@@ -257,8 +266,8 @@ const BookCourt = () => {
 
                         <select id="court" name="court" onChange={() => {
                             loadCourtInfo()
-                            handleCalcAmount()
                             checkAvailableSlot()
+                            handleCalcAmount()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
@@ -279,6 +288,7 @@ const BookCourt = () => {
                                 value="fixed-time" onChange={() => {
                                     setBookingType('fixed')
                                     setPaymentType('banking')
+                                    handleCalcAmount()
                                 }}
                                 checked={bookingType === 'fixed'}
                             />
@@ -286,7 +296,7 @@ const BookCourt = () => {
                             {bookingType === 'fixed' && (
                                 <div className="bookCourt-form-subgroup">
                                     <label htmlFor="fixed-time-months">For:</label>
-                                    <select id='monthNum' name="fixed-time-months">
+                                    <select id='monthNum' name="fixed-time-months" onChange={()=>handleCalcAmount()}>
                                         <option value={1}>1 month</option>
                                         <option value={2}>2 months</option>
                                         <option value={3}>3 months</option>
@@ -296,7 +306,10 @@ const BookCourt = () => {
                             )}
                         </div>
                         <div className="bookCourt-form-group2">
-                            <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => { setBookingType('playonce') }}
+                            <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => {
+                                setBookingType('playonce')
+                                handleCalcAmount()
+                            }}
                                 checked={bookingType === 'playonce'}
                             />
                             <label htmlFor="once">Once (reserves at the specified time and date)</label>
@@ -358,7 +371,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        <div>{amount}</div>
+                        <span><h3>{amount}</h3></span>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
