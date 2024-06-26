@@ -32,7 +32,7 @@ import AdminLayout from './Components/AdminLayout';
 import BuyTime from './Components/BuyTime/BuyTime';
 import BookingHistory from './Components/ViewHistory/ViewHistory';
 import PaySuccess from './Components/PaySuccess/PaySuccess';
-
+import BuyFail from './Components/BuyFail/BuyFail';
 const App = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -54,6 +54,7 @@ const App = () => {
           <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
           <Route path="/buyTime" element={<div><Header /><BuyTime /><Footer /></div>} />
           <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />
+          <Route path="/payFail" element={<div><Header /><BuyFail /><Footer /></div>} />
           <Route path="/bookingHistory" element={<BookingHistory />} />
           <Route path="/ViewCourtInfo" element={<ViewCourtInfo />} />
 
