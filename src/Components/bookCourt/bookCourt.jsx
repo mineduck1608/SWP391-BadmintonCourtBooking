@@ -64,26 +64,30 @@ const BookCourt = () => {
     const checkAvailableSlot = async () => {
 
         let courtId = courtInfo['id']
-        if (validateDate() && validateTime()) {
-            var bookingDate = document.getElementById("datePicker").value
-            var t1 = parseInt(document.getElementById("time-start").value)
-            var t2 = parseInt(document.getElementById("time-end").value)
+        try {
+            if (validateDate() && validateTime()) {
+                var bookingDate = document.getElementById("datePicker").value
+                var t1 = parseInt(document.getElementById("time-start").value)
+                var t2 = parseInt(document.getElementById("time-end").value)
 
-            let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
-            let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
+                let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
+                let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
 
-            const res = await fetch(`${apiUrl}/Slot/GetSlotCourtInInterval?`
-                + `startTime=${startTime}&`
-                + `endTime=${endTime}&`
-                + `id=${courtId}`, {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            const data = await res.json()
-            setIsOccupied(data.length > 0)
-            return (data.length > 0)
+                const res = await fetch(`${apiUrl}/Slot/GetSlotCourtInInterval?`
+                    + `startTime=${startTime}&`
+                    + `endTime=${endTime}&`
+                    + `id=${courtId}`, {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                const data = await res.json()
+                setIsOccupied(data.length > 0)
+                return (data.length > 0)
+            }
+        } catch (err) {
+            return false;
         }
     }
     useEffect(() => {
@@ -95,7 +99,7 @@ const BookCourt = () => {
         }
     }, [courtInfo])
 
-    useEffect(()=>{
+    useEffect(() => {
         handleCalcAmount()
     }, [courtInfo, bookingType])
 
@@ -238,9 +242,29 @@ const BookCourt = () => {
         catch (err) {
         }
     }
-    const formatPrice = (n) => {
+    const formatNumber = (n) => {
+        function formatTo3Digits(n, stop) {
+            var rs = ''
+            console.log('n=' + n);
+            if (!stop)
+                for (var i = 1; i <= 3; i++) {
+                    rs = (n % 10) + rs
+                    n = Math.floor(n / 10)
+                    console.log(rs);
+                }
+            else rs = n + rs
+            return rs
+        }
         var rs = ''
+        do {
+            rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
+            n = Math.floor(n / 1000)
+            if (n > 0) rs = '.' + rs
+        }
+        while (n > 0)
+        return rs
     }
+
     return (
         <div className="bookCourt-container">
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
@@ -298,7 +322,7 @@ const BookCourt = () => {
                             {bookingType === 'fixed' && (
                                 <div className="bookCourt-form-subgroup">
                                     <label htmlFor="fixed-time-months">For:</label>
-                                    <select id='monthNum' name="fixed-time-months" onChange={()=>handleCalcAmount()}>
+                                    <select id='monthNum' name="fixed-time-months" onChange={() => handleCalcAmount()}>
                                         <option value={1}>1 month</option>
                                         <option value={2}>2 months</option>
                                         <option value={3}>3 months</option>
@@ -373,7 +397,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        <span>Price: <span className='priceSpan'>{amount}</span></span>
+                        <span>Price: <span className='priceSpan'>{formatNumber(amount)}</span></span>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
