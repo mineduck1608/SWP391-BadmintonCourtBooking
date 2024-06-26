@@ -111,6 +111,19 @@ export default function ViewHistory() {
     return `${hours}:00:00`;
   };
 
+  const getBookingTypeLabel = (bookingType) => {
+    switch (bookingType) {
+      case 1:
+        return 'Once';
+      case 2:
+        return 'Permanent';
+      case 3:
+        return 'Flexible';
+      default:
+        return 'unknown';
+    }
+  };
+
   const currentDate = new Date();
 
   const renderTableRows = (isUpcoming) => {
@@ -135,7 +148,7 @@ export default function ViewHistory() {
         <tr key={booking.bookingId}>
           <td>{booking.bookingId}</td>
           <td>{booking.amount}</td>
-          <td>{booking.bookingType}</td>
+          <td>{getBookingTypeLabel(booking.bookingType)}</td>
           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
           <td>{slotDate}</td>
           <td>{startTime}</td>
