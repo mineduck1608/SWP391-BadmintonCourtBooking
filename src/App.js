@@ -56,7 +56,6 @@ const App = () => {
           <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />
           <Route path="/payFail" element={<div><Header /><BuyFail /><Footer /></div>} />
           <Route path="/bookingHistory" element={<BookingHistory />} />
-          <Route path="/ViewCourtInfo" element={<ViewCourtInfo />} />
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}

@@ -1,5 +1,3 @@
-/* viewCourtInfo.css */
-
 :root {
     --gold-color: #d4af37;
     --white-color: #fff;
@@ -245,8 +243,8 @@
 .date-slider {
     display: flex;
     overflow-x: auto;
-    scroll-behavior: smooth; /* Adds smooth scrolling */
-    transition: transform 0.3s ease-in-out; /* Add a transition for smooth sliding */
+    scroll-behavior: smooth;
+    transition: transform 0.3s ease-in-out;
 }
 
 .date-item {

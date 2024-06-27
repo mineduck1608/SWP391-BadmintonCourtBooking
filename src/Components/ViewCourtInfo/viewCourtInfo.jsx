@@ -5,6 +5,7 @@ import Footer from "../Footer/Footer";
 import image2 from '../../Assets/image2.jpg';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -15,21 +16,24 @@ const ViewCourtInfo = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date()));
     const [currentHourIndex, setCurrentHourIndex] = useState(0);
-    const [slots, setSlots] = useState([]); // New state variable
-    const maxVisibleHours = 5; // Số khung giờ hiển thị tối đa
+    const [slots, setSlots] = useState([]);
+    const maxVisibleHours = 5;
+
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchData = async () => {
             const branchUrl = 'https://localhost:7233/Branch/GetAll';
             const courtUrl = 'https://localhost:7233/Court/GetAll';
-            const slotUrl = 'https://localhost:7233/Slot/GetAll'; // New API
+            const slotUrl = 'https://localhost:7233/Slot/GetAll';
 
             try {
                 setLoading(true);
                 const [branchResponse, courtResponse, slotResponse] = await Promise.all([
                     fetch(branchUrl),
                     fetch(courtUrl),
-                    fetch(slotUrl), // Fetching new API
+                    fetch(slotUrl),
                 ]);
 
                 if (!branchResponse.ok) {
@@ -44,21 +48,19 @@ const ViewCourtInfo = () => {
 
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
-                const slotData = await slotResponse.json(); // Parsing new API data
+                const slotData = await slotResponse.json();
 
-                console.log('Branch Data:', branchData);
-                console.log('Court Data:', courtData);
-                console.log('Slot Data:', slotData); // Logging new API data
+                const params = new URLSearchParams(location.search);
+                const courtId = params.get('courtId');
 
-                const mainCourtData = courtData[0];
+                const mainCourtData = courtData.find(court => court.courtId === courtId) || courtData[0];
                 const mainBranchData = branchData.find(branch => branch.branchId === mainCourtData.branchId);
                 const recommendedCourtsData = courtData.filter(court => court.branchId === mainCourtData.branchId && court.courtId !== mainCourtData.courtId).slice(0, 2);
 
                 setBranch(mainBranchData);
                 setMainCourt(mainCourtData);
                 setRecommendedCourts(recommendedCourtsData);
-                setSlots(slotData); // Store the slot data
-
+                setSlots(slotData);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -67,16 +69,15 @@ const ViewCourtInfo = () => {
         };
 
         fetchData();
-    }, []);
+    }, [location.search]);
 
     const handleBookCourt = (courtId) => {
-        console.log(`Booking court with ID: ${courtId}`);
-        alert(`Court No: ${courtId} booked successfully!`);
+        navigate(`/viewCourtInfo?courtId=${courtId}`);
     };
 
     const handleDateClick = (date) => {
         setSelectedDate(date);
-        setCurrentHourIndex(0); // Reset the hour index to the beginning
+        setCurrentHourIndex(0);
     };
 
     const handlePrevWeek = () => {
@@ -124,7 +125,7 @@ const ViewCourtInfo = () => {
             hours.push({
                 start: hourStart.toString().padStart(2, '0') + ':00',
                 end: hourEnd.toString().padStart(2, '0') + ':00',
-                status: isBooked ? 'booked' : 'available' // Mark as booked if the slot matches
+                status: isBooked ? 'booked' : 'available'
             });
         }
         return hours;
