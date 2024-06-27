@@ -11,10 +11,8 @@ const BookCourt = () => {
     const [paymentType, setPaymentType] = useState(''); //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00. Hardcoded
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
-    const [validDate, setValidDate] = useState(false) //is booking date valid? (not in the past)
-    const [validTimeRange, setValidTimeRange] = useState(false) //is booking time range valid (start < end)
+    const [timeError, setTimeError] = useState(0) //
     const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
-    const [validBooking, setValidBooking] = useState(false) //is booking valid
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
@@ -65,7 +63,7 @@ const BookCourt = () => {
 
         let courtId = courtInfo['id']
         try {
-            if (validateDate() && validateTime()) {
+            if (validateDateTime()) {
                 var bookingDate = document.getElementById("datePicker").value
                 var t1 = parseInt(document.getElementById("time-start").value)
                 var t2 = parseInt(document.getElementById("time-end").value)
@@ -108,58 +106,46 @@ const BookCourt = () => {
             const selectedCourt = document.getElementById("court").value;
             const response = await fetch(`${apiUrl}/Court/GetById?id=${selectedCourt}`);
             const data = await response.json();
-            console.log(data);
             setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
         } catch (error) {
 
         }
-        console.log(courtInfo);
     }
-
-    const validateDate = () => {
-        var value = document.getElementById("datePicker").value.replace(/-/g, "/")
-        var selectedDate = Date.parse(value)
-        if (!Object.is(selectedDate, NaN)) {
-            setValidDate(!(selectedDate < curDate))
-            return !(selectedDate < curDate)
-        }
-        else {
-            setValidDate(false)
-            return false;
-        }
-    }
-    const validateTime = () => {
+    const validateDateTime = () => {
+        var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
-        setValidTimeRange(t1 < t2)
-        return t1 < t2
+        var startTime = Date.parse(selectedDate) + t1 * 3600000
+        var endTime = Date.parse(selectedDate) + t2 * 3600000
+        var curDateNum = Date.parse(curDate)
+        var r = 0
+        if (startTime > endTime) r = 1
+        if (startTime < curDateNum) r = 2
+        setTimeError(t => r)
+        return r
     }
     const validateBooking = () => {
-        setValidBooking(t => true);
-        validateDate();
-        validateTime();
-
+        //reset
+        console.log('Validate booking');
+        var t = (validateDateTime() === 0)
         try {
-            setValidBooking(t => t && courtInfo['status'] && !isOccupied);
-            return validBooking;
-
+            return t && courtInfo['status'] && !isOccupied;
         } catch (error) {
-
-            setValidBooking(false);
             return false;
         }
     };
 
     const completeBooking = async () => {
-
+        console.log('complete booking');
         try {
             const result = validateBooking();
+            console.log(result);
             if (result) {
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
                 fetchApi()
             }
         } catch (error) {
-
+            console.log(error);
         }
     };
     const getFromJwt = () => {
@@ -182,7 +168,6 @@ const BookCourt = () => {
             let endTime = document.getElementById('time-end').value
             let t = document.getElementById('monthNum');
             let monthNum = t == null ? 1 : t.value
-            console.log(startTime + ", " + endTime + ", " + t + ", " + monthNum);
             return calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
         }
         catch (err) {
@@ -190,10 +175,8 @@ const BookCourt = () => {
         }
     }
     function calcAmount(bkType, price, start, end, month) {
-        console.log(bkType + ', ' + price + ', ' + start + ', ' + end + ', ' + month);
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
-        console.log('=>' + amount);
         setAmount(a => Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
@@ -245,12 +228,10 @@ const BookCourt = () => {
     const formatNumber = (n) => {
         function formatTo3Digits(n, stop) {
             var rs = ''
-            console.log('n=' + n);
             if (!stop)
                 for (var i = 1; i <= 3; i++) {
                     rs = (n % 10) + rs
                     n = Math.floor(n / 10)
-                    console.log(rs);
                 }
             else rs = n + rs
             return rs
@@ -347,7 +328,7 @@ const BookCourt = () => {
                     <div className="bookCourt-form-group4">
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
-                            if (validateTime()) {
+                            if (validateDateTime()) {
                                 checkAvailableSlot()
                                 handleCalcAmount()
                             }
@@ -361,7 +342,7 @@ const BookCourt = () => {
                         </select>
                         <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => {
-                            if (validateTime()) {
+                            if (validateDateTime()) {
                                 checkAvailableSlot()
                                 handleCalcAmount()
                             }
@@ -375,14 +356,14 @@ const BookCourt = () => {
                         </select>
                     </div>
                     {
-                        !validTimeRange && (
+                        (timeError === 1) && (
                             <p id="dateError">Invalid time range</p>
                         )
                     }
                     <div className="bookCourt-form-group5">
                         <label htmlFor="day">Day: </label>
                         <input type="date" id="datePicker" onChange={() => {
-                            if (validateTime()) {
+                            if (validateDateTime()) {
                                 checkAvailableSlot()
                                 handleCalcAmount()
                             }
@@ -390,7 +371,7 @@ const BookCourt = () => {
 
                     </div>
                     {
-                        !validDate && (
+                        (timeError === 2) && (
                             <p id="dateError">Cannot create a booking for a date in the past</p>
                         )
                     }
