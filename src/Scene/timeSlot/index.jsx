@@ -278,7 +278,6 @@ const TimeSlotManagement = () => {
         const court = courtsData.find(court => court.courtId === row.courtId);
         const branch = branchesData.find(branch => branch.branchId === court.branchId);
         const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
-        console.log(booking)
         return {
           id: index + 1,
           ...row,
