@@ -307,44 +307,59 @@ namespace BadmintonCourtAPI.Controllers
 		}
 
 
-		[HttpPost]
-		[Route("User/Register")]
-		public async Task<IActionResult> Register(string username, string password, string firstName, string lastName, string email, string phone)
-		{
-			UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Email.Equals(email) || x.Phone == phone);
-			if (info == null)
-			{
-				if (!username.IsNullOrEmpty())
-				{
-					if (_service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName.Equals(username)) == null)
-					{
-						if (Util.IsPhoneFormatted(phone))
-						{
-
-							if (Util.IsPasswordSecure(password))
-							{
-								//Hash pass
-								//service.userService.AddUser(new User { UserId = GenerateId(), UserName = username, Password = ToHashString(password), AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-
-								_service.UserService.AddUser(new User { UserId = "U" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), UserName = username, Password = password, AccessFail = 0, ActiveStatus = true, Balance = 0, BranchId = null, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R003" });
-								User user = _service.UserService.GetRecentAddedUser();
-								_service.UserDetailService.AddUserDetail(new UserDetail { UserId = user.UserId, FirstName = firstName, LastName = lastName, Email = email, Phone = phone });
-								return Ok(Util.GenerateToken(user.UserId, user.Password, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config));
-							}
-							return BadRequest(new { msg = "Password is not properly secured" });
-						}
-						return BadRequest(new { msg = "Phone number is not properly formatted" });
-					}
-					return BadRequest(new { msg = "Username existed" });
-				}
-				return BadRequest(new { msg = "Username can't be empty" });
-
-			}
-			return BadRequest(new { msg = "Email registered" });
-		}
+        [HttpPost]
+        [Route("User/Register")]
+        public async Task<IActionResult> Register(string? username, string? password, string? firstName, string? lastName, string? email, string? phone)
+        {
+            if (!Util.IsPhoneFormatted(phone))
+                return BadRequest(new { msg = "Phone number is not properly formatted" });
+            if (username.IsNullOrEmpty())
+                return BadRequest(new { msg = "Username can't be empty" });
+            if (email.IsNullOrEmpty())
+                return BadRequest(new { msg = "Email can't be empty" });
+            if (firstName.IsNullOrEmpty() || lastName.IsNullOrEmpty())
+                return BadRequest(new { msg = "Name can't be empty" });
+            //if (Util.IsPasswordSecure(password))  // Check password manh. yeu^'
+            //	return BadRequest(new { msg = "Password invalid" });
+            if (password.IsNullOrEmpty())
+                return BadRequest(new { msg = "Password can't be empty" });
 
 
-		[HttpPost]
+            //User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username);
+            //UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Phone == phone || x.Email == email);
+            if (_service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username) != null || _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Phone == phone || x.Email == email) != null)
+                return BadRequest(new { msg = "Account existed" });
+
+            string userId = "U" + (_service.UserService.GetAllUsers().Count() + 1).ToString("D7");
+
+            _service.UserService.AddUser(new User
+            {
+                UserId = userId,
+                AccessFail = 0,
+                LastFail = new DateTime(1900, 1, 1, 0, 0, 0),
+                Balance = 0,
+                ActiveStatus = true,
+				UserName = username,
+                //Password = Util.ToHashString(password),   // Hash pass
+                Password = password,
+                RoleId = "R003"
+            });
+
+            _service.UserDetailService.AddUserDetail(new UserDetail
+            {
+                UserId = userId,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Phone = phone,
+            });
+
+            return Ok(new { msg = "Success" });
+        }
+
+
+
+        [HttpPost]
 		[Route("User/Add")]
 		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> AddUser(ProvideAccount account)

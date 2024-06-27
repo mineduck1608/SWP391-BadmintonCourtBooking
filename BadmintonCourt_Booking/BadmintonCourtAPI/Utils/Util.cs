@@ -44,7 +44,7 @@ namespace BadmintonCourtAPI.Utils
 				issuer: config["Jwt:Issuer"],
 				audience: config["Jwt:Audience"],
 				claims: claims,
-				expires: DateTime.Now.AddMinutes(30),
+				expires: DateTime.Now.AddMinutes(15),
 				signingCredentials: credentials
 				);
 			return new JwtSecurityTokenHandler().WriteToken(token);
