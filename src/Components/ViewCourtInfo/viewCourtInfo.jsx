@@ -75,6 +75,10 @@ const ViewCourtInfo = () => {
         navigate(`/viewCourtInfo?courtId=${courtId}`);
     };
 
+    const handleBookCourtOption = (courtId) => {
+        navigate(`/bookCourt`);
+    };
+
     const handleDateClick = (date) => {
         setSelectedDate(date);
         setCurrentHourIndex(0);
@@ -210,7 +214,7 @@ const ViewCourtInfo = () => {
                                                 <div className="legend-text">Maintenance</div>
                                             </div>                                         
                                         </div>
-                                        <button className='timeline-viewCourt' onClick={() => handleBookCourt(mainCourt?.courtId)}>Book</button>
+                                        <button className='timeline-viewCourt' onClick={() => handleBookCourtOption(mainCourt?.courtId)}>Book</button>
                                     </div>
                                 </div>
                             </div>
@@ -229,7 +233,7 @@ const ViewCourtInfo = () => {
                         <div className="viewcourtinfo-othercourts-content">
                             {recommendedCourts.map((court, index) => (
                                 <div key={index} className="viewcourtinfo-other-pic">
-                                    <img className="viewcourtinfo-other-img" src={image2} alt="" />
+                                    <img className="viewcourtinfo-other-img" src={court.courtImg} alt="" />
                                     <div className="viewcourtinfo-other-info">
                                         <h2>Court Name: {court.courtName}</h2>
                                         <p>Address: {branch?.location}</p>
