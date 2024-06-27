@@ -59,51 +59,51 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<User>> GetUserByUserId(string id) => Ok(_service.UserService.GetUserById(id));
 
 
-		//[HttpPost]
-		//[Route("User/ExternalLogAuth")]
-		//public async Task<IActionResult> ExternalAuth(string token)
-		//{
-		//	string email = Util.GetMailFromToken(token);
-		//	UserDetail info = service.userDetailService.GetUserDetailByMail(email);
+        [HttpPost]
+        [Route("User/ExternalLogAuth")]
+        public async Task<IActionResult> ExternalAuth(string token)
+        {
+            string email = Util.GetMailFromToken(token);
+            UserDetail info = _service.UserDetailService.GetUserDetailByMail(email);
 
-		//	if (info == null) // Chua co acc
-		//	{
-
-		//		service.userService.AddUser(new User { UserId = Util.GenerateUserId(service), UserName = "", Password = "", LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null});
-		//		string id = service.userService.GetRecentAddedUser().UserId; 
-
-		//		service.userDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email, FirstName = "", LastName = "", Phone = ""} );
-		//		return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", _config) });
-		//	}
-
-		//	// Co acc
-		//	User user = service.userService.GetUserById(info.UserId);
-		//	return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, service.roleService.GetRoleById(user.RoleId).RoleName, _config) });
-		//}
+            if (info == null) // Chua co acc
+            {
+                string userId = "U" + (_service.UserService.GetAllUsers().Count() + 1).ToString("D7");
+                _service.UserService.AddUser(new User { UserId = userId, UserName = "", Password = "", LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null });
 
 
-		[HttpPost]
-		[Route("User/ExternalLogAuth")]
-		public async Task<IActionResult> ExternalAuth(string email)
-		{
-			UserDetail info = _service.UserDetailService.GetUserDetailByMail(email);
+                _service.UserDetailService.AddUserDetail(new UserDetail { UserId = userId, Email = email, FirstName = "", LastName = "", Phone = "" });
+                return Ok(new { token = Util.GenerateToken(userId, "", "", "Customer", true, _config) });
+            }
 
-			if (info == null) // Chua co acc
-			{
-				List<User> list = _service.UserService.GetAllUsers();
-				_service.UserService.AddUser(new User { UserId = "S" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null, RoleId = "R003" });
-				string id = _service.UserService.GetRecentAddedUser().UserId;
+            // Co acc
+            User user = _service.UserService.GetUserById(info.UserId);
+            return Ok(new { token = Util.GenerateToken(info.UserId, user.Password, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
+        }
 
-				_service.UserDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email });
-				return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", true, _config) });
-			}
 
-			// Co acc
-			User user = _service.UserService.GetUserById(info.UserId);
-			return Ok(new { token = Util.GenerateToken(info.UserId, user.Password, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
-		}
+        //[HttpPost]
+        //[Route("User/ExternalLogAuth")]
+        //public async Task<IActionResult> ExternalAuth(string email)
+        //{
+        //	UserDetail info = _service.UserDetailService.GetUserDetailByMail(email);
 
-		[HttpPost]
+        //	if (info == null) // Chua co acc
+        //	{
+        //		List<User> list = _service.UserService.GetAllUsers();
+        //		_service.UserService.AddUser(new User { UserId = "S" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null, RoleId = "R003" });
+        //		string id = _service.UserService.GetRecentAddedUser().UserId;
+
+        //		_service.UserDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email });
+        //		return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", true, _config) });
+        //	}
+
+        //	// Co acc
+        //	User user = _service.UserService.GetUserById(info.UserId);
+        //	return Ok(new { token = Util.GenerateToken(info.UserId, user.Password, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, user.ActiveStatus.Value, _config) });
+        //}
+
+        [HttpPost]
 		[Route("User/LoginAuth")]
 		public async Task<IActionResult> LoginAuth(string username, string password)
 		{

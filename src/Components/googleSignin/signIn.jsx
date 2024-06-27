@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth, provider } from "./config"; // Ensure this is the correct path to your Firebase config
+import { auth, provider } from "./config"; // Ensure this path is correct to your Firebase config
 import { signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
@@ -10,36 +10,39 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const handleClick = async (e) => {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
     e.preventDefault();
-    fetch("https://localhost:7233/User/ExternalLogAuth?token=" + result.user.getIdToken(), {
-        method: "POST",
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(result.user.getIdToken()),
-      }).then((res) => {
-        toast.success('Login successfuly.');
-      }).catch((err) => {
-        toast.error('Failed: ' + err.message);
-      })
-
     try {
-     
-      setValue(result.user.getIdToken());
-      sessionStorage.setItem("token", result.user.getIdToken());
-      navigate('/home'); // Navigate to /home after successful sign-in
+      const result = await signInWithPopup(auth, provider);
+      const token = await result.user.getIdToken();
+
+      const response = await fetch("https://localhost:7233/User/ExternalLogAuth?token=" + token, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token }), // Convert token to object
+      });
+
+      if (response.ok) {
+        const data = await response.json(); // Assuming the response contains JSON data
+        const returnedToken = data.token; // Adjust based on your API response structure
+        sessionStorage.setItem("token", returnedToken);
+        setValue(returnedToken);
+        toast.success('Login successfully.');
+        navigate('/home'); // Navigate to /home after successful login
+      } else {
+        toast.error('Failed to log in.');
+      }
     } catch (error) {
+      toast.error('Failed: ' + error.message);
     }
   };
 
   useEffect(() => {
-    const storedEmail = sessionStorage.getItem('token');
-    if (storedEmail) {
-      setValue(storedEmail);
+    const storedToken = sessionStorage.getItem('token');
+    if (storedToken) {
+      setValue(storedToken);
       navigate('/home');
-    } else {
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className='return'>

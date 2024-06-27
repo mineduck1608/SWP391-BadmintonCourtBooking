@@ -103,7 +103,7 @@ const TimeSlotManagement = () => {
 
   const showModal = async (row) => {
     try {
-      const bookingsRes = await fetch(`http://localhost:5266/Booking/GetAll`, {
+      const bookingsRes = await fetch(`https://localhost:7233/Booking/GetAll`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -118,7 +118,7 @@ const TimeSlotManagement = () => {
       const bookingsData = await bookingsRes.json();
       const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
 
-      const userRes = await fetch(`http://localhost:5266/User/GetById?id=${booking.userId}`, {
+      const userRes = await fetch(`https://localhost:7233/User/GetById?id=${booking.userId}`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -132,7 +132,7 @@ const TimeSlotManagement = () => {
 
       const userData = await userRes.json();
 
-      const userDetailsRes = await fetch(`http://localhost:5266/UserDetail/GetAll`, {
+      const userDetailsRes = await fetch(`https://localhost:7233/UserDetail/GetAll`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -176,7 +176,7 @@ const TimeSlotManagement = () => {
       start: addFormState.startValue,
       end: addFormState.endValue,
     };
-    fetch(`http://localhost:5266/Slot/BookingByBalence?date=${slotData.date}&start=${slotData.start}&end=${slotData.end}&userId=${slotData.userId}&courtId=${slotData.courtId}`, {
+    fetch(`https://localhost:7233/Slot/BookingByBalence?date=${slotData.date}&start=${slotData.start}&end=${slotData.end}&userId=${slotData.userId}&courtId=${slotData.courtId}`, {
       method: "POST",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -227,28 +227,28 @@ const TimeSlotManagement = () => {
   const fetchData = async () => {
     try {
       const [branchesRes, courtsRes, slotsRes, bookingsRes] = await Promise.all([
-        fetch(`http://localhost:5266/Branch/GetAll`, {
+        fetch(`https://localhost:7233/Branch/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`http://localhost:5266/Court/GetAll`, {
+        fetch(`https://localhost:7233/Court/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`http://localhost:5266/Slot/GetAll`, {
+        fetch(`https://localhost:7233/Slot/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`http://localhost:5266/Booking/GetAll`, {
+        fetch(`https://localhost:7233/Booking/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -278,7 +278,6 @@ const TimeSlotManagement = () => {
         const court = courtsData.find(court => court.courtId === row.courtId);
         const branch = branchesData.find(branch => branch.branchId === court.branchId);
         const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
-        console.log(booking)
         return {
           id: index + 1,
           ...row,
