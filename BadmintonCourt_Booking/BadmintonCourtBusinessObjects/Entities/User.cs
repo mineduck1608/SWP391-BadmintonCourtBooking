@@ -17,11 +17,15 @@ public partial class User
 
     public double? Balance { get; set; }
 
-    public int? AccessFail { get; set; }
+    public int AccessFail { get; set; }
 
     public DateTime? LastFail { get; set; } 
 
-    public bool? ActiveStatus { get; set; }
+    public bool ActiveStatus { get; set; }
+
+    public DateTime? ActionPeriod { get; set; }
+
+    public string? Token { get; set; }
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 

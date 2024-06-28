@@ -334,7 +334,7 @@ namespace BadmintonCourtAPI.Controllers
 				else
 				{
 					string content = $"User: {info.FirstName} {info.LastName} | ID: {userId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {date} {start}h - {end}h | Court: {courtId} | Booking: {booking.BookingId} | Slot: {slotId} |";
-					double transactionAmount = (newAmount - tmpBalance) < 10 ? float.Parse(newAmount.ToString()) : (newAmount - tmpBalance);
+					double transactionAmount = (newAmount - tmpBalance) < 10000 ? float.Parse(newAmount.ToString()) : (newAmount - tmpBalance);
 					//-----------------------------------------------------
 
 

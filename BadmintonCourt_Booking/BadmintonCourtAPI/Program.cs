@@ -87,11 +87,13 @@
 
 
 
+using BadmintonCourtBusinessDAOs;
 using BadmintonCourtServices;
 using BadmintonCourtServices.IService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
 using System.Text;
@@ -106,6 +108,13 @@ namespace BadmintonCourtAPI
 
 			// Add services to the container.
 			builder.Services.AddControllers();
+			var isTesting = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
+			if (isTesting)
+			{
+				builder.Services.AddDbContext<BadmintonCourtContext>(options =>
+					options.UseInMemoryDatabase("InMemoryDb"));
+			}
+
 			builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("AllowAll", builder =>

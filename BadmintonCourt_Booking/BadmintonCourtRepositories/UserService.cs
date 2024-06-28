@@ -1,4 +1,5 @@
-﻿using BadmintonCourtBusinessObjects.Entities;
+﻿using BadmintonCourtBusinessDAOs;
+using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtDAOs;
 using BadmintonCourtServices.IService;
 using System;
@@ -17,10 +18,10 @@ namespace BadmintonCourtServices
         public UserService()
         {
             if (_userDAO == null)
-                _userDAO = new UserDAO();
-        }
+				_userDAO = new UserDAO();
+		}
 
-        public void AddUser(User user) => _userDAO.AddUser(user);
+		public void AddUser(User user) => _userDAO.AddUser(user);
 
         public void DeleteUser(string id) => _userDAO.DeleteUser(id);
 

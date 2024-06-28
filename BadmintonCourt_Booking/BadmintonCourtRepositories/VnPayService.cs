@@ -69,7 +69,7 @@ namespace BadmintonCourtServices
 				Description = vnp_OrderInfo,
 				TransactionId = vnp_transactionId.ToString(),
 				VnPayResponseCode = vnp_ResponseCode,
-				Amount = double.Parse(amount),
+				Amount = double.Parse(amount) / 100,
 				Date = DateTime.Now
 			};
 

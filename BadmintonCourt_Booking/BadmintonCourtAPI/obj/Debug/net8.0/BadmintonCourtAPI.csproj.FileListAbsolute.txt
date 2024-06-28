@@ -242,7 +242,6 @@ D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.AssemblyInfoInputs.cache
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.AssemblyInfo.cs
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.csproj.CoreCompileInputs.cache
-D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.MvcApplicationPartsAssemblyInfo.cs
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.MvcApplicationPartsAssemblyInfo.cache
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\staticwebassets.build.json
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\staticwebassets.development.json
@@ -258,3 +257,8 @@ D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.pdb
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.genruntimeconfig.cache
 D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\ref\BadmintonCourtAPI.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.InMemory.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.MvcApplicationPartsAssemblyInfo.cs
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\MailKit.dll
+D:\CSharp_Projects\SWP391\V1\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\MimeKit.dll
