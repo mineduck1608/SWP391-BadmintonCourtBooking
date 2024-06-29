@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './PaySuccess.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const PaySuccess = () => {
   const [success, setSuccess] = useState(null); // null initially, can be 1 for success or -1 for fail
@@ -36,14 +37,29 @@ const PaySuccess = () => {
   }
 
   return (
-    <div className='pay-success-background'>
-    <div className='pay-success-paymentresult'>
-      <div className="pay-success-container-paymentresult">
-        <h1>{success === 1 ? 'Thank You for Your Purchase!' : 'Transaction Failed'}</h1>
-        <p>{success === 1 ? 'Your transaction has been successfully completed.' : 'Unfortunately, your transaction could not be completed. Please try again.'}</p>
-        <button onClick={handleConfirm}>{success === 1 ? 'Go to Home Page' : 'Try Again'}</button>
+    <div className={`pay-success-background ${success === -1 ? 'failure' : ''}`}>
+      <div className='pay-success-paymentresult'>
+        <div className="pay-success-container-paymentresult">
+          {success === 1 ? (
+            <>
+              <div className="icon">
+                <i className="fas fa-check-circle" style={{ color: '#4CAF50' }}></i>
+              </div>
+              <h1>Thank You for Your Purchase!</h1>
+              <p>Your transaction has been successfully completed.</p>
+            </>
+          ) : (
+            <>
+              <div className="icon">
+                <i className="fas fa-times-circle" style={{ color: '#e53935' }}></i>
+              </div>
+              <h1>Transaction Failed</h1>
+              <p>Unfortunately, your transaction could not be completed. Please try again.</p>
+            </>
+          )}
+          <button onClick={handleConfirm}>{success === 1 ? 'Go to Home Page' : 'Try Again'}</button>
+        </div>
       </div>
-    </div>
     </div>
   );
 

@@ -17,16 +17,19 @@ const Register = () => {
   const isValidate = () => {
     let isProceed = true;
   
-    // Kiểm tra tính hợp lệ của email
     if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)) {
       isProceed = false;
       toast.warning('Please enter a valid email');
     }
   
-    // Kiểm tra tính hợp lệ của số điện thoại
     if (!/^\d{10}$/.test(phone)) {
       isProceed = false;
       toast.warning('Please enter a valid phone number');
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}$/.test(password)) {
+      isProceed = false;
+      toast.warning('Please enter a secure password. It should be at least 12 characters long and include uppercase, lowercase, digit, and special character.');
     }
   
     return isProceed;

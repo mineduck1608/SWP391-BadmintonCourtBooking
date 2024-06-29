@@ -95,7 +95,38 @@ const User = () => {
     setFormState(initialState); // Reset form state to initial values
   };
 
+  const isValidate = () => {
+    let isProceed = true;
+  
+    const email = formState.email;
+    const phone = formState.phone;
+    const password = formState.password;
+  
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+      isProceed = false;
+      toast.warning('Please enter a valid email');
+    }
+  
+    if (!/^\d{10}$/.test(phone)) {
+      isProceed = false;
+      toast.warning('Please enter a valid phone number');
+    }
+  
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}$/.test(password)) {
+      isProceed = false;
+      toast.warning('Please enter a secure password. It should be at least 12 characters long and include uppercase, lowercase, digit, and special character.');
+    }
+  
+    return isProceed;
+  }
+  
+
   const handleAddOk = () => {
+
+    if (!isValidate()) {
+      return;
+    }
+    
     // Construct the data for the new user
     const newUser = {
       username: formState.username,

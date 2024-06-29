@@ -76,7 +76,7 @@ const ViewCourtInfo = () => {
     };
 
     const handleBookCourtOption = (courtId) => {
-        navigate(`/bookCourt`);
+        navigate(`/bookCourt?courtId=${courtId}`);
     };
 
     const handleDateClick = (date) => {
