@@ -3,7 +3,7 @@ import './ViewInfo.css';
 import { Link } from 'react-router-dom';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; 
 import userImg from '../../Assets/user.jpg';
 
 export default function ViewInfo() {
@@ -19,14 +19,13 @@ export default function ViewInfo() {
 
   useEffect(() => {
     if (!token) {
-      console.error('Token không tìm thấy. Vui lòng đăng nhập.');
       return;
     }
 
-    const decodedToken = jwtDecode(token); // Giải mã JWT token để lấy thông tin người dùng
-    const userIdToken = decodedToken.UserId; // Trích xuất userId từ token đã giải mã
+    const decodedToken = jwtDecode(token); 
+    const userIdToken = decodedToken.UserId; 
 
-    fetch(`https://localhost:7233/UserDetail/GetAll`, { // Lấy tất cả thông tin người dùng
+    fetch(`https://localhost:7233/UserDetail/GetAll`, { 
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -35,18 +34,17 @@ export default function ViewInfo() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Lấy thông tin người dùng thất bại');
+        throw new Error('Error fetch user');
       }
       return response.json();
     })
     .then((data) => {
-      // Tìm người dùng với userId khớp
-      const matchingUser = data.find(user => user.userId == userIdToken);
+      const matchingUser = data.find(user => user.userId === userIdToken);
       if (matchingUser) {
         setUserInfo(matchingUser);
       }
     })
-    .catch(error => console.error('Lỗi khi lấy thông tin người dùng:', error));
+    .catch(error => console.error('Error fetch user:', error));
   }, [token]);
 
   return (
@@ -71,19 +69,19 @@ export default function ViewInfo() {
                 <div className="info-items">
                   <div className="info-item">
                     <label>First Name</label>
-                    <div>{userInfo.firstName}</div>
+                    <div>{userInfo.firstName || 'Please enter first name'}</div>
                   </div>
                   <div className="info-item">
                     <label>Last Name</label>
-                    <div>{userInfo.lastName}</div>
+                    <div>{userInfo.lastName || 'Please enter last name'}</div>
                   </div>
                   <div className="info-item">
                     <label>Email</label>
-                    <div>{userInfo.email}</div>
+                    <div>{userInfo.email || 'Please enter email'}</div>
                   </div>
                   <div className="info-item">
                     <label>Phone</label>
-                    <div>{userInfo.phone}</div>
+                    <div>{userInfo.phone || 'Please enter phone number'}</div>
                   </div>
                 </div>
                 <div className="button-container">

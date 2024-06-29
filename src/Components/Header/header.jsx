@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { MdSportsTennis } from "react-icons/md";
+import React, { useEffect, useState } from "react";
+import { MdSportsTennis, MdMenu } from "react-icons/md";
 import './header.css';
 import user from '../../Assets/user.jpg';
 import { Link, useNavigate } from "react-router-dom";
@@ -8,11 +8,12 @@ import { jwtDecode } from 'jwt-decode';
 
 const Header = () => {
     const navigate = useNavigate();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         let path = window.location.pathname;
         console.log(path);
-        if(path === '/paySuccess') return
+        if (path === '/paySuccess') return;
         let token = sessionStorage.getItem('token');
         if (!token) {
             navigate('/signin'); // Redirect to home if token is not present
@@ -47,6 +48,11 @@ const Header = () => {
         toast.success('Logout successful.');
         navigate('/'); // Redirect to home on logout
     };
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
+
     return (
         <div className="header-component">
             <Link to={'/home'}>
@@ -57,15 +63,19 @@ const Header = () => {
                     <img src={user} alt="" />
                 </Link>
             </a>
-            <div className="text-header">
-
-            <Link to={'/home'}><a className="header-link">Home</a></Link>
-            <Link to={'/bookingHistory'}>  <a className="header-link" href="">Booking</a></Link>
-            <Link to={'/buyTime'}><a className="header-link" href="">Time Balance</a></Link>
-                <a className="header-link time-balance" href="" onClick={handleLogout} >Logout</a>
+            <div className="dropdown">
+                <button className="dropdown-toggle" onClick={toggleDropdown}>
+                    <MdMenu className="menu-icon" />
+                </button>
+                <div className={`text-header ${dropdownOpen ? 'show' : ''}`}>
+                    <Link to={'/home'} className="header-link">Home</Link>
+                    <Link to={'/bookingHistory'} className="header-link">Booking</Link>
+                    <Link to={'/buyTime'} className="header-link">Time Balance</Link>
+                    <a className="header-link time-balance" onClick={handleLogout}>Logout</a>
+                </div>
             </div>
         </div>
     );
 }
 
-export default Header
+export default Header;

@@ -24,7 +24,7 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
             <div className="body">
                 <div className="body-element">
                     <div className="signin-text-element">
-                            <Link to={'/home'} className="logo">                            
+                            <Link to={'/'} className="logo">                            
                             <h1 className="signin-h1"><MdSportsTennis className="icon" />
                                 BMTC
                             </h1></Link>

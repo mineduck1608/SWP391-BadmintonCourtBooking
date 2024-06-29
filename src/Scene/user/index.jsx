@@ -63,19 +63,21 @@ const User = () => {
 
   const handleOk = () => {
     const userData = formState;
-
-    // Gửi yêu cầu cập nhật cho bảng User
-    fetch(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance, {
+  
+    // If activeStatus is set to true, reset accessFail to 0
+    if (userData.activeStatus === 'true') {
+      userData.accessFail = 0;
+    }
+  
+    fetch(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance + "&accessFail=" + userData.accessFail, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(userData)
-
     })
       .then(response => {
-        // Xử lý kết quả trả về từ bảng User
         toast(response.msg);
       })
       .catch(error => {
@@ -271,8 +273,8 @@ const User = () => {
     { field: "role", headerName: "Role", flex: 1, align: "center", headerAlign: "center" },
     {
       field: "activeStatus", headerName: "Active Status", flex: 1, align: "center", headerAlign: "center", renderCell: (params) => (
-        <Box color={params.value ? 'lightgreen' : 'red'}>
-          {params.value ? 'true' : 'false'}
+        <Box color={params.value ? 'green' : 'red'}>
+          {params.value ? 'Active' : 'Banned'}
         </Box>
       )
     },
@@ -333,8 +335,8 @@ const User = () => {
                       
                       <select value={formState.activeStatus} onChange={e => setFormState({ ...formState, activeStatus: e.target.value })} className="input-box-modal" type="text" >
                         <option value="0" hidden>{selectedRow ? selectedRow.activeStatus.toString() : ''}</option>
-                        <option value="true">true</option>
-                        <option value="false">false</option>
+                        <option value="true">Active</option>
+                        <option value="false">Banned</option>
                       </select>
                     </div>
                   </div>

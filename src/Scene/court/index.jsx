@@ -224,7 +224,7 @@ const Court = () => {
             headerAlign: "center",
             renderCell: (params) => (
                 <Box color={params.value ? 'green' : 'red'}>
-                    {params.value ? 'true' : 'false'}
+                    {params.value ? 'Active' : 'Maintenance'}
                 </Box>
             )
         },
@@ -256,13 +256,6 @@ const Court = () => {
                         onClick={() => handleViewInfo(params.row.courtId)}
                     >
                         Edit Info
-                    </Button>
-                    <Button
-                        variant="contained"
-                        style={{ backgroundColor: '#b22222', color: 'white' }}
-                        onClick={() => handleDelete(params.row.id)}
-                    >
-                        Delete
                     </Button>
                 </Box>
             )
@@ -394,8 +387,8 @@ const Court = () => {
                                     value={selectedCourt.courtStatus}
                                     onChange={handleInputChange}
                                 >
-                                    <FormControlLabel value="true" control={<Radio />} label="True" />
-                                    <FormControlLabel value="false" control={<Radio />} label="False" />
+                                    <FormControlLabel value="true" control={<Radio />} label="Active" />
+                                    <FormControlLabel value="false" control={<Radio />} label="Maintenance" />
                                 </RadioGroup>
                             </FormControl>
                             <TextField

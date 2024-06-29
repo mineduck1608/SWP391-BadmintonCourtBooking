@@ -34,12 +34,16 @@ const UserTable = () => {
 
                 const data = await response.json();
 
-                // Convert dates to readable format and map method to readable names
-                const formattedData = data.map(item => ({
-                    ...item,
-                    date: new Date(item.date).toLocaleString(),
-                    method: item.method === 1 ? 'Momo' : item.method === 2 ? 'VNPay' : 'Unknown'
-                }));
+                // Convert dates to readable format and split into date and time
+                const formattedData = data.map(item => {
+                    const dateObject = new Date(item.date);
+                    return {
+                        ...item,
+                        date: dateObject.toLocaleDateString(),
+                        time: dateObject.toLocaleTimeString(),
+                        method: item.method === 1 ? 'Momo' : item.method === 2 ? 'VNPay' : 'Unknown'
+                    };
+                });
 
                 setRows(formattedData);
             } catch (error) {
@@ -59,6 +63,7 @@ const UserTable = () => {
         { field: "paymentId", headerName: "Payment ID", flex: 1, align: "center", headerAlign: "center" },
         { field: "userId", headerName: "User ID", flex: 1, align: "center", headerAlign: "center" },
         { field: "date", headerName: "Date", flex: 1, align: "center", headerAlign: "center" },
+        { field: "time", headerName: "Time", flex: 1, align: "center", headerAlign: "center" },
         { field: "bookingId", headerName: "Booking ID", flex: 1, align: "center", headerAlign: "center" },
         { field: "method", headerName: "Method", flex: 1, align: "center", headerAlign: "center" },
         { field: "amount", headerName: "Amount", flex: 1, align: "center", headerAlign: "center", type: 'number' }

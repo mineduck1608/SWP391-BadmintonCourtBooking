@@ -47,18 +47,22 @@ export default function EditInfo() {
         const matchingUser = data.find(user => user.userId == userIdToken);
         if (matchingUser) {
           setUserInfo(matchingUser);
+          setImgPreview(matchingUser.img); // Set initial imgPreview to the current user's image
         }
       })
       .catch(error => console.error('Error fetching user info:', error));
   }, [token]);
 
   const handleSave = () => {
-    fetch(`https://localhost:7233/User/Update?id=${userInfo.userId}&firstName=${userInfo.firstName}&lastName=${userInfo.lastName}&phone=${userInfo.phone}&email=${userInfo.email}&img=${userInfo.img}`, {
+    // Ensure userInfo.img is not empty
+    const updatedUserInfo = { ...userInfo, img: userInfo.img || encodeURIComponent(imgPreview) };
+
+    fetch(`https://localhost:7233/User/Update?id=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}`, {
       method: "PUT",
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(userInfo) // Send updated userInfo as the body
+      body: JSON.stringify(updatedUserInfo) // Send updated userInfo as the body
     })
       .then(response => response.json())
       .then(data => {
@@ -71,48 +75,49 @@ export default function EditInfo() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-        setImg(file);
-        setImgPreview(URL.createObjectURL(file));
+      setImg(file);
+      setImgPreview(URL.createObjectURL(file));
     }
-};
+  };
 
-const handleClick = () => {
+  const handleClick = () => {
     if (!img) {
-        toast.error('No image selected');
-        return;
+      toast.error('No image selected');
+      return;
     }
     const imgRef = ref(imageDb, `files/${v4()}`);
     uploadBytes(imgRef, img)
-        .then(() => getDownloadURL(imgRef))
-        .then(url => {
-          const encodedUrl = encodeURIComponent(url);
-    setUserInfo(prevState => ({ ...prevState, img: encodedUrl }));
-    toast.success('Image uploaded successfully');
+      .then(() => getDownloadURL(imgRef))
+      .then(url => {
+        const encodedUrl = encodeURIComponent(url);
+        setUserInfo(prevState => ({ ...prevState, img: encodedUrl }));
+        toast.success('Image uploaded successfully');
       })
-        .catch(error => {
-            console.error('Error uploading image:', error);
-            toast.error('Image upload failed');
-        });
-};
-return (
+      .catch(error => {
+        console.error('Error uploading image:', error);
+        toast.error('Image upload failed');
+      });
+  };
+
+  return (
     <div className='edit-info'>
-        <div className='edit-info-header'>
-            <Header />
-        </div>
-        <div className="edit-info-wrapper">
-            <div className="background">
-                <div className="profile-container">
-                    <div className="profile-sidebar">
-                        <div className="uploaded-image-container">
-                            <img
-                                src={imgPreview || userInfo.img}
-                                alt="Uploaded"
-                                className="uploaded-image"
-                            />
-                        </div>
-                        <input type="file" onChange={handleImageChange} />
-                        <button className="button upload" onClick={handleClick}>Upload</button>
-                    </div>
+      <div className='edit-info-header'>
+        <Header />
+      </div>
+      <div className="edit-info-wrapper">
+        <div className="background">
+          <div className="profile-container">
+            <div className="profile-sidebar">
+              <div className="uploaded-image-container">
+                <img
+                  src={imgPreview || userInfo.img}
+                  alt="Uploaded"
+                  className="uploaded-image"
+                />
+              </div>
+              <input type="file" onChange={handleImageChange} />
+              <button className="button upload" onClick={handleClick}>Upload</button>
+            </div>
             <div className="profile-content">
               <h2>Profile Settings</h2>
               <div className="info-items">

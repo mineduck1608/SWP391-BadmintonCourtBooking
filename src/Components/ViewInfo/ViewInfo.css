@@ -115,6 +115,7 @@ html, body {
   font-size: 16px;
   background-color: #f9f9f9;
   color: #333;
+  font-weight: 500;
 }
 
 .button-container {
@@ -123,6 +124,7 @@ html, body {
   justify-content: flex-end;
   width: 100%;
 }
+
 
 .button {
   padding: 10px 20px;

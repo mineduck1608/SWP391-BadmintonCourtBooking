@@ -162,7 +162,7 @@ const Branch = () => {
       headerAlign: "center",
       renderCell: (params) => (
         <Box color={params.value ? 'green' : 'red'}>
-          {params.value ? 'true' : 'false'}
+          {params.value ? 'Active' : 'Closed'}
         </Box>
       )
     },
@@ -181,13 +181,6 @@ const Branch = () => {
             onClick={() => handleViewInfo(params.row.branchId)}
           >
             Edit Info
-          </Button>
-          <Button
-            variant="contained"
-            style={{backgroundColor: '#b22222', color: 'white'}}
-            onClick={() => handleDelete(params.row.id)}
-          >
-            Delete
           </Button>
         </Box>
       )
@@ -363,8 +356,8 @@ const Branch = () => {
                   value={selectedBranch.branchStatus ? 'true' : 'false'}
                   onChange={handleInputChange}
                 >
-                  <FormControlLabel value="true" control={<Radio />} label="True" />
-                  <FormControlLabel value="false" control={<Radio />} label="False" />
+                  <FormControlLabel value="true" control={<Radio />} label="Active" />
+                  <FormControlLabel value="false" control={<Radio />} label="Closed" />
                 </RadioGroup>
               </FormControl>
             </Box>
