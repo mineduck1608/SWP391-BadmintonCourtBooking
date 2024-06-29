@@ -92,6 +92,12 @@
   text-align: center;
 }
 
+.view-history-footer{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
 .view-history-table h3{
   font-size: 30px;
 }
