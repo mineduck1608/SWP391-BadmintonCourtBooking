@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import './ViewHistory.css';
@@ -13,94 +14,75 @@ export default function ViewHistory() {
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
-    if (!token) {
-      console.error('Token not found. Please log in.');
-      return;
-    }
+    const fetchData = async () => {
+      if (!token) {
+        setError('Token not found. Please log in.');
+        setLoading(false);
+        return;
+      }
 
-    const fetchBookings = async () => {
       try {
-        const response = await fetch('https://localhost:7233/Booking/GetAll', {
+        const decodedToken = jwtDecode(token);
+        const userIdToken = decodedToken.UserId;
+
+        const bookingsResponse = await fetch('https://localhost:7233/Booking/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
-        if (!response.ok) {
+        if (!bookingsResponse.ok) {
           throw new Error('Failed to fetch bookings');
         }
 
-        const data = await response.json();
-        setBookings(data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+        const bookingsData = await bookingsResponse.json();
+        const userBookings = bookingsData.filter(booking => booking.userId === userIdToken);
+        setBookings(userBookings);
 
-    const fetchSlots = async () => {
-      try {
-        const response = await fetch('https://localhost:7233/Slot/GetAll', {
+        const slotsResponse = await fetch('https://localhost:7233/Slot/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
-        if (!response.ok) {
+        if (!slotsResponse.ok) {
           throw new Error('Failed to fetch slots');
         }
 
-        const data = await response.json();
-        setSlots(data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+        const slotsData = await slotsResponse.json();
+        setSlots(slotsData);
 
-    const fetchCourts = async () => {
-      try {
-        const response = await fetch('https://localhost:7233/Court/GetAll', {
+        const courtsResponse = await fetch('https://localhost:7233/Court/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
-        if (!response.ok) {
+        if (!courtsResponse.ok) {
           throw new Error('Failed to fetch courts');
         }
 
-        const data = await response.json();
-        setCourts(data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+        const courtsData = await courtsResponse.json();
+        setCourts(courtsData);
 
-    const fetchBranches = async () => {
-      try {
-        const response = await fetch('https://localhost:7233/Branch/GetAll', {
+        const branchesResponse = await fetch('https://localhost:7233/Branch/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
-        if (!response.ok) {
+        if (!branchesResponse.ok) {
           throw new Error('Failed to fetch branches');
         }
 
-        const data = await response.json();
-        setBranches(data);
+        const branchesData = await branchesResponse.json();
+        setBranches(branchesData);
+
+        setLoading(false);
       } catch (err) {
         setError(err.message);
+        setLoading(false);
       }
-    };
-
-    const fetchData = async () => {
-      setLoading(true);
-      await fetchBookings();
-      await fetchSlots();
-      await fetchCourts();
-      await fetchBranches();
-      setLoading(false);
     };
 
     fetchData();
@@ -133,7 +115,11 @@ export default function ViewHistory() {
       return isUpcoming ? slotDate && slotDate >= currentDate : slotDate && slotDate < currentDate;
     });
 
-    return filteredBookings.slice(0, 5).map((booking) => {
+    const sortedBookings = filteredBookings.sort((a, b) => {
+      return new Date(b.bookingDate) - new Date(a.bookingDate); // Sort by booking date descending
+    });
+
+    return sortedBookings.map((booking) => {
       const slot = slots.find(slot => slot.bookingId === booking.bookingId);
       const slotDate = slot ? new Date(slot.date).toLocaleDateString() : 'N/A';
       const startTime = slot ? formatTime(slot.start) : 'N/A';
