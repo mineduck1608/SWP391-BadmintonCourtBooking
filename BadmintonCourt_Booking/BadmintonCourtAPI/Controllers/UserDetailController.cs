@@ -22,6 +22,12 @@ namespace BadmintonCourtAPI.Controllers
         public async Task<IEnumerable<UserDetail>> GetAllUserDetails() => _service.UserDetailService.GetAllUserDetails();
 
         [HttpGet]
+        [Route("UserDetail/GetById")]
+        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Staff")]
+        public async Task<ActionResult<UserDetail>> GetUserDetailByUserId(string id) => Ok(_service.UserDetailService.GetUserDetailById(id));
+
+        [HttpGet]
         [Route("UserDetail/GetByName")]
         public async Task<IEnumerable<UserDetail>> GetUserDetailsByName(string name) =>
 			_service.UserDetailService.GetUserDetailsByName(name);

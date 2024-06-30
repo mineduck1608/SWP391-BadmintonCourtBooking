@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { MdSportsTennis, MdMenu } from "react-icons/md";
 import './header.css';
-import user from '../../Assets/user.jpg';
+import userImg from '../../Assets/user.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Import jwt-decode without curly braces
 
 const Header = () => {
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [userImage, setUserImage] = useState(userImg);
+    const [username, setUsername] = useState("");
 
     useEffect(() => {
         let path = window.location.pathname;
-        console.log(path);
         if (path === '/paySuccess') return;
+
         let token = sessionStorage.getItem('token');
         if (!token) {
             navigate('/signin'); // Redirect to home if token is not present
@@ -29,9 +31,9 @@ const Header = () => {
             return;
         }
 
-        const { UserId: userid, Username: username, Role: role } = decodedToken;
+        const { UserId: userId, Username: userName, Role: role } = decodedToken;
 
-        if (!username && !userid && !role) {
+        if (!userName && !userId && !role) {
             navigate('/signin'); // Redirect to sign-in if required fields are missing
             return;
         }
@@ -41,7 +43,27 @@ const Header = () => {
             navigate('/'); // Redirect to home if the role is not 'Customer'
             return;
         }
+
+        setUsername(userName);
+        fetchUserImage(userId);
+
     }, [navigate]);
+
+    const fetchUserImage = async (userId) => {
+        const userDetailsUrl = `https://localhost:7233/UserDetail/GetById?id=${userId}`;
+        
+        try {
+            const response = await fetch(userDetailsUrl);
+            if (response.ok) {
+                const userDetails = await response.json();
+                if (userDetails.img) {
+                    setUserImage(userDetails.img);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch user details', error);
+        }
+    };
 
     const handleLogout = () => {
         sessionStorage.clear();
@@ -60,7 +82,7 @@ const Header = () => {
             </Link>
             <a href="" className="user-pic">
                 <Link to={'/viewInfo'}>
-                    <img src={user} alt="" />
+                    <img src={userImage || userImg} alt="User" />
                 </Link>
             </a>
             <div className="dropdown">

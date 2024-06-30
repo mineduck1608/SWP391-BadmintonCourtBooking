@@ -33,6 +33,7 @@ import BuyTime from './Components/BuyTime/BuyTime';
 import BookingHistory from './Components/ViewHistory/ViewHistory';
 import PaySuccess from './Components/PaySuccess/PaySuccess';
 import BuyFail from './Components/BuyFail/BuyFail';
+import GoogleMap from './Components/googleMap/googleMap';
 const App = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />
           <Route path="/payFail" element={<div><Header /><BuyFail /><Footer /></div>} />
           <Route path="/bookingHistory" element={<BookingHistory />} />
+          <Route path="/googleMap" element={<GoogleMap />} />
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}

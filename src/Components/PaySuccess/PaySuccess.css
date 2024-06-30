@@ -59,7 +59,7 @@
   background-color: #d32f2f; /* Darker red on hover */
 }
 
-.icon {
+.icon-payment {
   font-size: 50px;
   margin-bottom: 20px;
   animation: show 0.5s ease-in-out;
