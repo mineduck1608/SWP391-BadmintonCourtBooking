@@ -86,7 +86,7 @@
     overflow: hidden;
     z-index: 1;
     animation: fadeIn 0.3s ease-in-out;
-    width: 220px; /* Adjusted width to prevent text wrapping */
+    width: 230px; /* Adjusted width to prevent text wrapping */
     border: 1px solid #ddd; /* Border for a more defined look */
 }
 
