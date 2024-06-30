@@ -51,16 +51,16 @@ namespace BadmintonCourtDAOs
                 tmp.BranchImg = newBranch.BranchImg; 
                 tmp.BranchName = newBranch.BranchName;
                 tmp.BranchStatus = newBranch.BranchStatus;
-    //            if (newBranch.BranchStatus == 0 || newBranch.BranchStatus == -1) 
-    //            {
-				//	List<Court> courts = _dbContext.Courts.Where(x => x.BranchId == id).ToList();
-				//	foreach (var item in courts)
-				//	{
-				//		item.CourtStatus = false;
-				//		_dbContext.Courts.Update(item);
-				//		_dbContext.SaveChanges();
-				//	}
-				//}
+                if (newBranch.BranchStatus == 0 || newBranch.BranchStatus == -1)
+                {
+                    List<Court> courts = _dbContext.Courts.Where(x => x.BranchId == id).ToList();
+                    foreach (var item in courts)
+                    {
+                        item.CourtStatus = false;
+                        _dbContext.Courts.Update(item);
+                        _dbContext.SaveChanges();
+                    }
+                }
                 _dbContext.CourtBranches.Update(tmp);
                 _dbContext.SaveChanges();
             }

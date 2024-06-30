@@ -21,5 +21,6 @@ public partial class Payment
 
     public virtual Booking? Booking { get; set; }
 
-    public virtual User User { get; set; } = null!;
+
+	public virtual User User { get; set; } = null!;
 }

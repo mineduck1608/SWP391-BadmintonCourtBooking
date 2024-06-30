@@ -53,7 +53,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (content.IsNullOrEmpty())
 				return BadRequest("Full fill your comment");
-			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rating = rate });
+			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rating = rate, Period = DateTime.Now });
 			return Ok();
 		}
 
@@ -66,6 +66,7 @@ namespace BadmintonCourtAPI.Controllers
 			feedback.Rating = int.Parse(rate.ToString());
 			if (!content.IsNullOrEmpty())
 				feedback.Content = content;
+			feedback.Period = DateTime.Now;
 			_service.FeedbackService.UpdateFeedback(feedback, id);
 			return Ok();
 		}

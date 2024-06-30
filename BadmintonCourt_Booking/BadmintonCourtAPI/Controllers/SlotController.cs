@@ -8,12 +8,16 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.NET.StringTools;
 using BadmintonCourtBusinessObjects.SupportEntities.Slot;
 using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo;
+using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Primitives;
 namespace BadmintonCourtAPI.Controllers
 {
 	public class SlotController : Controller
 	{
 		private readonly BadmintonCourtService _service;
 		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
+		private const string updateResultMomoCallBack = "https://localhost:7233/Slot/UpdateResultProcessMomo";
+		private const string updateResultVnPayCallBack = "https://localhost:7233/Slot/UpdateResultProcessVnPay";
 		public SlotController(IConfiguration config)
 		{
 			if (_service == null)
@@ -22,16 +26,93 @@ namespace BadmintonCourtAPI.Controllers
 			}
 		}
 
+		private void ExtractDataForUpdatingSlot(string slotId, out Payment? payment, out BookedSlot slot, out Court? court, out User? user, out Booking booking)
+		{
+			slot = _service.SlotService.GetSlotById(slotId);
+			court = _service.CourtService.GetCourtByCourtId(slot.CourtId);
+			payment = _service.PaymentService.GetPaymentByBookingId(slot.BookingId);
+			booking = _service.BookingService.GetBookingByBookingId(slot.BookingId);
+			user = _service.UserService.GetUserById(booking.UserId);
+		}
+
+		private void ExtractSlotAndTime(string date, int start, int end, string courtId, out DateTime startDate, out DateTime endDate, out List<BookedSlot> tmpStorage)
+		{
+			string[] dateComponents = date.Split('-');
+			startDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), start, 0, 0);
+			endDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), end, 0, 0);
+			tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
+		}
+		private bool IsTimeIntervalValid(string? date, int? start, int? end, string? courtId)
+		{
+			BookedSlot primitive = _service.SlotService.GetSlotById("S1");
+			if (date.IsNullOrEmpty() || start >= end || courtId.IsNullOrEmpty() || start < primitive.StartTime.Hour || end > primitive.EndTime.Hour || courtId.IsNullOrEmpty() || _service.CourtService.GetCourtByCourtId(courtId).CourtStatus == false)
+				return false;
+			return true;
+		}
+
+		private void SupportUpdateSlotEnoughBalnce(double tmpBalance, double newAmount, double refund, string courtId, DateTime startDate, DateTime endDate, Booking booking, BookedSlot slot, User user)
+		{
+			// Update số dư
+			user.Balance = tmpBalance - newAmount; // Tru bot cho phan dat slot moi
+			_service.UserService.UpdateUser(user, user.UserId);
+			//----------------------------------------
+			// Update booking
+			if (booking.BookingType == 1) // 1 lần chơi -> Thay giá trị booking cũ thành mới
+				booking.Amount = newAmount;
+			else // Chơi tháng
+			{
+				booking.Amount -= refund; // Bỏ giá trị của 1 slot cũ
+				booking.Amount += newAmount; // Thêm giá trị của slot mới vừa thay đổi
+			}
+			booking.ChangeLog += 1;
+			_service.BookingService.UpdatBooking(booking, booking.BookingId);
+			slot.StartTime = startDate;
+			slot.EndTime = endDate;
+			slot.CourtId = courtId;
+			_service.SlotService.UpdateSlot(slot, slot.SlotId);
+		}
+
+		private void ExtractAmountToValidateCondition(BookedSlot slot, Booking booking, DateTime startDate, DateTime endDate, string courtId, out double refund, out double tmpBalance, out double newAmount)
+		{
+			Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
+			Court court = _service.CourtService.GetCourtByCourtId(courtId);
+			User user = _service.UserService.GetUserById(booking.UserId);
+			refund = oCourt.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
+			tmpBalance = user.Balance.Value + refund;
+			newAmount = (endDate.Hour - startDate.Hour) * court.Price;
+		}
+		private Dictionary<string, string> ExtractPaymentInfo(string content)
+		{
+			string[] components = content.Split('|');
+			Dictionary<string, string> result = new Dictionary<string, string>();
+			int tail = components.Length - 2;
+			for (int i = 0; i < components.Length - 1; i++)
+            {	
+				string key = "";
+				string value = "";
+				string tmp = components[i].Trim();
+				if (i == tail)
+				{
+					key = "Status";
+					value = tmp;
+				}
+				else
+				{
+					key = components[i].Split(':')[0].Trim();
+					value = components[i].Split(':')[1].Trim();
+				}
+				result.Add(key, value);
+			}
+			return result;
+		}
 
 		[HttpGet]
 		[Route("Slot/GetAll")]
-		//[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.SlotService.GetAllSlots()));
 
 		[HttpGet]
 		[Route("Slot/GetByDemand")]
-		//[Authorize(Roles = "Admin,Staff")]
-		
+
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByDemand(string? branchId, string? courtId, DateOnly? startDate, DateOnly? endDate)
 		{
 			DateTime start = startDate == null ? new DateTime(2000, 1, 1, 0, 0, 1) : new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day, 0, 0, 1);
@@ -63,21 +144,21 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Slot/BookingByBalance")]
-		//[Authorize]
-		public async Task<IActionResult> AddBookedSLot(string? date, int start, int end, string courtId, string userId)
+		[Authorize]
+		public async Task<IActionResult> AddBookedSLot(string? date, int? start, int? end, string? courtId, string userId)
 		{
-			if (date.IsNullOrEmpty() || start >= end || courtId.IsNullOrEmpty() || start < Utils.Environment.StartHour || end > Utils.Environment.EndHour)
+			if (IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
 
-			string[] dateComponents = date.Split('-');
-			User user = _service.UserService.GetUserById(userId);
-			DateTime startDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), start, 0, 0);
-			DateTime endDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), end, 0, 0);
-			List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
-			if (tmpStorage == null || tmpStorage.Count == 0)
+			DateTime startDate = new();
+			DateTime endDate = new();
+			List<BookedSlot> tmpStorage = new();
+			ExtractSlotAndTime(date, start.Value, end.Value, courtId, out startDate, out endDate, out tmpStorage);
+			if (tmpStorage.Count == 0)
 			{
+				User user = _service.UserService.GetUserById(userId);
 				Court court = _service.CourtService.GetCourtByCourtId(courtId);
-				double amount = (end - start) * court.Price;
+				double amount = (end.Value - start.Value) * court.Price;
 				if (user.Balance >= amount)
 				{
 					string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
@@ -107,114 +188,158 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPut]
 		[Route("Slot/UpdateOfficeHours")]
-		//[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateOfficeHours(int start, int end)
 		{
 			if (start >= end)
 				return BadRequest(new { msg = "End must be bigger than start" });
 			BookedSlot slot = _service.SlotService.GetSlotById("S1");
-			slot.StartTime = Util.CustomizeDate(start);
-			slot.EndTime = Util.CustomizeDate(end);
+			slot.StartTime = new DateTime(1900, 1, 1, start, 0, 0);
+			slot.EndTime = new DateTime(1900, 1, 1, end, 0, 0);
 			_service.SlotService.UpdateSlot(slot, "S1");
 			return Ok(new { msg = "Success" });
 		}
 
 		[HttpPut]
 		[Route("Slot/UpdateByStaff")]
-		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> UpdateSlotByStaff(string date, int start, int end, string slotId, string courtId)
+		[Authorize(Roles = "Admin,Staff")]
+		public async Task<IActionResult> UpdateSlotByStaff(string? date, int? start, int? end, string slotId, string? courtId, string bookingId)
 		{
-			if (date.IsNullOrEmpty() || start > end || courtId.IsNullOrEmpty() || start < Utils.Environment.StartHour || end > Utils.Environment.EndHour)
+			if (IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
 
-			string[] dateComponents = date.Split('-');
-			// Check trường hợp sân đấy giờ đấy đang tạm bảo trì đổi thời gian + sân khác cho khách
-			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-			Booking booking = _service.BookingService.GetBookingByBookingId(slot.BookingId);
-
-			DateTime startDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), start, 0, 0);
-			DateTime endDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), end, 0, 0);
-			//Court c1 = _service.CourtService.GetCourtByCourtId("C1");
-
-
-			List<BookedSlot> tmpList = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
-			if (courtId != slot.CourtId) // Thay đổi sân khác với sân gốc đã đặt
+			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
+			if (booking.ChangeLog < 3)
 			{
-				if (tmpList.Count > 0l) // Khung giờ đấy của sân mới đã kẹt
+				BookedSlot slot = _service.SlotService.GetSlotById(slotId);
+				DateTime startDate = new();
+				DateTime endDate = new();
+				List<BookedSlot> tmpStorage = new();
+				ExtractSlotAndTime(date, start.Value, end.Value, courtId, out startDate, out endDate, out tmpStorage);
+				if (courtId == slot.CourtId) // Cũng là sân cũ
+				{
+					tmpStorage.Remove(slot); // Bỏ slot gốc để tránh quét phải
+				}
+				if (tmpStorage.Count > 0) // Khung giờ đấy của sân mới đã kẹt
 					return BadRequest(new { msg = $"Court {courtId} between {startDate} to {endDate} has been booked" });
+
+				double refund;
+				double tmpBalance;
+				double newAmount;
+				ExtractAmountToValidateCondition(slot, booking, startDate, endDate, courtId, out refund, out tmpBalance, out newAmount);
+				User user = _service.UserService.GetUserById(booking.UserId);
+				if (tmpBalance >= newAmount)
+				{
+					SupportUpdateSlotEnoughBalnce(tmpBalance, newAmount, refund, courtId, startDate, endDate, booking, slot, user);
+					return Ok(new { msg = "Success" });
+				}
+				return BadRequest(new { msg = "Balance not enough" });
+
 			}
-			else // Cũng là sân cũ
+			return BadRequest(new { msg = "Can't change" });
+		}
+
+		// Status: on going
+		[HttpPut]
+		[Route("Slot/UpdateByUser")]
+		[Authorize]
+		public async Task<IActionResult> UpdateSlotByUser(int? start, int? end, string? date, string userId, string courtId, string slotId, int? paymentMethod, string bookingId) // Khách đổi ý muốn thay đổi sân / thời gian / ....
+		{
+			if (IsTimeIntervalValid(date, start, end, courtId))
+				return BadRequest(new { msg = "Invalid time" });
+
+
+			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
+			//--------------------------------------------------------------------------------------
+			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 3)
 			{
-				tmpList.Remove(slot); // Bỏ slot gốc để tránh quét phải
-				if (tmpList.Count > 0) // Kết quả sau khi bỏ slot gốc nếu danh sách vẫn còn tức là thời gian muốn thay đổi trong đấy vẫn bị cấn các slot đc đặt khác
+				BookedSlot slot = _service.SlotService.GetSlotById(slotId);
+				DateTime startDate = new();
+				DateTime endDate = new();
+				List<BookedSlot> tmpStorage = new();
+				ExtractSlotAndTime(date, start.Value, end.Value, courtId, out startDate, out endDate, out tmpStorage);
+				if (courtId == slot.CourtId) // Cũng là sân cũ
+				{
+					tmpStorage.Remove(slot); // Bỏ slot gốc để tránh quét phải
+				}
+				if (tmpStorage.Count > 0) // Khung giờ đấy của sân mới đã kẹt
 					return BadRequest(new { msg = $"Court {courtId} between {startDate} to {endDate} has been booked" });
+
+				double refund;
+				double tmpBalance;
+				double newAmount;
+				ExtractAmountToValidateCondition(slot, booking, startDate, endDate, courtId, out refund, out tmpBalance, out newAmount);
+				User user = _service.UserService.GetUserById(userId);
+				// ---------------------------- 
+				if (tmpBalance >= newAmount) // Check số dư sau khi hoàn đã đủ tiền thanh toán
+				{
+					SupportUpdateSlotEnoughBalnce(tmpBalance, newAmount, refund, courtId, startDate, endDate, booking, slot, user);
+				}
+				//----------------------------------------------------
+				// Sau khi đã giả định số dư tổng sẽ có sau khi đc hoàn mà vẫn ko đủ thì tiến hành cho khách thực hiện giao dịch qua app bank / momo
+				else
+				{
+					UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
+					string content = $"User: {info.FirstName} {info.LastName} | ID: {userId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {date} {start}h - {end}h | Court: {courtId} | Booking: {booking.BookingId} | Slot: {slotId} |";
+					double transactionAmount = (newAmount - tmpBalance) < 10000 ? float.Parse(newAmount.ToString()) : (newAmount - tmpBalance);
+					paymentMethod = paymentMethod == null ? 1 : paymentMethod;
+					// Thực hiện giao dịch thanh toán
+					if (transactionAmount < 10000) // GIao dịch VNPay chưa tới 10k -> thanh toán full ko cấn số dư
+						content += " Balance not enough | Change Slot";
+					else // Sau khi cấn số dư thì số tiền cần phải thanh toán trên 10k -> tiến hành cook giao dịch app bank
+						 // Thực hiện giao dịch thanh toán
+						content += " Balance enough | Change Slot";
+					//------------------------------------------------------------------------
+					string paymentUrl = "";
+					if (paymentMethod == 1)
+					{
+						paymentUrl = _service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO
+						{
+							Content = content,
+							Amount = float.Parse(transactionAmount.ToString())
+						},
+						updateResultVnPayCallBack
+						);
+					}
+					else
+					{
+						var reqdata = _service.MomoService.CreateRequestData(content, (transactionAmount * 1000).ToString(), updateResultMomoCallBack);
+						var response = _service.MomoService.SendMoMoRequest(reqdata);
+						paymentUrl = response.Result.PayUrl;
+					}
+					return Ok(new { url = paymentUrl });
+				}
+				return Ok(new { msg = "Success" });
 			}
-
-			slot.StartTime = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), start, 0, 0);
-			slot.EndTime = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), end, 0, 0);
-			slot.CourtId = courtId;
-			_service.SlotService.UpdateSlot(slot, slotId);
-
-			//if (bookingId.IsNullOrEmpty() && status == true) // Tương đương hủy slot -> hoàn số dư
-			//{
-			//	Booking booking = _service.BookingService.GetBookingByBookingId(tmpBookingId);
-			//	Payment payment = _service.PaymentService.GetPaymentByBookingId(tmpBookingId);
-			//	if (payment == null) // Book = số dư
-			//	{
-			//		if (booking.BookingType == 1) // 1 lần chơi
-			//			_service.BookingService.DeleteBooking(tmpBookingId);
-			//	}
-			//	else // Book = bank
-			//	{
-			//		if (booking.BookingType == 1) // 1 lần chơi
-			//		{
-			//			// Chỉnh bookingId của payment thành null rồi mới xóa booking 
-			//			payment.BookingId = null;
-			//			_service.PaymentService.UpdatePayment(payment, payment.PaymentId);
-			//			// Xóa booking
-			//			_service.BookingService.DeleteBooking(tmpBookingId);
-			//		}
-			//		// Nếu chơi cố định chơi tháng thì chỉ đơn thuần xóa slot và hoàn tiền. Ko xóa luôn book do những slot còn lại của chuỗi tháng đấy sẽ bị ảnh hưởng theo
-			//	}
-			//	// Hoàn số dư
-			//	User user = _service.UserService.GetUserById(booking.UserId);
-			//	user.Balance += refund;
-			//	_service.UserService.UpdateUser(user, user.UserId);
-			//}
-			return Ok(new { msg = "Success" });
+			return BadRequest(new { msg = "Can't cancel as out of time to change decision" });
 		}
 
 		[HttpDelete]
 		[Route("Slot/CancelByStaff")]
-		//[Authorize]
-		public async Task<IActionResult> CancelSlotByStaff(string slotId, string bookingId) // Nhân viên hủy slot
+		[Authorize(Roles = "Admin,Staff")]
+		public async Task<IActionResult> CancelSlotByStaff(string slotId) // Nhân viên hủy slot
 		{
-			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
+			Booking booking = new();
+			BookedSlot slot = new();
+			Court court = new();
+			User user = new();
+			Payment payment = new();
+			ExtractDataForUpdatingSlot(slotId, out payment, out slot, out court, out user, out booking);
+			float refund = court.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
 
-			User user = _service.UserService.GetUserById(booking.UserId);
-			Payment payment = _service.PaymentService.GetPaymentByBookingId(bookingId);
-			int refund = slot.EndTime.Hour - slot.StartTime.Hour;
-			_service.SlotService.DeleteSlot(slotId);
-			if (payment == null) // Đặt sân = số dư
+			slot.IsDeleted = true;
+			_service.SlotService.UpdateSlot(slot, slotId);
+			if (booking.BookingType == 1) // 1 lan choi
 			{
-				if (booking.BookingType == 1) // 1 lần chơi 
-					_service.BookingService.DeleteBooking(bookingId);
-			}
-			// -----------------------------------------
-			// Bank để đặt
-			else
-			{
-				if (booking.BookingType == 1) // 1 lần chơi
+				booking.IsDeleted = true;
+				if (payment != null) // 1 lan choi dat = tien
 				{
-					// Chỉnh bookingId của payment thành null rồi mới xóa booking 
 					payment.BookingId = null;
 					_service.PaymentService.UpdatePayment(payment, payment.PaymentId);
-					// Xóa booking
-					_service.BookingService.DeleteBooking(bookingId);
 				}
-				// Nếu chơi cố định chơi tháng thì chỉ đơn thuần xóa slot và hoàn tiền. Ko xóa luôn book do những slot còn lại của chuỗi tháng đấy sẽ bị ảnh hưởng theo
 			}
+			else booking.Amount -= refund; // Choi thang' / choi co dinh
+			_service.BookingService.UpdatBooking(booking, booking.BookingId);
 			user.Balance += refund;
 			_service.UserService.UpdateUser(user, user.UserId);
 			return Ok(new { msg = "Success" });
@@ -223,416 +348,134 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpDelete]
 		[Route("Slot/Cancel")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> CancelSlot(string slotId, string bookingId) // Khách hàng chủ động hủy slot
 		{
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-
-			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-			Court court = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-			User user = _service.UserService.GetUserById(booking.UserId);
-			Payment payment = _service.PaymentService.GetPaymentByBookingId(bookingId);
-			double refund = (slot.EndTime.Hour - slot.StartTime.Hour) * court.Price;
-			_service.SlotService.DeleteSlot(slotId);
-
-			if (payment == null) // Đặt sân = số dư
+			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 3)
 			{
-				if (booking.BookingType == 1) // 1 lần chơi 
-					_service.BookingService.DeleteBooking(bookingId);
-			}
-			// -----------------------------------------
-			// Bank để đặt
-			else
-			{
-				if (booking.BookingType == 1) // 1 lần chơi
+				BookedSlot slot = new();
+				Court court = new();
+				User user = new();
+				Payment payment = new();
+				ExtractDataForUpdatingSlot(slotId, out payment, out slot, out court, out user, out booking);
+				float refund = court.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
+
+				slot.IsDeleted = true;
+				_service.SlotService.UpdateSlot(slot, slotId);
+				if (booking.BookingType == 1) // 1 lan choi
 				{
-					// Chỉnh bookingId của payment thành null rồi mới xóa booking 
-					payment.BookingId = null;
-					_service.PaymentService.UpdatePayment(payment, payment.PaymentId);
-					// Xóa booking
-					_service.BookingService.DeleteBooking(bookingId);
-				}
-				// Nếu chơi cố định chơi tháng thì chỉ đơn thuần xóa slot và hoàn tiền. Ko xóa luôn book do những slot còn lại của chuỗi tháng đấy sẽ bị ảnh hưởng theo
-			}
-			user.Balance += refund;
-			_service.UserService.UpdateUser(user, user.UserId);
-			return Ok(new { msg = "Success" });
-		}
-
-
-		// Status: on going
-		[HttpPut]
-		[Route("Slot/UpdateByUser")]
-		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> UpdateSlotByUser(int? start, int? end, string? date, string userId, string courtId, string slotId, int? paymentMethod) // Khách đổi ý muốn thay đổi sân / thời gian / ....
-		{
-			if (date.IsNullOrEmpty() || start > end || courtId.IsNullOrEmpty() || start < Utils.Environment.StartHour || end > Utils.Environment.EndHour)
-				return BadRequest(new { msg = "Invalid time" });
-
-			string[] componentDate = date.Split('-');
-			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-			Booking booking = _service.BookingService.GetBookingByBookingId(slot.BookingId);
-			//--------------------------------------------------------------------------------------
-			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1)
-			{
-				DateTime startDate = new DateTime(int.Parse(componentDate[0]), int.Parse(componentDate[1]), int.Parse(componentDate[2]), start.Value, 0, 0);
-				DateTime endDate = new DateTime(int.Parse(componentDate[0]), int.Parse(componentDate[1]), int.Parse(componentDate[2]), end.Value, 0, 0);
-				if (slot.CourtId == courtId && slot.StartTime == startDate && slot.EndTime == endDate) // Chọn nhầm lại y chang cũ ko khác gì
-					return Ok(new { msg = "Success" });
-
-
-				Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-				Court court = _service.CourtService.GetCourtByCourtId(courtId);
-				List<BookedSlot> tmpList = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
-				//--------------------------------------------------------------------------------------
-				if (courtId != slot.CourtId) // Thay đổi sân khác với sân gốc đã đặt
-				{
-					if (tmpList != null) // Khung giờ đấy của sân mới đã kẹt
-						return BadRequest(new { msg = $"Court {courtId} between {startDate} to {endDate} has been booked" });
-				}
-				else // Cũng là sân cũ
-				{
-					tmpList.Remove(slot); // Bỏ slot gốc để tránh quét phải
-					if (tmpList.Count > 0) // Kết quả sau khi bỏ slot gốc nếu danh sách vẫn còn tức là thời gian muốn thay đổi trong đấy vẫn bị cấn các slot đc đặt khác
-						return BadRequest(new { msg = $"Court {courtId} between {startDate} to {endDate} has been booked" });
-				}
-
-				User user = _service.UserService.GetUserById(userId);
-				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				int oInterval = slot.EndTime.Hour - slot.StartTime.Hour; // Thời lượng cũ trc khi sửa
-				int nInterval = end.Value - start.Value; // Thời lượng mới sau khi sửa
-				paymentMethod = paymentMethod == null ? 1 : paymentMethod; // Bắt buộc chọn phương thức thanh toán khi thay đổi giờ chơi
-																		   // Ko chọn sẽ mặc định vnpay
-
-				double tmpBalance = user.Balance.Value + booking.Amount; // Giả sử tổng số dư của khách sau khi đc hoàn tiền
-				double newAmount = nInterval * court.Price;
-				// ---------------------------- 
-				user.Balance = tmpBalance;  // Chỉnh lại số dư thành số dư giả định  
-				if (tmpBalance >= newAmount) // Check số dư sau khi hoàn đã đủ tiền thanh toán
-				{
-					// Update số dư
-					user.Balance -= newAmount; // Tru bot cho phan dat slot moi
-					_service.UserService.UpdateUser(user, userId);
-					//----------------------------------------
-					// Update booking
-					if (booking.BookingType == 1) // 1 lần chơi -> Thay giá trị booking cũ thành mới
-						booking.Amount = newAmount;
-					else // Chơi tháng
+					booking.IsDeleted = true;
+					if (payment != null) // 1 lan choi dat = tien
 					{
-						booking.Amount -= oInterval * oCourt.Price; // Bỏ giá trị của 1 slot cũ
-						booking.Amount += newAmount; // Thêm giá trị của slot mới vừa thay đổi
+						payment.BookingId = null;
+						_service.PaymentService.UpdatePayment(payment, payment.PaymentId);
 					}
-					_service.BookingService.UpdatBooking(booking, booking.BookingId); // Update
-																					  //-------------------------------------------------
-																					  // Update slot
-					slot.StartTime = startDate;
-					slot.EndTime = endDate;
-					slot.CourtId = courtId;
-					_service.SlotService.UpdateSlot(slot, slotId);
 				}
-				//----------------------------------------------------
-				// Sau khi đã giả định số dư tổng sẽ có sau khi đc hoàn mà vẫn ko đủ thì tiến hành cho khách thực hiện giao dịch qua app bank / momo
 				else
 				{
-					string content = $"User: {info.FirstName} {info.LastName} | ID: {userId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {date} {start}h - {end}h | Court: {courtId} | Booking: {booking.BookingId} | Slot: {slotId} |";
-					double transactionAmount = (newAmount - tmpBalance) < 10 ? float.Parse(newAmount.ToString()) : (newAmount - tmpBalance);
-					//-----------------------------------------------------
-
-
-					// Thực hiện giao dịch thanh toán
-					if (transactionAmount < 10000) // GIao dịch VNPay chưa tới 10k -> thanh toán full ko cấn số dư
-					{
-						content += " Balance not enough | Change Slot";
-					}
-					else // Sau khi cấn số dư thì số tiền cần phải thanh toán trên 10k -> tiến hành cook giao dịch app bank
-						 // Thực hiện giao dịch thanh toán
-						content += " Balance enough | Change Slot";
-					//------------------------------------------------------------------------
-					//------------------------------------------------------------------------
-					if (paymentMethod == 1)
-						return Ok(new
-						{
-							url = _service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO
-							{
-								Amount = float.Parse(transactionAmount.ToString()),
-								UserId = userId,
-								Content = content
-							},
-							"https://localhost:7233/Slot/UpdateResultProcessVnPay")
-						});
-					else
-					{
-						var reqdata = _service.MomoService.CreateRequestData(content, (transactionAmount * 1000).ToString(), "https://localhost:7233/Slot/UpdateResultProcessMomo");
-						var response = _service.MomoService.SendMoMoRequest(reqdata);
-						return Ok(new { url = response.Result.PayUrl });
-					}
+					booking.Amount -= refund; // Choi thang' / choi co dinh
+					booking.ChangeLog += 1;
 				}
+				_service.BookingService.UpdatBooking(booking, booking.BookingId);
+				user.Balance += refund / 2;
+				_service.UserService.UpdateUser(user, user.UserId);
 				return Ok(new { msg = "Success" });
 			}
-			return BadRequest(new { msg = "Can't cancel as out of time to change decision" });
+			return BadRequest(new { msg = "Can't change" });
 		}
-
-
-		//[HttpGet]
-		//[Route("Slot/UpdateResultProcessVnPay")]
-		//public async Task<ActionResult> ProcessResultVnpay()
-		//{
-		//	VnPayResponseDTO result = _service.VnPayService.PaymentExecute(Request.Query);
-		//	if (result.VnPayResponseCode != "00")
-		//		return BadRequest(new { msg = "Transaction failed! Can't update data" });
-
-		//	//---------------------------------------------------------------------
-		//	string userId = result.Description.Split('|')[1].Trim().Split(',')[1].Trim();
-		//	User user = _service.UserService.GetUserById(userId);
-		//	//------------------------------------------------------------------
-		//	string rawDate = result.Description.Split('|')[4].Trim().Split(':')[1].Trim();
-		//	DateOnly date = DateOnly.Parse(rawDate.Split(' ')[0]);
-		//	int start = int.Parse(new string(rawDate.Split(' ')[1].Where(char.IsDigit).ToArray()));
-		//	int end = int.Parse(new string(rawDate.Split(' ')[3].Where(char.IsDigit).ToArray()));
-		//	//------------------------------------------------------------------
-		//	string courtId = result.Description.Split('|')[6].Trim().Split(',')[1].Trim();
-		//	Court court = _service.CourtService.GetCourtByCourtId(courtId);
-		//	//------------------------------------------------------------------
-		//	string bookingId = result.Description.Split('|')[6].Trim().Split(',')[1].Trim();
-		//	Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-		//	//------------------------------------------------------------------
-		//	string slotId = result.Description.Split('|')[7].Trim().Split(',')[1].Trim();
-		//	BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-		//	Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-		//	//------------------------------------------------------------------
-		//	// Giao dịch thành công
-		//	_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), BookingId = booking.BookingId, Date = result.Date, Method = 1, UserId = userId, TransactionId = result.TransactionId });
-		//	//------------------------------------------------------------------
-
-		//	if (result.Description.Split('|')[8].Trim().Equals("Balance enough")) // Giao dịch update số dư đã cấn ra và còn ít nhất từ 10k để thỏa giao dịch qua vnpay - tương đương giao dịch bên trang vnpay sẽ >= 10k
-		//	{
-		//		user.Balance = 0;  // Do cấn hết số dư vào đơn đặt này nên trả về lại 0
-		//		booking.Amount += result.Amount / 1000; // Vì cấn toàn bộ số dư sau khi hoàn rồi mới thanh toán nên chỉ cần cộng thêm vào giá trị của giao dịch đã thanh toán từ payment ko quan tâm loại chơi 1 lần hay cố định
-		//	}
-		//	//------------------------------------------------------------------
-		//	// Giao dịch update đã cấn ra và còn chưa tới 10k để giao dịch trên vnpay - Ko thể giao dịch với số tiền nhỏ hơn 10k -> giao dịch full tiền của slot mới mà ko đc cấn từ balance giả định đã hoàn
-		//	else
-		//	{
-		//		user.Balance += (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
-		//		if (booking.BookingType == 1) // 1 lần chơi -> Thay luôn giá trị đơn cũ thành đơn mới
-		//			booking.Amount = result.Amount / 1000;
-		//		//-----------------------------------------------------			
-		//		else if (booking.BookingType == 2) // Chơi tháng
-		//		{
-		//			booking.Amount -= (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
-		//			booking.Amount += result.Amount / 1000; // Thêm giá trị của slot mới vào
-		//		}
-		//	}
-		//	// -------------------------------------
-		//	// Update lại dữ liệu số dư của khách trong db
-		//	_service.UserService.UpdateUser(user, userId);
-		//	//----------------------------------------
-		//	// Update Booking trước slot vì để lấy lại giá trị đơn tiền cũ đã đặt của slot cũ
-		//	_service.BookingService.UpdatBooking(booking, booking.BookingId);
-		//	//-----------------------------------------
-		//	// Update lại slot sau khi update booking hoàn tất
-		//	slot.CourtId = courtId;
-		//	slot.StartHour = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
-		//	slot.EndHour = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
-		//	_service.SlotService.UpdateSlot(slot, slotId);
-		//	return Ok(new { msg = "Success" });
-		//}
-
-
 
 		[HttpGet]
 		[Route("Slot/UpdateResultProcessVnPay")]
 		public async Task<IActionResult> ProcessResultVnpay()
 		{
 			VnPayResponseDTO result = _service.VnPayService.PaymentExecute(Request.Query);
-			if (result.VnPayResponseCode != "00")
-				return Redirect(resultRedirectUrl + "?msg=fail");
+			bool status = UpdateNewSlotToDB("00", result.VnPayResponseCode, result.Description, result.TransactionId, result.Amount, result.Date, 1);
+			if (status)
+			{
+				string userId = result.Description.Split('|')[0].Trim().Split(':')[1].Trim();
+				_service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, "Thanks for your purchasement. Your slot has been updated. You can now check it", "BMTC - Slot Update Notification");
+			}
+			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
+		}
+
+		private bool UpdateNewSlotToDB(string expected, string actual, string content, string transactionId, double amount, DateTime transactionPeriod, int method)
+		{
+			if (expected != actual) 
+				return false;
+
+			Dictionary<string, string> infoStorage = ExtractPaymentInfo(content);
 			//---------------------------------------------------------------------
-			string userId = result.Description.Split('|')[1].Trim().Split(',')[1].Trim();
+			string userId = infoStorage["ID"];
 			User user = _service.UserService.GetUserById(userId);
-			//------------------------------------------------------------------
-			string rawDate = result.Description.Split('|')[4].Trim().Split(':')[1].Trim();
+			//---------------------------------------------------------------------
+			string rawDate = infoStorage["Date"];
 			DateOnly date = DateOnly.Parse(rawDate.Split(' ')[0]);
 			int start = int.Parse(new string(rawDate.Split(' ')[1].Where(char.IsDigit).ToArray()));
 			int end = int.Parse(new string(rawDate.Split(' ')[3].Where(char.IsDigit).ToArray()));
-			//------------------------------------------------------------------
-			string courtId = result.Description.Split('|')[6].Trim().Split(',')[1].Trim();
-			Court court = _service.CourtService.GetCourtByCourtId(courtId);
-			//------------------------------------------------------------------
-			string bookingId = result.Description.Split('|')[6].Trim().Split(',')[1].Trim();
+			//---------------------------------------------------------------------
+			string courtId = infoStorage["Court"];
+			//---------------------------------------------------------------------
+			string bookingId = infoStorage["Booking"];
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-			//------------------------------------------------------------------
-			string slotId = result.Description.Split('|')[7].Trim().Split(',')[1].Trim();
+			//---------------------------------------------------------------------
+			string slotId = infoStorage["Slot"];
 			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
 			Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-			//------------------------------------------------------------------
-			// Giao dịch thành công
-			_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), BookingId = booking.BookingId, Date = result.Date, Method = 1, UserId = userId, TransactionId = result.TransactionId });
-			//------------------------------------------------------------------
-
-			if (result.Description.Split('|')[8].Trim().Equals("Balance enough")) // Giao dịch update số dư đã cấn ra và còn ít nhất từ 10k để thỏa giao dịch qua vnpay - tương đương giao dịch bên trang vnpay sẽ >= 10k
+			//---------------------------------------------------------------------
+			string paymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7");
+			_service.PaymentService.AddPayment(new Payment
 			{
-				user.Balance = 0;  // Do cấn hết số dư vào đơn đặt này nên trả về lại 0
-				booking.Amount += result.Amount; // Vì cấn toàn bộ số dư sau khi hoàn rồi mới thanh toán nên chỉ cần cộng thêm vào giá trị của giao dịch đã thanh toán từ payment ko quan tâm loại chơi 1 lần hay cố định
+				PaymentId = paymentId,
+				Amount = amount,
+				BookingId = bookingId,
+				Method = method,
+				TransactionId = transactionId,
+				Date = transactionPeriod,
+				UserId = userId
+			});
+
+			if (infoStorage["Status"] == "Balance enough")
+			{
+				user.Balance = 0;
+				booking.Amount += amount;
 			}
-			//------------------------------------------------------------------
-			// Giao dịch update đã cấn ra và còn chưa tới 10k để giao dịch trên vnpay - Ko thể giao dịch với số tiền nhỏ hơn 10k -> giao dịch full tiền của slot mới mà ko đc cấn từ balance giả định đã hoàn
 			else
 			{
-				user.Balance += (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
-				if (booking.BookingType == 1) // 1 lần chơi -> Thay luôn giá trị đơn cũ thành đơn mới
-					booking.Amount = result.Amount;
-				//-----------------------------------------------------			
-				else if (booking.BookingType == 2) // Chơi tháng
+				double oldPrice = oCourt.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
+				user.Balance += oldPrice;
+				if (booking.BookingType == 2)
 				{
-					booking.Amount -= (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
-					booking.Amount += result.Amount; // Thêm giá trị của slot mới vào
+					booking.Amount -= oldPrice;
+					booking.Amount += amount;
 				}
+				else booking.Amount = amount;
 			}
-			// -------------------------------------
-			// Update lại dữ liệu số dư của khách trong db
+			//---------------------------------------------------------------------
 			_service.UserService.UpdateUser(user, userId);
-			//----------------------------------------
-			// Update Booking trước slot vì để lấy lại giá trị đơn tiền cũ đã đặt của slot cũ
-			_service.BookingService.UpdatBooking(booking, booking.BookingId);
-			//-----------------------------------------
-			// Update lại slot sau khi update booking hoàn tất
+			//---------------------------------------------------------------------
+			_service.BookingService.UpdatBooking(booking, bookingId);
+			//---------------------------------------------------------------------
 			slot.CourtId = courtId;
 			slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
 			slot.EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
 			_service.SlotService.UpdateSlot(slot, slotId);
-			return Redirect(resultRedirectUrl + "?msg=success");
+			return true;
 		}
-
-
-		//[HttpGet]
-		//[Route("Slot/UpdateResultProcessMomo")]
-		//public async Task<ActionResult> ProcessResultMomo(MoMoRedirectResult result)
-		//{
-		//	if (result.Message == "Fail")
-		//		return BadRequest(new { msg = "Transaction fail" });
-
-		//	//---------------------------------------------------------------------
-		//	string userId = result.OrderInfo.Split('|')[1].Trim().Split(',')[1].Trim();
-		//	User user = _service.UserService.GetUserById(userId);
-		//	//------------------------------------------------------------------
-		//	string rawDate = result.OrderInfo.Split('|')[4].Trim().Split(':')[1].Trim();
-		//	DateOnly date = DateOnly.Parse(rawDate.Split(' ')[0]);
-		//	int start = int.Parse(new string(rawDate.Split(' ')[1].Where(char.IsDigit).ToArray()));
-		//	int end = int.Parse(new string(rawDate.Split(' ')[3].Where(char.IsDigit).ToArray()));
-		//	//------------------------------------------------------------------
-		//	string courtId = result.OrderInfo.Split('|')[6].Trim().Split(',')[1].Trim();
-		//	Court court = _service.CourtService.GetCourtByCourtId(courtId);
-		//	//------------------------------------------------------------------
-		//	string bookingId = result.OrderInfo.Split('|')[6].Trim().Split(',')[1].Trim();
-		//	Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-		//	//------------------------------------------------------------------
-		//	string slotId = result.OrderInfo.Split('|')[7].Trim().Split(',')[1].Trim();
-		//	BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-		//	Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-		//	//------------------------------------------------------------------
-		//	_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), BookingId = booking.BookingId, Date = DateTime.Parse(result.ResponseTime), Method = 1, UserId = userId, TransactionId = result.TransId });
-		//	//------------------------------------------------------------------
-
-		//	if (result.OrderInfo.Split('|')[8].Trim().Equals("Balance enough")) // Giao dịch update số dư đã cấn ra và còn ít nhất từ 10k 
-		//	{
-		//		user.Balance = 0;  // Do cấn hết số dư vào đơn đặt này nên trả về lại 0
-		//		booking.Amount += double.Parse(result.Amount) / 1000; // Vì cấn toàn bộ số dư sau khi hoàn rồi mới thanh toán nên chỉ cần cộng thêm vào giá trị của giao dịch đã thanh toán từ payment ko quan tâm loại chơi 1 lần hay cố định
-		//	}
-		//	//------------------------------------------------------------------
-		//	// Ko  giao dịch với số tiền nhỏ hơn 10k -> giao dịch full tiền của slot mới mà ko đc cấn từ balance giả định đã hoàn
-		//	else
-		//	{
-		//		user.Balance += (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
-		//		if (booking.BookingType == 1) // 1 lần chơi -> Thay luôn giá trị đơn cũ thành đơn mới
-		//			booking.Amount = double.Parse(result.Amount) / 1000;
-		//		//-----------------------------------------------------			
-		//		else if (booking.BookingType == 2) // Chơi tháng
-		//		{
-		//			booking.Amount -= (slot.EndHour.Hour - slot.StartHour.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
-		//			booking.Amount += double.Parse(result.Amount) / 1000; // Thêm giá trị của slot mới vào
-		//		}
-		//	}
-		//	// -------------------------------------
-		//	// Update lại dữ liệu số dư của khách trong db
-		//	_service.UserService.UpdateUser(user, userId);
-		//	//----------------------------------------
-		//	// Update Booking trước slot vì để lấy lại giá trị đơn tiền cũ đã đặt của slot cũ
-		//	_service.BookingService.UpdatBooking(booking, booking.BookingId);
-		//	//-----------------------------------------
-		//	// Update lại slot sau khi update booking hoàn tất
-		//	slot.CourtId = courtId;
-		//	slot.StartHour = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
-		//	slot.EndHour = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
-		//	_service.SlotService.UpdateSlot(slot, slotId);
-		//	return Ok(new { msg = "Success" });
-		//}
-
 
 		[HttpGet]
 		[Route("Slot/UpdateResultProcessMomo")]
 		public async Task<IActionResult> ProcessResultMomo(MoMoRedirectResult result)
 		{
-
-			if (result.Message == "Fail")
-				return Redirect(resultRedirectUrl + "?msg=fail");
-
-			//---------------------------------------------------------------------
-			string userId = result.OrderInfo.Split('|')[1].Trim().Split(',')[1].Trim();
-			User user = _service.UserService.GetUserById(userId);
-			//------------------------------------------------------------------
-			string rawDate = result.OrderInfo.Split('|')[4].Trim().Split(':')[1].Trim();
-			DateOnly date = DateOnly.Parse(rawDate.Split(' ')[0]);
-			int start = int.Parse(new string(rawDate.Split(' ')[1].Where(char.IsDigit).ToArray()));
-			int end = int.Parse(new string(rawDate.Split(' ')[3].Where(char.IsDigit).ToArray()));
-			//------------------------------------------------------------------
-			string courtId = result.OrderInfo.Split('|')[6].Trim().Split(',')[1].Trim();
-			Court court = _service.CourtService.GetCourtByCourtId(courtId);
-			//------------------------------------------------------------------
-			string bookingId = result.OrderInfo.Split('|')[6].Trim().Split(',')[1].Trim();
-			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-			//------------------------------------------------------------------
-			string slotId = result.OrderInfo.Split('|')[7].Trim().Split(',')[1].Trim();
-			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-			Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-			//------------------------------------------------------------------
-			_service.PaymentService.AddPayment(new Payment { PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"), BookingId = booking.BookingId, Date = DateTime.Parse(result.ResponseTime), Method = 1, UserId = userId, TransactionId = result.TransId });
-			//------------------------------------------------------------------
-
-			if (result.OrderInfo.Split('|')[8].Trim().Equals("Balance enough")) // Giao dịch update số dư đã cấn ra và còn ít nhất từ 10k 
+			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), DateTime.Parse(result.ResponseTime.Split(' ')[0]), 2);
+			if (status)
 			{
-				user.Balance = 0;  // Do cấn hết số dư vào đơn đặt này nên trả về lại 0
-				booking.Amount += double.Parse(result.Amount); // Vì cấn toàn bộ số dư sau khi hoàn rồi mới thanh toán nên chỉ cần cộng thêm vào giá trị của giao dịch đã thanh toán từ payment ko quan tâm loại chơi 1 lần hay cố định
+				string userId = result.OrderInfo.Split('|')[0].Trim().Split(':')[1].Trim();
+				_service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, "Thanks for your purchasement. Your slot has been updated. You can now check it", "BMTC - Slot Update Notification");
 			}
-			//------------------------------------------------------------------
-			// Ko  giao dịch với số tiền nhỏ hơn 10k -> giao dịch full tiền của slot mới mà ko đc cấn từ balance giả định đã hoàn
-			else
-			{
-				user.Balance += (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Hoàn lại số dư slot cũ đã đc hủy
-				if (booking.BookingType == 1) // 1 lần chơi -> Thay luôn giá trị đơn cũ thành đơn mới
-					booking.Amount = double.Parse(result.Amount);
-				//-----------------------------------------------------			
-				else if (booking.BookingType == 2) // Chơi tháng
-				{
-					booking.Amount -= (slot.EndTime.Hour - slot.StartTime.Hour) * oCourt.Price; // Trừ bớt giá trị đơn đặt cũ đi bằng tiền của 1 trong những ngày đã đặt
-					booking.Amount += double.Parse(result.Amount); // Thêm giá trị của slot mới vào
-				}
-			}
-			// -------------------------------------
-			// Update lại dữ liệu số dư của khách trong db
-			_service.UserService.UpdateUser(user, userId);
-			//----------------------------------------
-			// Update Booking trước slot vì để lấy lại giá trị đơn tiền cũ đã đặt của slot cũ
-			_service.BookingService.UpdatBooking(booking, booking.BookingId);
-			//-----------------------------------------
-			// Update lại slot sau khi update booking hoàn tất
-			slot.CourtId = courtId;
-			slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
-			slot.EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
-			_service.SlotService.UpdateSlot(slot, slotId);
-			//return Ok(new { msg = "Success" });
-			return Redirect(resultRedirectUrl + "?msg=success");
+			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
+
 
 	}
 }

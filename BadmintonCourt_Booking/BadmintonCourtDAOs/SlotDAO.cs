@@ -51,7 +51,7 @@ namespace BadmintonCourtDAOs
 			{
 				// Ở TH này áp dụng GetA_CourtSlotsInDay() cho trường hợp 2!!!
 				List<BookedSlot> temporaryList = GetA_CourtSlotsInTimeInterval(start, end, id);
-				if (temporaryList == null || temporaryList.Count == 0)
+				if (temporaryList.Count == 0)
 				{
 					//result.Add(new Slot(start, end, true, id, null));
 					result.Add(new BookedSlot { StartTime = start, EndTime = end, CourtId = id });

@@ -87,14 +87,17 @@
 
 
 
+using BadmintonCourtBusinessDAOs;
 using BadmintonCourtServices;
 using BadmintonCourtServices.IService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Configuration;
-using System.Diagnostics;
 using System.Text;
 
 namespace BadmintonCourtAPI
@@ -107,6 +110,13 @@ namespace BadmintonCourtAPI
 
 			// Add services to the container.
 			builder.Services.AddControllers();
+			var isTesting = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
+			//if (isTesting)
+			//{
+			//	builder.Services.AddDbContext<BadmintonCourtContext>(options =>
+			//		options.UseInMemoryDatabase("InMemoryDb"));
+			//}
+
 			builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("AllowAll", builder =>
@@ -119,7 +129,18 @@ namespace BadmintonCourtAPI
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
+			builder.Services.AddSwaggerGen(options =>
+			{
+				options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+				{
+					Description = "Standard Authorization header using Bearer scheme",
+					In = ParameterLocation.Header,
+					Name = "Authorization",
+					Type = SecuritySchemeType.ApiKey
+				});
+
+				options.OperationFilter<SecurityRequirementsOperationFilter>();
+			});
 
 			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{
@@ -165,6 +186,7 @@ namespace BadmintonCourtAPI
 				endpoints.MapControllers();
 				endpoints.MapRazorPages();
 			});
+
 			app.Run();
 		}
 	}
