@@ -44,10 +44,15 @@ export default function EditInfo() {
       })
       .then((data) => {
         // Find user with matching userId
-        const matchingUser = data.find(user => user.userId == userIdToken);
+        const matchingUser = data.find(user => user.userId === userIdToken);
         if (matchingUser) {
-          setUserInfo(matchingUser);
-          setImgPreview(matchingUser.img); // Set initial imgPreview to the current user's image
+          // Encode the image URL
+          const encodedImgUrl = encodeURI(matchingUser.img);
+          setUserInfo({
+            ...matchingUser,
+            img: encodedImgUrl
+          });
+          setImgPreview(matchingUser.img); // Set initial imgPreview to the current user's encoded image URL
         }
       })
       .catch(error => console.error('Error fetching user info:', error));
@@ -55,8 +60,7 @@ export default function EditInfo() {
 
   const handleSave = () => {
     // Ensure userInfo.img is not empty
-    const updatedUserInfo = { ...userInfo, img: userInfo.img || encodeURIComponent(imgPreview) };
-
+    const updatedUserInfo = userInfo;
     fetch(`https://localhost:7233/User/Update?id=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}`, {
       method: "PUT",
       headers: {
