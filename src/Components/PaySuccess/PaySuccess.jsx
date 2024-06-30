@@ -42,7 +42,7 @@ const PaySuccess = () => {
         <div className="pay-success-container-paymentresult">
           {success === 1 ? (
             <>
-              <div className="icon">
+              <div className="icon-payment">
                 <i className="fas fa-check-circle" style={{ color: '#4CAF50' }}></i>
               </div>
               <h1>Thank You for Your Purchase!</h1>
@@ -50,7 +50,7 @@ const PaySuccess = () => {
             </>
           ) : (
             <>
-              <div className="icon">
+              <div className="icon-payment">
                 <i className="fas fa-times-circle" style={{ color: '#e53935' }}></i>
               </div>
               <h1>Transaction Failed</h1>

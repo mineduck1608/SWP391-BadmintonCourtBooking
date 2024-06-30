@@ -136,7 +136,9 @@ const FindCourt = () => {
             ...fb,
             user: {
               ...user,
-              image: userDetails ? userDetails.img : null
+              image: userDetails ? userDetails.img : null,
+              firstName: userDetails ? userDetails.firstName : '',
+              lastName: userDetails ? userDetails.lastName : ''
             }
           };
         });
@@ -188,7 +190,6 @@ const FindCourt = () => {
                       onChange={handleBranchChange}
                       value={selectedBranch}
                     >
-                      <option value="">All</option>
                       {branches.map((branch) => (
                         <option key={branch.branchId} value={branch.branchId}>
                           {branch.branchName}
@@ -202,8 +203,7 @@ const FindCourt = () => {
                     <select
                       onChange={handleCourtChange}
                       value={selectedCourt}
-                    >
-                      <option value="">All</option>
+                    >       
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
@@ -251,11 +251,12 @@ const FindCourt = () => {
                         <div className="findcourt-feedbackInfo">
                           <div className="findcourt-user-info">
                             <img src={user ? user.image || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
-                            <p><strong>{user ? user.userName : 'Anonymous'}</strong></p>
+                            <p><strong>{user ? user.firstName + " " + user.lastName : 'Anonymous'}</strong></p>
                           </div>
-                          <p>{fb.content}</p>
                           <p>Rating: <span className="stars">{renderStars(fb.rating)}</span></p>
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
+                          <p>Feedback: {fb.content}</p>
+                          
                         </div>
                       </div>
                     );

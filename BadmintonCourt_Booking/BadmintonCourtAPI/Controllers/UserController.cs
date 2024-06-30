@@ -448,7 +448,7 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				if (balence >= 0)
 					user.Balance = balence;
-				else return BadRequest(new { msg = "Balence must be at least 0" });
+				else return BadRequest(new { msg = "Balance must be at least 0" });
 			}
 			if (status != null)
 			{
