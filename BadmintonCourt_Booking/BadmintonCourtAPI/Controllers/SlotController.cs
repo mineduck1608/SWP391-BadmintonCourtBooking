@@ -162,8 +162,8 @@ namespace BadmintonCourtAPI.Controllers
 				if (user.Balance >= amount)
 				{
 					string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
-					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, Amount = amount, BookingType = 1, UserId = userId, BookingDate = DateTime.Now });
-					_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate });
+					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, Amount = amount, BookingType = 1, UserId = userId, BookingDate = DateTime.Now, ChangeLog = 0 });
+					_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate,  });
 					user.Balance -= amount;
 					_service.UserService.UpdateUser(user, userId);
 					return Ok(new { msg = "Success" });

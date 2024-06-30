@@ -664,7 +664,8 @@ namespace BadmintonCourtAPI.Controllers
 					BookingDate = DateTime.Now,
 					UserId = userId,
 					Amount = amount,
-					BookingType = map["Type"] == fixedBooking ? 2 : 1
+					BookingType = map["Type"] == fixedBooking ? 2 : 1,
+					ChangeLog = 0
 				};
 
 				_service.BookingService.AddBooking(booking);

@@ -39,7 +39,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Feedback/GetByUser")]
-		//[Authorize]
+		[Authorize]
 		public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUser(string id) => Ok(_service.FeedbackService.GetA_UserFeedbacks(id));
 
 		[HttpGet]
@@ -48,32 +48,62 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Feedback/Post")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> AddFeedback(int rate, string content, string id, string branchId)
 		{
+			List<Court> courtList = _service.CourtService.GetCourtsByBranchId(branchId);
+			List<Booking> bookingList = _service.BookingService.GetBookingsByUserId(id).Where(x => x.IsDeleted == null).ToList();
+			if (bookingList.Count == 0)
+				return BadRequest(new { msg = "Can't post feedback" });
+			bool status = false;
+            foreach (var item in bookingList)
+            {
+				List<BookedSlot> slotList = _service.SlotService.GetSlotsByBookingId(item.BookingId).Where(x => x.IsDeleted == null).ToList();
+				if (slotList.Count == 0)
+					continue;
+				else
+				{
+					foreach (var slot in slotList)
+					{
+                        foreach (var court in courtList)
+                        {
+                            if (slot.CourtId == court.CourtId)
+							{
+								status = true;
+								break;
+							}
+                        }
+                    }
+				}
+            }
+			if (!status)
+				return BadRequest(new { msg = "Can't post feedback" });
+
 			if (content.IsNullOrEmpty())
-				return BadRequest("Full fill your comment");
+				return BadRequest(new { msg = "Full fill your comment" });
 			_service.FeedbackService.AddFeedback(new Feedback { FeedbackId = "F" + (_service.FeedbackService.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rating = rate, Period = DateTime.Now });
-			return Ok();
+			return Ok(new { msg = "Success"});
 		}
 
 		[HttpPut]
 		[Route("Feedback/Update")]
-		//[Authorize]
-		public async Task<IActionResult> UpdateFeedback(int rate, string content, string id)
+		[Authorize]
+		public async Task<IActionResult> UpdateFeedback(int rate, string content, string id, string userId)
 		{
 			Feedback feedback = _service.FeedbackService.GetFeedbackByFeedbackId(id);
+			if (feedback.UserId != userId)
+				return BadRequest(new { msg = "Can't edit others' feedback" });
 			feedback.Rating = int.Parse(rate.ToString());
 			if (!content.IsNullOrEmpty())
 				feedback.Content = content;
 			feedback.Period = DateTime.Now;
 			_service.FeedbackService.UpdateFeedback(feedback, id);
-			return Ok();
+			return Ok(new { msg = "Success" });
 		}
 
 		[HttpDelete]
 		[Route("Feedback/Delete")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> DeleteFeedback(string id)
 		{
 			_service.FeedbackService.DeleteFeedback(id);
