@@ -18,6 +18,8 @@ public partial class User
     public double? Balance { get; set; }
 
     public int? AccessFail { get; set; }
+    public string? Token {  get; set; }
+    public DateTime? ActionPeriod { get; set; }
 
     public DateTime? LastFail { get; set; }
 

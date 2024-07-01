@@ -14,6 +14,7 @@ public partial class BookedSlot
     public string CourtId { get; set; } = null!;
 
     public string BookingId { get; set; } = null!;
+    public bool? IsDeleted { get; set; }
 
     public virtual Booking Booking { get; set; } = null!;
 

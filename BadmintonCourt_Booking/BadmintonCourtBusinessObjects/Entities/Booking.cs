@@ -15,9 +15,13 @@ public partial class Booking
 
     public DateTime BookingDate { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
+    public int ChangeLog {  get; set; }
+
     public virtual ICollection<BookedSlot> BookedSlots { get; set; } = new List<BookedSlot>();
 
-    public virtual Payment? Payment { get; set; }
+	public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-    public virtual User User { get; set; } = null!;
+	public virtual User User { get; set; } = null!;
 }
