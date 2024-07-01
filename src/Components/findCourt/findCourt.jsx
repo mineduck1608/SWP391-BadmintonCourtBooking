@@ -83,10 +83,13 @@ const FindCourt = () => {
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
 
-        const courtsWithImages = courtData.map(court => ({
-          ...court,
-          image: court.courtImg
-        }));
+        const courtsWithImages = courtData.map(court => {
+          const imageUrl = court.courtImg?.[0]?.split(':')[1]?.trim(); // Extract the URL of Image 1
+          return {
+            ...court,
+            image: imageUrl
+          };
+        });
 
         setBranches(branchData);
         setCourts(courtsWithImages);
@@ -100,6 +103,7 @@ const FindCourt = () => {
 
     fetchData();
   }, []);
+  console.log(courts)
 
   useEffect(() => {
     const fetchFeedback = async () => {
