@@ -51,33 +51,37 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize]
 		public async Task<IActionResult> AddFeedback(int rate, string content, string id, string branchId)
 		{
-			List<Court> courtList = _service.CourtService.GetCourtsByBranchId(branchId);
-			List<Booking> bookingList = _service.BookingService.GetBookingsByUserId(id).Where(x => x.IsDeleted == null).ToList();
-			if (bookingList.Count == 0)
-				return BadRequest(new { msg = "Can't post feedback" });
-			bool status = false;
-            foreach (var item in bookingList)
-            {
-				List<BookedSlot> slotList = _service.SlotService.GetSlotsByBookingId(item.BookingId).Where(x => x.IsDeleted == null).ToList();
-				if (slotList.Count == 0)
-					continue;
-				else
+			string roleId = _service.UserService.GetUserById(id).RoleId;
+			if (roleId != "R001" || roleId != "R002")
+			{
+				List<Court> courtList = _service.CourtService.GetCourtsByBranchId(branchId);
+				List<Booking> bookingList = _service.BookingService.GetBookingsByUserId(id).Where(x => x.IsDeleted == null).ToList();
+				if (bookingList.Count == 0)
+					return BadRequest(new { msg = "Can't post feedback" });
+				bool status = false;
+				foreach (var item in bookingList)
 				{
-					foreach (var slot in slotList)
+					List<BookedSlot> slotList = _service.SlotService.GetSlotsByBookingId(item.BookingId).Where(x => x.IsDeleted == null).ToList();
+					if (slotList.Count == 0)
+						continue;
+					else
 					{
-                        foreach (var court in courtList)
-                        {
-                            if (slot.CourtId == court.CourtId)
+						foreach (var slot in slotList)
+						{
+							foreach (var court in courtList)
 							{
-								status = true;
-								break;
+								if (slot.CourtId == court.CourtId)
+								{
+									status = true;
+									break;
+								}
 							}
-                        }
-                    }
+						}
+					}
 				}
-            }
-			if (!status)
-				return BadRequest(new { msg = "Can't post feedback" });
+				if (!status)
+					return BadRequest(new { msg = "Can't post feedback" });
+			}	
 
 			if (content.IsNullOrEmpty())
 				return BadRequest(new { msg = "Full fill your comment" });

@@ -22,6 +22,12 @@ namespace BadmintonCourtDAOs
             }
         }
 
+        public UserDAO(BadmintonCourtContext context)
+        {
+            if (_dbContext == null)
+				_dbContext = context;
+		}
+
         public List<User> GetAllUsers() => _dbContext.Users.ToList();
 
         public User GetUserById(string id) => _dbContext.Users.FirstOrDefault(x => x.UserId == id);

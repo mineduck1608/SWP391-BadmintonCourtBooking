@@ -1470,6 +1470,22 @@
           "build/net8.0/Microsoft.EntityFrameworkCore.Design.props": {}
         }
       },
+      "Microsoft.EntityFrameworkCore.InMemory/8.0.6": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "8.0.6"
+        },
+        "compile": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational/8.0.6": {
         "type": "package",
         "dependencies": {
@@ -5514,6 +5530,21 @@
         "microsoft.entityframeworkcore.design.nuspec"
       ]
     },
+    "Microsoft.EntityFrameworkCore.InMemory/8.0.6": {
+      "sha512": "/ATG+iNpRELMJ1HJgcGPWgqOFGARrK2LCuZtX8yPXK421HS7krDe0zkyFVucS9YVHnMWk1Asa8zZCtvHqVkk2g==",
+      "type": "package",
+      "path": "microsoft.entityframeworkcore.inmemory/8.0.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll",
+        "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.xml",
+        "microsoft.entityframeworkcore.inmemory.8.0.6.nupkg.sha512",
+        "microsoft.entityframeworkcore.inmemory.nuspec"
+      ]
+    },
     "Microsoft.EntityFrameworkCore.Relational/8.0.6": {
       "sha512": "chhfmLusCGLGvNYtvMji6KGQlduPDnJsStG/LjS8qJhFWJDDzTZpSr2LHowewcxMrMo/Axc6Jwe+WwSi/vlkTg==",
       "type": "package",
@@ -8893,6 +8924,7 @@
       "Microsoft.AspNetCore.Authentication.Google >= 8.0.5",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.6",
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson >= 8.0.6",
+      "Microsoft.EntityFrameworkCore.InMemory >= 8.0.6",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.4",
       "Microsoft.Extensions.Configuration.Json >= 8.0.0",
       "Microsoft.IdentityModel.Tokens >= 7.6.0",
@@ -8959,6 +8991,10 @@
             "version": "[8.0.6, )"
           },
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+            "target": "Package",
+            "version": "[8.0.6, )"
+          },
+          "Microsoft.EntityFrameworkCore.InMemory": {
             "target": "Package",
             "version": "[8.0.6, )"
           },

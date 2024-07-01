@@ -111,11 +111,11 @@ namespace BadmintonCourtAPI
 			// Add services to the container.
 			builder.Services.AddControllers();
 			var isTesting = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
-			//if (isTesting)
-			//{
-			//	builder.Services.AddDbContext<BadmintonCourtContext>(options =>
-			//		options.UseInMemoryDatabase("InMemoryDb"));
-			//}
+			if (isTesting)
+			{
+				builder.Services.AddDbContext<BadmintonCourtContext>(options =>
+					options.UseInMemoryDatabase("InMemoryDb"));
+			}
 
 			builder.Services.AddCors(options =>
 			{

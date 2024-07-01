@@ -12,6 +12,7 @@
           "Microsoft.AspNetCore.Authentication.Google": "8.0.5",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "8.0.6",
+          "Microsoft.EntityFrameworkCore.InMemory": "8.0.6",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.4",
           "Microsoft.Extensions.Configuration.Json": "8.0.0",
           "Microsoft.IdentityModel.Tokens": "7.6.0",
@@ -1255,6 +1256,17 @@
           "lib/net8.0/Microsoft.EntityFrameworkCore.Design.dll": {
             "assemblyVersion": "8.0.4.0",
             "fileVersion": "8.0.424.16902"
+          }
+        }
+      },
+      "Microsoft.EntityFrameworkCore.InMemory/8.0.6": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "8.0.6"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "assemblyVersion": "8.0.6.0",
+            "fileVersion": "8.0.624.26904"
           }
         }
       },
@@ -2698,6 +2710,13 @@
       "sha512": "sha512-QD5/h3+h4N7GlUaA4bzaYFW9CoeB7ne2KMiDIENIT0GPx+E6up/v9fDA36FAS3NIq9zeKUAQgN8aj6IwE7tMGw==",
       "path": "microsoft.entityframeworkcore.design/8.0.4",
       "hashPath": "microsoft.entityframeworkcore.design.8.0.4.nupkg.sha512"
+    },
+    "Microsoft.EntityFrameworkCore.InMemory/8.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/ATG+iNpRELMJ1HJgcGPWgqOFGARrK2LCuZtX8yPXK421HS7krDe0zkyFVucS9YVHnMWk1Asa8zZCtvHqVkk2g==",
+      "path": "microsoft.entityframeworkcore.inmemory/8.0.6",
+      "hashPath": "microsoft.entityframeworkcore.inmemory.8.0.6.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore.Relational/8.0.6": {
       "type": "package",

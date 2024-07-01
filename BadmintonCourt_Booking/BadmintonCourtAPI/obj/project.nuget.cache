@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bRghrgEKoSucAR2VtxJ+mu6dt48Ei7oV2RIPzOLS7v+aJ06JK58CHHvmdshaf83AgTPcLrPereiQvZyVxFl1Zg==",
+  "dgSpecHash": "VgQsyBrSlKwIys1klsbO/TuQRAUXMgOywrMLdeFGiePvX/JGHbIWjCBw92fnDqkvsGFbSOVZywllw0j2DYUqaw==",
   "success": true,
   "projectFilePath": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
   "expectedPackageFiles": [
@@ -88,6 +88,7 @@
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.6\\microsoft.entityframeworkcore.abstractions.8.0.6.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.6\\microsoft.entityframeworkcore.analyzers.8.0.6.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.design\\8.0.4\\microsoft.entityframeworkcore.design.8.0.4.nupkg.sha512",
+    "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.inmemory\\8.0.6\\microsoft.entityframeworkcore.inmemory.8.0.6.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.6\\microsoft.entityframeworkcore.relational.8.0.6.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\8.0.6\\microsoft.entityframeworkcore.sqlserver.8.0.6.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\8.0.4\\microsoft.entityframeworkcore.tools.8.0.4.nupkg.sha512",
