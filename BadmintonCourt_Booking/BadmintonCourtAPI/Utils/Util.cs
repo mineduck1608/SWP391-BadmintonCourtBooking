@@ -24,14 +24,12 @@ namespace BadmintonCourtAPI.Utils
 
 		public static bool IsMailFormatted(string mail) => !mail.IsNullOrEmpty() ? new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").IsMatch(mail) : false;
 
-		public static string GenerateToken(string id, string lastName, string username, string roleName, IConfiguration config)
+		public static string GenerateToken(string id, bool status, string username, string roleName, IConfiguration config)
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 			if (username.IsNullOrEmpty())
 				username = "";
-			if (lastName.IsNullOrEmpty())
-				lastName = "";
 			var claims = new[]
 			{
 				new Claim("UserId", id.ToString()),
@@ -39,7 +37,7 @@ namespace BadmintonCourtAPI.Utils
 				
 				new Claim("Username" , username),
 				//new Claim(ClaimTypes.Surname, lastName),
-				new Claim("Lastname", lastName),
+				new Claim("Status", status.ToString()),
 				new Claim(ClaimTypes.Role, roleName),
 				new Claim("Role", roleName)
 			};

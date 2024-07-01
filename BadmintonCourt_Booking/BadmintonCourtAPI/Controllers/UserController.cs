@@ -23,6 +23,7 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly BadmintonCourtService _service = null;
 		private readonly IConfiguration _config;
 		private const string verifyUrl = "https://localhost:7233/User/VerifyAction";
+		private const string resetPassUrl = "http://localhost:3000/ResetPassword";
 
 		public UserController(IConfiguration config)
 		{
@@ -54,8 +55,6 @@ namespace BadmintonCourtAPI.Controllers
 			return result;
 		}
 
-
-
 		[HttpGet]
 		[Route("User/GetAll")]
 		[Authorize]
@@ -66,7 +65,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<User>>> GetStaffsByBranch(string id) => Ok(_service.UserService.GetStaffsByBranch(id).ToList());
 
-		[HttpGet]
+		[HttpGet]	
 		[Route("User/GetByRole")]
 		[Authorize(Roles = "Admin")]
 		[Authorize(Roles = "Staff")]
@@ -92,12 +91,12 @@ namespace BadmintonCourtAPI.Controllers
 
 
 				_service.UserDetailService.AddUserDetail(new UserDetail { UserId = userId, Email = email, FirstName = "", LastName = "", Phone = "" });
-				return Ok(new { token = Util.GenerateToken(userId, "", "", "Customer", _config) });
+				return Ok(new { token = Util.GenerateToken(userId, true, "", "Customer", _config) });
 			}
 
 			// Co acc
 			User user = _service.UserService.GetUserById(info.UserId);
-			return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+			return Ok(new { token = Util.GenerateToken(info.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
 		}
 
 
@@ -130,7 +129,7 @@ namespace BadmintonCourtAPI.Controllers
 			user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 			user.ActiveStatus = true;
 			_service.UserService.UpdateUser(user, user.UserId);
-			return Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
+			return Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
 		}
 
 		//[HttpPost]
@@ -283,7 +282,7 @@ namespace BadmintonCourtAPI.Controllers
 					UserDetail info = _service.UserDetailService.GetUserDetailById(user.UserId);
 					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 					_service.UserService.UpdateUser(user, user.UserId);
-					return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
+					return Ok(new { token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
 				}   // Legit, nhập đúng từ lần đầu
 					//-------------------------------------------------------------------------
 				else if (user.AccessFail < 3) // Trước đó nhập sai chưa tới lần 3
@@ -360,8 +359,12 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("User/ForgotPassReset")]
-		public async Task<IActionResult> ResetPass(string id, string? password)
+		public async Task<IActionResult> ResetPass(string id, string? password, string? confirmPassword)
 		{
+			if (password.IsNullOrEmpty() || confirmPassword.IsNullOrEmpty() || confirmPassword != password)
+			{
+				return Redirect($"{resetPassUrl}?id={id}");
+			}
 			if (Util.IsPasswordSecure(password))
 			{
 				if (!id.IsNullOrEmpty())
@@ -397,7 +400,7 @@ namespace BadmintonCourtAPI.Controllers
 				User user = _service.UserService.GetUserById(info.UserId);
 				if (user.AccessFail <= 5) // Chưa bị ban vv
 				{
-					string token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
+					string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
 					user.ActionPeriod = DateTime.Now;
 					user.Token = token;
 					_service.UserService.UpdateUser(user, user.UserId);
@@ -494,12 +497,12 @@ namespace BadmintonCourtAPI.Controllers
 					info.Email = email;
 				else if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
 				{
-					string token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
+					string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
 					user.ActionPeriod = DateTime.Now;
 					user.Token = token;
 					_service.UserService.UpdateUser(user, id);
 					_service.UserDetailService.UpdateUserDetail(info, id);
-					_service.MailService.SendMail(email, $"Click <a href='{verifyUrl}?rawToken={token}:2:{email}'>HERE</a> to verify your update-mail profile process", "BMTC - Account Update Mail Profile Verification");
+					_service.MailService.SendMail(email, $"Click <a href='{verifyUrl}?rawToken={token}:3:{email}'>HERE</a> to verify your update-mail profile process", "BMTC - Account Update Mail Profile Verification");
 					return Ok(new { msg = "Please check your mail box to activate your new email" });
 				}
 				else return BadRequest(new { msg = "Email registered" });
@@ -533,7 +536,7 @@ namespace BadmintonCourtAPI.Controllers
 				return BadRequest(new { msg = "Account existed" });
 
 			string userId = "U" + (_service.UserService.GetAllUsers().Count() + 1).ToString("D7");
-			string token = Util.GenerateToken(userId, lastName, username, "R003", _config);
+			string token = Util.GenerateToken(userId, false, username, "R003", _config);
 			string content = $"Click to verify your account";
 
 			_service.UserService.AddUser(new User
@@ -592,7 +595,7 @@ namespace BadmintonCourtAPI.Controllers
 				if (type == "2") // Loại reset pass mà đủ tg 
 				{
 					_service.UserService.UpdateUser(user, user.UserId);
-					return Redirect($"url?id={user.UserId}"); // Trả về trang nhập pass mới - đây là url của FE với tham số para truyền đi là id 
+					return Redirect($"{resetPassUrl}?id={user.UserId}"); // Trả về trang nhập pass mới - đây là url của FE với tham số para truyền đi là id 
 				}
 				else if (type == "3")
 				{
