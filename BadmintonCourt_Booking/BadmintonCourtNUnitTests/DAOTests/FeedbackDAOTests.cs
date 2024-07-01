@@ -148,7 +148,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 		{
 			var context = new BadmintonCourtContext(_options);
 			FeedbackDAO dao = new FeedbackDAO(context);
-			Assert.IsTrue(dao.GetA_UserFeedbacks(notExistedId).Count() > 0);
+			Assert.IsTrue(dao.GetA_UserFeedbacks(notExistedId).Count() == 0);
 		}
 
 		[Test]
