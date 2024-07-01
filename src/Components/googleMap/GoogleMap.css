@@ -1,8 +1,23 @@
 .googlemap-container {
+    position: relative;
     padding: 20px;
-    background: linear-gradient(to right, #f69d3c, #ebf8e1, #3f87a6);
     min-height: 100vh;
+    color: #fff; /* Ensure text is readable against the background */
 }
+
+.googlemap-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../../Assets/login.jpg') no-repeat center center fixed;
+    background-size: cover;
+    filter: blur(8px); /* Apply blur effect */
+    z-index: -1; /* Ensure the background is behind the content */
+}
+
 
 .googlemap-title {
     color: #fff;
@@ -10,7 +25,7 @@
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-family: 'Arial', sans-serif;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -66,14 +81,13 @@
 
 .googlemap-branch-content .MuiTypography-body2 span {
     margin-left: 8px; /* Add some space between the icon and text */
-    margin-bottom: -10px; /* Adjust this value to move the text down slightly */
+    margin-top: 10px;
 }
 
 .googlemap-branch-content .MuiTypography-body2 svg {
     margin-right: 8px;
     display: inline-block;
 }
-
 
 .googlemap-status-icon {
     vertical-align: middle;
@@ -87,43 +101,62 @@
 .googlemap-status-icon.closed {
     color: red;
 }
-.googlemap-position{
+
+.googlemap-position {
     margin-left: 50px;
     display: flex;
 }
-.googlemap-contacts{
+
+.googlemap-contacts {
     margin-left: 50px;
     margin-top: 20px;
     font-size: 40px;
     font-weight: 600;
 }
-
-.googlemap-location{
-    margin-left: 300px;
-    text-align: center;
+.googlemap-information {
+    margin-left: 50px;
+    margin-bottom: 20px;
+    font-size: 40px;
+    font-weight: 600;
 }
 
-.googlemap-phone{
-    margin-left: 300px;
+.googlemap-location,
+.googlemap-phone,
+.googlemap-name {
     text-align: center;
+    flex: 1; /* Allows equal distribution of space among the items */
 }
 
-.googlemap-name{
-    text-align: center;
-}
-
-.googlemap-flex{
+.googlemap-flex {
     display: flex;
     margin-left: 100px;
+    margin-top: 20px;
+    justify-content: space-between; /* Distributes items evenly */
+    gap: 50px; /* Adds space between items */
 }
-.googlemap-right{
+
+.googlemap-right {
     margin-left: 50px;
 }
-.googlemap-description{
+
+.googlemap-description {
     margin-left: 50px;
     width: 1000px;
+    font-size: 18px;
     word-wrap: break-word; /* Ensures that long words break and wrap to the next line */
     word-break: break-word; /* Ensures that long words break and wrap to the next line */
     white-space: normal; /* Allows text to wrap to the next line */
     overflow-wrap: break-word; /* Ensures that text breaks at the end of the line */
+}
+
+.googlemap-name p,
+.googlemap-location p,
+.googlemap-phone p {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text horizontally within the parent */
+    margin-left: 0; /* Resets any previous margin setting */
+    margin-right: 0; /* Resets any previous margin setting */
+    font-size: 18px;
 }
