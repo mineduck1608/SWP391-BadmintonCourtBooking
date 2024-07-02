@@ -51,23 +51,24 @@
         }
 
         .homeCard {
-            width: 80% !important;
+            width: 60% !important;
             border-radius: 1rem !important;
             padding: 2rem !important;
             background: var(--whiteColor) !important;
             position: absolute !important;
             gap: 1rem !important;
             justify-content: center !important;
-            bottom: -35% !important;
+            bottom: -20% !important;
             transform: translate(-50%) !important;
             left: 50% !important;
             box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45) !important;
+            display: flex !important;
+            align-items: center !important;
 
             .locationDiv,
-            .distDiv,
-            .priceDiv {
-
-                width: 100% !important;
+            .distDiv {
+                width: 45% !important;
+                margin: 0 1% !important;
 
                 label {
                     display: block !important;
@@ -77,7 +78,7 @@
                     padding-bottom: .4rem !important;
                 }
 
-                input{
+                select, input {
                     width: 100% !important;
                     background: var(--inputColor) !important;
                     border-radius: 10px !important;
@@ -86,23 +87,24 @@
                     font-size: 13px !important;
                     font-weight: 500 !important;
 
-                    &::placeholder{
+                    &::placeholder {
                         font-size: 13px !important;
                         opacity: .5 !important;
                         font-weight: 400 !important;
                     }
-                    &:focus{
+                    &:focus {
                         outline: none !important;
                     }
                 }
             }
 
-            .btn{
-                width: 100% !important;
-                padding: .6rem 1.5 rem !important;
+            .btn {
+                width: auto !important;
+                padding: .6rem 1.5rem !important;
                 color: var(--whiteColor) !important;
                 font-weight: 600 !important;
                 margin-top: -2px !important;
+                align-self: center !important;
             }
         }
     }
@@ -111,13 +113,13 @@
 // MEDIA QUERIES ======================>
 
 @media screen and (min-width: 480px) {
-    .home{
-        .secContainer{
-            .homeCard{
+    .home {
+        .secContainer {
+            .homeCard {
                 bottom: -100px !important;
-                width: 90% !important;
+                width: 80% !important;
                 grid-template-columns: repeat(2, 1fr) !important;
-                .btn{
+                .btn {
                     transform: translateY(15px) !important;
                 }
             }
@@ -125,15 +127,14 @@
     }
 }
 
-
 @media screen and (min-width: 556px) {
-    .home{
-        .secContainer{
-            .homeText{
-                .title{
+    .home {
+        .secContainer {
+            .homeText {
+                .title {
                     font-size: 2.5rem !important;
                 }
-                .subTitle{
+                .subTitle {
                     font-size: 18px !important;
                 }
             }
@@ -142,31 +143,30 @@
 }
 
 @media screen and (min-width: 720px) {
-    .home{
-        .secContainer{
-            .homeCard{
+    .home {
+        .secContainer {
+            .homeCard {
                 bottom: -10% !important;
-                grid-template-columns: repeat(4, 1fr) !important;
-
+                grid-template-columns: repeat(2, 1fr) !important;
             }
         }
     }
 }
 
 @media screen and (min-width: 720px) {
-    .home{
-        .secContainer{
-            .homeText{
+    .home {
+        .secContainer {
+            .homeText {
                 padding: 1rem 10rem !important;
 
-                .title{
+                .title {
                     font-size: 3.5rem !important;
                     margin: auto !important;
                     line-height: 4rem !important;
                 }
 
-                .subTitle{
-                    width: 70% !important; 
+                .subTitle {
+                    width: 70% !important;
                 }
             }
         }
@@ -174,16 +174,16 @@
 }
 
 @media screen and (min-width: 1024px) {
-    home{
-        .secContainer{
-            .homeText{
-                .subTitle{
+    .home {
+        .secContainer {
+            .homeText {
+                .subTitle {
                     font-size: 20px !important;
                 }
             }
 
-            .homeCard{
-                width: 70% !important;
+            .homeCard {
+                width: 50% !important;
             }
         }
     }

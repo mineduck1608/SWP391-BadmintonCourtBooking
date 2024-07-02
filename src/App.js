@@ -34,17 +34,19 @@ import BookingHistory from './Components/ViewHistory/ViewHistory';
 import PaySuccess from './Components/PaySuccess/PaySuccess';
 import BuyFail from './Components/BuyFail/BuyFail';
 import GoogleMap from './Components/googleMap/googleMap';
+
 const App = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const [searchCriteria, setSearchCriteria] = useState({ branch: '', location: '' });
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
-          <Route path="/" element={<div><Navbar /><Home /><Popular /><Footer /></div>} />
-          <Route path="/home" element={<div><Header /><Home /><Popular /><Footer /></div>} />
+          <Route path="/" element={<div><Navbar /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><Footer /></div>} />
+          <Route path="/home" element={<div><Header /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><Footer /></div>} />
           <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />} />
           <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false} />} />
           <Route path="/viewCourtInfo" element={<ViewCourtInfo />} />

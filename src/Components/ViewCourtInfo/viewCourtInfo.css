@@ -401,3 +401,108 @@
 .legend-text {
     font-size: 14px;
 }
+/* Existing styles... */
+
+.viewcourtinfo-slider {
+    width: 100%;
+    max-width: 800px;
+    margin-right: 20px;
+}
+
+.viewcourtinfo-slider .slick-slide img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: var(--primary-shadow);
+}
+
+.slick-prev, .slick-next {
+    font-size: 25px;
+    z-index: 1;
+    color: var(--black-color);
+    background-color: var(--light-gradient);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.slick-prev:hover, .slick-next:hover {
+    color: var(--PrimaryColor);
+    transition: 0.1s ease;
+}
+
+.slick-prev {
+    left: -35px;
+}
+
+.slick-next {
+    right: -35px;
+}
+
+/* Date slider CSS */
+
+.date-slider-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.date-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    transition: transform 0.3s ease-in-out;
+}
+
+.date-item {
+    min-width: 100px;
+    border: 2px solid var(--PrimaryColor);
+    color: var(--black-color);
+    text-align: center;
+    margin: 0 5px;
+    padding: 10px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.viewcourt-date {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.date-item.selected {
+    background-color: var(--PrimaryColor);
+    color: var(--white-color);
+}
+
+.arrow-left,
+.arrow-right,
+.arrow-left-timeline,
+.arrow-right-timeline {
+    color: var(--black-color);
+    background-color: var(--light-gradient);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.arrow-left:hover,
+.arrow-right:hover,
+.arrow-left-timeline:hover,
+.arrow-right-timeline:hover {
+    color: var(--PrimaryColor);
+    transition: 0.1s ease;
+}
+
+.arrow-left-timeline,
+.arrow-right-timeline {
+    margin-top: 1%;
+}
+
+
