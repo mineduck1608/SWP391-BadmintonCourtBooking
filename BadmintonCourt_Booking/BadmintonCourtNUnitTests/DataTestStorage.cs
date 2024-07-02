@@ -9,7 +9,7 @@ namespace BadmintonCourtNUnitTests
 {
 	public class DataTestStorage
 	{
-		public static List<User> userStorage = new List<User>() {
+		public List<User> userStorage = new List<User>() {
 			// Admin
 			new User() { UserId = "U1", AccessFail = 0, ActiveStatus = true, Balance = 0, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), RoleId = "R001"},
 			// Branch B001
@@ -32,7 +32,7 @@ namespace BadmintonCourtNUnitTests
 			new User() { UserId = "U10", AccessFail = 6, ActiveStatus = false, Balance = 20000, LastFail = new DateTime(2024, 7, 1, 15, 23, 49), RoleId = "R003"},
 		};
 
-		public static List<UserDetail> userDetailStorage = new List<UserDetail>()
+		public List<UserDetail> userDetailStorage = new List<UserDetail>()
 		{
 			new UserDetail() { UserId = "U1", FirstName = "Nam", LastName = "Nguyen", Phone = "0932211699", Email = "externalauthdemo1234@gmail.com"},
 			new UserDetail() { UserId = "U2", FirstName = "Luu", LastName = "Dang", Phone = "0932211599", Email = "dangl311@gmail.com"},
@@ -46,13 +46,13 @@ namespace BadmintonCourtNUnitTests
 			new UserDetail() { UserId = "U10", FirstName = "Johny", LastName = "Dark", Phone = "0835251799", Email = "jydrk0527@gmail.com"}
 		};
 
-		public static List<Role> rolseStorage = new List<Role>() {
+		public List<Role> rolseStorage = new List<Role>() {
 			new Role() {RoleId = "R001", RoleName = "Admin"},
 			new Role() {RoleId = "R002", RoleName = "Staff"},
 			new Role() {RoleId = "R003", RoleName = "Customer"},
 		};
 
-		public static List<CourtBranch> branchStorage = new List<CourtBranch>()
+		public List<CourtBranch> branchStorage = new List<CourtBranch>()
 		{
 			// Active
 			new CourtBranch() { BranchId = "B001", BranchName = "Nha van hoa", BranchStatus = 1, BranchPhone = "0831255640", Location = "Binh Duong" },
@@ -62,17 +62,17 @@ namespace BadmintonCourtNUnitTests
 			new CourtBranch() { BranchId = "B003", BranchName = "Hoa Lac", BranchStatus = -1, BranchPhone = "0846250640", Location = "Ha Noi" }
 		};
 
-		public static List<Court> courtList = new List<Court>()
+		public List<Court> courtStorage = new List<Court>()
 		{ 
 			// Branch B001 - active branch
-			new Court() { CourtId = "C1", CourtName = "Court 1", BranchId = "B001", CourtStatus = true, Price = 20000}, // active court
-			new Court() { CourtId = "C2", CourtName = "Court 2", BranchId = "B001", CourtStatus = false, Price = 25000}, // maintained court
+			new Court() { CourtId = "C1", CourtName = "Court 1", BranchId = "B001", CourtStatus = true, Price = 20000, Description = "VIP"}, // active court
+			new Court() { CourtId = "C2", CourtName = "Court 2", BranchId = "B001", CourtStatus = false, Price = 25000, Description = "GHevatsao"}, // maintained court
 			// Branch B002 - closed branch -> All courts of B002 closed
-			new Court() { CourtId = "C3", CourtName = "Court 1", BranchId = "B002", CourtStatus = false, Price = 30000},
-			new Court() { CourtId = "C4", CourtName = "Court 2", BranchId = "B002", CourtStatus = false, Price = 30000},
+			new Court() { CourtId = "C3", CourtName = "Court A", BranchId = "B002", CourtStatus = false, Price = 30000, Description = "VIP"},
+			new Court() { CourtId = "C4", CourtName = "Court B", BranchId = "B002", CourtStatus = false, Price = 30000, Description = "VIP"},
 			// Branch B003 - maintained branch -> All courts temorarily closed for maintainence
-			new Court() { CourtId = "C5", CourtName = "Court 1", BranchId = "B003", CourtStatus = false, Price = 40000},
-			new Court() { CourtId = "C6", CourtName = "Court 2", BranchId = "B003", CourtStatus = false, Price = 30000}
+			new Court() { CourtId = "C5", CourtName = "Court C", BranchId = "B003", CourtStatus = false, Price = 40000, Description = "VIP"},
+			new Court() { CourtId = "C6", CourtName = "Court D", BranchId = "B003", CourtStatus = false, Price = 30000, Description = "VIP"}
 		};
 
 		public static List<Payment> paymentStorage = new List<Payment>()
@@ -88,7 +88,7 @@ namespace BadmintonCourtNUnitTests
 			new Payment() { PaymentId = "P006", Amount = 100000, BookingId = "BK004", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "31121166"}  // Momo
 		};
 
-		public static List<Booking> bookingStorage = new List<Booking>()
+		public List<Booking> bookingStorage = new List<Booking>()
 		{ 
 			// Primitive booking - contribute to create office hours
 			new Booking() { BookingId = "BK001", Amount = 0, BookingDate = new DateTime(1900, 1, 1, 0, 0, 0), BookingType = 1, ChangeLog = 0, UserId = "U1" },
@@ -106,7 +106,7 @@ namespace BadmintonCourtNUnitTests
 			new Booking() { BookingId = "BK009", Amount = 50000, BookingDate = new DateTime(2024, 7, 1, 15, 23, 49), BookingType = 2, ChangeLog = 2, UserId = "U4" }
 		};
 
-		public static List<BookedSlot> slotStorage = new List<BookedSlot>()
+		public List<BookedSlot> slotStorage = new List<BookedSlot>()
 		{
 			// Primitive slot - represent office hours - defaults as 7am to 22pm
 			new BookedSlot() { SlotId = "S1", BookingId = "BK001", CourtId = "C1", StartTime = new DateTime(1900, 1, 1, 7, 0, 0), EndTime = new DateTime(1900, 1, 1, 22, 0, 0)},
@@ -120,7 +120,7 @@ namespace BadmintonCourtNUnitTests
 		};
 
 
-		public static List<Feedback> feedbackStorage = new List<Feedback>
+		public List<Feedback> feedbackStorage = new List<Feedback>
 		{
 			// Admin feedback
 			new Feedback() { FeedbackId = "F1", BranchId = "B001", Content = "First comment", Period = new DateTime(2023, 11, 17, 14, 23, 41), Rating = 5, UserId = "U1" }, 
@@ -130,7 +130,7 @@ namespace BadmintonCourtNUnitTests
 			new Feedback() { FeedbackId = "F3", BranchId = "B003", Content = "Good service :D", Period = new DateTime(2024, 2, 6, 19, 32, 37), Rating = 4, UserId = "U2" },
 		};
 
-		public static List<Discount> discountStorage = new List<Discount>()
+		public List<Discount> discountStorage = new List<Discount>()
 		{
 			new Discount() { DiscountId = "D1", Amount = 200000, Proportion = 3},
 			new Discount() { DiscountId = "D2", Amount = 500000, Proportion = 5}

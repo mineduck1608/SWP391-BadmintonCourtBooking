@@ -20,6 +20,11 @@ namespace BadmintonCourtDAOs
 			}
 		}
 
+		public DiscountDAO(BadmintonCourtContext context)
+		{
+			_dbContext = context;
+		}
+
 		public List<Discount> GetAllDiscounts() => _dbContext.Discounts.ToList();
 
 		public Discount GetDiscountById(string id) => _dbContext.Discounts.FirstOrDefault(x => x.DiscountId == id);
@@ -44,8 +49,12 @@ namespace BadmintonCourtDAOs
 
 		public void DeleteDiscount(string id)
 		{
-			_dbContext.Discounts.Remove(GetDiscountById(id));
-			_dbContext.SaveChanges();
+			Discount discount = GetDiscountById(id);
+			if (discount != null)
+			{
+				_dbContext.Discounts.Remove(discount);
+				_dbContext.SaveChanges();
+			}
 		}
 
 	}
