@@ -11,19 +11,20 @@ namespace BadmintonCourtNUnitTests.DAOTests
 	public class UserDAOTests
 	{
 		private DbContextOptions<BadmintonCourtContext> _options;
+
 		public readonly int primitiveLength = DataTestStorage.userStorage.Count;
 		public readonly int activeCase = DataTestStorage.userStorage.Count - 2;
 		public readonly List<CourtBranch> branchStorage = DataTestStorage.branchStorage;
 		public const string notExistedId = "sfsafsfs";
 		public const string existedId = "U1";
 
+
 		[SetUp]
 		public void Setup()
 		{
 			var serviceProvider = new ServiceCollection()
-		   .AddEntityFrameworkInMemoryDatabase()
+			.AddEntityFrameworkInMemoryDatabase()
 			.BuildServiceProvider();
-
 
 			// Configure DbContextOptions to use in-memory database
 			_options = new DbContextOptionsBuilder<BadmintonCourtContext>()
@@ -134,8 +135,8 @@ namespace BadmintonCourtNUnitTests.DAOTests
 			var context = new BadmintonCourtContext(_options);
 			UserDAO dao = new UserDAO(context);
 			List<Role> roleStorage = DataTestStorage.rolseStorage;
-			List<List<User>> expected = new List<List<User>>();
-			List<List<User>> actual = new List<List<User>>();
+			//List<List<User>> expected = new List<List<User>>();
+			//List<List<User>> actual = new List<List<User>>();
 
             foreach (var item in roleStorage)
             {

@@ -3,13 +3,14 @@ import './bookCourt.css';
 import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
+import { HttpStatusCode } from "axios";
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('fixed'); //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts of that branch, if active
     const [paymentType, setPaymentType] = useState(''); //banking or not
-    const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00. Hardcoded
+    const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
     const [timeError, setTimeError] = useState(0) //
     const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
@@ -60,10 +61,10 @@ const BookCourt = () => {
         setCurDate(new Date())
     }, [])
     const checkAvailableSlot = async () => {
-
         let courtId = courtInfo['id']
+        console.log("Check for: " + courtId);
         try {
-            if (validateDateTime()) {
+            if (validateDateTime() === 0) {
                 var bookingDate = document.getElementById("datePicker").value
                 var t1 = parseInt(document.getElementById("time-start").value)
                 var t2 = parseInt(document.getElementById("time-end").value)
@@ -81,11 +82,11 @@ const BookCourt = () => {
                     }
                 })
                 const data = await res.json()
+                console.log('Length: ' + data.length);
                 setIsOccupied(data.length > 0)
-                return (data.length > 0)
             }
         } catch (err) {
-            return false;
+            console.log(err);
         }
     }
     useEffect(() => {
@@ -112,6 +113,7 @@ const BookCourt = () => {
         }
     }
     const validateDateTime = () => {
+        console.log('Validate time');
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
@@ -122,12 +124,14 @@ const BookCourt = () => {
         if (startTime > endTime) r = 1
         if (startTime < curDateNum) r = 2
         setTimeError(t => r)
+        console.log(r);
         return r
     }
     const validateBooking = () => {
         //reset
         console.log('Validate booking');
         var t = (validateDateTime() === 0)
+        console.log("DateTime: " + t);
         try {
             return t && courtInfo['status'] && !isOccupied;
         } catch (error) {
@@ -136,7 +140,6 @@ const BookCourt = () => {
     };
 
     const completeBooking = async () => {
-        console.log('complete booking');
         try {
             const result = validateBooking();
             console.log(result);
@@ -212,10 +215,15 @@ const BookCourt = () => {
                             'Content-Type': 'application/json'
                         }
                     })
-                var data = await (res.json())
-                var payUrl = data['url']
-                if (payUrl !== undefined) {
-                    window.location.assign(payUrl)
+                if (paymentType !== 'flexible') {
+                    var data = await (res.json())
+                    var payUrl = data['url']
+                    if (payUrl !== undefined) {
+                        window.location.assign(payUrl)
+                    }
+                }
+                else {
+                    window.location.assign(res.status === HttpStatusCode.Ok ? '/paySuccess?msg=success' : '/payFail')
                 }
             }
             catch (err) {
@@ -328,7 +336,7 @@ const BookCourt = () => {
                     <div className="bookCourt-form-group4">
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
-                            if (validateDateTime()) {
+                            if (validateDateTime() === 0) {
                                 checkAvailableSlot()
                                 handleCalcAmount()
                             }
@@ -342,7 +350,7 @@ const BookCourt = () => {
                         </select>
                         <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => {
-                            if (validateDateTime()) {
+                            if (validateDateTime() === 0) {
                                 checkAvailableSlot()
                                 handleCalcAmount()
                             }
@@ -363,7 +371,7 @@ const BookCourt = () => {
                     <div className="bookCourt-form-group5">
                         <label htmlFor="day">Day: </label>
                         <input type="date" id="datePicker" onChange={() => {
-                            if (validateDateTime()) {
+                            if (validateDateTime() === 0) {
                                 checkAvailableSlot()
                                 handleCalcAmount()
                             }

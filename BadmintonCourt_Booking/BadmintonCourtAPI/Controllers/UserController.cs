@@ -24,6 +24,7 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly IConfiguration _config;
 		private const string verifyUrl = "https://localhost:7233/User/VerifyAction";
 		private const string resetPassUrl = "http://localhost:3000/ResetPassword";
+		private const string style = "style=\"border: 1px solid black; border-collapse: collapse;\"";
 
 		public UserController(IConfiguration config)
 		{
@@ -95,7 +96,10 @@ namespace BadmintonCourtAPI.Controllers
 			}
 
 			// Co acc
+			
 			User user = _service.UserService.GetUserById(info.UserId);
+			if (user.Token != null || user.ActionPeriod != null)
+				ResetFailAction(user);
 			return Ok(new { token = Util.GenerateToken(info.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
 		}
 
@@ -132,116 +136,7 @@ namespace BadmintonCourtAPI.Controllers
 			return Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
 		}
 
-		//[HttpPost]
-		//[Route("User/LoginAuth")]
-		//public async Task<IActionResult> LoginAuth(string? username, string? password)
-		//{
-		//	//User user = service.userService.GetUserByLogin(username, password);
-		//	User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username && x.Password == password);
-
-		//	// Nhập đúng username + pass
-		//	if (user != null)
-		//	{
-		//		if (user.AccessFail == 0)
-		//		{
-		//			UserDetail info = _service.UserDetailService.GetUserDetailById(user.UserId);
-		//			user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-		//			_service.UserService.UpdateUser(user, user.UserId);
-		//			return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
-		//		}   // Legit, nhập đúng từ lần đầu
-
-		//		else if (user.AccessFail < 3) // Trước đó nhập sai chưa tới lần 3
-		//		{
-		//			return Ok(new { token = ResetUserStatus(user) });
-		//		}
-
-		//		else if (user.AccessFail == 3) // Trước đó nhập sai tới lần 3
-		//		{
-		//			if ((DateTime.Now - user.LastFail).Value.TotalMinutes >= 15)
-		//			{
-		//				user.AccessFail = 0;
-		//				user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-		//				user.ActiveStatus = true;
-		//				_service.UserService.UpdateUser(user, user.UserId);
-		//				return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
-		//			}
-		//			return BadRequest(new { msg = "Temporaly locked" });
-		//		}
-
-		//		else if (user.AccessFail == 4)  // Trước đó nhập sai tới lần 4
-		//		{
-		//			if ((DateTime.Now - user.LastFail).Value.TotalMinutes >= 30)
-		//			{
-		//				user.AccessFail = 0;
-		//				user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-		//				user.ActiveStatus = true;
-		//				_service.UserService.UpdateUser(user, user.UserId);
-		//				return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
-		//			}
-		//			return BadRequest(new { msg = "Temporaly locked" });
-		//		}
-
-		//		else if (user.AccessFail == 5)  // Trước đó nhập sai tới lần 5
-		//		{
-		//			if ((DateTime.Now - user.LastFail).Value.TotalHours >= 1)
-		//			{
-		//				user.AccessFail = 0;
-		//				user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
-		//				user.ActiveStatus = true;
-		//				_service.UserService.UpdateUser(user, user.UserId);
-		//				return Ok(new { token = Util.GenerateToken(user.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
-		//			}
-		//			return BadRequest(new { msg = "Temporaly locked" });
-		//		}
-
-		//		else return BadRequest(new { msg = "Locked. Contact" });
-		//	}
-
-		//	else
-		//	{
-		//		User failCase = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username);
-		//		//----------------------------------------------------------------------------------------------
-		//		if (failCase != null) // Đúng username, sai pass
-		//		{
-		//			if (failCase.AccessFail <= 5) // Sai từ dưới 5 lần
-		//			{
-		//				//----------------------------------------------
-		//				if (failCase.AccessFail == 3)
-		//				{
-		//					if ((DateTime.Now - failCase.LastFail).Value.TotalMinutes < 15) 
-		//					{
-		//						return BadRequest(new { msg = "Temporarily locked" });
-		//					}
-		//				}
-		//				//----------------------------------------------
-		//				else if (failCase.AccessFail == 4)
-		//				{
-		//					if ((DateTime.Now - failCase.LastFail).Value.TotalMinutes < 30)
-		//					{
-		//						return BadRequest(new { msg = "Temporarily locked" });
-		//					}
-		//				}
-		//				//----------------------------------------------
-		//				else if (failCase.AccessFail == 5)
-		//				{
-		//					if ((DateTime.Now - failCase.LastFail).Value.TotalHours < 1)
-		//					{
-		//						return BadRequest(new { msg = "Temporarily locked" });
-		//					}
-		//				}
-		//				//----------------------------------------------
-		//				failCase.AccessFail += 1;
-		//				failCase.LastFail = DateTime.Now;
-		//				if (failCase.AccessFail > 2)
-		//					failCase.ActiveStatus = false;
-		//				_service.UserService.UpdateUser(failCase, failCase.UserId);
-		//				return BadRequest(new { msg = "Incorrect username or password!" });
-		//			}
-		//			return BadRequest(new { msg = "Locked! Contact" }); // Từ lần sai thứ 6 đổ đi đã khóa acc, liên hệ admin để giải quyết
-		//		}
-		//		return BadRequest(new { msg = "Incorrect username or password!" }); // Sai username, ko quan tâm pass
-		//	}
-		//}
+		
 
 		private void ResetFailAction(User user) // Công dụng: giành để reset lại các account chưa bị ban thực hiện việc thay đổi password/ quên pass rồi reset pass nhưng chưa verify lúc nhận đc mail xác nhận hoặc quá hạn xác nhận mà hủy chưa update đc xuống db
 		{
@@ -363,7 +258,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (password.IsNullOrEmpty() || confirmPassword.IsNullOrEmpty() || confirmPassword != password)
 			{
-				return Redirect($"{resetPassUrl}?id={id}");
+				return Redirect($"{resetPassUrl}?id={id}&&msg=fail");
 			}
 			if (Util.IsPasswordSecure(password))
 			{
@@ -532,7 +427,8 @@ namespace BadmintonCourtAPI.Controllers
 
 			//User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username);
 			//UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Phone == phone || x.Email == email);
-			if (_service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username) != null || _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Phone == phone || x.Email == email) != null)
+			List<User> checkStorage = GetUserListFromFilterFailAccount();
+			if (checkStorage.FirstOrDefault(x => x.UserName == username) != null || GetUserDetailListFromFilterFailAccount(checkStorage).FirstOrDefault(x => x.Phone == phone || x.Email == email) != null)
 				return BadRequest(new { msg = "Account existed" });
 
 			string userId = "U" + (_service.UserService.GetAllUsers().Count() + 1).ToString("D7");
@@ -563,7 +459,7 @@ namespace BadmintonCourtAPI.Controllers
 				Phone = phone,
 			});
 
-			_service.MailService.SendMail(email, $"Click <a href='{verifyUrl}?rawToken={token}:1'>HERE</a> to verify your account", "BMTC - Account Registration Verification");
+			_service.MailService.SendMail(email, $"<table {style}><tr><td {style}>Username</td><td {style}>{username}</td></tr><tr><td {style}>First name</td><td>{firstName}</td></tr><tr><td {style}>Last name</td><td {style}>{lastName}</td><tr><td {style}>Phone number</td><td {style}>{phone}</td></tr></table><br>  Click <a href='{verifyUrl}?rawToken={token}:1'>HERE</a> to verify your account", "BMTC - Account Registration Verification");
 			return Ok(new { token = token }); // Trả lại để check chơi
 											  // Vào demo thực tế sẽ bỏ
 		}
@@ -580,11 +476,11 @@ namespace BadmintonCourtAPI.Controllers
 				string type = rawToken.Split(':')[1]; // Loại verify token: verify đkí - 1 / verify reset pass - 2
 				if ((DateTime.Now - user.ActionPeriod.Value).TotalMinutes > 15) // Quá hạn token	
 				{
-					if (type == "1") // Loại đkí mà quá hạn thời gian
-					{
-						_service.UserDetailService.DeleteUserDetail(user.UserId);
-						_service.UserService.DeleteUser(user.UserId);
-					}
+					//if (type == "1") // Loại đkí mà quá hạn thời gian
+					//{
+					//	_service.UserDetailService.DeleteUserDetail(user.UserId);
+					//	_service.UserService.DeleteUser(user.UserId);
+					//}
 					return BadRequest(new { msg = "Out of time" });
 				}
 				//--------------------------------------------------------
@@ -595,7 +491,7 @@ namespace BadmintonCourtAPI.Controllers
 				if (type == "2") // Loại reset pass mà đủ tg 
 				{
 					_service.UserService.UpdateUser(user, user.UserId);
-					return Redirect($"{resetPassUrl}?id={user.UserId}"); // Trả về trang nhập pass mới - đây là url của FE với tham số para truyền đi là id 
+					return Redirect($"{resetPassUrl}?id={user.UserId}&&msg=initial"); // Trả về trang nhập pass mới - đây là url của FE với tham số para truyền đi là id 
 				}
 				else if (type == "3")
 				{

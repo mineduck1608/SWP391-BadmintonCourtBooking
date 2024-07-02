@@ -20,7 +20,12 @@ namespace BadmintonCourtDAOs
             }
         }
 
-        public List<Feedback> GetAllFeedbacks() => _dbContext.Feedbacks.ToList();
+		public FeedbackDAO(BadmintonCourtContext context)
+		{
+			_dbContext = context;		
+		}
+
+		public List<Feedback> GetAllFeedbacks() => _dbContext.Feedbacks.ToList();
 
         public Feedback GetFeedbackByFeedbackId(string id) => _dbContext.Feedbacks.FirstOrDefault(x => x.FeedbackId == id);
 
@@ -52,8 +57,13 @@ namespace BadmintonCourtDAOs
 
         public void DeleteFeedback(string id)
         {
-            _dbContext.Feedbacks.Remove(GetFeedbackByFeedbackId((id)));
-            _dbContext.SaveChanges();
+            Feedback fb = GetFeedbackByFeedbackId(id);
+            if (fb != null)
+            {
+				_dbContext.Feedbacks.Remove(fb);
+				_dbContext.SaveChanges();
+			}
         }
+
     }
 }
