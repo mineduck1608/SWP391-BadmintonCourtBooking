@@ -31,8 +31,8 @@ const PaySuccess = () => {
       alert("You'll be redirected to the main page!");
       window.location.replace('/home');
     } else if (success === -1) {
-      alert("There was an issue with your payment. Redirecting to buy flexible...");
-      window.location.replace('/buyTime'); // Change this URL to where users should go to retry payment
+      alert("There was an issue with your payment. Return home.");
+      window.location.replace('/home'); // Change this URL to where users should go to retry payment
     }
   }
 

@@ -55,12 +55,18 @@ const BuyTime = () => {
     async function fetchData() {
       var token = sessionStorage.getItem('token')
       if (!token) {
-        //alert('Please log in')
+        alert('Please log in')
       } else {
         try {
           var decodedToken = jwtDecode(token)
           setUserID(u => decodedToken.UserId)
-          var res = await fetch(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`)
+          var res = await fetch(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`,{
+            method: 'GET',
+            headers: {
+              'Authorization': `bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
           var data = await res.json()
           if (decodedToken.UserId !== data['userId']) {
             throw new Error('Authorize failed')
@@ -71,6 +77,7 @@ const BuyTime = () => {
         }
         catch (err) {
           console.log(err)
+          console.log('1')
         }
       }
     }
