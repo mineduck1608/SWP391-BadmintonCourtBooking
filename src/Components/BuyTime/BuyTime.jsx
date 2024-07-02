@@ -9,6 +9,7 @@ const BuyTime = () => {
   const apiUrl = 'https://localhost:7233'
   const intRegex = /^(0{0,})[1-9]{1}[0-9]*$/
   var amount
+  var token = sessionStorage.getItem('token')
   const validateAmount = () => {
     var temp = (document.getElementById('amount').value).toString()
     console.log(temp);
@@ -34,6 +35,7 @@ const BuyTime = () => {
           {
             method: 'POST',
             headers: {
+              'Authorization': `bearer ${token}`,
               'Content-Type': 'application/json'
             }
           })
@@ -53,7 +55,7 @@ const BuyTime = () => {
   //Get the userID
   useEffect(() => {
     async function fetchData() {
-      var token = sessionStorage.getItem('token')
+      
       if (!token) {
         alert('Please log in')
       } else {
