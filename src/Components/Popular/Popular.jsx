@@ -16,12 +16,31 @@ const Popular = ({ searchCriteria }) => {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => response.json())
-            .then((data) => {
-                setCourtBranches(data);
-                setFilteredBranches(data);
-            })
-            .catch(error => console.error('Error fetching branches:', error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const parsedData = data.map(branch => {
+                let imgURL = '';
+                if (branch.branchImg && branch.branchImg.length > 0) {
+                    const urlString = branch.branchImg[0];
+                    const parts = urlString.split(': ');
+                    if (parts.length > 1) {
+                        imgURL = parts[1].trim();
+                    }
+                }
+                return {
+                    ...branch,
+                    branchImg: imgURL
+                };
+            });
+            setCourtBranches(parsedData);
+            setFilteredBranches(parsedData);
+        })
+        .catch(error => console.error('Error fetching branches:', error));
     }, [token]);
 
     useEffect(() => {
@@ -59,7 +78,7 @@ const Popular = ({ searchCriteria }) => {
                         <Link to={`/findCourt?branch=${branch.branchId}`} key={branch.branchId}>
                             <div className="singleDestination">
                                 <div className="destImage">
-                                    <img src={branch.branchImg} alt="Image title" />
+                                    <img src={branch.branchImg} alt={branch.branchName} />
                                     <div className="overlayInfo black-text">
                                         <p>{branch.location}</p>
                                         <BsArrowRightShort className='icon' />
