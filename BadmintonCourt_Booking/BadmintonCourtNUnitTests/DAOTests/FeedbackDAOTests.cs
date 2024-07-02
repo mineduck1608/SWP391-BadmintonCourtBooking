@@ -14,7 +14,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 	internal class FeedbackDAOTests
 	{
 		private DbContextOptions<BadmintonCourtContext> _options;
-		public readonly int primitiveLength = DataTestStorage.feedbackStorage.Count;
+		public readonly int primitiveLength = new DataTestStorage().feedbackStorage.Count;
 		public const string notExistedId = "sfsafsfs";
 		public const string existedId = "F1";
 		public const string existedUser = "U1";
@@ -45,7 +45,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 			// Code to seed your database with test data
 			if (dbContext.Feedbacks.Count() <= 0)
 			{
-				List<Feedback> feedbackStorage = DataTestStorage.feedbackStorage;
+				List<Feedback> feedbackStorage = new DataTestStorage().feedbackStorage;
 				foreach (var item in feedbackStorage)
 				{
 					dbContext.Feedbacks.Add(item);
@@ -53,7 +53,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 				}
 			}
 		}
-		private List<Feedback> ExtractFeedbackListFromProvidedCategoryOnDataStorage(string keyword, int type) => type == 1 ? DataTestStorage.feedbackStorage.Where(x => x.BranchId == keyword).ToList() : DataTestStorage.feedbackStorage.Where(x => x.Rating == int.Parse(keyword)).ToList();
+		private List<Feedback> ExtractFeedbackListFromProvidedCategoryOnDataStorage(string keyword, int type) => type == 1 ? new DataTestStorage().feedbackStorage.Where(x => x.BranchId == keyword).ToList() : new DataTestStorage().feedbackStorage.Where(x => x.Rating == int.Parse(keyword)).ToList();
 
 
 
@@ -75,7 +75,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 		}
 
 		[Test]
-		public void GetRoleById_InputExistedId_ReturnsTrue()
+		public void GetById_InputExistedId_ReturnsTrue()
 		{
 			var context = new BadmintonCourtContext(_options);
 			FeedbackDAO dao = new FeedbackDAO(context);
@@ -170,6 +170,13 @@ namespace BadmintonCourtNUnitTests.DAOTests
 			var context = new BadmintonCourtContext(_options);
 			FeedbackDAO dao = new FeedbackDAO(context);
 			Assert.AreEqual(0, dao.GetFeedbacksByRate(0).Count());
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			using var context = new BadmintonCourtContext(_options);
+			context.Database.EnsureDeleted();
 		}
 	}
 }
