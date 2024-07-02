@@ -30,7 +30,7 @@ const BuyTime = () => {
         var res = await fetch(`${apiUrl}/Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
-          + `Type=buyTime&`
+          + `Type=Flexible&`
           + `Amount=${amount}`,
           {
             method: 'POST',
