@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
-import { Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import './ViewHistory.css';
+import { Modal, Button, DatePicker } from 'antd'
+import { Link } from 'react-router-dom';
+import { HttpStatusCode } from 'axios';
+import { getHours } from 'date-fns';
 
 const FeedbackModal = ({ show, onClose, onSave, bookingId, feedback }) => {
   const [newFeedback, setNewFeedback] = useState(feedback);
@@ -47,9 +50,67 @@ export default function ViewHistory() {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [openCancel, setOpenCancel] = useState(false);
+  const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
+  const [selectedBooking, setSelectedBooking] = useState({})
+  const [showModal, setShowModal] = useState(false)
+  const [validSchedule, setValidSchedule] = useState(false)
   const token = sessionStorage.getItem('token');
+  const apiUrl = 'https://localhost:7233'
+  const initialState = {
+    start: '',
+    end: '',
+    date: '',
+    courtId: '',
+    slotId: '',
+    bookingId: '',
+    branchId: '',
+    userId: '',
+    paymentType: '',
+  };
+  const [formState, setFormState] = useState(initialState)
+  const [payment, setPayment] = useState({})
+  const loadTimeFrame = async () => {
+    const fetchTime = async () => {
+      var res = await fetch(`${apiUrl}/Slot/GetAll`)
+      var data = await res.json()
+      return data
+    }
+    try{
+      var data = await fetchTime()
+      setTimeBound([])
+      var primitive = data.find(d => d.slotID === 'S1')
+      var start = getHours(primitive.startTime)
+      var end = getHours(primitive.endTime)
+      for(let i=start; i<= end; i++){
+        setTimeBound(t => [...t, i])
+      }
+    }
+    catch(err){
+
+    }
+  }
+  const formatNumber = (n) => {
+    function formatTo3Digits(n, stop) {
+      var rs = ''
+      if (!stop)
+        for (var i = 1; i <= 3; i++) {
+          rs = (n % 10) + rs
+          n = Math.floor(n / 10)
+        }
+      else rs = n + rs
+      return rs
+    }
+    var rs = ''
+    do {
+      rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
+      n = Math.floor(n / 1000)
+      if (n > 0) rs = '.' + rs
+    }
+    while (n > 0)
+    return rs
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,7 +124,7 @@ export default function ViewHistory() {
         const decodedToken = jwtDecode(token);
         const userIdToken = decodedToken.UserId;
 
-        const bookingsResponse = await fetch('https://localhost:7233/Booking/GetAll', {
+        const bookingsResponse = await fetch(`${apiUrl}/Booking/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -77,7 +138,7 @@ export default function ViewHistory() {
         const userBookings = bookingsData.filter(booking => booking.userId === userIdToken);
         setBookings(userBookings);
 
-        const slotsResponse = await fetch('https://localhost:7233/Slot/GetAll', {
+        const slotsResponse = await fetch(`${apiUrl}/Slot/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -90,7 +151,7 @@ export default function ViewHistory() {
         const slotsData = await slotsResponse.json();
         setSlots(slotsData);
 
-        const courtsResponse = await fetch('https://localhost:7233/Court/GetAll', {
+        const courtsResponse = await fetch(`${apiUrl}/Court/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -103,7 +164,7 @@ export default function ViewHistory() {
         const courtsData = await courtsResponse.json();
         setCourts(courtsData);
 
-        const branchesResponse = await fetch('https://localhost:7233/Branch/GetAll', {
+        const branchesResponse = await fetch(`${apiUrl}/Branch/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -122,21 +183,152 @@ export default function ViewHistory() {
         setLoading(false);
       }
     };
-
+    
     fetchData();
+    loadTimeFrame()
   }, [token]);
 
+  const onClickEdit = (slot) => {
+    setOpen(true)
+    let court = courts.find(c => c.courtId === slot.courtId)
+    let branchId = court.branchId
+
+    setFormState({
+      date: slot.date,
+      start: slot.start,
+      end: slot.end,
+      courtId: slot.courtId,
+      bookingId: slot.bookingId,
+      branchId: branchId,
+      slotId: slot.bookedSlotId,
+    })
+  }
+  const onClickCancelSlot = (slot) => {
+    setOpenCancel(true)
+    let court = courts.find(c => c.courtId === slot.courtId)
+    let branchId = court.branchId
+
+    setFormState({
+      date: slot.date,
+      start: slot.start,
+      end: slot.end,
+      courtId: slot.courtId,
+      bookingId: slot.bookingId,
+      branchId: branchId,
+      slotId: slot.bookedSlotId,
+    })
+  }
   const formatTime = (time) => {
     const hours = time.toString().padStart(2, '0');
     return `${hours}:00:00`;
   };
+  function getUserId(token) {
+    var decodedToken = jwtDecode(token)
+    return decodedToken.UserId
+  }
+  const getPayment = async (bookingID) => {
+    async function fetchPayment(bookingID) {
+      try {
+        var res = await fetch(`${apiUrl}/Payment/GetByUser?id=${getUserId(token)}`,
+          {
+            method: 'get',
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+        var data = await res.json()
+        var payment = data.find(d => d.bookingId === bookingID)
+        setPayment(payment)
+      }
+      catch (err) {
+
+      }
+    }
+    await fetchPayment(bookingID)
+  }
+  const handleOk = async () => {
+    const update = async (start, end, date, userId, courtId, slotId, paymentMethod, bookingId) => {
+      var res = await fetch(`${apiUrl}/Slot/UpdateByUser?`
+        + `start=${start}&`
+        + `end=${end}&`
+        + `date=${date}&`
+        + `userId=${userId}&`
+        + `courtId=${courtId}&`
+        + `slotId=${slotId}&`
+        + `paymentMethod=${paymentMethod}&`
+        + `bookingId=${bookingId}`
+        , {
+          method: 'put',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      if (res.ok) {
+        var data = await res.json()
+        if (Object.is(data['url'], undefined)) {
+          alert('The change has been added to your balance!')
+        }
+        else {
+          alert('You\'ll be redirect to the payment page')
+          window.location.assign(data['url'])
+        }
+      }
+      if (res.status === HttpStatusCode.BadRequest) {
+        alert('This booking cannot be changed, as it has already been changed 3 times')
+      }
+      window.location.reload()
+    }
+    let t = validateTime(formState.date, formState.start, formState.end)
+    setValidSchedule(t)
+    try {
+      if (t) {
+        setOpen(false)
+        getPayment(formState.bookingId)
+        await update(formState.start, formState.end, formState.date, getUserId(token),
+          formState.courtId, formState.slotId, payment.method, formState.bookingId
+        )
+        setFormState(initialState)
+      }
+      else {
+        alert('stupid')
+      }
+    }
+    catch (err) {
+
+    }
+  }
+
+  const cancelSlot = async () => {
+    async function cancel(slotId, bookingId) {
+      var res = await fetch(`${apiUrl}/Slot/Cancel?`
+        + `slotId=${slotId}&`
+        + `bookingId=${bookingId}`
+        , {
+          method: 'delete'
+        })
+      var data = await res.json()
+    }
+    try {
+      await cancel(formState.slotId, formState.bookingId)
+      window.location.reload()
+    }
+    catch (err) {
+
+    }
+  }
+
+  const handleCancel = () => {
+    setOpen(false)
+    setOpenCancel(false)
+    setFormState(initialState)
+  }
 
   const getBookingTypeLabel = (bookingType) => {
     switch (bookingType) {
       case 1:
         return 'Once';
       case 2:
-        return 'Permanent';
+        return 'Fixed';
       case 3:
         return 'Flexible';
       default:
@@ -178,7 +370,7 @@ export default function ViewHistory() {
     });
 
     const sortedBookings = filteredBookings.sort((a, b) => {
-      return new Date(b.bookingDate) - new Date(a.bookingDate); 
+      return new Date(b.bookingDate) - new Date(a.bookingDate);
     });
 
     return sortedBookings.map((booking) => {
@@ -194,9 +386,13 @@ export default function ViewHistory() {
       const feedback = booking.feedback ? booking.feedback : 'N/A';
 
       return (
+        !booking.isDeleted &&
         <tr key={booking.bookingId}>
-          <td>{booking.bookingId}</td>
-          <td>{booking.amount}</td>
+          <td>
+            {booking.bookingId}
+
+          </td>
+          <td>{formatNumber(booking.amount)}</td>
           <td>{getBookingTypeLabel(booking.bookingType)}</td>
           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
           <td>{slotDate}</td>
@@ -209,6 +405,14 @@ export default function ViewHistory() {
               {feedback}
             </button>
           </td>
+          {
+            filterType !== 'past' && (
+              <td>
+                <button className='view-history-button' onClick={() => onClickEdit(slot)}>Edit</button>
+                <button className='view-history-button' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
+              </td>
+            )
+          }
         </tr>
       );
     });
@@ -244,9 +448,81 @@ export default function ViewHistory() {
 
     return null;
   };
-
+  const validateTime = (date, start, end) => {
+    let now = Date.parse(new Date())
+    let startTime = Date.parse(date) + start * 3600000
+    let endTime = Date.parse(date) + end * 3600000
+    return (startTime < endTime) && (startTime > now)
+  }
   return (
     <div className='view-history'>
+      <Modal title='Edit slot'
+        open={open}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <span>
+          <p>Booking: {formState.bookingId}</p>
+          <p>Slot: {formState.slotId}</p>
+          <input type="date" id="datePicker" value={formState.date}
+            onChange={() => setFormState({
+              ...formState,
+              date: document.getElementById('datePicker').value
+            })}
+          />
+          <p>Starting time:</p>
+          <select id='startingTime'
+            onChange={() => {
+              setFormState({
+                ...formState,
+                start: document.getElementById('startingTime').value
+              })
+            }}
+          >
+            {timeBound.map(t => (
+              <option value={t} selected={t === formState.start}>{t}h</option>
+            ))}
+          </select>
+          <p>Ending time:</p>
+          <select id='endingTime'
+            onChange={() => setFormState({
+              ...formState,
+              end: document.getElementById('endingTime').value
+            })}
+          >
+            {timeBound.map(t => (
+              <option value={t} selected={t === formState.end}>{t}h</option>
+            ))}
+          </select>
+          Branch:
+          <select id='branch'>
+            {branches.map((b, i) => (
+              b.branchStatus === 1 &&
+              <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
+            ))}
+          </select>
+          Court:
+          <select id='court'>
+            {courts.map(c => (
+              c.courtStatus && c.branchId === formState.branchId
+              &&
+              (
+                <option value={c.courtId} selected={c.courtId === formState.courtId}>{c.courtName}</option>
+              )
+            ))}
+          </select>
+        </span>
+      </Modal>
+      <Modal title='Confirm cancel'
+        open={openCancel}
+        onOk={cancelSlot}
+        onCancel={handleCancel}
+      >
+        <span>
+          Are you sure you want to cancel this slot?
+          <p id='warning'>THIS CANNOT BE UNDONE!</p>
+        </span>
+      </Modal>
       <div className='view-history-header'>
         <Header />
       </div>
@@ -279,6 +555,7 @@ export default function ViewHistory() {
                               <th>COURT NAME</th>
                               <th>BRANCH NAME</th>
                               <th>FEEDBACK</th>
+                              <th>EDIT/CANCEL</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -287,7 +564,7 @@ export default function ViewHistory() {
                         </table>
                       </div>
                     </div>
-  
+
                     <div className="view-history-upcoming-table">
                       <h3>Upcoming Bookings</h3>
                       <div className="view-history-table-wrapper">
@@ -305,6 +582,7 @@ export default function ViewHistory() {
                               <th className="view-history-upcoming-table">COURT NAME</th>
                               <th className="view-history-upcoming-table">BRANCH NAME</th>
                               <th className="view-history-upcoming-table">FEEDBACK</th>
+                              <th className="view-history-upcoming-table">EDIT/CANCEL</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -313,7 +591,7 @@ export default function ViewHistory() {
                         </table>
                       </div>
                     </div>
-  
+
                     <div className="view-history-past-table">
                       <h3>Past Bookings</h3>
                       <div className="view-history-table-wrapper">
