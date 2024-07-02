@@ -147,8 +147,10 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize]
 		public async Task<IActionResult> AddBookedSLot(string? date, int? start, int? end, string? courtId, string userId)
 		{
-			if (IsTimeIntervalValid(date, start, end, courtId))
+			if (!IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
+
+
 
 			DateTime startDate = new();
 			DateTime endDate = new();
@@ -207,6 +209,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
+		
 
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
 			if (booking.ChangeLog < 3)
@@ -245,9 +248,8 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize]
 		public async Task<IActionResult> UpdateSlotByUser(int? start, int? end, string? date, string userId, string courtId, string slotId, int? paymentMethod, string bookingId) // Khách đổi ý muốn thay đổi sân / thời gian / ....
 		{
-			if (IsTimeIntervalValid(date, start, end, courtId))
+			if (!IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
-
 
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
 			//--------------------------------------------------------------------------------------
@@ -311,7 +313,7 @@ namespace BadmintonCourtAPI.Controllers
 				}
 				return Ok(new { msg = "Success" });
 			}
-			return BadRequest(new { msg = "Can't cancel as out of time to change decision" });
+			return BadRequest(new { msg = "Can't change as out of time to change decision" });
 		}
 
 		[HttpDelete]
@@ -393,7 +395,7 @@ namespace BadmintonCourtAPI.Controllers
 			bool status = UpdateNewSlotToDB("00", result.VnPayResponseCode, result.Description, result.TransactionId, result.Amount, result.Date, 1);
 			if (status)
 			{
-				string userId = result.Description.Split('|')[0].Trim().Split(':')[1].Trim();
+				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
 				_service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, "Thanks for your purchasement. Your slot has been updated. You can now check it", "BMTC - Slot Update Notification");
 			}
 			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));

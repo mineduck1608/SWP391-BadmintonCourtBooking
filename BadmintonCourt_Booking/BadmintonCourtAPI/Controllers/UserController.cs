@@ -80,15 +80,15 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("User/ExternalLogAuth")]
-		public async Task<IActionResult> ExternalAuth(string token)
+		public async Task<IActionResult> ExternalAuth(string email)
 		{
-			string email = Util.GetMailFromToken(token);
+			//string email = Util.GetMailFromToken(token);
 			UserDetail info = _service.UserDetailService.GetUserDetailByMail(email);
 
 			if (info == null) // Chua co acc
 			{
 				string userId = "U" + (_service.UserService.GetAllUsers().Count() + 1).ToString("D7");
-				_service.UserService.AddUser(new User { UserId = userId, UserName = "", Password = "", LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null });
+				_service.UserService.AddUser(new User { UserId = userId, UserName = "", Password = "", LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null, RoleId = "R003" });
 
 
 				_service.UserDetailService.AddUserDetail(new UserDetail { UserId = userId, Email = email, FirstName = "", LastName = "", Phone = "" });

@@ -23,6 +23,11 @@ namespace BadmintonCourtDAOs
             }
         }
 
+        public PaymentDAO(BadmintonCourtContext context)
+        {
+            _dbContext = context;
+        }
+
         public List<Payment> GetAllPayments() => _dbContext.Payments.ToList();
 
         public Payment GetPaymentByPaymentId(string id) => _dbContext.Payments.FirstOrDefault(x => x.PaymentId == id);

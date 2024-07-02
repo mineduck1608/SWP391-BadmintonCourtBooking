@@ -23,7 +23,7 @@ namespace BadmintonCourtServices.IService
 
         public Payment GetPaymentByBookingId(string id);
 
-        public void UpdatePayment(Payment newPayment, string id);
+		public void UpdatePayment(Payment newPayment, string id);
 
         public void AddPayment(Payment payment);
 

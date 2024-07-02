@@ -172,7 +172,7 @@ namespace BadmintonCourtAPI.Controllers
 			sb.Append($"Email: {_service.UserDetailService.GetUserDetailById(userId).Email}");
 			if (type != buyTime && type != flexibleBooking)
 			{
-				DateTime? date = DateTime.Parse(transactionDTO.Date.ToString());
+				DateTime? date = transactionDTO.Date;
 				int year = date.Value.Year; 
 				int month = date.Value.Month; 
 				int day = date.Value.Day;
