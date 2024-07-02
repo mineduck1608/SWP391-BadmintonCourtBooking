@@ -23,13 +23,13 @@ const Home = () => {
                 <div className="homeCard grid">
 
                     <div className="locationDiv">
-                        <label htmlFor="location">Location</label>
+                        <label htmlFor="location">Branch</label>
                         <input type="text" placeholder='Choose court branch' />
                     </div>
 
 
                     <div className="distDiv">
-                        <label htmlFor="distance">Date</label>
+                        <label htmlFor="distance">Court</label>
                         <input type="text" placeholder='Date' />
                     </div>
 

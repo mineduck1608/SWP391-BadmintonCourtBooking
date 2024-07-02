@@ -13,9 +13,9 @@ import dayjs from 'dayjs';
 const TimeSlotManagement = () => {
   const [rows, setRows] = useState([]);
   const token = sessionStorage.getItem('token');
-  const [loading, setLoading] = useState(false);
+  const [setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [setSelectedRow] = useState(null);
   const [branches, setBranches] = useState([]);
   const [courts, setCourts] = useState([]);
   const [filteredCourts, setFilteredCourts] = useState([]); // New state for filtered courts

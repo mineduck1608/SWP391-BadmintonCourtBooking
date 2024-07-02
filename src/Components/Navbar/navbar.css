@@ -16,11 +16,14 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 1rem;
   z-index: 1000;
   border: none;
   box-shadow: none;
+  background-color: black;
 }
+
+
+
 .navBarSection .header1 .logoDiv .logo {
   color: var(--whiteColor);
   font-weight: 500;
@@ -54,7 +57,7 @@
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    margin: auto;
+    margin-left: -10%;
   }
   .navBarSection .header1 .navBar .navLists .navItem {
     padding: 1rem 0;
@@ -136,6 +139,8 @@
     align-items: center;
     justify-content: center;
     flex-direction: row;
+    margin-top: .5%;
+    margin-left: -15%;
   }
   .navBarSection .header1 .navBar .navLists .navItem .navLink {
     color: var(--whiteColor);

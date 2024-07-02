@@ -5,7 +5,7 @@ import Head from "../../Components/Head";
 import { Modal } from 'antd';
 import './team.css'; // Import the custom CSS
 import { toast } from "react-toastify";
-import { Spin, ConfigProvider } from 'antd';
+import {ConfigProvider } from 'antd';
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 
@@ -18,7 +18,7 @@ const User = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [roles, setRoles] = useState([]); // State to store roles
   const [branches, setBranches] = useState([]);
-  const [addFormState, setAddFormState] = useState();
+  const [setAddFormState] = useState();
   const [addOpen, setAddOpen] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
