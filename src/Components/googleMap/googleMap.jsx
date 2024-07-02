@@ -5,8 +5,7 @@ import { Typography, Button } from '@mui/material';
 import { Phone, LocationOn, CheckCircle, Cancel } from '@mui/icons-material';
 import './GoogleMap.css'; // Import the CSS file
 import { GrMapLocation } from "react-icons/gr";
-import { BsFillInfoCircleFill } from "react-icons/bs";
-import { BsPhoneVibrate } from "react-icons/bs";
+import { BsFillInfoCircleFill, BsPhoneVibrate } from "react-icons/bs";
 
 const GoogleMap = () => {
     const [branches, setBranches] = useState([]);
@@ -16,8 +15,22 @@ const GoogleMap = () => {
         fetch('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
             .then(data => {
-                setBranches(data);
-                setSelectedBranch(data[0]); // Select the first branch by default
+                const parsedData = data.map(branch => {
+                    let imgURL = '';
+                    if (branch.branchImg && branch.branchImg.length > 0) {
+                        const urlString = branch.branchImg[0];
+                        const parts = urlString.split(': ');
+                        if (parts.length > 1) {
+                            imgURL = parts[1].trim();
+                        }
+                    }
+                    return {
+                        ...branch,
+                        branchImg: imgURL
+                    };
+                });
+                setBranches(parsedData);
+                setSelectedBranch(parsedData[0]); // Select the first branch by default
             })
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
@@ -25,7 +38,7 @@ const GoogleMap = () => {
     if (!selectedBranch) {
         return <div>Loading...</div>;
     }
-
+    console.log(branches)
     return (
         <>
             <Header />
@@ -36,7 +49,11 @@ const GoogleMap = () => {
                 <div className="googlemap-branch-grid">
                     {branches.map((branch, index) => (
                         <div className="googlemap-branch-card" key={index}>
-                            <img src={branch.branchImg[0].split(":")[1]} alt={branch.branchName} className="googlemap-branch-image" />
+                            <img 
+                                src={branch.branchImg} 
+                                alt={branch.branchName} 
+                                className="googlemap-branch-image" 
+                            />
                             <div className="googlemap-branch-content">
                                 <Typography gutterBottom variant="h5" component="div">
                                     {branch.branchName}

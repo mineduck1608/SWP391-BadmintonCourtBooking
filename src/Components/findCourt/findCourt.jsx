@@ -103,10 +103,10 @@ const FindCourt = () => {
 
     fetchData();
   }, []);
-  console.log(courts)
 
   useEffect(() => {
     const fetchFeedback = async () => {
+      let token = sessionStorage.getItem('token');
       const feedbackUrl = 'https://localhost:7233/Feedback/GetAll';
       const userUrl = 'https://localhost:7233/User/GetAll';
       const userDetailsUrl = 'https://localhost:7233/UserDetail/GetAll';
@@ -115,7 +115,13 @@ const FindCourt = () => {
       try {
         const [feedbackResponse, userResponse, userDetailsResponse] = await Promise.all([
           fetch(feedbackUrl),
-          fetch(userUrl),
+          fetch(userUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }),
           fetch(userDetailsUrl)
         ]);
 

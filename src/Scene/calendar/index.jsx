@@ -71,12 +71,13 @@ const BadmintonCourtHours = () => {
       start: startHour,
       end: endHour
     };
+    let token = sessionStorage.getItem('token');
   
     fetch(`https://localhost:7233/Slot/UpdateOfficeHours?start=${data.start}&end=${data.end}`, {
       method: 'PUT', // or 'PUT' depending on your API
       headers: {
         'Content-Type': 'application/json',
-        // Add any additional headers needed
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     })

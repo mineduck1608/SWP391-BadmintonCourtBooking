@@ -202,13 +202,16 @@ namespace BadmintonCourtAPI.Controllers
 				//----------------------------------------------------------------
 				if (dto.CourtId.IsNullOrEmpty())
 					return "Court can't be empty";
+
 				if (_service.CourtService.GetCourtByCourtId(dto.CourtId).CourtStatus == false)
 					return "Court inactive";
 
 				if (dto.Start == null || dto.End == null || dto.Start > dto.End || dto.Date == null || dto.Start < primitive.StartTime.Hour || dto.End > primitive.EndTime.Hour)
 					return "Invalid time interval";
+				
 				DateTime startDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Month, dto.Date.Value.Day, dto.Start.Value, 0, 0);
 				DateTime endDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Month, dto.Date.Value.Day, dto.End.Value, 0, 0);
+				
 				if ((startDate - DateTime.Now).TotalMinutes <= 10)
 					return "Booking too close slot time";
 

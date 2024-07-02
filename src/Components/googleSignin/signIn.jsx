@@ -14,7 +14,7 @@ const SignIn = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
-
+      console.log(token);
       const response = await fetch("https://localhost:7233/User/ExternalLogAuth?token=" + token, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -25,6 +25,7 @@ const SignIn = () => {
         const data = await response.json(); // Assuming the response contains JSON data
         const returnedToken = data.token; // Adjust based on your API response structure
         sessionStorage.setItem("token", returnedToken);
+        console.log(returnedToken)
         setValue(returnedToken);
         toast.success('Login successfully.');
         navigate('/home'); // Navigate to /home after successful login

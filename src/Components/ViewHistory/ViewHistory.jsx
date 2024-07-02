@@ -63,7 +63,7 @@ export default function ViewHistory() {
         const decodedToken = jwtDecode(token);
         const userIdToken = decodedToken.UserId;
 
-        const bookingsResponse = await fetch('https://localhost:7233/Booking/GetAll', {
+        const bookingsResponse = await fetch(`https://localhost:7233/Booking/GetByUser?id=${userIdToken}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
