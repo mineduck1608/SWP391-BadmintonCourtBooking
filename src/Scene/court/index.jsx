@@ -11,6 +11,7 @@ import { imageDb } from '../../Components/googleSignin/config.js';
 import { ConfigProvider, Modal, Spin, Form } from 'antd';
 import { toast, ToastContainer } from 'react-toastify';
 import './court.css';
+
 const Court = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -36,7 +37,7 @@ const Court = () => {
         price: '',
         description: '',
     });
-    const [img, setImg] = useState(null);
+    const [imgs, setImgs] = useState([]);
 
     const [form] = Form.useForm();
 
@@ -108,9 +109,8 @@ const Court = () => {
 
     const handleSave = async () => {
         const { courtId, courtImg, price, courtStatus, description, branchName } = selectedCourt;
-        console.log(selectedCourt)
         try {
-            const response = await fetch(`https://localhost:7233/Court/Update?courtImg=${selectedCourt.courtImg}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
+            const response = await fetch(`https://localhost:7233/Court/Update?courtImg=${courtImg}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,34 +165,39 @@ const Court = () => {
         }
     };
 
-    const handleClick = (e) => {
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImgs(files);
+    };
+
+    const handleClick = async (e) => {
         e.preventDefault();
-        if (!img) {
-            toast.error('No image selected');
+        if (imgs.length === 0) {
+            toast.error('No images selected');
             return;
         }
-        const imgRef = ref(imageDb, `files/${v4()}`);
-        uploadBytes(imgRef, img)
-            .then(() => getDownloadURL(imgRef))
-            .then(url => {
-                const encodedUrl = encodeURIComponent(url);
-                if (modalVisible) {
-                    setSelectedCourt(courtImg => ({ ...courtImg, courtImg: encodedUrl }));
-                } else {
-                    setNewCourtData(courtImg => ({ ...courtImg, courtImg: encodedUrl }));
-                }
-                toast.success('Image uploaded successfully');
-            })
-            .catch(error => {
+
+        const uploadedUrls = [];
+        for (const img of imgs) {
+            const imgRef = ref(imageDb, `files/${v4()}`);
+            try {
+                await uploadBytes(imgRef, img);
+                const url = await getDownloadURL(imgRef);
+                uploadedUrls.push(encodeURIComponent(url));
+            } catch (error) {
                 console.error('Error uploading image:', error);
                 toast.error('Image upload failed');
-            });
-    };
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImg(file);
+                return;
+            }
         }
+
+        if (modalVisible) {
+            setSelectedCourt((prevState) => ({ ...prevState, courtImg: uploadedUrls.join(',') }));
+        } else {
+            setNewCourtData((prevState) => ({ ...prevState, courtImg: uploadedUrls.join(',') }));
+        }
+
+        toast.success('Images uploaded successfully');
     };
 
     const columns = [
@@ -367,7 +372,7 @@ const Court = () => {
                                 />
                             </div>
                             <div className="uploaded-courtimage-upload">
-                                <input className="button-court-input" type="file" onChange={handleImageChange} />
+                                <input className="button-court-input" type="file" multiple onChange={handleImageChange} />
                                 <button className="button upload" onClick={handleClick}>Upload</button>
                             </div>
                             <TextField
@@ -414,7 +419,6 @@ const Court = () => {
                         <Spin />
                     )}
                 </Modal>
-
 
                 <Modal
                     title={<span style={{ fontSize: '32px' }}>Add Court</span>}

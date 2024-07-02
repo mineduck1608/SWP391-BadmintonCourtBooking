@@ -24,4 +24,9 @@ public partial class CourtBranch
 	public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
 	public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+	public override string? ToString()
+	{
+		return BranchId + "|" + Location;
+	}
 }

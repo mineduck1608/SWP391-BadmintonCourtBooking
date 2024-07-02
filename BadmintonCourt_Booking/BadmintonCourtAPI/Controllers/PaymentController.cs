@@ -161,7 +161,7 @@ namespace BadmintonCourtAPI.Controllers
 			string type = transactionDTO.Type;
 			string userId = transactionDTO.UserId;
 			string courtId = transactionDTO.CourtId;
-			DateTime? date = transactionDTO.Date;
+		
 			int? start = transactionDTO.Start;
 			int? end = transactionDTO.End;
 			int? numMonth = transactionDTO.NumMonth;
@@ -170,8 +170,9 @@ namespace BadmintonCourtAPI.Controllers
 			sb.Append($"Type: {type} | ");
 			sb.Append($"User: {userId} | ");
 			sb.Append($"Email: {_service.UserDetailService.GetUserDetailById(userId).Email}");
-			if (type != buyTime)
+			if (type != buyTime && type != flexibleBooking)
 			{
+				DateTime? date = DateTime.Parse(transactionDTO.Date.ToString());
 				int year = date.Value.Year; 
 				int month = date.Value.Month; 
 				int day = date.Value.Day;
@@ -206,9 +207,9 @@ namespace BadmintonCourtAPI.Controllers
 
 				if (dto.Start == null || dto.End == null || dto.Start > dto.End || dto.Date == null || dto.Start < primitive.StartTime.Hour || dto.End > primitive.EndTime.Hour)
 					return "Invalid time interval";
-				DateTime startDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Year, dto.Date.Value.Year, dto.Start.Value, 0, 0);
-				DateTime endDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Year, dto.Date.Value.Year, dto.End.Value, 0, 0);
-				if ((DateTime.Now - startDate).TotalMinutes <= 10)
+				DateTime startDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Month, dto.Date.Value.Day, dto.Start.Value, 0, 0);
+				DateTime endDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Month, dto.Date.Value.Day, dto.End.Value, 0, 0);
+				if ((startDate - DateTime.Now).TotalMinutes <= 10)
 					return "Booking too close slot time";
 
 				List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, dto.CourtId);
@@ -235,7 +236,7 @@ namespace BadmintonCourtAPI.Controllers
 		}
 		private float CalculateAmount(TransactionDTO model)
 		{
-			if (model.Type == buyTime) 
+			if (model.Type == buyTime || model.Type == flexibleBooking) 
 				return (float)model.Amount; //Already caught if null
 
 			float courtPrice = _service.CourtService.GetCourtByCourtId(model.CourtId).Price;
@@ -648,7 +649,7 @@ namespace BadmintonCourtAPI.Controllers
 				Amount = amount
 				//BookingId missing
 			};
-			if (map["Type"] != buyTime) //Capture buyTime
+			if (map["Type"] != buyTime && map["Type"] != flexibleBooking) //Capture buyTime
 			{
 				string courtId = map["Court"];
 				string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
@@ -685,7 +686,7 @@ namespace BadmintonCourtAPI.Controllers
 						_service.SlotService.AddSlot(item);
 					}
 				}
-				else
+				else if (map["Type"] == playonceBooking)
 				{
 					_service.SlotService.AddSlot(new BookedSlot
 					{
