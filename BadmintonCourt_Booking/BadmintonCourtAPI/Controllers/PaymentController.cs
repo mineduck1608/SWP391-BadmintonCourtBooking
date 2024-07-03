@@ -175,7 +175,7 @@ namespace BadmintonCourtAPI.Controllers
 				DateTime? date = transactionDTO.Date;
 				int year = date.Value.Year; 
 				int month = date.Value.Month; 
-				int day = date.Value.Day;
+				int day = date.Value.Day;	
 				string dateStr = $"{year}-{month}-{day}";
 				sb.Append($" | Court: {courtId}");
 				sb.Append($" | Date: {dateStr}");
@@ -606,13 +606,19 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult> VnPayPaymentCallBack()
 		{
 			VnPayResponseDTO result = _service.VnPayService.PaymentExecute(Request.Query);
-			string info = result.Description;
+			string content = result.Description;
 			DateTime date = result.Date;
 			string transId = result.TransactionId;
 			string amount = result.Amount.ToString();
 			string expected = "00";
 			string actual = result.VnPayResponseCode;
-			bool success = SaveToDB(info, date, transId, amount, expected, actual);
+			bool success = SaveToDB(content, date, transId, amount, expected, actual);
+			if (success)
+			{
+				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
+				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
+				_service.MailService.SendMail(info.Email, "Thanks for your purchasement. You now can check your transaction information in payment history", "BMTC - Booking Notification");
+			}
 			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
@@ -625,6 +631,12 @@ namespace BadmintonCourtAPI.Controllers
 			DateTime date = new(int.Parse(rawdate[0]), int.Parse(rawdate[1]), int.Parse(rawdate[2]));
 
 			bool success = SaveToDB(result.OrderInfo, date, result.TransId, result.Amount, result.Message, "Success");
+			if (success)
+			{
+				string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
+				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
+				_service.MailService.SendMail(info.Email, "Thanks for your purchasement. You now can check your transaction information in payment history", "BMTC - Booking Notification");
+			}
 			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 

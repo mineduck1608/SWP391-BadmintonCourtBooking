@@ -116,7 +116,7 @@ namespace BadmintonCourtNUnitTests
 			new BookedSlot() { SlotId = "S3", BookingId = "BK005", CourtId = "C3", StartTime = new DateTime(2024, 6, 3, 7, 0, 0), EndTime = new DateTime(2024, 6, 3, 10, 0, 0)},
 			new BookedSlot() { SlotId = "S4", BookingId = "BK005", CourtId = "C3", StartTime = new DateTime(2024, 6, 10, 7, 0, 0), EndTime = new DateTime(2024, 6, 10, 10, 0, 0)},
 			// Cancel case:
-			new BookedSlot() { SlotId = "S5", BookingId = "BK006", CourtId = "C3", StartTime = new DateTime(2024, 6, 10, 7, 0, 0), EndTime = new DateTime(2024, 6, 10, 10, 0, 0)}
+			new BookedSlot() { SlotId = "S5", BookingId = "BK006", CourtId = "C3", StartTime = new DateTime(2024, 7, 10, 7, 0, 0), EndTime = new DateTime(2024, 7, 10, 10, 0, 0), IsDeleted = true}
 		};
 
 
