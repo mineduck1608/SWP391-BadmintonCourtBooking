@@ -109,7 +109,7 @@ namespace BadmintonCourtAPI.Utils
 				string[] components = item.BranchImg.Split('|');
 				List<string> courtImg = new List<string>();
 				for (int i = 0; i < components.Length; i++)
-					courtImg.Add($"Image {i + 1}:{components[i]}");
+					courtImg.Add($"Image {i + 1}: {components[i]}");
 
 				result.Add(new BranchDTO
 				{

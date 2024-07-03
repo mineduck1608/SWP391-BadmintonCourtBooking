@@ -12,9 +12,9 @@ namespace BadmintonCourtNUnitTests.DAOTests
 	{
 		private DbContextOptions<BadmintonCourtContext> _options;
 
-		public readonly int primitiveLength = DataTestStorage.userStorage.Count;
-		public readonly int activeCase = DataTestStorage.userStorage.Count - 2;
-		public readonly List<CourtBranch> branchStorage = DataTestStorage.branchStorage;
+		public readonly int primitiveLength = new DataTestStorage().userStorage.Count;
+		public readonly int activeCase = new DataTestStorage().userStorage.Count - 2;
+		public readonly List<CourtBranch> branchStorage = new DataTestStorage().branchStorage;
 		public const string notExistedId = "sfsafsfs";
 		public const string existedId = "U1";
 
@@ -42,7 +42,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 			// Code to seed your database with test data
 			if (dbContext.Users.Count() <= 0)
 			{
-				List<User> userStorage = DataTestStorage.userStorage;
+				List<User> userStorage = new DataTestStorage().userStorage;
                 foreach (var item in userStorage)
 				{
 					dbContext.Users.Add(item);
@@ -50,7 +50,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 				}
             }
 		}
-		private List<User> ExtractUserBasedOnRoleFromTestStorage(string roldId) => DataTestStorage.userStorage.Where(x => x.RoleId == roldId).ToList();
+		private List<User> ExtractUserBasedOnRoleFromTestStorage(string roldId) => new DataTestStorage().userStorage.Where(x => x.RoleId == roldId).ToList();
 
 		[Test]
 		public void GetAll_ExpectedAsPrimitiveLength_ReturnsTrue()
@@ -134,7 +134,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 		{
 			var context = new BadmintonCourtContext(_options);
 			UserDAO dao = new UserDAO(context);
-			List<Role> roleStorage = DataTestStorage.rolseStorage;
+			List<Role> roleStorage = new DataTestStorage().rolseStorage;
 			//List<List<User>> expected = new List<List<User>>();
 			//List<List<User>> actual = new List<List<User>>();
 
@@ -145,6 +145,13 @@ namespace BadmintonCourtNUnitTests.DAOTests
 				Assert.AreEqual(tmp1.Count, tmp2.Count);
 			}
         }
+
+		[TearDown]
+		public void TearDown()
+		{
+			using var context = new BadmintonCourtContext(_options);
+			context.Database.EnsureDeleted();
+		}
 
 	}
 }

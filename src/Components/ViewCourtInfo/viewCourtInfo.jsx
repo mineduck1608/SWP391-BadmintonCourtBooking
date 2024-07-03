@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Header from "../Header/header";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
-import image2 from '../../Assets/image2.jpg';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Slider from "react-slick";
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -138,6 +138,16 @@ const ViewCourtInfo = () => {
     const weekDates = generateWeekDates(currentWeekStart);
     const hours = generateHourTimeline(currentHourIndex, selectedDate);
 
+    const sliderSettings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        prevArrow: <FaArrowLeft />,
+        nextArrow: <FaArrowRight />
+    };
+
     return (
         <div className="viewcourtinfo">
             <Header />
@@ -145,7 +155,13 @@ const ViewCourtInfo = () => {
                 <div className="background">
                     <div className="viewcourtinfo-body">
                         <div className="viewcourtinfo-body-pic">
-                            <img className="viewcourtinfo-img" src={mainCourt?.courtImg || image2} alt="" />
+                            <Slider {...sliderSettings} className="viewcourtinfo-slider">
+                                {mainCourt?.courtImg.split(',').map((img, index) => (
+                                    <div key={index}>
+                                        <img className="viewcourtinfo-img" src={img} alt={`Court ${index}`} />
+                                    </div>
+                                ))}
+                            </Slider>
                             <div className="viewcourtinfo-body-courtId-des">
                                 <div className="viewcourtinfo-body-courtId">
                                     <h1>Court Name: {mainCourt?.courtName}</h1>

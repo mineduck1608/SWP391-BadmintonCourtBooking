@@ -95,12 +95,12 @@ namespace BadmintonCourtAPI
 
             app.UseRouting();
 
+            // Apply the CORS policy globally
+            app.UseCors("AllowAll");
+
             // Authentication must come before Authorization
             app.UseAuthentication();
             app.UseAuthorization();
-
-            // CORS policy must be applied before the endpoints are mapped
-            app.UseCors("AllowAll");
 
             app.UseEndpoints(endpoints =>
             {

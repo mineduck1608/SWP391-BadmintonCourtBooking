@@ -64,6 +64,7 @@ export default function EditInfo() {
     fetch(`https://localhost:7233/User/Update?id=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}`, {
       method: "PUT",
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(updatedUserInfo) // Send updated userInfo as the body

@@ -20,6 +20,11 @@ namespace BadmintonCourtDAOs
             }
         }
 
+        public CourtDAO(BadmintonCourtContext context)
+        {
+            _dbContext = context;
+        }
+
         public Court GetRecentAddedCourt() => _dbContext.Courts.LastOrDefault();
 
         public List<Court> GetAllCourts() => _dbContext.Courts.ToList();
@@ -58,8 +63,11 @@ namespace BadmintonCourtDAOs
         public void DeleteCourt(string id)
         {
             Court court = GetCourtByCourtId(id);
-            court.CourtStatus = false;
-            UpdateCourt(court, id);
+            if (court != null)
+            {
+				court.CourtStatus = false;
+				UpdateCourt(court, id);
+			}
         }
     }
 }

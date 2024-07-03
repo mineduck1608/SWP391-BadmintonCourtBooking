@@ -21,6 +21,11 @@ namespace BadmintonCourtDAOs
             }
         }
 
+        public CourtBranchDAO(BadmintonCourtContext context)
+        {
+            _dbContext = context;
+        }
+
         public List<CourtBranch> GetAllCourtBranches() => _dbContext.CourtBranches.ToList();
 
         public CourtBranch GetBranchById(string id) => _dbContext.CourtBranches.FirstOrDefault(x => x.BranchId == id);
@@ -69,17 +74,19 @@ namespace BadmintonCourtDAOs
         public void DeleteBranch(string id)
         {
             CourtBranch branch = GetBranchById(id);
-            branch.BranchStatus = -1;
-            List<Court> courts = _dbContext.Courts.Where(x => x.BranchId == id).ToList();
-            foreach (var item in courts)
+            if (branch != null)
             {
-                item.CourtStatus = false;
-                _dbContext.Courts.Update(item);
-                _dbContext.SaveChanges();
-            }
-            UpdateBranch(branch, id);
+				branch.BranchStatus = -1;
+				List<Court> courts = _dbContext.Courts.Where(x => x.BranchId == id).ToList();
+				foreach (var item in courts)
+				{
+					item.CourtStatus = false;
+					_dbContext.Courts.Update(item);
+					_dbContext.SaveChanges();
+				}
+				UpdateBranch(branch, id);
+			}
         }
-
 
     }
 }

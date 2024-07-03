@@ -46,35 +46,36 @@
   font-size: 20px !important;
 }
 .home .secContainer .homeCard {
-  width: 80% !important;
+  width: 60% !important;
   border-radius: 1rem !important;
   padding: 2rem !important;
   background: var(--whiteColor) !important;
   position: absolute !important;
   gap: 1rem !important;
   justify-content: center !important;
-  bottom: -35% !important;
+  bottom: -20% !important;
   transform: translate(-50%) !important;
   left: 50% !important;
   box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45) !important;
+  display: flex !important;
+  align-items: center !important;
 }
 .home .secContainer .homeCard .locationDiv,
-.home .secContainer .homeCard .distDiv,
-.home .secContainer .homeCard .priceDiv {
-  width: 100% !important;
+.home .secContainer .homeCard .distDiv {
+  width: 45% !important;
+  margin: 0 1% !important;
 }
 .home .secContainer .homeCard .locationDiv label,
-.home .secContainer .homeCard .distDiv label,
-.home .secContainer .homeCard .priceDiv label {
+.home .secContainer .homeCard .distDiv label {
   display: block !important;
   color: var(--textColor) !important;
   font-weight: 500 !important;
   font-size: 17px !important;
   padding-bottom: 0.4rem !important;
 }
-.home .secContainer .homeCard .locationDiv input,
-.home .secContainer .homeCard .distDiv input,
-.home .secContainer .homeCard .priceDiv input {
+.home .secContainer .homeCard .locationDiv select, .home .secContainer .homeCard .locationDiv input,
+.home .secContainer .homeCard .distDiv select,
+.home .secContainer .homeCard .distDiv input {
   width: 100% !important;
   background: var(--inputColor) !important;
   border-radius: 10px !important;
@@ -83,35 +84,36 @@
   font-size: 13px !important;
   font-weight: 500 !important;
 }
-.home .secContainer .homeCard .locationDiv input::-moz-placeholder, .home .secContainer .homeCard .distDiv input::-moz-placeholder, .home .secContainer .homeCard .priceDiv input::-moz-placeholder {
+.home .secContainer .homeCard .locationDiv select::-moz-placeholder, .home .secContainer .homeCard .locationDiv input::-moz-placeholder, .home .secContainer .homeCard .distDiv select::-moz-placeholder, .home .secContainer .homeCard .distDiv input::-moz-placeholder {
   font-size: 13px !important;
   opacity: 0.5 !important;
   font-weight: 400 !important;
 }
-.home .secContainer .homeCard .locationDiv input::placeholder,
-.home .secContainer .homeCard .distDiv input::placeholder,
-.home .secContainer .homeCard .priceDiv input::placeholder {
+.home .secContainer .homeCard .locationDiv select::placeholder, .home .secContainer .homeCard .locationDiv input::placeholder,
+.home .secContainer .homeCard .distDiv select::placeholder,
+.home .secContainer .homeCard .distDiv input::placeholder {
   font-size: 13px !important;
   opacity: 0.5 !important;
   font-weight: 400 !important;
 }
-.home .secContainer .homeCard .locationDiv input:focus,
-.home .secContainer .homeCard .distDiv input:focus,
-.home .secContainer .homeCard .priceDiv input:focus {
+.home .secContainer .homeCard .locationDiv select:focus, .home .secContainer .homeCard .locationDiv input:focus,
+.home .secContainer .homeCard .distDiv select:focus,
+.home .secContainer .homeCard .distDiv input:focus {
   outline: none !important;
 }
 .home .secContainer .homeCard .btn {
-  width: 100% !important;
-  padding: 0.6rem 1.5 rem !important;
+  width: auto !important;
+  padding: 0.6rem 1.5rem !important;
   color: var(--whiteColor) !important;
   font-weight: 600 !important;
   margin-top: -2px !important;
+  align-self: center !important;
 }
 
 @media screen and (min-width: 480px) {
   .home .secContainer .homeCard {
     bottom: -100px !important;
-    width: 90% !important;
+    width: 80% !important;
     grid-template-columns: repeat(2, 1fr) !important;
   }
   .home .secContainer .homeCard .btn {
@@ -129,7 +131,7 @@
 @media screen and (min-width: 720px) {
   .home .secContainer .homeCard {
     bottom: -10% !important;
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 @media screen and (min-width: 720px) {
@@ -137,7 +139,7 @@
     padding: 1rem 10rem !important;
   }
   .home .secContainer .homeText .title {
-    font-size: 3.5rem !important;
+    font-size: 3.4rem !important;
     margin: auto !important;
     line-height: 4rem !important;
   }
@@ -146,10 +148,10 @@
   }
 }
 @media screen and (min-width: 1024px) {
-  home .secContainer .homeText .subTitle {
+  .home .secContainer .homeText .subTitle {
     font-size: 20px !important;
   }
-  home .secContainer .homeCard {
-    width: 70% !important;
+  .home .secContainer .homeCard {
+    width: 50% !important;
   }
 }/*# sourceMappingURL=home.css.map */

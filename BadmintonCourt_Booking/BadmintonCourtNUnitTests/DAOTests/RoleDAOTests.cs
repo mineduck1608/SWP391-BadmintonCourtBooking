@@ -14,7 +14,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 	internal class RoleDAOTests
 	{
 		private DbContextOptions<BadmintonCourtContext> _options;
-		public readonly int primitiveLength = DataTestStorage.rolseStorage.Count;
+		public readonly int primitiveLength = new DataTestStorage().rolseStorage.Count;
 		public const string notExistedId = "sfsafsfs";
 		public const string existedId = "R001";
 
@@ -41,7 +41,7 @@ namespace BadmintonCourtNUnitTests.DAOTests
 			// Code to seed your database with test data
 			if (dbContext.Roles.Count() <= 0)
 			{
-				List<Role> roleStorage = DataTestStorage.rolseStorage;
+				List<Role> roleStorage = new DataTestStorage().rolseStorage;
 				foreach (var item in roleStorage)
 				{
 					dbContext.Roles.Add(item);
@@ -113,6 +113,13 @@ namespace BadmintonCourtNUnitTests.DAOTests
 			dao.UpdateRole(role, existedId);
 			string actual = dao.GetRoleById(existedId).RoleName;
 			Assert.AreEqual("Owner", actual);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			using var context = new BadmintonCourtContext(_options);
+			context.Database.EnsureDeleted();
 		}
 
 	}
