@@ -22,6 +22,7 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(loginData)
       }).then((res) => res.json())
         .then((resp) => {
