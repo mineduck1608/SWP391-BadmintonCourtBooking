@@ -75,17 +75,17 @@ namespace BadmintonCourtNUnitTests
 			new Court() { CourtId = "C6", CourtName = "Court D", BranchId = "B003", CourtStatus = false, Price = 30000, Description = "VIP"}
 		};
 
-		public static List<Payment> paymentStorage = new List<Payment>()
+		public List<Payment> paymentStorage = new List<Payment>()
 		{
 			// Once 
-			new Payment() { PaymentId = "P001", Amount = 20000, BookingId = "BK001", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 1, TransactionId = "311566"},  // VnPay
-			new Payment() { PaymentId = "P002", Amount = 20000, BookingId = "BK002", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "318166"},  // Momo
+			new Payment() { PaymentId = "P001", Amount = 20000, BookingId = "BK001", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 1, TransactionId = "311566", UserId = "U1"},  // VnPay
+			new Payment() { PaymentId = "P002", Amount = 20000, BookingId = "BK002", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "318166", UserId = "U2"},  // Momo
 			// Balance
-			new Payment() { PaymentId = "P003", Amount = 30000, Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 1, TransactionId = "311566"}, // VnPay
-			new Payment() { PaymentId = "P004", Amount = 20000, Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "311266"},  // Momo
+			new Payment() { PaymentId = "P003", Amount = 30000, Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 1, TransactionId = "311566", UserId = "U3"}, // VnPay
+			new Payment() { PaymentId = "P004", Amount = 20000, Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "311266", UserId = "U4"},  // Momo
 			// Fixed
-			new Payment() { PaymentId = "P005", Amount = 50000, BookingId = "BK003" ,Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 1, TransactionId = "31501566"}, // VnPay
-			new Payment() { PaymentId = "P006", Amount = 100000, BookingId = "BK004", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "31121166"}  // Momo
+			new Payment() { PaymentId = "P005", Amount = 50000, BookingId = "BK003" ,Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 1, TransactionId = "31501566", UserId = "U5"}, // VnPay
+			new Payment() { PaymentId = "P006", Amount = 100000, BookingId = "BK004", Date = new DateTime(2024, 7, 1, 15, 23, 49), Method = 2, TransactionId = "31121166", UserId = "U6"}  // Momo
 		};
 
 		public List<Booking> bookingStorage = new List<Booking>()
