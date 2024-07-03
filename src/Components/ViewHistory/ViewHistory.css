@@ -155,8 +155,8 @@
   margin-top: 10px;
 }
 
-.view-history-button {
-  padding: 5%;
+.view-history-button, .view-history-button-small {
+  padding: 4%;
   margin: 3%;
   background: #ff9900;
   outline: none;
@@ -168,9 +168,12 @@
   transition: background 0.3s, transform 0.3s;
 }
 
-.view-history-button:hover {
+.view-history-button:hover, .view-history-button-small:hover {
   background-color: #e68a00;
   transform: translateY(-2px);
+}
+.view-history-button-small{
+  padding: 2%;
 }
 #warning{
   font-weight: 700;

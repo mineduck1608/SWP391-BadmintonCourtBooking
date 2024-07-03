@@ -67,15 +67,12 @@ const BookCourt = () => {
             var start = primitive.start
             var end = primitive.end
             for (let i = start; i <= end; i++) {
-                console.log(i);
                 setTimeBound(t => [...t, i])
             }
         }
         catch (err) {
             console.log(err);
         }
-        console.log('Time bound');
-        console.log(timeBound);
     }
     useEffect(() => {
         fetchBranches()
