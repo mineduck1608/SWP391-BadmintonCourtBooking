@@ -480,7 +480,7 @@ export default function ViewHistory() {
             }}
           >
             {timeBound.map(t => (
-              <option value={t} selected={t === formState.start}>{t}h</option>
+              <option value={t} selected={t === formState.start}>{t}:00:00</option>
             ))}
           </select>
           <p>Ending time:</p>
@@ -491,7 +491,7 @@ export default function ViewHistory() {
             })}
           >
             {timeBound.map(t => (
-              <option value={t} selected={t === formState.end}>{t}h</option>
+              <option value={t} selected={t === formState.end}>{t}:00:00</option>
             ))}
           </select>
           Branch:
