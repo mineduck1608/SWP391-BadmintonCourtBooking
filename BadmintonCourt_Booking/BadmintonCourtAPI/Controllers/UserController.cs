@@ -66,7 +66,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<User>>> GetStaffsByBranch(string id) => Ok(_service.UserService.GetStaffsByBranch(id).ToList());
 
-		[HttpGet]	
+		[HttpGet]
 		[Route("User/GetByRole")]
 		[Authorize(Roles = "Admin")]
 		[Authorize(Roles = "Staff")]
@@ -96,7 +96,7 @@ namespace BadmintonCourtAPI.Controllers
 			}
 
 			// Co acc
-			
+
 			User user = _service.UserService.GetUserById(info.UserId);
 			if (user.Token != null || user.ActionPeriod != null)
 				ResetFailAction(user);
@@ -136,7 +136,7 @@ namespace BadmintonCourtAPI.Controllers
 			return Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config);
 		}
 
-		
+
 
 		private void ResetFailAction(User user) // Công dụng: giành để reset lại các account chưa bị ban thực hiện việc thay đổi password/ quên pass rồi reset pass nhưng chưa verify lúc nhận đc mail xác nhận hoặc quá hạn xác nhận mà hủy chưa update đc xuống db
 		{

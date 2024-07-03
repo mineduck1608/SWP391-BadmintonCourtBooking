@@ -4,12 +4,13 @@ import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 import { HttpStatusCode } from "axios";
+import { getHours } from 'date-fns';
 
 const BookCourt = () => {
-    const [bookingType, setBookingType] = useState('fixed'); //once, fixed, flexible
+    const [bookingType, setBookingType] = useState('fixed') //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts of that branch, if active
-    const [paymentType, setPaymentType] = useState(''); //banking or not
+    const [paymentType, setPaymentType] = useState('') //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
     const [timeError, setTimeError] = useState(0) //
@@ -18,7 +19,7 @@ const BookCourt = () => {
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
     const apiUrl = "https://localhost:7233"
-
+    const [queryCourt, setQueryCourt] = useState('')
     const fetchBranches = async () => {
         try {
             setBranches(b => [])
@@ -52,17 +53,44 @@ const BookCourt = () => {
             //Toast: ko fetch dc branch
         }
     }
+    const loadTimeFrame = async () => {
+        const fetchTime = async () => {
+            var res = await fetch(`${apiUrl}/Slot/GetAll`)
+            var data = await res.json()
+            return data
+        }
+
+        try {
+            var data = await fetchTime()
+            setTimeBound([])
+            var primitive = data.find(d => d['bookedSlotId'] === 'S1')
+            var start = primitive.start
+            var end = primitive.end
+            for (let i = start; i <= end; i++) {
+                console.log(i);
+                setTimeBound(t => [...t, i])
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+        console.log('Time bound');
+        console.log(timeBound);
+    }
     useEffect(() => {
         fetchBranches()
-        setTimeBound(t => [])
-        for (let i = 0; i <= 23; i++) {
-            setTimeBound(t => [...t, i])
-        }
+        loadTimeFrame()
         setCurDate(new Date())
+        //Query court id
+        var queryStr = window.location.search
+        var params = new URLSearchParams(queryStr)
+        if (params.has('courtId')) {
+            setQueryCourt(params.get('courtId'))
+        }
     }, [])
     const checkAvailableSlot = async () => {
         let courtId = courtInfo['id']
-        console.log("Check for: " + courtId);
+        // console.log("Check for: " + courtId);
         try {
             if (validateDateTime() === 0) {
                 var bookingDate = document.getElementById("datePicker").value
@@ -82,7 +110,7 @@ const BookCourt = () => {
                     }
                 })
                 const data = await res.json()
-                console.log('Length: ' + data.length);
+                // console.log('Length: ' + data.length);
                 setIsOccupied(data.length > 0)
             }
         } catch (err) {
@@ -113,7 +141,7 @@ const BookCourt = () => {
         }
     }
     const validateDateTime = () => {
-        console.log('Validate time');
+        // console.log('Validate time');
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
@@ -124,14 +152,14 @@ const BookCourt = () => {
         if (startTime > endTime) r = 1
         if (startTime < curDateNum) r = 2
         setTimeError(t => r)
-        console.log(r);
+        // console.log(r);
         return r
     }
     const validateBooking = () => {
         //reset
-        console.log('Validate booking');
+        // console.log('Validate booking');
         var t = (validateDateTime() === 0)
-        console.log("DateTime: " + t);
+        // console.log("DateTime: " + t);
         try {
             return t && courtInfo['status'] && !isOccupied;
         } catch (error) {
@@ -142,7 +170,7 @@ const BookCourt = () => {
     const completeBooking = async () => {
         try {
             const result = validateBooking();
-            console.log(result);
+            // console.log(result);
             if (result) {
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
                 fetchApi()
@@ -287,7 +315,7 @@ const BookCourt = () => {
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
                                 courts.map((c, i) => (
-                                    <option value={c["courtId"]}>{c["courtId"]}</option>
+                                    <option value={c["courtId"]} selected={c['courtId' === queryCourt]}>{c["courtName"]}</option>
                                 ))
                             }
                         </select>
@@ -344,7 +372,7 @@ const BookCourt = () => {
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00</option>
+                                    <option value={t}>{t}:00:00</option>
                                 ))
                             }
                         </select>
@@ -358,7 +386,7 @@ const BookCourt = () => {
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00</option>
+                                    <option value={t}>{t}:00:00</option>
                                 ))
                             }
                         </select>
