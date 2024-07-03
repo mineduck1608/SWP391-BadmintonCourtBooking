@@ -372,7 +372,7 @@ const BookCourt = () => {
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00:00</option>
+                                    <option value={t}>{t}:00</option>
                                 ))
                             }
                         </select>
@@ -386,7 +386,7 @@ const BookCourt = () => {
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00:00</option>
+                                    <option value={t}>{t}:00</option>
                                 ))
                             }
                         </select>
@@ -413,7 +413,8 @@ const BookCourt = () => {
                     }
 
                     <div className="bookcourt-status">
-                        <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
+                        <h2 className="notes">
+                        4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
                         <span>Price: <span className='priceSpan'>{formatNumber(amount)}</span></span>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
