@@ -58,8 +58,8 @@
 .wrapper .remember-forgot{
     display: flex;
     justify-content: space-between;
-    font-size: 14.5px;
-    margin: 10px 100px;
+    font-size: 16px;
+    margin: 20px 0px 0px 180px;
     text-align: center;
     width: 100%;
 }
@@ -93,8 +93,7 @@
 .wrapper .register-link{
     font-size: 20px;
     text-align: center;
-    margin-top: 50px;
-    margin-left: 90px;
+    margin-top: 30px;
 }
 .register-link p a{
     color: #fff;

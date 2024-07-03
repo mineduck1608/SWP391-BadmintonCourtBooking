@@ -37,11 +37,12 @@ namespace BadmintonCourtAPI
             // Configure CORS policy
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", policyBuilder =>
+                options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
                 {
-                    policyBuilder.AllowAnyOrigin()
+                    policyBuilder.WithOrigins("http://localhost:3000")
                                  .AllowAnyMethod()
-                                 .AllowAnyHeader();
+                                 .AllowAnyHeader()
+                                 .AllowCredentials(); // Allow credentials
                 });
             });
 
@@ -96,7 +97,7 @@ namespace BadmintonCourtAPI
             app.UseRouting();
 
             // Apply the CORS policy globally
-            app.UseCors("AllowAll");
+            app.UseCors("AllowSpecificOrigin");
 
             // Authentication must come before Authorization
             app.UseAuthentication();
