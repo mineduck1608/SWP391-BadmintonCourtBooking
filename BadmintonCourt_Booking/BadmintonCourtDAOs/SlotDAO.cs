@@ -20,6 +20,11 @@ namespace BadmintonCourtDAOs
 			}
 		}
 
+		public SlotDAO(BadmintonCourtContext context)
+		{
+			_dbContext = context;
+		}
+
 		public List<BookedSlot> GetAllSlots() => _dbContext.BookedSlots.ToList();
 
 		public BookedSlot GetSlotById(string id) => _dbContext.BookedSlots.FirstOrDefault(x => x.SlotId == id);
@@ -28,7 +33,7 @@ namespace BadmintonCourtDAOs
 
 		public List<BookedSlot> GetSLotsByDate(DateTime date) => _dbContext.BookedSlots.Where(x => x.StartTime >= new DateTime(date.Year, date.Month, date.Day, 0, 0, 1) && x.EndTime <= new DateTime(date.Year, date.Month, date.Day, 23, 59, 59)).ToList();
 
-		public List<BookedSlot> GetSlotsByCourt(string id) => _dbContext.BookedSlots.Where(x => x.CourtId == id).ToList();
+		public List<BookedSlot> GetSlotsByCourt(string id) => _dbContext.BookedSlots.Where(x => x.CourtId == id && x.IsDeleted == null).ToList();
 
 
 		// 2 trường hợp sử dụng:
@@ -46,7 +51,7 @@ namespace BadmintonCourtDAOs
 		public List<BookedSlot> GetSlotsByFixedBooking(int monthNum, DateTime start, DateTime end, string id)
 		{
 			List<BookedSlot> result = new List<BookedSlot>();
-			int count = 0;
+			int count = 1;
 			while (count <= monthNum * 4)
 			{
 				// Ở TH này áp dụng GetA_CourtSlotsInDay() cho trường hợp 2!!!

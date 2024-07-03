@@ -20,6 +20,11 @@ namespace BadmintonCourtDAOs
             }
         }
 
+        public BookingDAO(BadmintonCourtContext context)
+        {
+            _dbContext = context;
+        }
+
         public List<Booking> GetAllBookings() => _dbContext.Bookings.ToList();
 
         public Booking GetBookingByBookingId(string id) => _dbContext.Bookings.FirstOrDefault(x => x.BookingId == id);
@@ -50,8 +55,12 @@ namespace BadmintonCourtDAOs
 
         public void DeleteBooking(string id) 
         {
-            _dbContext.Bookings.Remove(GetBookingByBookingId(id));
-            _dbContext.SaveChanges();
+            Booking booking = GetBookingByBookingId(id);
+            if (booking != null)
+            {
+				_dbContext.Bookings.Remove(booking);
+				_dbContext.SaveChanges();
+			}
         }
 
     }

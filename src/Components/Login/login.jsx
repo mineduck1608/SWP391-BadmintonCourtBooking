@@ -22,6 +22,7 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(loginData)
       }).then((res) => res.json())
         .then((resp) => {
@@ -78,6 +79,9 @@ const Login = () => {
         </div>
         <button className='login-submit' type="submit">Login</button>
       </form>
+      <div className="remember-forgot">
+        <a><Link to={'/verifyAccount'}>Forget password?</Link></a>
+      </div>
       <div className="register-link">
         <p>Don't have an account? <Link to={'/signup'}>Register</Link></p>
       </div>

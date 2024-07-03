@@ -40,16 +40,17 @@
 }
 
 .viewcourtinfo-info-status {
-    display: flex;
+    text-align: left;
+    width: 100%;
 }
 
 .viewcourtinfo-body {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 1850px;
     position: relative;
     top: 20px;
-    left: 20px;
     z-index: 1;
     margin: 10px auto;
     padding: 15px;
@@ -57,39 +58,87 @@
     border-radius: var(--border-radius);
     box-shadow: var(--primary-shadow);
     background: var(--light-gradient);
-    margin-left: auto;
-    margin-right: auto;
-    margin-left: 10px;
     flex-grow: 1;
+}
+
+.viewcourtinfo-body-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .viewcourtinfo-body-pic {
     display: flex;
-    margin: 10px 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
 }
 
-.viewcourtinfo-img {
-    width: 45%;
+.viewcourtinfo-slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 700px;
+    left: 20px;
+    top: -30px;
+    margin-right: 30px;
+    margin-left: 20px;
+}
+
+.viewcourtinfo-slider img {
+    width: 100%;
     height: auto;
-    margin-right: 20px;
     border-radius: 10px;
     box-shadow: var(--primary-shadow);
 }
 
-.viewcourtinfo-body-des {
-    margin-left: 50px;
+.arrow-left, .arrow-right {
+    font-size: 25px;
+    z-index: 1;
+    color: var(--blackColor);
+    background-color: var(--light-gradient);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: color 0.1s ease;
 }
 
-.viewcourtinfo-des-h1,
-.viewcourtinfo-des-p {
-    color: var(--black-color);
+.arrow-left:hover, .arrow-right:hover {
+    color: var(--PrimaryColor);
+}
+
+.viewcourtinfo-body-details {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    max-width: 60%;
+    margin-left: 20px;
+}
+
+.viewcourtinfo-body-courtId {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.viewcourtinfo-body-des {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.viewcourtinfo-body-des .viewcourtinfo-des-h1,
+.viewcourtinfo-body-des .viewcourtinfo-des-p {
+    color: var(--blackColor);
 }
 
 .viewcourtinfo-info {
-    margin-left: 20px;
-    margin-top: 20px;
-    color: var(--black-color);
+    color: var(--blackColor);
     font-size: larger;
+    text-align: left;
+    margin-left: 50px;
 }
 
 .viewcourtinfo-info h2,
@@ -113,16 +162,16 @@
     color: white;
 }
 
-.viewcourtinfo-other-des-p{
+.viewcourtinfo-other-des-p {
     margin-bottom: 3%;
 }
 
-.viewcourtinfo-other-des-h1{
+.viewcourtinfo-other-des-h1 {
     font-size: 28.8px;
     margin-left: 4.78%;
 }
 
-.other-court-button{
+.other-court-button {
     margin-left: 4.78%;
 }
 
@@ -174,10 +223,9 @@
     text-overflow: ellipsis;
 }
 
-
 .viewcourtinfo-other-info h2,
 .viewcourtinfo-other-info p {
-    color: var(--black-color);
+    color: var(--blackColor);
     margin-left: 20px;
     max-width: 100%;
 }
@@ -198,7 +246,7 @@
     width: 30%;
 }
 
-.timeline-viewCourt{
+.timeline-viewCourt {
     background-color: var(--PrimaryColor);
     border: none;
     color: var(--white-color);
@@ -211,10 +259,9 @@
     transition: background-color 0.3s;
     width: 20%;
     position: relative;
-    left: 40%;
 }
 
-.timeline-viewCourt:hover{
+.timeline-viewCourt:hover {
     background-color: var(--HoverColor);
 }
 
@@ -230,13 +277,16 @@
 .schedule-legend-wrapper {
     margin-top: 20px;
     max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .date-slider-wrapper {
     display: flex;
     align-items: center;
     margin: 20px 0;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .date-slider {
@@ -249,7 +299,7 @@
 .date-item {
     min-width: 100px;
     border: 2px solid var(--PrimaryColor);
-    color: var(--black-color);
+    color: var(--blackColor);
     text-align: center;
     margin: 0 5px;
     padding: 10px;
@@ -275,7 +325,7 @@
 .arrow-right,
 .arrow-left-timeline,
 .arrow-right-timeline {
-    color: var(--black-color);
+    color: var(--blackColor);
     background-color: var(--light-gradient);
     border: none;
     padding: 10px;
@@ -304,35 +354,32 @@
 .court {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
 }
 
 .chooseTime {
     width: 100%;
     text-align: center;
     font-weight: bold;
-    font-size: 20px;
-    position:relative;
-    top: 25px;
     font-size: 23px;
     color: var(--PrimaryColor);
+    margin-top: 20px;
+    padding-bottom: -50px;
 }
 
 .chooseDate {
     width: 100%;
     text-align: center;
     font-weight: bold;
-    font-size: 20px;
-    position: relative;
-    top: 2px;
     font-size: 23px;
-    color: var(--PrimaryColor)
+    color: var(--PrimaryColor);
+    margin-top: 20px;
 }
 
 .chooseTimeLine {
     position: relative;
-    top: 25%;
     left: 10%;
+    display: flex;
+    flex-direction: column;
 }
 
 .court-timeline {
@@ -362,7 +409,7 @@
     background-color: var(--greyText);
 }
 
-.maintenance{
+.maintenance {
     background-color: var(--red-color);
 }
 
@@ -374,8 +421,9 @@
     width: 100%;
 }
 
-.viewcourtinfo-body-courtId{
-    margin-left: 50px;
+.viewcourtinfo-body-courtId {
+    margin-left: 0;
+    text-align: left;
 }
 
 .legend-item {
@@ -401,108 +449,3 @@
 .legend-text {
     font-size: 14px;
 }
-/* Existing styles... */
-
-.viewcourtinfo-slider {
-    width: 100%;
-    max-width: 800px;
-    margin-right: 20px;
-}
-
-.viewcourtinfo-slider .slick-slide img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: var(--primary-shadow);
-}
-
-.slick-prev, .slick-next {
-    font-size: 25px;
-    z-index: 1;
-    color: var(--black-color);
-    background-color: var(--light-gradient);
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.slick-prev:hover, .slick-next:hover {
-    color: var(--PrimaryColor);
-    transition: 0.1s ease;
-}
-
-.slick-prev {
-    left: -35px;
-}
-
-.slick-next {
-    right: -35px;
-}
-
-/* Date slider CSS */
-
-.date-slider-wrapper {
-    display: flex;
-    align-items: center;
-    margin: 20px 0;
-    justify-content: center;
-}
-
-.date-slider {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    transition: transform 0.3s ease-in-out;
-}
-
-.date-item {
-    min-width: 100px;
-    border: 2px solid var(--PrimaryColor);
-    color: var(--black-color);
-    text-align: center;
-    margin: 0 5px;
-    padding: 10px;
-    border-radius: 5px;
-    flex-shrink: 0;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.viewcourt-date {
-    font-size: 25px;
-    font-weight: bold;
-}
-
-.date-item.selected {
-    background-color: var(--PrimaryColor);
-    color: var(--white-color);
-}
-
-.arrow-left,
-.arrow-right,
-.arrow-left-timeline,
-.arrow-right-timeline {
-    color: var(--black-color);
-    background-color: var(--light-gradient);
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 25px;
-}
-
-.arrow-left:hover,
-.arrow-right:hover,
-.arrow-left-timeline:hover,
-.arrow-right-timeline:hover {
-    color: var(--PrimaryColor);
-    transition: 0.1s ease;
-}
-
-.arrow-left-timeline,
-.arrow-right-timeline {
-    margin-top: 1%;
-}
-
-

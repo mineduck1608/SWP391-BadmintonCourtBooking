@@ -1,8 +1,7 @@
-// Dashboard.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
@@ -19,6 +18,38 @@ import './dashboard.css';
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [payments, setPayments] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const paymentResponse = await axios.get('https://localhost:7233/Payment/GetAll');
+        const userResponse = await axios.get('https://localhost:7233/User/GetAll');
+        const userDetailResponse = await axios.get('https://localhost:7233/UserDetail/GetAll');
+
+        setPayments(paymentResponse.data);
+        setUsers(userResponse.data);
+        setUserDetails(userDetailResponse.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const getUserName = (userId) => {
+    const userDetail = userDetails.find((detail) => detail.userId === userId);
+    return userDetail ? `${userDetail.firstName}` : 'Unknown';
+  };
 
   return (
     <Box m="20px">
@@ -186,9 +217,9 @@ const Dashboard = () => {
               Recent Transactions
             </Typography>
           </Box>
-          {mockTransactions.map((transaction, i) => (
+          {payments.map((payment, i) => (
             <Box
-              key={`${transaction.txId}-${i}`}
+              key={`${payment.transactionId}-${i}`}
               display="flex"
               justifyContent="space-between"
               alignItems="center"
@@ -201,19 +232,19 @@ const Dashboard = () => {
                   variant="h5"
                   fontWeight="600"
                 >
-                  {transaction.txId}
+                  {payment.transactionId}
                 </Typography>
                 <Typography color={colors.grey[100]}>
-                  {transaction.user}
+                  {getUserName(payment.userId)}
                 </Typography>
               </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
+              <Box color={colors.grey[100]}>{payment.date}</Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
                 p="5px 10px"
                 borderRadius="4px"
               >
-                ${transaction.cost}
+                ${payment.amount}
               </Box>
             </Box>
           ))}

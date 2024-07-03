@@ -212,7 +212,7 @@ namespace BadmintonCourtAPI.Controllers
 		
 
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-			if (booking.ChangeLog < 3)
+			if (booking.ChangeLog < 2)
 			{
 				BookedSlot slot = _service.SlotService.GetSlotById(slotId);
 				DateTime startDate = new();
@@ -253,7 +253,7 @@ namespace BadmintonCourtAPI.Controllers
 
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
 			//--------------------------------------------------------------------------------------
-			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 3)
+			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 2)
 			{
 				BookedSlot slot = _service.SlotService.GetSlotById(slotId);
 				DateTime startDate = new();
@@ -354,7 +354,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<IActionResult> CancelSlot(string slotId, string bookingId) // Khách hàng chủ động hủy slot
 		{
 			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
-			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 3)
+			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 2)
 			{
 				BookedSlot slot = new();
 				Court court = new();
