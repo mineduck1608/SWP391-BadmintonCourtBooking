@@ -59,7 +59,7 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "BadmintonCourtAPI",
+              "Title": "BadmintonCourtAPI.csproj",
               "DocumentMoniker": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
               "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\BadmintonCourtAPI.csproj",
@@ -76,7 +76,7 @@
               "RelativeDocumentMoniker": "BadmintonCourtAPI\\Program.cs",
               "ToolTip": "D:\\Coding\\SWP391\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Program.cs",
               "RelativeToolTip": "BadmintonCourtAPI\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAuwA4AAAARAAAA",
+              "ViewState": "AQIAAGIAAAAAAAAAAAAAwA4AAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-03T08:02:54.881Z",
               "EditorCaption": ""
