@@ -104,7 +104,7 @@ const FindCourt = () => {
 
 
         const courtsWithImages = courtData.map(court => {
-          const imageUrl = court.courtImg ? extractImageUrls(court.courtImg)[0] : null;
+          const imageUrl = court.courtImg ? extractImageUrls(court.courtImg)[0] : image2;
           return {
             ...court,
             image: imageUrl
