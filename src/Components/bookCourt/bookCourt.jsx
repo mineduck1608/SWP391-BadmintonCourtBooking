@@ -251,10 +251,10 @@ const BookCourt = () => {
             try {
                 var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
                     {
-                        method: 'post',
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `bearer ${token}`
+                            'Authorization': `Bearer ${token}`
                         }
                     })
                 if (paymentType !== 'flexible') {

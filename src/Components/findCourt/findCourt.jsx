@@ -6,7 +6,7 @@ import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
-import {jwtDecode} from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 const { RangePicker } = TimePicker;
 const { TextArea } = Input;
@@ -67,6 +67,18 @@ const FindCourt = () => {
     );
   });
 
+  // Function to extract image URLs from the courtImg string
+
+  const extractImageUrls = (courtImg) => {
+    const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+    let matches;
+    const urls = [];
+    while ((matches = regex.exec(courtImg)) !== null) {
+      urls.push(matches[1]);
+    }
+    return urls;
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       const branchUrl = 'https://localhost:7233/Branch/GetAll';
@@ -89,8 +101,10 @@ const FindCourt = () => {
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
 
+
+
         const courtsWithImages = courtData.map(court => {
-          const imageUrl = court.courtImg?.[0]?.split(':')[1]?.trim(); // Extract the URL of Image 1
+          const imageUrl = court.courtImg ? extractImageUrls(court.courtImg)[0] : image2;
           return {
             ...court,
             image: imageUrl
@@ -113,8 +127,6 @@ const FindCourt = () => {
   useEffect(() => {
     const fetchFeedback = async () => {
       const token = sessionStorage.getItem('token');
-      const decodedToken = jwtDecode(token); 
-      const userIdToken = decodedToken.UserId;
 
       const feedbackUrl = 'https://localhost:7233/Feedback/GetAll';
       const userUrl = 'https://localhost:7233/User/GetAll';
@@ -199,14 +211,14 @@ const FindCourt = () => {
     const token = sessionStorage.getItem('token');
     const decodedToken = jwtDecode(token);
     const userIdToken = decodedToken.UserId;
-  
+
     const feedbackData = {
       userId: userIdToken,
       rating: newRating,
       content: newContent,
       feedbackId: selectedFeedback ? selectedFeedback.feedbackId : undefined,
     };
-  
+
     try {
       const url = `https://localhost:7233/Feedback/Update?rate=${feedbackData.rating}&content=${feedbackData.content}&id=${feedbackData.feedbackId}&userId=${feedbackData.userId}`;
       const response = await fetch(url, {
@@ -216,18 +228,18 @@ const FindCourt = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-  
+
       if (!response.ok) {
         throw new Error(`Failed to update feedback: ${response.statusText}`);
       }
-  
+
       const updatedFeedback = await response.json();
       setFeedback((prevFeedback) =>
         prevFeedback.map((fb) =>
           fb.feedbackId === selectedFeedback.feedbackId ? updatedFeedback : fb
         )
       );
-  
+
       setIsModalVisible(false);
       setSelectedFeedback(null);
       setNewRating(0);
@@ -238,7 +250,7 @@ const FindCourt = () => {
       setErrorFeedback('Failed to update feedback');
     }
   };
-  
+
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
@@ -250,7 +262,7 @@ const FindCourt = () => {
   const sendFeedback = async (feedback) => {
     const url = `https://localhost:7233/Feedback/Update/${feedback.feedbackId}`;
     const token = sessionStorage.getItem('token');
-  
+
     try {
       const response = await fetch(url, {
         method: 'PUT',
@@ -260,11 +272,11 @@ const FindCourt = () => {
         },
         body: JSON.stringify(feedback),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Failed to update feedback: ${response.statusText}`);
       }
-  
+
       const result = await response.json();
       return result;
     } catch (error) {
@@ -272,7 +284,7 @@ const FindCourt = () => {
       setErrorFeedback(`Failed to update feedback: ${error.message}`);
     }
   };
-  
+
   return (
     <div className="findCourt">
       <div className="findCourtHeader">
@@ -308,7 +320,7 @@ const FindCourt = () => {
                     <select
                       onChange={handleCourtChange}
                       value={selectedCourt}
-                    >       
+                    >
                       <option value="">All</option>
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
@@ -353,7 +365,7 @@ const FindCourt = () => {
                   {filteredFeedback.map((fb) => {
                     const user = fb.user;
                     const token = sessionStorage.getItem('token');
-                    const decodedToken = jwtDecode(token); 
+                    const decodedToken = jwtDecode(token);
                     const userIdToken = decodedToken.UserId;
 
                     return (
