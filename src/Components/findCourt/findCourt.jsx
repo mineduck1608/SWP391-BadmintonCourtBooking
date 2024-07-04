@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './findcourt.css';
-import { TimePicker } from 'antd';
+import { TimePicker, Modal, Button, Rate, Input } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
+import { jwtDecode } from 'jwt-decode';
 
 const { RangePicker } = TimePicker;
+const { TextArea } = Input;
 
 const FindCourt = () => {
   const [timeRange, setTimeRange] = useState([null, null]);
@@ -21,6 +23,10 @@ const FindCourt = () => {
   const [users, setUsers] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newRating, setNewRating] = useState(0);
+  const [newContent, setNewContent] = useState('');
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -61,6 +67,18 @@ const FindCourt = () => {
     );
   });
 
+  // Function to extract image URLs from the courtImg string
+
+  const extractImageUrls = (courtImg) => {
+    const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+    let matches;
+    const urls = [];
+    while ((matches = regex.exec(courtImg)) !== null) {
+      urls.push(matches[1]);
+    }
+    return urls;
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       const branchUrl = 'https://localhost:7233/Branch/GetAll';
@@ -83,8 +101,10 @@ const FindCourt = () => {
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
 
+
+
         const courtsWithImages = courtData.map(court => {
-          const imageUrl = court.courtImg?.[0]?.split(':')[1]?.trim(); // Extract the URL of Image 1
+          const imageUrl = court.courtImg ? extractImageUrls(court.courtImg)[0] : image2;
           return {
             ...court,
             image: imageUrl
@@ -106,7 +126,8 @@ const FindCourt = () => {
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      let token = sessionStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
+
       const feedbackUrl = 'https://localhost:7233/Feedback/GetAll';
       const userUrl = 'https://localhost:7233/User/GetAll';
       const userDetailsUrl = 'https://localhost:7233/UserDetail/GetAll';
@@ -179,6 +200,91 @@ const FindCourt = () => {
     );
   };
 
+  const handleEdit = (feedbackId, rating, content) => {
+    setSelectedFeedback({ feedbackId, rating, content });
+    setNewRating(rating);
+    setNewContent(content);
+    setIsModalVisible(true);
+  };
+
+  const handleModalOk = async () => {
+    const token = sessionStorage.getItem('token');
+    const decodedToken = jwtDecode(token);
+    const userIdToken = decodedToken.UserId;
+
+    const feedbackData = {
+      userId: userIdToken,
+      rating: newRating,
+      content: newContent,
+      feedbackId: selectedFeedback ? selectedFeedback.feedbackId : undefined,
+    };
+
+    try {
+      const url = `https://localhost:7233/Feedback/Update?rate=${feedbackData.rating}&content=${feedbackData.content}&id=${feedbackData.feedbackId}&userId=${feedbackData.userId}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update feedback: ${response.statusText}`);
+      }
+
+      const updatedFeedback = await response.json();
+      setFeedback((prevFeedback) =>
+        prevFeedback.map((fb) =>
+          fb.feedbackId === selectedFeedback.feedbackId ? updatedFeedback : fb
+        )
+      );
+
+      setIsModalVisible(false);
+      setSelectedFeedback(null);
+      setNewRating(0);
+      setNewContent('');
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      setErrorFeedback('Failed to update feedback');
+    }
+  };
+
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setSelectedFeedback(null);
+    setNewRating(0);
+    setNewContent('');
+  };
+
+  const sendFeedback = async (feedback) => {
+    const url = `https://localhost:7233/Feedback/Update/${feedback.feedbackId}`;
+    const token = sessionStorage.getItem('token');
+
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(feedback),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update feedback: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error(error);
+      setErrorFeedback(`Failed to update feedback: ${error.message}`);
+    }
+  };
+
   return (
     <div className="findCourt">
       <div className="findCourtHeader">
@@ -200,6 +306,7 @@ const FindCourt = () => {
                       onChange={handleBranchChange}
                       value={selectedBranch}
                     >
+                      <option value="">All</option>
                       {branches.map((branch) => (
                         <option key={branch.branchId} value={branch.branchId}>
                           {branch.branchName}
@@ -213,7 +320,8 @@ const FindCourt = () => {
                     <select
                       onChange={handleCourtChange}
                       value={selectedCourt}
-                    >       
+                    >
+                      <option value="">All</option>
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
@@ -256,6 +364,10 @@ const FindCourt = () => {
                 <div className="findcourt-feedbackGrid">
                   {filteredFeedback.map((fb) => {
                     const user = fb.user;
+                    const token = sessionStorage.getItem('token');
+                    const decodedToken = jwtDecode(token);
+                    const userIdToken = decodedToken.UserId;
+
                     return (
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
                         <div className="findcourt-feedbackInfo">
@@ -266,7 +378,7 @@ const FindCourt = () => {
                           <p>Rating: <span className="stars">{renderStars(fb.rating)}</span></p>
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                           <p>Feedback: {fb.content}</p>
-                          
+                          {user && user.userId === userIdToken && <button className="find-court-edit-feedback-btn" onClick={() => handleEdit(fb.feedbackId, fb.rating, fb.content)}>Edit</button>}
                         </div>
                       </div>
                     );
@@ -280,6 +392,33 @@ const FindCourt = () => {
       <div className="findCourtFooter">
         <Footer />
       </div>
+      <Modal
+        title={<div className="findcourt-modal-title">Edit Feedback</div>}
+        visible={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={handleModalCancel}
+        footer={[
+          <Button key="cancel" onClick={handleModalCancel} className="findcourt-modal-cancel-btn">
+            Cancel
+          </Button>,
+          <Button key="ok" type="primary" onClick={handleModalOk} className="findcourt-modal-ok-btn">
+            OK
+          </Button>,
+        ]}
+        className="findcourt-modal"
+      >
+        <div className="findcourt-modal-content">
+          <div className="findcourt-rating-container">
+            <p>Rating: </p>
+            <Rate onChange={setNewRating} value={newRating} />
+          </div>
+          <TextArea
+            rows={4}
+            onChange={(e) => setNewContent(e.target.value)}
+            value={newContent}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

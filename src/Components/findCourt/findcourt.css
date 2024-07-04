@@ -309,3 +309,60 @@ button {
     color: #ffcc00; /* Gold color for stars */
     font-size: 20px; /* Adjust size as needed */
 }
+
+.find-court-edit-feedback-btn{
+    background-color: hsl(26, 93%, 50%);
+    width: 50px;
+    border: #ebe7e7;
+    border-radius: 10%;
+    color:  white;
+}
+
+.findcourt-modal-title {
+    font-size: 24px; 
+    text-align: center;
+    width: 100%;
+}
+  
+.findcourt-modal .ant-modal-footer {
+    display: flex;
+    justify-content: space-between; 
+}
+  
+.findcourt-modal-cancel-btn,
+.findcourt-modal-ok-btn {
+    width: 100px; 
+    color: white; 
+}
+  
+.findcourt-modal-cancel-btn {
+    background-color:hsl(26, 93%, 50%); 
+    border: none; 
+}
+  
+.findcourt-modal-cancel-btn:hover,
+.findcourt-modal-cancel-btn:focus {
+    background-color: hsl(26, 93%, 50%); 
+}
+  
+.findcourt-modal-ok-btn {
+    background-color: hsl(26, 93%, 50%); 
+    border: none; 
+}
+  
+.findcourt-modal-ok-btn:hover,
+.findcourt-modal-ok-btn:focus {
+    background-color: hsl(26, 93%, 50%); 
+}
+
+.findcourt-modal-content .findcourt-rating-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px; 
+}
+  
+.findcourt-modal-content .findcourt-rating-container p {
+    margin: 0;
+    padding-right: 8px; 
+}
+  

@@ -617,9 +617,20 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
 				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				_service.MailService.SendMail(info.Email, "Thanks for your purchasement. You now can check your transaction information in payment history", "BMTC - Booking Notification");
-			}
-			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
+                _service.MailService.SendMail(info.Email, $@"
+<p>Dear {info.FirstName} {info.LastName},</p>
+<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>
+<p>If you have any questions or need further assistance, please contact us.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+"BMTC - Booking Notification");
+
+            }
+            return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
 		[HttpGet]
@@ -635,9 +646,20 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
 				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				_service.MailService.SendMail(info.Email, "Thanks for your purchasement. You now can check your transaction information in payment history", "BMTC - Booking Notification");
-			}
-			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
+                _service.MailService.SendMail(info.Email, $@"
+<p>Dear {info.FirstName} {info.LastName},</p>
+<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>
+<p>If you have any questions or need further assistance, please contact us.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+"BMTC - Booking Notification");
+
+            }
+            return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
 		// Create info for both methods.It will have the following format:

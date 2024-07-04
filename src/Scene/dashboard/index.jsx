@@ -23,19 +23,29 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
 
-        const paymentResponse = await axios.get('https://localhost:7233/Payment/GetAll');
-        const userResponse = await axios.get('https://localhost:7233/User/GetAll');
+        const paymentResponse = await axios.get('https://localhost:7233/Payment/GetAll', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const userResponse = await axios.get('https://localhost:7233/User/GetAll', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const userDetailResponse = await axios.get('https://localhost:7233/UserDetail/GetAll');
-
+         
         setPayments(paymentResponse.data);
         setUsers(userResponse.data);
         setUserDetails(userDetailResponse.data);
+
+        // Calculate the total revenue
+        const total = paymentResponse.data.reduce((sum, payment) => sum + payment.amount, 0);
+        setTotalRevenue(total);
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
@@ -272,7 +282,7 @@ const Dashboard = () => {
               color={colors.greenAccent[500]}
               sx={{ mt: "15px" }}
             >
-              $48,352 revenue generated
+              ${totalRevenue.toLocaleString()} revenue generated
             </Typography>
             <Typography>Includes extra misc expenditures and costs</Typography>
           </Box>

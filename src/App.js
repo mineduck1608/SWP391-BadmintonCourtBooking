@@ -34,6 +34,7 @@ import BookingHistory from './Components/ViewHistory/ViewHistory';
 import PaySuccess from './Components/PaySuccess/PaySuccess';
 import BuyFail from './Components/BuyFail/BuyFail';
 import GoogleMap from './Components/googleMap/googleMap';
+import VerifyAccount from './Components/verifyAccount/verifyAccount';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -53,7 +54,8 @@ const App = () => {
           <Route path="/editInfo" element={<EditInfo />} />
           <Route path="/viewInfo" element={<ViewInfo />} />
           <Route path="/findCourt" element={<FindCourt />} />
-          <Route path="/forget" element={<ForgetPassword />} />
+          <Route path="/ResetPassword" element={<ForgetPassword />} />
+          <Route path="/verifyAccount" element={<VerifyAccount />} />
           <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
           <Route path="/buyTime" element={<div><Header /><BuyTime /><Footer /></div>} />
           <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />

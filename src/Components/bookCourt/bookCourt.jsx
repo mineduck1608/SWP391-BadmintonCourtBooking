@@ -4,27 +4,31 @@ import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 import { HttpStatusCode } from "axios";
-import { getHours } from 'date-fns';
 
 const BookCourt = () => {
-    const [bookingType, setBookingType] = useState('fixed') //once, fixed, flexible
+    const [bookingType, setBookingType] = useState('') //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
-    const [courts, setCourts] = useState([]) //all courts of that branch, if active
+    const [courts, setCourts] = useState([]) //all courts if active
     const [paymentType, setPaymentType] = useState('') //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
     const [timeError, setTimeError] = useState(0) //
-    const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
+    const [transferMethod, setTransferMethod] = useState(0) //momo, vnpay
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
     const apiUrl = "https://localhost:7233"
-    const [queryCourt, setQueryCourt] = useState('')
+    const [selectedBranch, setSelectedBranch] = useState({})
+    const [user, setUser] = useState({})
     const fetchBranches = async () => {
         try {
             setBranches(b => [])
             const branchData = await (
-                await fetch(`${apiUrl}/Branch/GetAll`)
+                await fetch(`${apiUrl}/Branch/GetAll`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+                    }
+                })
             ).json()
             for (let index = 0; index < branchData.length; index++) {
                 if ((branchData[index])["branchStatus"] === 1) {
@@ -38,14 +42,19 @@ const BookCourt = () => {
     }
     const fetchCourts = async () => {
         try {
-            var branchId = document.getElementById("branch").value
+            var queryStr = window.location.search
+            var params = new URLSearchParams(queryStr)
             setCourts([])
             const courtData = await (
-                await fetch(`${apiUrl}/Court/GetByBranch?id=${branchId}`)
+                await fetch(`${apiUrl}/Court/GetAll`)
             ).json()
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
                     setCourts(c => [...c, courtData[index]])
+                    if (params.has('courtId') && courtData[index].courtId === params.get('courtId')) {
+                        setCourtInfo(courtData[index])
+                        setSelectedBranch(courtData[index].branchId)
+                    }
                 }
             }
         }
@@ -67,29 +76,51 @@ const BookCourt = () => {
             var start = primitive.start
             var end = primitive.end
             for (let i = start; i <= end; i++) {
-                console.log(i);
                 setTimeBound(t => [...t, i])
             }
         }
         catch (err) {
             console.log(err);
         }
-        console.log('Time bound');
-        console.log(timeBound);
     }
     useEffect(() => {
-        fetchBranches()
-        loadTimeFrame()
-        setCurDate(new Date())
-        //Query court id
-        var queryStr = window.location.search
-        var params = new URLSearchParams(queryStr)
-        if (params.has('courtId')) {
-            setQueryCourt(params.get('courtId'))
+        async function getUser() {
+            console.log('get user');
+            var token = sessionStorage.getItem('token')
+            if (!token) {
+            } else {
+                try {
+                    var decodedToken = jwtDecode(token)
+                    var data = await (await
+                        fetch(`${apiUrl}/User/GetById?id=${decodedToken['UserId']}`,
+                            {
+                                method: 'get',
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            }
+                        )).json()
+                    setUser(data)
+                }
+                catch (err) {
+                    console.log('error getting user');
+                    console.log(err);
+                }
+            }
         }
+        async function startFetch() {
+            await fetchBranches()
+            await fetchCourts()
+        }
+        async function loadData() {
+            await startFetch()
+            await loadTimeFrame()
+            setCurDate(new Date())
+        }
+        loadData()
+        getUser()
     }, [])
-    const checkAvailableSlot = async () => {
-        let courtId = courtInfo['id']
+    const checkAvailableSlot = async (courtId) => {
         // console.log("Check for: " + courtId);
         try {
             if (validateDateTime() === 0) {
@@ -106,7 +137,8 @@ const BookCourt = () => {
                     + `id=${courtId}`, {
                     method: 'post',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
                     }
                 })
                 const data = await res.json()
@@ -117,60 +149,54 @@ const BookCourt = () => {
             console.log(err);
         }
     }
-    useEffect(() => {
-        try {
-            checkAvailableSlot()
-        }
-        catch (err) {
-
-        }
-    }, [courtInfo])
 
     useEffect(() => {
         handleCalcAmount()
     }, [courtInfo, bookingType])
 
-    const loadCourtInfo = async () => {
+    const loadCourtInfo = async (id) => {
         try {
-            const selectedCourt = document.getElementById("court").value;
-            const response = await fetch(`${apiUrl}/Court/GetById?id=${selectedCourt}`);
-            const data = await response.json();
-            setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
+            const data = courts.find(c => c.courtId === id)
+            setCourtInfo(data)
+            await checkAvailableSlot(document.getElementById('court').value)
         } catch (error) {
-
+            console.log(error);
         }
     }
+
     const validateDateTime = () => {
         // console.log('Validate time');
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
+        if (selectedDate === '' || t1 === '' || t2 === '') return -1
         var startTime = Date.parse(selectedDate) + t1 * 3600000
         var endTime = Date.parse(selectedDate) + t2 * 3600000
         var curDateNum = Date.parse(curDate)
         var r = 0
-        if (startTime > endTime) r = 1
+        if (startTime >= endTime) r = 1
         if (startTime < curDateNum) r = 2
         setTimeError(t => r)
         // console.log(r);
         return r
     }
+
     const validateBooking = () => {
-        //reset
-        // console.log('Validate booking');
-        var t = (validateDateTime() === 0)
-        // console.log("DateTime: " + t);
-        try {
-            return t && courtInfo['status'] && !isOccupied;
-        } catch (error) {
-            return false;
-        }
+        var tmp = (validateDateTime() === 0)
+        if (tmp)
+            try {
+                console.log(paymentType);
+                var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
+                tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
+                return tmp
+            } catch (error) {
+                return false;
+            }
     };
 
     const completeBooking = async () => {
         try {
             const result = validateBooking();
-            // console.log(result);
             if (result) {
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
                 fetchApi()
@@ -179,20 +205,7 @@ const BookCourt = () => {
             console.log(error);
         }
     };
-    const getFromJwt = () => {
-        var token = sessionStorage.getItem('token')
-        if (!token) {
-        } else {
-            try {
-                var decodedToken = jwtDecode(token)
-                return decodedToken['UserId']
-            }
-            catch (err) {
 
-            }
-        }
-        return ''
-    }
     function handleCalcAmount() {
         try {
             let startTime = document.getElementById('time-start').value
@@ -208,11 +221,11 @@ const BookCourt = () => {
     function calcAmount(bkType, price, start, end, month) {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
-        setAmount(a => Object.is(amount, NaN) ? 0 : amount)
+        setAmount(Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
     const fetchApi = async () => {
-
+        var token = sessionStorage.getItem('token')
         try {
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
@@ -223,9 +236,9 @@ const BookCourt = () => {
                 + `Method=${transferMethod}&`
                 + `Start=${startTime}&`
                 + `End=${endTime}&`
-                + `UserId=${getFromJwt()}&`
+                + `UserId=${user['userId']}&`
                 + `Date=${date}&`
-                + `CourtId=${courtInfo['id']}&`
+                + `CourtId=${courtInfo['courtId']}&`
                 + `Type=${bookingType}&`
                 + `NumMonth=${monthNum}&`
                 + `Amount=${handleCalcAmount()}`
@@ -233,14 +246,15 @@ const BookCourt = () => {
                 + `date=${date}&`
                 + `start=${startTime}&`
                 + `end=${endTime}&`
-                + `courtId=${courtInfo['id']}&`
-                + `userId=${getFromJwt()}`
+                + `courtId=${courtInfo['courtId']}&`
+                + `userId=${user['userId']}`
             try {
                 var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
                     {
-                        method: 'post',
+                        method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
                         }
                     })
                 if (paymentType !== 'flexible') {
@@ -251,7 +265,15 @@ const BookCourt = () => {
                     }
                 }
                 else {
-                    window.location.assign(res.status === HttpStatusCode.Ok ? '/paySuccess?msg=success' : '/payFail')
+                    if (res.status === HttpStatusCode.Ok)
+                        window.location.assign('/bookingHistory')
+                    else {
+                        const data = await res.json()
+                        const msg = data['msg']
+                        if (msg.includes('not enough')) {
+                            alert(msg)
+                        }
+                    }
                 }
             }
             catch (err) {
@@ -281,7 +303,6 @@ const BookCourt = () => {
         while (n > 0)
         return rs
     }
-
     return (
         <div className="bookCourt-container">
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
@@ -292,13 +313,18 @@ const BookCourt = () => {
                         <label htmlFor="branch">BRANCH:</label>
 
                         <select id="branch" name="branch" onChange={() => {
-                            fetchCourts()
+                            setSelectedBranch(document.getElementById('branch').value)
                         }}>
                             <option value="" hidden selected>Choose a branch</option>
                             {
                                 branches.map(b =>
                                 (
-                                    <option value={b["branchId"]}>{b["branchName"]}</option>
+                                    <option value={b["branchId"]}
+                                        //Set selected branch
+                                        selected={
+                                            !Object.is(selectedBranch, undefined) && selectedBranch === b['branchId']
+                                        }
+                                    >{b["branchName"]}</option>
                                 )
                                 )
                             }
@@ -308,14 +334,19 @@ const BookCourt = () => {
                         <label htmlFor="court">COURT:</label>
 
                         <select id="court" name="court" onChange={() => {
-                            loadCourtInfo()
-                            checkAvailableSlot()
+                            loadCourtInfo(document.getElementById('court').value)
+                            checkAvailableSlot(document.getElementById('court').value)
                             handleCalcAmount()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
                                 courts.map((c, i) => (
-                                    <option value={c["courtId"]} selected={c['courtId' === queryCourt]}>{c["courtName"]}</option>
+                                    c['branchId'] === selectedBranch &&
+                                    <option value={c["courtId"]}
+                                        selected={
+                                            !Object.is(courtInfo, undefined) && c['courtId'] === courtInfo['courtId']
+                                        }
+                                    >{c["courtName"]}</option>
                                 ))
                             }
                         </select>
@@ -365,7 +396,7 @@ const BookCourt = () => {
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
                             if (validateDateTime() === 0) {
-                                checkAvailableSlot()
+                                checkAvailableSlot(document.getElementById('court').value)
                                 handleCalcAmount()
                             }
                         }}>
@@ -379,7 +410,7 @@ const BookCourt = () => {
                         <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => {
                             if (validateDateTime() === 0) {
-                                checkAvailableSlot()
+                                checkAvailableSlot(document.getElementById('court').value)
                                 handleCalcAmount()
                             }
                         }}>
@@ -400,7 +431,7 @@ const BookCourt = () => {
                         <label htmlFor="day">Day: </label>
                         <input type="date" id="datePicker" onChange={() => {
                             if (validateDateTime() === 0) {
-                                checkAvailableSlot()
+                                checkAvailableSlot(document.getElementById('court').value)
                                 handleCalcAmount()
                             }
                         }} />
@@ -413,12 +444,18 @@ const BookCourt = () => {
                     }
 
                     <div className="bookcourt-status">
-                        <h2 className="notes">4. STATUS: {isOccupied ? "Occupied" : "Free"}</h2>
-                        <span>Price: <span className='priceSpan'>{formatNumber(amount)}</span></span>
+                        <h2 className="notes">
+                            4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
+                        <p>Price: <span className='priceSpan'>{formatNumber(amount)}</span></p>
+                        <p>Your balance:
+                            <span className='priceSpan'>
+                                {' ' + (Object.is(user, undefined) || Object.is(user['balance'], undefined) ? '_' : formatNumber(user['balance']))}
+                            </span>
+                        </p>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
-                                onChange={() => { setPaymentType(p => 'banking') }}
+                                onChange={() => { setPaymentType('banking') }}
                                 checked={paymentType === 'banking'}
                             />
                             <span>Banking</span>
@@ -429,7 +466,7 @@ const BookCourt = () => {
                                 <div className='inlineDiv'>
                                     <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
                                         onChange={() => {
-                                            setPaymentType(p => 'flexible')
+                                            setPaymentType('flexible')
                                         }}
                                         checked={paymentType === 'flexible'}
                                     />

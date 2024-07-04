@@ -71,24 +71,26 @@ export default function ViewHistory() {
   };
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
+
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
       var res = await fetch(`${apiUrl}/Slot/GetAll`)
       var data = await res.json()
       return data
     }
-    try{
+
+    try {
       var data = await fetchTime()
       setTimeBound([])
-      var primitive = data.find(d => d.slotID === 'S1')
-      var start = getHours(primitive.startTime)
-      var end = getHours(primitive.endTime)
-      for(let i=start; i<= end; i++){
+      var primitive = data.find(d => d['bookedSlotId'] === 'S1')
+      var start = primitive.start
+      var end = primitive.end
+      for (let i = start; i <= end; i++) {
         setTimeBound(t => [...t, i])
       }
     }
-    catch(err){
-
+    catch (err) {
+      console.log(err);
     }
   }
   const formatNumber = (n) => {
@@ -183,13 +185,14 @@ export default function ViewHistory() {
         setLoading(false);
       }
     };
-    
+
     fetchData();
     loadTimeFrame()
   }, [token]);
 
   const onClickEdit = (slot) => {
     setOpen(true)
+    loadTimeFrame()
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
 
@@ -266,7 +269,8 @@ export default function ViewHistory() {
       if (res.ok) {
         var data = await res.json()
         if (Object.is(data['url'], undefined)) {
-          alert('The change has been added to your balance!')
+          alert('The change has been made!')
+          window.location.reload()
         }
         else {
           alert('You\'ll be redirect to the payment page')
@@ -276,7 +280,6 @@ export default function ViewHistory() {
       if (res.status === HttpStatusCode.BadRequest) {
         alert('This booking cannot be changed, as it has already been changed 3 times')
       }
-      window.location.reload()
     }
     let t = validateTime(formState.date, formState.start, formState.end)
     setValidSchedule(t)
@@ -313,7 +316,7 @@ export default function ViewHistory() {
       window.location.reload()
     }
     catch (err) {
-
+      alert(err)
     }
   }
 
@@ -332,7 +335,7 @@ export default function ViewHistory() {
       case 3:
         return 'Flexible';
       default:
-        return 'unknown';
+        return 'Buy Time';
     }
   };
 
@@ -458,8 +461,7 @@ export default function ViewHistory() {
     <div className='view-history'>
       <Modal title='Edit slot'
         open={open}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        footer={null}
       >
         <span>
           <p>Booking: {formState.bookingId}</p>
@@ -511,16 +513,27 @@ export default function ViewHistory() {
               )
             ))}
           </select>
+          <button className='view-history-button-small'
+            onClick={handleOk}
+          >OK</button>
+          <button className='view-history-button-small'
+            onClick={handleCancel}
+          >Cancel</button>
         </span>
       </Modal>
       <Modal title='Confirm cancel'
         open={openCancel}
-        onOk={cancelSlot}
-        onCancel={handleCancel}
+        footer={null}
       >
         <span>
-          Are you sure you want to cancel this slot?
+          <p>Are you sure you want to cancel this slot?</p>
           <p id='warning'>THIS CANNOT BE UNDONE!</p>
+          <button className='view-history-button-small'
+            onClick={cancelSlot}
+          >OK</button>
+          <button className='view-history-button-small'
+            onClick={handleCancel}
+          >Cancel</button>
         </span>
       </Modal>
       <div className='view-history-header'>

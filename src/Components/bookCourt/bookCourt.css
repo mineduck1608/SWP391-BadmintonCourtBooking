@@ -275,3 +275,10 @@ select {
 .priceSpan{
   font-weight: 600;
 }
+.occupied {
+  color: red;
+}
+
+.free {
+  color: green;
+}

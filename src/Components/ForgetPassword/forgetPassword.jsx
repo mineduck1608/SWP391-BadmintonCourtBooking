@@ -1,90 +1,81 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import './forgetpassword.css';
+import Navbar from '../Navbar/Navbar';
 
-const ForgetPassword = () => {
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
+const ResetPassword = () => {
+  const [userId, setUserId] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSendOtp = async () => {
-    try {
-      const response = await axios.post('http://localhost:3005/send-otp', { email });
-      if (response.status === 200) {
-        setOtpSent(true);
-        setMessage('OTP sent successfully. Check your email.');
-      }
-    } catch (error) {
-      setMessage('Error sending OTP');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('id');
+    if (userId) {
+      setUserId(userId);
     }
-  };
-
-  const handleVerifyOtp = async () => {
-    try {
-      const response = await axios.post('http://localhost:3005/verify-otp', { email, otp });
-      if (response.status === 200) {
-        setOtpVerified(true);
-        setMessage('OTP verified successfully. You can now reset your password.');
-      }
-    } catch (error) {
-      setMessage('Invalid OTP');
-    }
-  };
+  }, []);
 
   const handleResetPassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setMessage('Passwords do not match. Please try again.');
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:3005/reset-password', { email, newPassword });
-      if (response.status === 200) {
+      const response = await fetch(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, newPassword, confirmPassword })
+      });
+
+      if (response.ok) {
         setMessage('Password updated successfully. You can now log in with your new password.');
+      } else {
+        const responseData = await response.json();
+        setMessage(responseData.msg);
       }
     } catch (error) {
-      setMessage('Error updating password');
+      setMessage('Error updating password. Please try again.');
     }
   };
 
   return (
-    <div className='forget-password-wrapper'>
-      <h1>Forget Password</h1>
-      <div className="input-box">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder='Enter your email'
-          required
-        />
-      </div>
-      <button className='forget-button' onClick={handleSendOtp}>Send OTP</button>
-      {otpSent && !otpVerified && (
-        <div className="otp-box">
-          <input
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder='Enter OTP'
-            required
-          />
-          <button className='forget-button' onClick={handleVerifyOtp}>Verify OTP</button>
-        </div>
-      )}
-      {otpVerified && (
-        <div className="reset-password-box">
+    <>
+    <div><Navbar/></div>
+    <div className='reset-password-wrapper'>
+      <div className="reset-password-container">
+        <h1 className='reset-password-title'>Reset Password</h1>
+        <div className="reset-password-input-box">
+          <i className="reset-password-input-icon fas fa-lock"></i>
           <input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            className="reset-password-input"
             placeholder='Enter new password'
             required
           />
-          <button className='forget-button' onClick={handleResetPassword}>Reset Password</button>
         </div>
-      )}
-      {message && <p>{message}</p>}
+        <div className="reset-password-input-box">
+          <i className="reset-password-input-icon fas fa-lock"></i>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="reset-password-input"
+            placeholder='Confirm new password'
+            required
+          />
+        </div>
+        <button className='reset-password-button' onClick={handleResetPassword}>Reset Password</button>
+        {message && <p className="forget-password-message">{message}</p>}
+      </div>
     </div>
+    </>
   );
 }
 
-export default ForgetPassword;
+export default ResetPassword;

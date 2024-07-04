@@ -192,9 +192,9 @@ const Court = () => {
         }
 
         if (modalVisible) {
-            setSelectedCourt((prevState) => ({ ...prevState, courtImg: uploadedUrls.join(',') }));
+            setSelectedCourt((prevState) => ({ ...prevState, courtImg: uploadedUrls.join('|') }));
         } else {
-            setNewCourtData((prevState) => ({ ...prevState, courtImg: uploadedUrls.join(',') }));
+            setNewCourtData((prevState) => ({ ...prevState, courtImg: uploadedUrls.join('|') }));
         }
 
         toast.success('Images uploaded successfully');
