@@ -108,10 +108,14 @@
 .past-table {
   margin-top: 40px;
 }
+.view-history-header{
+  width: 100%;
+  text-align: center;
+}
 
-.view-history-header,
 .view-history-footer {
   width: 100%;
+  margin-top: 100px;
   text-align: center;
 }
 

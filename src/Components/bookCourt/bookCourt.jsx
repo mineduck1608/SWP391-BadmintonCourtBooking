@@ -209,7 +209,7 @@ const BookCourt = () => {
         return amount
     }
     const fetchApi = async () => {
-
+        var token = sessionStorage.getItem('token')
         try {
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
@@ -237,7 +237,8 @@ const BookCourt = () => {
                     {
                         method: 'post',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `bearer ${token}`
                         }
                     })
                 if (paymentType !== 'flexible') {

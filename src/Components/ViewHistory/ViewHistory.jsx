@@ -335,7 +335,7 @@ export default function ViewHistory() {
       case 3:
         return 'Flexible';
       default:
-        return 'unknown';
+        return 'Buy Time';
     }
   };
 

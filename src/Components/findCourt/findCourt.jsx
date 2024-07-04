@@ -294,7 +294,6 @@ const FindCourt = () => {
                       onChange={handleBranchChange}
                       value={selectedBranch}
                     >
-                      <option value="">All</option>
                       {branches.map((branch) => (
                         <option key={branch.branchId} value={branch.branchId}>
                           {branch.branchName}
@@ -309,7 +308,6 @@ const FindCourt = () => {
                       onChange={handleCourtChange}
                       value={selectedCourt}
                     >       
-                      <option value="">All</option>
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
