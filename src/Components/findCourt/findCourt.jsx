@@ -84,7 +84,7 @@ const FindCourt = () => {
         const courtData = await courtResponse.json();
 
         const courtsWithImages = courtData.map(court => {
-          const imageUrl = court.courtImg?.[0]?.split(':')[1]?.trim(); // Extract the URL of Image 1
+          const imageUrl = extractImageUrls(court.courtImg)[0] || image2;; // Extract the URL of Image 1
           return {
             ...court,
             image: imageUrl
@@ -179,6 +179,16 @@ const FindCourt = () => {
     );
   };
 
+  const extractImageUrls = (courtImg) => {
+    const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+    let matches;
+    const urls = [];
+    while ((matches = regex.exec(courtImg)) !== null) {
+      urls.push(matches[1]);
+    }
+    return urls;
+  };
+
   return (
     <div className="findCourt">
       <div className="findCourtHeader">
@@ -213,7 +223,7 @@ const FindCourt = () => {
                     <select
                       onChange={handleCourtChange}
                       value={selectedCourt}
-                    >       
+                    >
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
@@ -247,6 +257,7 @@ const FindCourt = () => {
                     </div>
                   );
                 })}
+
               </div>
 
               <div className="findcourt-feedbackBox">
@@ -266,7 +277,7 @@ const FindCourt = () => {
                           <p>Rating: <span className="stars">{renderStars(fb.rating)}</span></p>
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                           <p>Feedback: {fb.content}</p>
-                          
+
                         </div>
                       </div>
                     );

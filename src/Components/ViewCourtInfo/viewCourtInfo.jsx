@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Header from "../Header/header";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
-import image2 from '../../Assets/image2.jpg';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -50,6 +49,10 @@ const ViewCourtInfo = () => {
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
                 const slotData = await slotResponse.json();
+
+                console.log('Fetched court data:', courtData); // Log court data to console
+                console.log('Fetched court data:', branchData);
+                console.log('Fetched court data:', slotData);
 
                 const params = new URLSearchParams(location.search);
                 const courtId = params.get('courtId');
@@ -106,9 +109,8 @@ const ViewCourtInfo = () => {
     };
 
     const handleNextImage = () => {
-        if (mainCourt?.courtImg) {
-            const images = mainCourt.courtImg.split(',');
-            setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1));
+        if (mainCourt?.courtImg?.length > 0) {
+            setCurrentImageIndex((prev) => Math.min(prev + 1, mainCourt.courtImg.length - 1));
         }
     };
 
@@ -150,7 +152,18 @@ const ViewCourtInfo = () => {
     const weekDates = generateWeekDates(currentWeekStart);
     const hours = generateHourTimeline(currentHourIndex, selectedDate);
 
-    const images = mainCourt?.courtImg.split(',') || [];
+    // Function to extract image URLs from the courtImg string
+    const extractImageUrls = (courtImg) => {
+        const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+        let matches;
+        const urls = [];
+        while ((matches = regex.exec(courtImg)) !== null) {
+            urls.push(matches[1]);
+        }
+        return urls;
+    }
+
+    const images = mainCourt ? extractImageUrls(mainCourt.courtImg) : [];
 
     return (
         <div className="viewcourtinfo">
@@ -258,12 +271,12 @@ const ViewCourtInfo = () => {
                         <div className="viewcourtinfo-othercourts-content">
                             {recommendedCourts.map((court, index) => (
                                 <div key={index} className="viewcourtinfo-other-pic">
-                                    <img className="viewcourtinfo-other-img" src={court.courtImg} alt="" />
+                                    <img className="viewcourtinfo-other-img" src={extractImageUrls(court.courtImg)[0]?.trim()} alt="" />
                                     <div className="viewcourtinfo-other-info">
                                         <h2>Court Name: {court.courtName}</h2>
                                         <p>Address: {branch?.location}</p>
                                         <p>Branch: {branch?.branchName}</p>
-                                        <p>Price: {mainCourt?.price}</p>
+                                        <p>Price: {court.price}</p>
                                         <div className="viewcourtinfo-other-des">
                                             <h1 className='viewcourtinfo-other-des-h1'>Description:</h1>
                                             <p className='viewcourtinfo-other-des-p'>{court.description}</p>
