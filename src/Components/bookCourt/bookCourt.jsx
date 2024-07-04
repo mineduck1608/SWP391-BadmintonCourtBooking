@@ -6,24 +6,29 @@ import { jwtDecode } from 'jwt-decode';
 import { HttpStatusCode } from "axios";
 
 const BookCourt = () => {
-    const [bookingType, setBookingType] = useState('fixed') //once, fixed, flexible
+    const [bookingType, setBookingType] = useState('') //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts if active
     const [paymentType, setPaymentType] = useState('') //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
     const [timeError, setTimeError] = useState(0) //
-    const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
+    const [transferMethod, setTransferMethod] = useState(0) //momo, vnpay
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
     const apiUrl = "https://localhost:7233"
     const [selectedBranch, setSelectedBranch] = useState({})
+    const [user, setUser] = useState({})
     const fetchBranches = async () => {
         try {
             setBranches(b => [])
             const branchData = await (
-                await fetch(`${apiUrl}/Branch/GetAll`)
+                await fetch(`${apiUrl}/Branch/GetAll`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+                    }
+                })
             ).json()
             for (let index = 0; index < branchData.length; index++) {
                 if ((branchData[index])["branchStatus"] === 1) {
@@ -79,6 +84,30 @@ const BookCourt = () => {
         }
     }
     useEffect(() => {
+        async function getUser() {
+            console.log('get user');
+            var token = sessionStorage.getItem('token')
+            if (!token) {
+            } else {
+                try {
+                    var decodedToken = jwtDecode(token)
+                    var data = await (await
+                        fetch(`${apiUrl}/User/GetById?id=${decodedToken['UserId']}`,
+                            {
+                                method: 'get',
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            }
+                        )).json()
+                    setUser(data)
+                }
+                catch (err) {
+                    console.log('error getting user');
+                    console.log(err);
+                }
+            }
+        }
         async function startFetch() {
             await fetchBranches()
             await fetchCourts()
@@ -89,10 +118,9 @@ const BookCourt = () => {
             setCurDate(new Date())
         }
         loadData()
-
+        getUser()
     }, [])
-    const checkAvailableSlot = async () => {
-        let courtId = courtInfo['id']
+    const checkAvailableSlot = async (courtId) => {
         // console.log("Check for: " + courtId);
         try {
             if (validateDateTime() === 0) {
@@ -109,7 +137,8 @@ const BookCourt = () => {
                     + `id=${courtId}`, {
                     method: 'post',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
                     }
                 })
                 const data = await res.json()
@@ -129,7 +158,7 @@ const BookCourt = () => {
         try {
             const data = courts.find(c => c.courtId === id)
             setCourtInfo(data)
-            await checkAvailableSlot()
+            await checkAvailableSlot(document.getElementById('court').value)
         } catch (error) {
             console.log(error);
         }
@@ -140,11 +169,12 @@ const BookCourt = () => {
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
+        if (selectedDate === '' || t1 === '' || t2 === '') return -1
         var startTime = Date.parse(selectedDate) + t1 * 3600000
         var endTime = Date.parse(selectedDate) + t2 * 3600000
         var curDateNum = Date.parse(curDate)
         var r = 0
-        if (startTime > endTime) r = 1
+        if (startTime >= endTime) r = 1
         if (startTime < curDateNum) r = 2
         setTimeError(t => r)
         // console.log(r);
@@ -152,12 +182,16 @@ const BookCourt = () => {
     }
 
     const validateBooking = () => {
-        var t = (validateDateTime() === 0)
-        try {
-            return t && courtInfo['courtStatus'] && !isOccupied;
-        } catch (error) {
-            return false;
-        }
+        var tmp = (validateDateTime() === 0)
+        if (tmp)
+            try {
+                console.log(paymentType);
+                var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
+                tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
+                return tmp
+            } catch (error) {
+                return false;
+            }
     };
 
     const completeBooking = async () => {
@@ -171,20 +205,7 @@ const BookCourt = () => {
             console.log(error);
         }
     };
-    const getFromJwt = () => {
-        var token = sessionStorage.getItem('token')
-        if (!token) {
-        } else {
-            try {
-                var decodedToken = jwtDecode(token)
-                return decodedToken['UserId']
-            }
-            catch (err) {
 
-            }
-        }
-        return ''
-    }
     function handleCalcAmount() {
         try {
             let startTime = document.getElementById('time-start').value
@@ -215,7 +236,7 @@ const BookCourt = () => {
                 + `Method=${transferMethod}&`
                 + `Start=${startTime}&`
                 + `End=${endTime}&`
-                + `UserId=${getFromJwt()}&`
+                + `UserId=${user['userId']}&`
                 + `Date=${date}&`
                 + `CourtId=${courtInfo['courtId']}&`
                 + `Type=${bookingType}&`
@@ -226,7 +247,7 @@ const BookCourt = () => {
                 + `start=${startTime}&`
                 + `end=${endTime}&`
                 + `courtId=${courtInfo['courtId']}&`
-                + `userId=${getFromJwt()}`
+                + `userId=${user['userId']}`
             try {
                 var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
                     {
@@ -244,7 +265,15 @@ const BookCourt = () => {
                     }
                 }
                 else {
-                    window.location.assign(res.status === HttpStatusCode.Ok ? '/paySuccess?msg=Success' : '/payFail')
+                    if (res.status === HttpStatusCode.Ok)
+                        window.location.assign('/bookingHistory')
+                    else {
+                        const data = await res.json()
+                        const msg = data['msg']
+                        if (msg.includes('not enough')) {
+                            alert(msg)
+                        }
+                    }
                 }
             }
             catch (err) {
@@ -306,7 +335,7 @@ const BookCourt = () => {
 
                         <select id="court" name="court" onChange={() => {
                             loadCourtInfo(document.getElementById('court').value)
-                            checkAvailableSlot()
+                            checkAvailableSlot(document.getElementById('court').value)
                             handleCalcAmount()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
@@ -367,28 +396,28 @@ const BookCourt = () => {
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
                             if (validateDateTime() === 0) {
-                                checkAvailableSlot()
+                                checkAvailableSlot(document.getElementById('court').value)
                                 handleCalcAmount()
                             }
                         }}>
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00</option>
+                                    <option value={t}>{t}:00:00</option>
                                 ))
                             }
                         </select>
                         <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => {
                             if (validateDateTime() === 0) {
-                                checkAvailableSlot()
+                                checkAvailableSlot(document.getElementById('court').value)
                                 handleCalcAmount()
                             }
                         }}>
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00</option>
+                                    <option value={t}>{t}:00:00</option>
                                 ))
                             }
                         </select>
@@ -402,7 +431,7 @@ const BookCourt = () => {
                         <label htmlFor="day">Day: </label>
                         <input type="date" id="datePicker" onChange={() => {
                             if (validateDateTime() === 0) {
-                                checkAvailableSlot()
+                                checkAvailableSlot(document.getElementById('court').value)
                                 handleCalcAmount()
                             }
                         }} />
@@ -417,11 +446,16 @@ const BookCourt = () => {
                     <div className="bookcourt-status">
                         <h2 className="notes">
                             4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
-                        <span>Price: <span className='priceSpan'>{formatNumber(amount)}</span></span>
+                        <p>Price: <span className='priceSpan'>{formatNumber(amount)}</span></p>
+                        <p>Your balance:
+                            <span className='priceSpan'>
+                                {' ' + (Object.is(user, undefined) || Object.is(user['balance'], undefined) ? '_' : formatNumber(user['balance']))}
+                            </span>
+                        </p>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
-                                onChange={() => { setPaymentType(p => 'banking') }}
+                                onChange={() => { setPaymentType('banking') }}
                                 checked={paymentType === 'banking'}
                             />
                             <span>Banking</span>
@@ -432,7 +466,7 @@ const BookCourt = () => {
                                 <div className='inlineDiv'>
                                     <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
                                         onChange={() => {
-                                            setPaymentType(p => 'flexible')
+                                            setPaymentType('flexible')
                                         }}
                                         checked={paymentType === 'flexible'}
                                     />
