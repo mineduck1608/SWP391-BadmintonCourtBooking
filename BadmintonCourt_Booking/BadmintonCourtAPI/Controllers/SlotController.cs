@@ -396,9 +396,20 @@ namespace BadmintonCourtAPI.Controllers
 			if (status)
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
-				_service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, "Thanks for your purchasement. Your slot has been updated. You can now check it", "BMTC - Slot Update Notification");
-			}
-			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
+                _service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, $@"
+<p>Dear {_service.UserDetailService.GetUserDetailById(userId).FirstName + " " + _service.UserDetailService.GetUserDetailById(userId).LastName},</p>
+<p>Thank you for your purchase. Your slot has been updated. You can now check it on your account.</p>
+<p>If you have any questions or need further assistance, please contact us.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+"BMTC - Slot Update Notification");
+
+            }
+            return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
 
 		private bool UpdateNewSlotToDB(string expected, string actual, string content, string transactionId, double amount, DateTime transactionPeriod, int method)
@@ -473,9 +484,20 @@ namespace BadmintonCourtAPI.Controllers
 			if (status)
 			{
 				string userId = result.OrderInfo.Split('|')[0].Trim().Split(':')[1].Trim();
-				_service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, "Thanks for your purchasement. Your slot has been updated. You can now check it", "BMTC - Slot Update Notification");
-			}
-			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
+                _service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, $@"
+<p>Dear {_service.UserDetailService.GetUserDetailById(userId).FirstName + " " + _service.UserDetailService.GetUserDetailById(userId).LastName},</p>
+<p>Thank you for your purchase. Your slot has been updated. You can now check it on your account.</p>
+<p>If you have any questions or need further assistance, please contact us.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+"BMTC - Slot Update Notification");
+
+            }
+            return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
 
 
