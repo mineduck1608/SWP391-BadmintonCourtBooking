@@ -294,6 +294,7 @@ const FindCourt = () => {
                       onChange={handleBranchChange}
                       value={selectedBranch}
                     >
+                      <option value="">All</option>
                       {branches.map((branch) => (
                         <option key={branch.branchId} value={branch.branchId}>
                           {branch.branchName}
@@ -308,6 +309,7 @@ const FindCourt = () => {
                       onChange={handleCourtChange}
                       value={selectedCourt}
                     >       
+                      <option value="">All</option>
                       {courts
                         .filter(court => !selectedBranch || court.branchId === selectedBranch)
                         .map((court) => (
@@ -364,7 +366,7 @@ const FindCourt = () => {
                           <p>Rating: <span className="stars">{renderStars(fb.rating)}</span></p>
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                           <p>Feedback: {fb.content}</p>
-                          {user && user.userId === userIdToken && <button onClick={() => handleEdit(fb.feedbackId, fb.rating, fb.content)}>Edit</button>}
+                          {user && user.userId === userIdToken && <button className="find-court-edit-feedback-btn" onClick={() => handleEdit(fb.feedbackId, fb.rating, fb.content)}>Edit</button>}
                         </div>
                       </div>
                     );
@@ -379,17 +381,31 @@ const FindCourt = () => {
         <Footer />
       </div>
       <Modal
-        title={selectedFeedback ? "Edit Feedback" : "Add Feedback"}
+        title={<div className="findcourt-modal-title">Edit Feedback</div>}
         visible={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
+        footer={[
+          <Button key="cancel" onClick={handleModalCancel} className="findcourt-modal-cancel-btn">
+            Cancel
+          </Button>,
+          <Button key="ok" type="primary" onClick={handleModalOk} className="findcourt-modal-ok-btn">
+            OK
+          </Button>,
+        ]}
+        className="findcourt-modal"
       >
-        <Rate onChange={setNewRating} value={newRating} />
-        <TextArea
-          rows={4}
-          onChange={(e) => setNewContent(e.target.value)}
-          value={newContent}
-        />
+        <div className="findcourt-modal-content">
+          <div className="findcourt-rating-container">
+            <p>Rating: </p>
+            <Rate onChange={setNewRating} value={newRating} />
+          </div>
+          <TextArea
+            rows={4}
+            onChange={(e) => setNewContent(e.target.value)}
+            value={newContent}
+          />
+        </div>
       </Modal>
     </div>
   );
