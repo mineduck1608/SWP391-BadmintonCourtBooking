@@ -299,8 +299,19 @@ namespace BadmintonCourtAPI.Controllers
 					user.ActionPeriod = DateTime.Now;
 					user.Token = token;
 					_service.UserService.UpdateUser(user, user.UserId);
-					_service.MailService.SendMail(info.Email, $"Click <a href='{verifyUrl}?rawToken={token}:2'>HERE</a> to verify your reset-password process", "BMTC - Account Reset-Password Verification");
-					return Ok(new { msg = "Please check your mail box to verify the reset-pass process" });
+                    _service.MailService.SendMail(info.Email, $@"
+<p>Dear {info.FirstName + " " + info.LastName},</p>
+<p>We received a request to reset your password for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>
+<p><a href='{verifyUrl}?rawToken={token}:2'>HERE</a></p>
+<p>If you did not request a password reset, please ignore this email or contact us for support.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+"BMTC - Account Reset-Password Verification");
+                    return Ok(new { msg = "Please check your mail box to verify the reset-pass process" });
 				}
 				return BadRequest(new { msg = "Locked! Contact Admin" });
 			}
@@ -397,8 +408,20 @@ namespace BadmintonCourtAPI.Controllers
 					user.Token = token;
 					_service.UserService.UpdateUser(user, id);
 					_service.UserDetailService.UpdateUserDetail(info, id);
-					_service.MailService.SendMail(email, $"Click <a href='{verifyUrl}?rawToken={token}:3:{email}'>HERE</a> to verify your update-mail profile process", "BMTC - Account Update Mail Profile Verification");
-					return Ok(new { msg = "Please check your mail box to activate your new email" });
+                    _service.MailService.SendMail(email, $@"
+<p>Dear {info.FirstName + " " + info.LastName},</p>
+<p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your update-mail profile process:</p>
+<p><a href='{verifyUrl}?rawToken={token}:3:{email}'>HERE</a></p>
+<p>If you did not request an email update, please ignore this email or contact us for support.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+"BMTC - Account Update Mail Profile Verification");
+
+                    return Ok(new { msg = "Please check your mail box to activate your new email" });
 				}
 				else return BadRequest(new { msg = "Email registered" });
 			}
@@ -459,8 +482,41 @@ namespace BadmintonCourtAPI.Controllers
 				Phone = phone,
 			});
 
-			_service.MailService.SendMail(email, $"<table {style}><tr><td {style}>Username</td><td {style}>{username}</td></tr><tr><td {style}>First name</td><td>{firstName}</td></tr><tr><td {style}>Last name</td><td {style}>{lastName}</td><tr><td {style}>Phone number</td><td {style}>{phone}</td></tr></table><br>  Click <a href='{verifyUrl}?rawToken={token}:1'>HERE</a> to verify your account", "BMTC - Account Registration Verification");
-			return Ok(new { token = token }); // Trả lại để check chơi
+            string style = "style='padding: 8px; border: 1px solid #ddd;'";
+
+            _service.MailService.SendMail(email, $@"
+<table {style}>
+    <tr>
+        <td {style}>Username</td>
+        <td {style}>{username}</td>
+    </tr>
+    <tr>
+        <td {style}>First name</td>
+        <td {style}>{firstName}</td>
+    </tr>
+    <tr>
+        <td {style}>Last name</td>
+        <td {style}>{lastName}</td>
+    </tr>
+    <tr>
+        <td {style}>Phone number</td>
+        <td {style}>{phone}</td>
+    </tr>
+</table>
+<br>
+<p>Dear {firstName + " " + lastName},</p>
+<p>Thank you for registering an account with BadmintonCourtBooking. Please click the link below to verify your account:</p>
+<p><a href='{verifyUrl}?rawToken={token}:1'>HERE</a></p>
+<p>If you did not register for this account, please ignore this email or contact us for support.</p>
+<p>Best regards,<br>
+BadmintonCourtBooking BMTC</p>
+<p>Contact Information:<br>
+Phone: 0977300916<br>
+Address: 123 Badminton St, Hanoi, Vietnam<br>
+Email: externalauthdemo1234@gmail.com</p>",
+            "BMTC - Account Registration Verification");
+
+            return Ok(new { token = token }); // Trả lại để check chơi
 											  // Vào demo thực tế sẽ bỏ
 		}
 
