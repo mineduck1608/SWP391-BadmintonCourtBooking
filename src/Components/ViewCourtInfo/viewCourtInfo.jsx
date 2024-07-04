@@ -51,8 +51,8 @@ const ViewCourtInfo = () => {
                 const slotData = await slotResponse.json();
 
                 console.log('Fetched court data:', courtData); // Log court data to console
-                console.log('Fetched court data:', branchData);
-                console.log('Fetched court data:', slotData);
+                console.log('Fetched branch data:', branchData);
+                console.log('Fetched slot data:', slotData);
 
                 const params = new URLSearchParams(location.search);
                 const courtId = params.get('courtId');
