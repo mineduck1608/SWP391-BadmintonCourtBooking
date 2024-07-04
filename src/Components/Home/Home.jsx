@@ -18,8 +18,14 @@ const Home = ({ setSearchCriteria }) => {
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
 
-    const handleSearch = () => {
-        setSearchCriteria({ branch: selectedBranch, location: selectedLocation });
+    const handleBranchChange = (e) => {
+        setSelectedBranch(e.target.value);
+        setSearchCriteria({ branch: e.target.value, location: selectedLocation });
+    };
+
+    const handleLocationChange = (e) => {
+        setSelectedLocation(e.target.value);
+        setSearchCriteria({ branch: selectedBranch, location: e.target.value });
     };
 
     return (
@@ -42,9 +48,9 @@ const Home = ({ setSearchCriteria }) => {
                         <select 
                             id="branch" 
                             value={selectedBranch}
-                            onChange={(e) => setSelectedBranch(e.target.value)}
+                            onChange={handleBranchChange}
                         >
-                            <option value="">Choose court branch</option>
+                            <option value="">All Branch</option>
                             {branches.map(branch => (
                                 <option key={branch.id} value={branch.branchName}>
                                     {branch.branchName}
@@ -57,9 +63,9 @@ const Home = ({ setSearchCriteria }) => {
                         <select 
                             id="location" 
                             value={selectedLocation}
-                            onChange={(e) => setSelectedLocation(e.target.value)}
+                            onChange={handleLocationChange}
                         >
-                            <option value="">Choose location</option>
+                            <option value="">All Location</option>
                             {locations.map((location, index) => (
                                 <option key={index} value={location}>
                                     {location}
@@ -67,9 +73,6 @@ const Home = ({ setSearchCriteria }) => {
                             ))}
                         </select>
                     </div>
-                    <button className='btn' onClick={handleSearch}>
-                        Search
-                    </button>
                 </div>
             </div>
         </section>
