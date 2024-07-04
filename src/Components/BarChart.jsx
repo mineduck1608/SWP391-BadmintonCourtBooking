@@ -1,17 +1,66 @@
+import React, { useEffect, useState } from 'react';
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
-import { mockBarData as data } from "../data/mockData";
+
+const fetchData = async (url, options = {}) => {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+};
 
 const BarChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [branchAmounts, setBranchAmounts] = useState([]);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const branches = await fetchData('https://localhost:7233/Branch/GetAll');
+        const courts = await fetchData('https://localhost:7233/Court/GetAll');
+        const slots = await fetchData('https://localhost:7233/Slot/GetAll');
+        const token = sessionStorage.getItem('token');
+        const bookings = await fetchData('https://localhost:7233/Booking/GetAll', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        // Process data to calculate total amount for each branch
+        const branchAmounts = branches.map(branch => {
+          const branchCourts = courts.filter(court => court.branchId === branch.branchId);
+          const branchBookings = branchCourts.flatMap(court => 
+            slots.filter(slot => slot.courtId === court.courtId)
+                 .map(slot => bookings.find(booking => booking.bookingId === slot.bookingId)?.amount || 0)
+          );
+          const totalAmount = branchBookings.reduce((sum, amount) => sum + amount, 0);
+          return { branchName: branch.branchName, totalAmount };
+        });
+        
+        setBranchAmounts(branchAmounts);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
   return (
     <ResponsiveBar
-      data={data}
+      data={branchAmounts}
+      keys={['totalAmount']}
+      indexBy="branchName"
+      margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+      padding={0.3}
+      valueScale={{ type: "linear" }}
+      indexScale={{ type: "band", round: true }}
+      colors={{ scheme: "nivo" }}
       theme={{
-        // added
         axis: {
           domain: {
             line: {
@@ -39,44 +88,13 @@ const BarChart = ({ isDashboard = false }) => {
           },
         },
       }}
-      keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
-      indexBy="country"
-      margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-      padding={0.3}
-      valueScale={{ type: "linear" }}
-      indexScale={{ type: "band", round: true }}
-      colors={{ scheme: "nivo" }}
-      defs={[
-        {
-          id: "dots",
-          type: "patternDots",
-          background: "inherit",
-          color: "#38bcb2",
-          size: 4,
-          padding: 1,
-          stagger: true,
-        },
-        {
-          id: "lines",
-          type: "patternLines",
-          background: "inherit",
-          color: "#eed312",
-          rotation: -45,
-          lineWidth: 6,
-          spacing: 10,
-        },
-      ]}
-      borderColor={{
-        from: "color",
-        modifiers: [["darker", "1.6"]],
-      }}
       axisTop={null}
       axisRight={null}
       axisBottom={{
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "country", // changed
+        legend: isDashboard ? undefined : "Branch Name",
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -84,7 +102,7 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "food", // changed
+        legend: isDashboard ? undefined : "Total Amount",
         legendPosition: "middle",
         legendOffset: -40,
       }}
@@ -121,7 +139,7 @@ const BarChart = ({ isDashboard = false }) => {
       ]}
       role="application"
       barAriaLabel={function (e) {
-        return e.id + ": " + e.formattedValue + " in country: " + e.indexValue;
+        return e.id + ": " + e.formattedValue + " in branch: " + e.indexValue;
       }}
     />
   );
