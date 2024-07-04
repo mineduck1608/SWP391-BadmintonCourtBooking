@@ -18,7 +18,6 @@ const BookCourt = () => {
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
     const apiUrl = "https://localhost:7233"
-    const [queryCourt, setQueryCourt] = useState({})
     const [selectedBranch, setSelectedBranch] = useState({})
     const fetchBranches = async () => {
         try {
@@ -48,7 +47,7 @@ const BookCourt = () => {
                 if ((courtData[index])["courtStatus"] === true) {
                     setCourts(c => [...c, courtData[index]])
                     if (params.has('courtId') && courtData[index].courtId === params.get('courtId')) {
-                        setQueryCourt(courtData[index])
+                        setCourtInfo(courtData[index])
                         setSelectedBranch(courtData[index].branchId)
                     }
                 }
@@ -129,10 +128,10 @@ const BookCourt = () => {
     const loadCourtInfo = async (id) => {
         try {
             const data = courts.find(c => c.courtId === id)
-            setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
-            checkAvailableSlot()
+            setCourtInfo(data)
+            await checkAvailableSlot()
         } catch (error) {
-
+            console.log(error);
         }
     }
 
@@ -155,7 +154,7 @@ const BookCourt = () => {
     const validateBooking = () => {
         var t = (validateDateTime() === 0)
         try {
-            return t && courtInfo['status'] && !isOccupied;
+            return t && courtInfo['courtStatus'] && !isOccupied;
         } catch (error) {
             return false;
         }
@@ -164,7 +163,6 @@ const BookCourt = () => {
     const completeBooking = async () => {
         try {
             const result = validateBooking();
-            // console.log(result);
             if (result) {
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
                 fetchApi()
@@ -202,7 +200,7 @@ const BookCourt = () => {
     function calcAmount(bkType, price, start, end, month) {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
-        setAmount(a => Object.is(amount, NaN) ? 0 : amount)
+        setAmount(Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
     const fetchApi = async () => {
@@ -219,7 +217,7 @@ const BookCourt = () => {
                 + `End=${endTime}&`
                 + `UserId=${getFromJwt()}&`
                 + `Date=${date}&`
-                + `CourtId=${courtInfo['id']}&`
+                + `CourtId=${courtInfo['courtId']}&`
                 + `Type=${bookingType}&`
                 + `NumMonth=${monthNum}&`
                 + `Amount=${handleCalcAmount()}`
@@ -227,7 +225,7 @@ const BookCourt = () => {
                 + `date=${date}&`
                 + `start=${startTime}&`
                 + `end=${endTime}&`
-                + `courtId=${courtInfo['id']}&`
+                + `courtId=${courtInfo['courtId']}&`
                 + `userId=${getFromJwt()}`
             try {
                 var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
@@ -246,7 +244,7 @@ const BookCourt = () => {
                     }
                 }
                 else {
-                    window.location.assign(res.status === HttpStatusCode.Ok ? '/paySuccess?msg=success' : '/payFail')
+                    window.location.assign(res.status === HttpStatusCode.Ok ? '/paySuccess?msg=Success' : '/payFail')
                 }
             }
             catch (err) {
@@ -317,7 +315,7 @@ const BookCourt = () => {
                                     c['branchId'] === selectedBranch &&
                                     <option value={c["courtId"]}
                                         selected={
-                                            !Object.is(queryCourt, undefined) && c['courtId'] === queryCourt['courtId']
+                                            !Object.is(courtInfo, undefined) && c['courtId'] === courtInfo['courtId']
                                         }
                                     >{c["courtName"]}</option>
                                 ))
