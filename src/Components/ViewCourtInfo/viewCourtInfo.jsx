@@ -140,10 +140,12 @@ const ViewCourtInfo = () => {
                 slot.end === hourEnd
             );
 
+            const status = !mainCourt?.courtStatus ? 'maintenance' : isBooked ? 'booked' : 'available';
+
             hours.push({
                 start: hourStart.toString().padStart(2, '0') + ':00',
                 end: hourEnd.toString().padStart(2, '0') + ':00',
-                status: isBooked ? 'booked' : 'available'
+                status
             });
         }
         return hours;
@@ -260,7 +262,13 @@ const ViewCourtInfo = () => {
                                                 <div className="legend-text">Maintenance</div>
                                             </div>                                         
                                         </div>
-                                        <button className='timeline-viewCourt' onClick={() => handleBookCourtOption(mainCourt?.courtId)}>Book</button>
+                                        <button 
+                                            className='timeline-viewCourt' 
+                                            onClick={() => handleBookCourtOption(mainCourt?.courtId)} 
+                                            disabled={!mainCourt?.courtStatus}
+                                        >
+                                            Book
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -282,7 +290,13 @@ const ViewCourtInfo = () => {
                                             <p className='viewcourtinfo-other-des-p'>{court.description}</p>
                                         </div>
                                         <div className="other-court-button">
-                                            <button className='viewCourt' onClick={() => handleBookCourt(court.courtId)}>Book</button>
+                                            <button 
+                                                className='viewCourt' 
+                                                onClick={() => handleBookCourt(court.courtId)}
+                                                disabled={!court.courtStatus}
+                                            >
+                                                Book
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

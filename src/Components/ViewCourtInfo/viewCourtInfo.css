@@ -88,10 +88,12 @@
 }
 
 .viewcourtinfo-slider img {
-    width: 100%;
-    height: auto;
+    width: 700px;
+    height: 400px;
     border-radius: 10px;
     box-shadow: var(--primary-shadow);
+    object-fit: cover;
+    object-position: center;
 }
 
 .arrow-left, .arrow-right {
@@ -267,6 +269,12 @@
 
 .viewCourt:hover {
     background-color: var(--HoverColor);
+}
+
+/* Styles for disabled buttons */
+.viewCourt:disabled, .timeline-viewCourt:disabled {
+    background-color: var(--grey-color);
+    cursor: not-allowed;
 }
 
 .viewcourtinfo-othercourts-body {
