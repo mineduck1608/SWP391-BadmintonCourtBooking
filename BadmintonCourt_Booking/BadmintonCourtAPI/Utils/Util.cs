@@ -127,7 +127,20 @@ namespace BadmintonCourtAPI.Utils
 
 		public static bool ArePricesValid(double? min, double? max) => min < max;
 
-		public static bool IsLeapYear(int? year) => year == null ? false : year % 4 == 0 || year % 400 == 0;
+		public static bool IsLeapYear(int? year)
+		{
+			if (year == null || year % 4 != 0 || year < 0)
+				return false;
+
+			if (year % 100 != 0)
+				return true;
+			else
+			{
+				if (year % 400 == 0)
+					return true;
+				return false;
+			}
+		}
 
 		public static List<DashboardResponseDTO> GenerateYearDashboard(int year, List<Payment> pList)
 		{

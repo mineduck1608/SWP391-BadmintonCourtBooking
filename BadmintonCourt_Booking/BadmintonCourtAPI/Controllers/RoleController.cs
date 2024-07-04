@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using BadmintonCourtAPI.Utils;
+using BadmintonCourtDAOs;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -17,6 +18,13 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				_service = new BadmintonCourtService(config);
 			}
+		}
+
+
+		public RoleController(RoleDAO dao)
+		{
+			if (_service == null)
+				_service = new BadmintonCourtService(dao);
 		}
 
 

@@ -1,4 +1,5 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
+using BadmintonCourtDAOs;
 using BadmintonCourtServices.IService;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -87,5 +88,9 @@ namespace BadmintonCourtServices
 				MailService = new MailService();
 		}
 
+		public BadmintonCourtService(RoleDAO dao)
+		{
+			RoleService = new RoleService(dao);
+		}
 	}
 }

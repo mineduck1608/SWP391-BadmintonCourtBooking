@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="APITests\" />
     <Folder Include="ServiceTests\" />
   </ItemGroup>
 

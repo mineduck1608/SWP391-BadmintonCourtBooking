@@ -266,7 +266,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Payment/Statistic")]
-		[Authorize]
+		//[Authorize]
 		public async Task<ActionResult<IEnumerable<DashboardResponseDTO>>> GetPaymentsForStatistic(DashboardRequestDTO model)
 		{
 
@@ -274,8 +274,8 @@ namespace BadmintonCourtAPI.Controllers
 																			  //-----------------------------------------------------------
 			model.Type = model.Type == null ? 1 : model.Type; // Type ko nhập mặc định sẽ là loại dashboard năm
 															  //-----------------------------------------------------------
-			DateTime start = new DateTime(model.Year.Value, 12, 31, 23, 59, 59);
-			DateTime end = new DateTime(model.Year.Value, 1, 1, 0, 0, 0);
+			DateTime end = new DateTime(model.Year.Value, 12, 31, 23, 59, 59);
+			DateTime start = new DateTime(model.Year.Value, 1, 1, 0, 0, 0);
 			List<Payment> pList = _service.PaymentService.GetAllPayments().Where(x => x.Date >= start && x.Date <= end).ToList();
 			//-----------------------------------------------------------
 			if (model.Type == 1) // Dashboard năm
@@ -288,10 +288,10 @@ namespace BadmintonCourtAPI.Controllers
 					if (model.StartMonth == null || model.MonthNum == null)
 						return BadRequest(new { msg = "Invalid month" });
 					//-----------------------------------------------------
-					if (model.MonthNum == 11) // Tháng 11 thì chỉ đc xem nhiều nhất 11 12 hoặc chỉ 11	
+					if (model.StartMonth == 11) // Tháng 11 thì chỉ đc xem nhiều nhất 11 12 hoặc chỉ 1
 						model.MonthNum = model.MonthNum == 3 ? 2 : model.MonthNum; // Nếu chọn 3 mặc định sẽ đưa về 2 
 																				   //-----------------------------------------------------
-					else if (model.MonthNum == 12)
+					else if (model.StartMonth == 12)
 						model.MonthNum = model.MonthNum == 3 || model.MonthNum == 2 ? 1 : model.MonthNum; // Nhập 3 hay 2 đều đưa về 1
 																										  //-----------------------------------------------------
 					return Ok(Util.GenerateMonthDashboard(model.Year.Value, model.StartMonth.Value, model.MonthNum.Value, pList));

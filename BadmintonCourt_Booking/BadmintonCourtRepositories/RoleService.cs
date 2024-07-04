@@ -22,6 +22,11 @@ namespace BadmintonCourtServices
             }
         }
 
+        public RoleService(RoleDAO dao)
+        {
+            _roleDAO = dao;
+        }
+
         public void AddRole(Role role) => _roleDAO.AddRole(role);
 
         public void DeleteRole(string id) => _roleDAO.DeleteRole(id);
