@@ -4,12 +4,11 @@ import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 import { HttpStatusCode } from "axios";
-import { getHours } from 'date-fns';
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('fixed') //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
-    const [courts, setCourts] = useState([]) //all courts of that branch, if active
+    const [courts, setCourts] = useState([]) //all courts if active
     const [paymentType, setPaymentType] = useState('') //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
     const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
@@ -19,7 +18,8 @@ const BookCourt = () => {
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
     const apiUrl = "https://localhost:7233"
-    const [queryCourt, setQueryCourt] = useState('')
+    const [queryCourt, setQueryCourt] = useState({})
+    const [selectedBranch, setSelectedBranch] = useState({})
     const fetchBranches = async () => {
         try {
             setBranches(b => [])
@@ -38,14 +38,19 @@ const BookCourt = () => {
     }
     const fetchCourts = async () => {
         try {
-            var branchId = document.getElementById("branch").value
+            var queryStr = window.location.search
+            var params = new URLSearchParams(queryStr)
             setCourts([])
             const courtData = await (
-                await fetch(`${apiUrl}/Court/GetByBranch?id=${branchId}`)
+                await fetch(`${apiUrl}/Court/GetAll`)
             ).json()
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
                     setCourts(c => [...c, courtData[index]])
+                    if (params.has('courtId') && courtData[index].courtId === params.get('courtId')) {
+                        setQueryCourt(courtData[index])
+                        setSelectedBranch(courtData[index].branchId)
+                    }
                 }
             }
         }
@@ -75,15 +80,17 @@ const BookCourt = () => {
         }
     }
     useEffect(() => {
-        fetchBranches()
-        loadTimeFrame()
-        setCurDate(new Date())
-        //Query court id
-        var queryStr = window.location.search
-        var params = new URLSearchParams(queryStr)
-        if (params.has('courtId')) {
-            setQueryCourt(params.get('courtId'))
+        async function startFetch() {
+            await fetchBranches()
+            await fetchCourts()
         }
+        async function loadData() {
+            await startFetch()
+            await loadTimeFrame()
+            setCurDate(new Date())
+        }
+        loadData()
+
     }, [])
     const checkAvailableSlot = async () => {
         let courtId = courtInfo['id']
@@ -114,29 +121,21 @@ const BookCourt = () => {
             console.log(err);
         }
     }
-    useEffect(() => {
-        try {
-            checkAvailableSlot()
-        }
-        catch (err) {
-
-        }
-    }, [courtInfo])
 
     useEffect(() => {
         handleCalcAmount()
     }, [courtInfo, bookingType])
 
-    const loadCourtInfo = async () => {
+    const loadCourtInfo = async (id) => {
         try {
-            const selectedCourt = document.getElementById("court").value;
-            const response = await fetch(`${apiUrl}/Court/GetById?id=${selectedCourt}`);
-            const data = await response.json();
+            const data = courts.find(c => c.courtId === id)
             setCourtInfo({ id: data['courtId'], price: data['price'], status: data['courtStatus'] })
+            checkAvailableSlot()
         } catch (error) {
 
         }
     }
+
     const validateDateTime = () => {
         // console.log('Validate time');
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
@@ -152,11 +151,9 @@ const BookCourt = () => {
         // console.log(r);
         return r
     }
+
     const validateBooking = () => {
-        //reset
-        // console.log('Validate booking');
         var t = (validateDateTime() === 0)
-        // console.log("DateTime: " + t);
         try {
             return t && courtInfo['status'] && !isOccupied;
         } catch (error) {
@@ -279,7 +276,6 @@ const BookCourt = () => {
         while (n > 0)
         return rs
     }
-
     return (
         <div className="bookCourt-container">
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
@@ -290,13 +286,18 @@ const BookCourt = () => {
                         <label htmlFor="branch">BRANCH:</label>
 
                         <select id="branch" name="branch" onChange={() => {
-                            fetchCourts()
+                            setSelectedBranch(document.getElementById('branch').value)
                         }}>
                             <option value="" hidden selected>Choose a branch</option>
                             {
                                 branches.map(b =>
                                 (
-                                    <option value={b["branchId"]}>{b["branchName"]}</option>
+                                    <option value={b["branchId"]}
+                                        //Set selected branch
+                                        selected={
+                                            !Object.is(selectedBranch, undefined) && selectedBranch === b['branchId']
+                                        }
+                                    >{b["branchName"]}</option>
                                 )
                                 )
                             }
@@ -306,14 +307,19 @@ const BookCourt = () => {
                         <label htmlFor="court">COURT:</label>
 
                         <select id="court" name="court" onChange={() => {
-                            loadCourtInfo()
+                            loadCourtInfo(document.getElementById('court').value)
                             checkAvailableSlot()
                             handleCalcAmount()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
                             {
                                 courts.map((c, i) => (
-                                    <option value={c["courtId"]} selected={c['courtId' === queryCourt]}>{c["courtName"]}</option>
+                                    c['branchId'] === selectedBranch &&
+                                    <option value={c["courtId"]}
+                                        selected={
+                                            !Object.is(queryCourt, undefined) && c['courtId'] === queryCourt['courtId']
+                                        }
+                                    >{c["courtName"]}</option>
                                 ))
                             }
                         </select>
@@ -412,7 +418,7 @@ const BookCourt = () => {
 
                     <div className="bookcourt-status">
                         <h2 className="notes">
-                        4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
+                            4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
                         <span>Price: <span className='priceSpan'>{formatNumber(amount)}</span></span>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
