@@ -271,6 +271,12 @@
     background-color: var(--HoverColor);
 }
 
+/* Styles for disabled buttons */
+.viewCourt:disabled, .timeline-viewCourt:disabled {
+    background-color: var(--grey-color);
+    cursor: not-allowed;
+}
+
 .viewcourtinfo-othercourts-body {
     width: 100%;
     display: flex;
