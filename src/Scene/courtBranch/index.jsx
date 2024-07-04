@@ -97,6 +97,7 @@ const Branch = () => {
       [name]: value,
     });
   };
+  const token = sessionStorage.getItem('token');
 
   const handleSave = async () => {
     const { location, branchImg, branchName, branchPhone, branchStatus, branchId } = selectedBranch;
@@ -104,6 +105,10 @@ const Branch = () => {
     try {
       const response = await fetch(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}`, {
         method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
       });
 
       if (!response.ok) {
@@ -128,6 +133,7 @@ const Branch = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           location,
