@@ -12,17 +12,13 @@ import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import PaymentIcon from '@mui/icons-material/Payment';
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { jwtDecode } from 'jwt-decode';
-
-
+import {jwtDecode} from 'jwt-decode';  // Fixed import statement
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
     const theme = useTheme();
@@ -40,7 +36,6 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
         </MenuItem>
     );
 };
-
 
 const Sidebar = () => {
     const theme = useTheme();
@@ -86,7 +81,6 @@ const Sidebar = () => {
         navigate('/'); // Redirect to home on logout
     };
 
-
     return (
         <Box className="sidebar-wrapper"
             sx={{
@@ -123,7 +117,6 @@ const Sidebar = () => {
                                 alignItems="center"
                                 ml="15px"
                             >
-
                                 <Link className="logo" to="/">
                                     <MdSportsTennis className="iconSidebar"/>
                                 </Link>
@@ -244,23 +237,9 @@ const Sidebar = () => {
                             setSelected={setSelected}
                         />
                         <Item className="menu-item"
-                            title="Pie Chart"
-                            to="pie"
-                            icon={<PieChartOutlineOutlinedIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
-                        <Item className="menu-item"
                             title="Line Chart"
                             to="line"
                             icon={<TimelineOutlinedIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
-                        <Item className="menu-item"
-                            title="Geography Chart"
-                            to="geography"
-                            icon={<MapOutlinedIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
