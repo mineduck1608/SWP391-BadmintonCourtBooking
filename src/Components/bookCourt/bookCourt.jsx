@@ -185,8 +185,8 @@ const BookCourt = () => {
         var tmp = (validateDateTime() === 0)
         if (tmp)
             try {
-                console.log(paymentType);
                 var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
+                if(!checkBalance) alert('Balance not enough')
                 tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
                 return tmp
             } catch (error) {
@@ -267,6 +267,7 @@ const BookCourt = () => {
                 else {
                     if (res.status === HttpStatusCode.Ok)
                         window.location.assign('/bookingHistory')
+                    
                     else {
                         const data = await res.json()
                         const msg = data['msg']

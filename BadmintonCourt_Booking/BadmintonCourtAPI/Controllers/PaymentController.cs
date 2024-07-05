@@ -21,7 +21,7 @@ namespace BadmintonCourtAPI.Controllers
 	public class PaymentController : Controller
 	{
 		private readonly BadmintonCourtService _service = null;
-		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
+		private const string resultRedirectUrl = "http://localhost:3000/paySuccess";
 		private const string flexibleBooking = "flexible";
 		private const string playonceBooking = "playonce";
 		private const string fixedBooking = "fixed";

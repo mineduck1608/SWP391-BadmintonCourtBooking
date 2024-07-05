@@ -208,7 +208,7 @@ export default function ViewHistory() {
           {
             filterType == 'past' && (
           <td>
-             <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
+             <button onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>feedback</button>
           </td>
           )
         }
