@@ -183,3 +183,12 @@
   font-weight: 700;
   color: #f00;
 }
+
+.vh-feedback-btn{
+  background-color: #e68a00;
+  color: white;
+  border-radius: 5px;
+  width: 80px;
+  height: 30px;
+  border: none;
+}
