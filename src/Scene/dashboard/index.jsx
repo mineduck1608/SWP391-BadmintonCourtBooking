@@ -12,12 +12,14 @@ const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const currentYear = new Date().getFullYear();
+
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRevenue, setTotalRevenue] = useState(0);
 
   const [filterType, setFilterType] = useState("year");
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState(currentYear);
   const [startMonth, setStartMonth] = useState(1);
   const [numberOfMonths, setNumberOfMonths] = useState(1);
   const [weekOfMonth, setWeekOfMonth] = useState(1);
@@ -25,7 +27,7 @@ const Dashboard = () => {
   const [paymentStatistics, setPaymentStatistics] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchInitialData = async () => {
       try {
         setLoading(true);
         const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
@@ -39,6 +41,17 @@ const Dashboard = () => {
         // Calculate the total revenue
         const total = paymentResponse.data.reduce((sum, payment) => sum + payment.amount, 0);
         setTotalRevenue(total);
+
+        // Fetch initial statistics
+        const response = await axios.get(`https://localhost:7233/Payment/Statistic?Year=${currentYear}&Type=1&StartMonth=1&MonthNum=1&Week=1`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setPaymentStatistics(response.data);
+
+        // Calculate the total revenue from the fetched statistics
+        const initialTotal = response.data.reduce((sum, payment) => sum + payment.amount, 0);
+        setTotalRevenue(initialTotal);
+
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
@@ -46,7 +59,7 @@ const Dashboard = () => {
       }
     };
 
-    fetchData();
+    fetchInitialData();
   }, []);
 
   const handleFilterChange = (event) => {
