@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { HttpStatusCode } from 'axios';
 import { getHours } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function ViewHistory() {
   const [bookings, setBookings] = useState([]);
@@ -57,7 +58,7 @@ export default function ViewHistory() {
       }
     }
     catch (err) {
-      console.log(err);
+      toast.error('Server error')
     }
   }
   const formatNumber = (n) => {
@@ -71,6 +72,7 @@ export default function ViewHistory() {
       else rs = n + rs
       return rs
     }
+    n = Math.floor(n)
     var rs = ''
     do {
       rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
@@ -188,7 +190,7 @@ export default function ViewHistory() {
       const courtName = court ? court.courtName : 'Unknown Court';
       const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
       const branchName = branch ? branch.branchName : 'Unknown Branch';
-      
+
 
       return (
         !booking.isDeleted &&
@@ -207,11 +209,11 @@ export default function ViewHistory() {
           <td>{branchName}</td>
           {
             filterType == 'past' && (
-          <td>
-             <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
-          </td>
-          )
-        }
+              <td>
+                <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
+              </td>
+            )
+          }
 
           {
             filterType !== 'past' && (
@@ -280,7 +282,7 @@ export default function ViewHistory() {
         setPayment(payment)
       }
       catch (err) {
-
+        toast.error('Server error')
       }
     }
     await fetchPayment(bookingID)
@@ -305,16 +307,15 @@ export default function ViewHistory() {
       if (res.ok) {
         var data = await res.json()
         if (Object.is(data['url'], undefined)) {
-          alert('The change has been made!')
+          toast.success('Saved')
           window.location.reload()
         }
         else {
-          alert('You\'ll be redirect to the payment page')
           window.location.assign(data['url'])
         }
       }
       if (res.status === HttpStatusCode.BadRequest) {
-        alert('This booking cannot be changed, as it has already been changed 3 times')
+        toast.error('Couldn\'t change')
       }
     }
     let t = validateTime(formState.date, formState.start, formState.end)
@@ -329,7 +330,7 @@ export default function ViewHistory() {
         setFormState(initialState)
       }
       else {
-        alert('stupid')
+        toast.error('Invalid time')
       }
     }
     catch (err) {
@@ -339,20 +340,26 @@ export default function ViewHistory() {
 
   const cancelSlot = async () => {
     async function cancel(slotId, bookingId) {
-      var res = await fetch(`${apiUrl}/Slot/Cancel?`
+      return res = await fetch(`${apiUrl}/Slot/Cancel?`
         + `slotId=${slotId}&`
         + `bookingId=${bookingId}`
         , {
-          method: 'delete'
+          method: 'delete',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         })
-      var data = await res.json()
     }
     try {
-      await cancel(formState.slotId, formState.bookingId)
-      window.location.reload()
+      var res = await cancel(formState.slotId, formState.bookingId)
+      if (res.ok)
+        window.location.reload()
+      else {
+        toast.error('Couldn\'t change')
+      }
     }
     catch (err) {
-      alert(err)
+      toast.error('Server error')
     }
   }
 
@@ -424,6 +431,8 @@ export default function ViewHistory() {
       <Modal title='Edit slot'
         open={open}
         footer={null}
+        closable={false}
+        centered={true}
       >
         <span>
           <p>Booking: {formState.bookingId}</p>
@@ -477,25 +486,27 @@ export default function ViewHistory() {
           </select>
           <button className='view-history-button-small'
             onClick={handleOk}
-          >OK</button>
+          >Change slot</button>
           <button className='view-history-button-small'
             onClick={handleCancel}
-          >Cancel</button>
+          >Return</button>
         </span>
       </Modal>
       <Modal title='Confirm cancel'
         open={openCancel}
         footer={null}
+        centered={true}
+        closable={false}
       >
         <span>
           <p>Are you sure you want to cancel this slot?</p>
           <p id='warning'>THIS CANNOT BE UNDONE!</p>
           <button className='view-history-button-small'
             onClick={cancelSlot}
-          >OK</button>
+          >Cancel booking</button>
           <button className='view-history-button-small'
             onClick={handleCancel}
-          >Cancel</button>
+          >Return</button>
         </span>
       </Modal>
       <div className='view-history-header'>

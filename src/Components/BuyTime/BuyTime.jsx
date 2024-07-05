@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './BuyTime.css'
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 const BuyTime = () => {
   const [userID, setUserID] = useState('');
@@ -12,7 +13,6 @@ const BuyTime = () => {
   var token = sessionStorage.getItem('token')
   const validateAmount = () => {
     var temp = (document.getElementById('amount').value).toString()
-    console.log(temp);
     if (!Object.is(temp, undefined) && intRegex.test(temp)) {
       amount = parseInt(temp)
       setValidAmount(amount >= 10000)
@@ -30,7 +30,7 @@ const BuyTime = () => {
         var res = await fetch(`${apiUrl}/Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
-          + `Type=Flexible&`
+          + `Type=flexible&`
           + `Amount=${amount}`,
           {
             method: 'POST',
@@ -44,11 +44,11 @@ const BuyTime = () => {
           window.location.replace(data['url'])
         }
         catch (err) {
-
+          toast.error('Server error')
         }
       }
       catch (err) {
-        alert(err)
+        toast.error('Server error')
       }
     }
   }
@@ -78,8 +78,7 @@ const BuyTime = () => {
           }
         }
         catch (err) {
-          console.log(err)
-          console.log('1')
+          toast.error('Server error')
         }
       }
     }
@@ -97,6 +96,7 @@ const BuyTime = () => {
       else rs = n + rs
       return rs
     }
+    n = Math.floor(n)
     var rs = ''
     do {
       rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
