@@ -9,6 +9,7 @@ import { HttpStatusCode } from 'axios';
 import { getHours } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import CreateFeedbackModal from '../CreateFeedbackModal/CreateFeedbackModal';
 
 export default function ViewHistory() {
   const [bookings, setBookings] = useState([]);
@@ -385,9 +386,11 @@ export default function ViewHistory() {
   const currentDate = new Date();
   const currentDateString = currentDate.toDateString();
 
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [feedbackData, setFeedbackData] = useState({});
   const handleFeedbackClick = (bookingId, branchId, userId) => {
-    const token = sessionStorage.getItem('token');
-    navigate('/createFeedbackModal', { state: { bookingId, branchId, userId, token } });
+    setFeedbackData({ bookingId, branchId, userId });
+    setFeedbackModalVisible(true);
   };
 
   const renderNoBookingsMessage = (filterType) => {
@@ -610,6 +613,13 @@ export default function ViewHistory() {
       <div className='view-history-footer'>
         <Footer />
       </div>
+      <CreateFeedbackModal
+      visible={feedbackModalVisible}
+      onCancel={() => setFeedbackModalVisible(false)}
+      bookingId={feedbackData.bookingId}
+      branchId={feedbackData.branchId}
+      userId={feedbackData.userId}
+      />
     </div>
   );
 }
