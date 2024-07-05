@@ -35,6 +35,7 @@ import PaySuccess from './Components/PaySuccess/PaySuccess';
 import BuyFail from './Components/BuyFail/BuyFail';
 import GoogleMap from './Components/googleMap/googleMap';
 import VerifyAccount from './Components/verifyAccount/verifyAccount';
+import CreateFeedbackModal from './Components/CreateFeedbackModal/CreateFeedbackModal'; 
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -46,6 +47,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
+          {/* Define routes */}
           <Route path="/" element={<div><Navbar /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><Footer /></div>} />
           <Route path="/home" element={<div><Header /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><Footer /></div>} />
           <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />} />
@@ -77,6 +79,9 @@ const App = () => {
             <Route path="line" element={<Line />} />
             <Route path="geography" element={<Geography />} />
           </Route>
+
+          {/* Route for CreateFeedbackModal */}
+          <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />
         </Routes>
         <ToastContainer theme='colored' />
       </ThemeProvider>
