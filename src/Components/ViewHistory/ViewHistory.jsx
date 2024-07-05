@@ -178,52 +178,45 @@ export default function ViewHistory() {
     const sortedBookings = filteredBookings.sort((a, b) => {
       return new Date(b.bookingDate) - new Date(a.bookingDate);
     });
-
-    return sortedBookings.map((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date).toLocaleDateString() : 'N/A';
-      const startTime = slot ? formatTime(slot.start) : 'N/A';
-      const endTime = slot ? formatTime(slot.end) : 'N/A';
-      const courtId = slot ? slot.courtId : 'Unknown Court';
-      const court = courts.find(court => court.courtId === courtId);
-      const courtName = court ? court.courtName : 'Unknown Court';
-      const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
-      const branchName = branch ? branch.branchName : 'Unknown Branch';
-
-
-      return (
-        !booking.isDeleted &&
-        <tr key={booking.bookingId}>
-          <td>
-            {booking.bookingId}
-
-          </td>
-          <td>{formatNumber(booking.amount)}</td>
-          <td>{getBookingTypeLabel(booking.bookingType)}</td>
-          <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
-          <td>{slotDate}</td>
-          <td>{startTime}</td>
-          <td>{endTime}</td>
-          <td>{courtName}</td>
-          <td>{branchName}</td>
-          {
-            filterType == 'past' && (
+  
+    return sortedBookings.flatMap((booking) => {
+      const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
+  
+      return relatedSlots.map((slot) => {
+        const slotDate = new Date(slot.date).toLocaleDateString();
+        const startTime = formatTime(slot.start);
+        const endTime = formatTime(slot.end);
+        const courtId = slot.courtId;
+        const court = courts.find(court => court.courtId === courtId);
+        const courtName = court ? court.courtName : 'Unknown Court';
+        const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+        const branchName = branch ? branch.branchName : 'Unknown Branch';
+  
+        return (
+          !booking.isDeleted &&
+          <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
+            <td>{booking.bookingId}</td>
+            <td>{formatNumber(booking.amount)}</td>
+            <td>{getBookingTypeLabel(booking.bookingType)}</td>
+            <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+            <td>{slotDate}</td>
+            <td>{startTime}</td>
+            <td>{endTime}</td>
+            <td>{courtName}</td>
+            <td>{branchName}</td>
+            {filterType === 'past' ? (
               <td>
                 <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
               </td>
-            )
-          }
-
-          {
-            filterType !== 'past' && (
+            ) : (
               <td>
                 <button className='view-history-button' onClick={() => onClickEdit(slot)}>Edit</button>
                 <button className='view-history-button view-history-cancel-btn' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
               </td>
-            )
-          }
-        </tr>
-      );
+            )}
+          </tr>
+        );
+      });
     });
   };
 
@@ -629,4 +622,3 @@ export default function ViewHistory() {
     </div>
   );
 }
-
