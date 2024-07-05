@@ -81,6 +81,9 @@ namespace BadmintonCourtAPI.Controllers
 			tmpBalance = user.Balance.Value + refund;
 			newAmount = (endDate.Hour - startDate.Hour) * court.Price;
 		}
+
+		
+
 		private Dictionary<string, string> ExtractPaymentInfo(string content)
 		{
 			string[] components = content.Split('|');
@@ -105,6 +108,8 @@ namespace BadmintonCourtAPI.Controllers
 			}
 			return result;
 		}
+
+		private string GenerateMailBody(UserDetail info) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. Your slot has been updated. You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
 		[HttpGet]
 		[Route("Slot/GetAll")]
@@ -396,25 +401,30 @@ namespace BadmintonCourtAPI.Controllers
 			if (status)
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
-                _service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, $@"
-<p>Dear {_service.UserDetailService.GetUserDetailById(userId).FirstName + " " + _service.UserDetailService.GetUserDetailById(userId).LastName},</p>
-<p>Thank you for your purchase. Your slot has been updated. You can now check it on your account.</p>
-<p>If you have any questions or need further assistance, please contact us.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
-"BMTC - Slot Update Notification");
-
+				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
+				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
             }
+            return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
+		}
+		
+
+		[HttpGet]
+		[Route("Slot/UpdateResultProcessMomo")]
+		public async Task<IActionResult> ProcessResultMomo(MoMoRedirectResult result)
+		{
+			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), DateTime.Parse(result.ResponseTime.Split(' ')[0]), 2);
+			if (status)
+			{
+				string userId = result.OrderInfo.Split('|')[0].Trim().Split(':')[1].Trim();
+				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
+				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
+			}
             return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
 
 		private bool UpdateNewSlotToDB(string expected, string actual, string content, string transactionId, double amount, DateTime transactionPeriod, int method)
 		{
-			if (expected != actual) 
+			if (expected != actual)
 				return false;
 
 			Dictionary<string, string> infoStorage = ExtractPaymentInfo(content);
@@ -475,31 +485,6 @@ Email: externalauthdemo1234@gmail.com</p>",
 			_service.SlotService.UpdateSlot(slot, slotId);
 			return true;
 		}
-
-		[HttpGet]
-		[Route("Slot/UpdateResultProcessMomo")]
-		public async Task<IActionResult> ProcessResultMomo(MoMoRedirectResult result)
-		{
-			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), DateTime.Parse(result.ResponseTime.Split(' ')[0]), 2);
-			if (status)
-			{
-				string userId = result.OrderInfo.Split('|')[0].Trim().Split(':')[1].Trim();
-                _service.MailService.SendMail(_service.UserDetailService.GetUserDetailById(userId).Email, $@"
-<p>Dear {_service.UserDetailService.GetUserDetailById(userId).FirstName + " " + _service.UserDetailService.GetUserDetailById(userId).LastName},</p>
-<p>Thank you for your purchase. Your slot has been updated. You can now check it on your account.</p>
-<p>If you have any questions or need further assistance, please contact us.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
-"BMTC - Slot Update Notification");
-
-            }
-            return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
-		}
-
 
 	}
 }

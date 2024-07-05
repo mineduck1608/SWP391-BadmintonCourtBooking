@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Identity.Client.Extensions.Msal;
 using Microsoft.CodeAnalysis.Emit;
 using NuGet.Common;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -24,7 +25,10 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly IConfiguration _config;
 		private const string verifyUrl = "https://localhost:7233/User/VerifyAction";
 		private const string resetPassUrl = "http://localhost:3000/ResetPassword";
-		private const string style = "style=\"border: 1px solid black; border-collapse: collapse;\"";
+		private const string loginUrl = "http://localhost:3000/signin";
+		private const string registerMsg = "If you did not register for this account, ";
+		public const string emailUpdateMsg = "If you did not request an email update, ";
+		public const string resetPassMsg = "If you did not request a password reset, ";
 
 		public UserController(IConfiguration config)
 		{
@@ -55,6 +59,9 @@ namespace BadmintonCourtAPI.Controllers
 				result.Add(_service.UserDetailService.GetUserDetailById(item.UserId));
 			return result;
 		}
+
+		private string GenerateMailBody(int type) => "<p>" + (type == 1 ? registerMsg : (type == 2 ? resetPassMsg : emailUpdateMsg)) + "please ignore this email or contact us for support.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+
 
 		[HttpGet]
 		[Route("User/GetAll")]
@@ -299,18 +306,11 @@ namespace BadmintonCourtAPI.Controllers
 					user.ActionPeriod = DateTime.Now;
 					user.Token = token;
 					_service.UserService.UpdateUser(user, user.UserId);
-                    _service.MailService.SendMail(info.Email, $@"
-<p>Dear {info.FirstName + " " + info.LastName},</p>
-<p>We received a request to reset your password for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>
-<p><a href='{verifyUrl}?rawToken={token}:2'>HERE</a></p>
-<p>If you did not request a password reset, please ignore this email or contact us for support.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
-"BMTC - Account Reset-Password Verification");
+					int type = 2;
+					string begin = "<p>Dear ";
+					begin += (info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{mail}," : $"{info.FirstName} {info.LastName},";
+					begin += $"</p><p>We received a request to reset your password for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}'>HERE</a></p>";
+					_service.MailService.SendMail(info.Email, begin + GenerateMailBody(type), "BMTC - Account Reset-Password Verification");
                     return Ok(new { msg = "Please check your mail box to verify the reset-pass process" });
 				}
 				return BadRequest(new { msg = "Locked! Contact Admin" });
@@ -408,19 +408,13 @@ Email: externalauthdemo1234@gmail.com</p>",
 					user.Token = token;
 					_service.UserService.UpdateUser(user, id);
 					_service.UserDetailService.UpdateUserDetail(info, id);
-                    _service.MailService.SendMail(email, $@"
-<p>Dear {info.FirstName + " " + info.LastName},</p>
-<p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your update-mail profile process:</p>
-<p><a href='{verifyUrl}?rawToken={token}:3:{email}'>HERE</a></p>
-<p>If you did not request an email update, please ignore this email or contact us for support.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
-"BMTC - Account Update Mail Profile Verification");
-
+					//---------------------------------------------------------
+					int type = 3;
+					string begin = "<p>Dear ";
+					begin += (info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{email}," : $"{info.FirstName} {info.LastName},";
+					begin += $"</p><p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}:{email}'>HERE</a></p>";
+					//---------------------------------------------------------
+					_service.MailService.SendMail(email, begin + GenerateMailBody(type), "BMTC - Account Update Mail Profile Verification");
                     return Ok(new { msg = "Please check your mail box to activate your new email" });
 				}
 				else return BadRequest(new { msg = "Email registered" });
@@ -456,8 +450,6 @@ Email: externalauthdemo1234@gmail.com</p>",
 
 			string userId = "U" + (_service.UserService.GetAllUsers().Count() + 1).ToString("D7");
 			string token = Util.GenerateToken(userId, false, username, "R003", _config);
-			string content = $"Click to verify your account";
-
 			_service.UserService.AddUser(new User
 			{
 				UserId = userId,
@@ -482,8 +474,9 @@ Email: externalauthdemo1234@gmail.com</p>",
 				Phone = phone,
 			});
 
+			int type = 1;
             string style = "style='padding: 8px; border: 1px solid #ddd;'";
-
+			string begin = $"<p>Dear {firstName} {lastName}, <p>Thank you for registering an account with BadmintonCourtBooking. Please click the link below to activate your account:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}'>HERE</a></p>";
             _service.MailService.SendMail(email, $@"
 <table {style}>
     <tr>
@@ -503,21 +496,11 @@ Email: externalauthdemo1234@gmail.com</p>",
         <td {style}>{phone}</td>
     </tr>
 </table>
-<br>
-<p>Dear {firstName + " " + lastName},</p>
-<p>Thank you for registering an account with BadmintonCourtBooking. Please click the link below to verify your account:</p>
-<p><a href='{verifyUrl}?rawToken={token}:1'>HERE</a></p>
-<p>If you did not register for this account, please ignore this email or contact us for support.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
+<br>" + begin 
++ GenerateMailBody(type),
             "BMTC - Account Registration Verification");
-
-            return Ok(new { token = token }); // Trả lại để check chơi
-											  // Vào demo thực tế sẽ bỏ
+			//------------------------------------------------------------
+            return Ok(new { msg = "Please check your mail box to finish the registration process" }); 
 		}
 
 
@@ -529,21 +512,15 @@ Email: externalauthdemo1234@gmail.com</p>",
 			User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.Token == token);
 			if (user != null)
 			{
-				string type = rawToken.Split(':')[1]; // Loại verify token: verify đkí - 1 / verify reset pass - 2
 				if ((DateTime.Now - user.ActionPeriod.Value).TotalMinutes > 15) // Quá hạn token	
 				{
-					//if (type == "1") // Loại đkí mà quá hạn thời gian
-					//{
-					//	_service.UserDetailService.DeleteUserDetail(user.UserId);
-					//	_service.UserService.DeleteUser(user.UserId);
-					//}
 					return BadRequest(new { msg = "Out of time" });
 				}
 				//--------------------------------------------------------
 				// Còn tg
-
 				user.Token = null;
 				user.ActionPeriod = null;
+				string type = rawToken.Split(':')[1]; // Loại verify token: verify đkí - 1 / verify reset pass - 2 / Update profile - new email - 3
 				if (type == "2") // Loại reset pass mà đủ tg 
 				{
 					_service.UserService.UpdateUser(user, user.UserId);
@@ -559,7 +536,7 @@ Email: externalauthdemo1234@gmail.com</p>",
 				}
 				user.ActiveStatus = true;
 				_service.UserService.UpdateUser(user, user.UserId);
-				return Ok(new { msg = "Success" });
+				return Redirect(loginUrl);
 			}
 			// Fake info, url
 			return BadRequest(new { msg = "Invalid information" });

@@ -147,17 +147,10 @@ namespace BadmintonCourtAPI.Utils
 			//-----------------------------------------------------
 			List<DashboardResponseDTO> result = new List<DashboardResponseDTO>();
 			//--------------------------------------------------
-			bool isLeapYear = IsLeapYear(year);
-			//--------------------------------------------------
 			for (int i = 1; i <= 12; i++)
 			{
 				float amount = 0;
-				int endDay = (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) ? 31 : /* Check 31 ngày */
-					((i == 4 || i == 6 || i == 9 || i == 1) ? 30 : /* Check 30 ngày */
-					(isLeapYear == true ? 29 : 28)); /* Check năm nhuần tháng 2*/
-				DateTime startDate = new DateTime(year, i, 1, 0, 0, 0);
-				DateTime endDate = new DateTime(year, i, endDay, 23, 59, 59);
-				List<Payment> tmpStorage = pList.Where(x => x.Date >= startDate && x.Date <= endDate).ToList();
+				List<Payment> tmpStorage = pList.Where(x => x.Date.Month == i).ToList();
 				foreach (var item in tmpStorage)
 					amount += float.Parse(item.Amount.ToString());
 				result.Add(new DashboardResponseDTO { Amount = amount, Period = $"{i}/{year}" });
@@ -178,29 +171,36 @@ namespace BadmintonCourtAPI.Utils
 				float amount = 0;
 				DateTime startDate = new DateTime(year, startMonth, begin, 0, 0, 0);
 				DateTime endDate;
+				string period;
 				//----------------------------------------------------------------------------
 				if (i % 4 != 0) // Ko phải tuần 4 - tuần cuối của tháng
 				{
-					endDate = new DateTime(year, startMonth, begin + 6, 23, 59, 59);
-					begin += 7;
+					//endDate = new DateTime(year, startMonth, begin + 6, 23, 59, 59);
+					endDate = startDate.AddDays(7);
 				}
 				else // Tuần cuối của tháng - tuần 4
 				{
 					int endDay = (startMonth == 1 || startMonth == 3 || startMonth == 5 || startMonth == 7 || startMonth == 8 || startMonth == 10 || startMonth == 12) ? 31 : /* Check 31 ngày */
-					((startMonth == 4 || startMonth == 6 || startMonth == 9 || startMonth == 1) ? 30 : /* Check 30 ngày */
+					((startMonth == 4 || startMonth == 6 || startMonth == 9 || startMonth == 11) ? 30 : /* Check 30 ngày */
 					(isLeapYear == true ? 29 : 28)); /* Check năm nhuần tháng 2*/
 					endDate = new DateTime(year, startMonth, endDay, 23, 59, 59);
 					//----------------------------------------------------------------------------
-					startMonth++; // Qua tháng mới
-					begin = 1; // Reset ngày băt đầu về lại từ đầu
 				}
 				List<Payment> tmpStorage = pList.Where(x => x.Date >= startDate && x.Date <= endDate).ToList();
 				foreach (var item in tmpStorage)
 					amount += float.Parse(item.Amount.ToString());
 				result.Add(new DashboardResponseDTO { Amount = amount, Period = $"{startMonth}/{year} - Week {week}" });
 				if (week == 4)
+				{
 					week = 1;
-				else week += 1;
+					startMonth++; // Qua tháng mới
+					begin = 1; // Reset ngày băt đầu về lại từ đầu
+				}
+				else
+				{
+					week += 1;
+					begin += 7;
+				}
 			}
 			return result;
 		}
@@ -222,21 +222,22 @@ namespace BadmintonCourtAPI.Utils
 			if (begin <= 15) // Tuần 1, 2, 3
 				endDay = begin + 6;
 			else endDay = (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) ? 31 : /* Check 31 ngày */
-			((month == 4 || month == 6 || month == 9 || month == 1) ? 30 : /* Check 30 ngày */
+			((month == 4 || month == 6 || month == 9 || month == 11) ? 30 : /* Check 30 ngày */
 			(isLeapYear == true ? 29 : 28)); /* Check năm nhuần tháng 2*/
 			//----------------------------------------
-			DateTime startDate = new DateTime(year, month, begin, 0, 0, 0);
-			DateTime endDate = new DateTime(year, month, begin, 23, 59, 59);
+			//DateTime startDate = new DateTime(year, month, begin, 0, 0, 0);
+			//DateTime endDate = new DateTime(year, month, begin, 23, 59, 59);
 			List<DashboardResponseDTO> result = new List<DashboardResponseDTO>();
 			for (int i = begin; i <= endDay; i++)
 			{
 				float amount = 0;
-				List<Payment> tmpStorage = pList.Where(x => x.Date >= startDate && x.Date <= endDate).ToList();
+				//List<Payment> tmpStorage = pList.Where(x => x.Date >= startDate && x.Date <= endDate).ToList();
+				List<Payment> tmpStorage = pList.Where(x => x.Date.Year == year && x.Date.Month == month && x.Date.Day == i).ToList();
 				foreach (var item in tmpStorage)
 					amount += float.Parse(item.Amount.ToString());
 				result.Add(new DashboardResponseDTO { Amount = amount, Period = $"{i}/{month}/{year}" });
-				startDate = startDate.AddDays(1);
-				endDate = endDate.AddDays(1);
+				//startDate = startDate.AddDays(1);
+				//endDate = endDate.AddDays(1);
 			}
 			return result;
 		}

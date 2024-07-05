@@ -37,12 +37,12 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpGet]
 		[Route("Role/GetByName")]
 		[Authorize(Roles = "Admin,Staff")]
-		public async Task<IEnumerable<Role>> GetRolesByName(string name) => _service.RoleService.GetRolesByName(name).ToList();
+		public async Task<ActionResult<IEnumerable<Role>>> GetRolesByName(string name) => Ok(_service.RoleService.GetRolesByName(name).ToList());
 
 		[HttpGet]
 		[Route("Role/GetById")]
 		[Authorize(Roles = "Admin,Staff")]
-		public async Task<ActionResult<Role>> GetRoleById(string id) => _service.RoleService.GetRoleById(id);
+		public async Task<ActionResult<Role>> GetRoleById(string id) => Ok(_service.RoleService.GetRoleById(id));
 
 		[HttpPost]
 		[Route("Role/Add")]

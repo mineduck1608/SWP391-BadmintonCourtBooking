@@ -32,120 +32,9 @@ namespace BadmintonCourtAPI.Controllers
 				_service = new BadmintonCourtService(config);
 		}
 
-		//private string GenerateVnPayUrl(TransactionDTO model)
-		//{
-		//	UserDetail info = _service.UserDetailService.GetUserDetailById(model.UserId);
-		//	VnPayRequestDTO vnPayRequestDTO = new VnPayRequestDTO();
-		//	string content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} |";
-		//	//---------------------------------------------------------
-		//	if (model.Type == "flexible") // Linh hoạt
-		//	{
-		//		content += $" Amount: {model.Amount}";
-		//		vnPayRequestDTO = new VnPayRequestDTO { Amount = float.Parse(model.Amount.ToString()), Content = content, Date = DateTime.Now, UserId = model.UserId };
-		//	}
-		//	else
-		//	{
-		//		if (model.Start != null && model.End != null)
-		//		{
-		//			if (model.Start < model.End && model.Start >= StartHour && model.End <= EndHour)
-		//			{
-		//				if (model.Date != null)
-		//				{
-		//					if ((new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0) - DateTime.Now).TotalMinutes >= 10)
-		//					{
-		//						if (!model.CourtId.IsNullOrEmpty())
-		//						{
-		//							Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
-		//							List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), model.CourtId);
-		//							//---------------------------------------------------------
-		//							if (tmpStorage.Count > 0) // Nếu sân có người đặt trước
-		//								return "Slot";
-		//							//---------------------------------------------------------
-		//							if (model.Type == "playonce") // Đặt loại 1 lần chơi
-		//							{
-		//								content += $" Date: {model.Date.Value.ToString("yyyy-MM-dd")} {model.Start}h - {model.End}h | Court: {model.CourtId}";
-		//								vnPayRequestDTO = new VnPayRequestDTO { Amount = (model.End - model.Start) * court.Price, Content = content, UserId = model.UserId };
 
-		//							}
-		//							//---------------------------------------------------------
-		//							else  // Cố định. Vd: ngày 1/1/2001 15h-17h 2 tháng sân A
-		//							{
-		//								content += $" Start date on schedule: {model.Date.Value.ToString("yyyy-MM-dd")} {model.Start}h - {model.End}h | Court: {model.CourtId} | Number of months: {model.NumMonth}";
-		//								vnPayRequestDTO = new VnPayRequestDTO { Amount = (model.End - model.Start) * court.Price * model.NumMonth * 4, Content = content, UserId = model.UserId };
-		//							}
-		//						}
-		//						else return "Court";
-		//					}
-		//					else return "Time";
-		//				}
-		//				else return "Time";
-		//			}
-		//			else return "Time";
-		//		}
-		//		else return "Time";
-		//	}
-		//	//------------------------------------------------------------------------------------
-		//	return _service.VnPayService.CreatePaymentUrl(HttpContext, vnPayRequestDTO, null);
-		//}
+		private string GenerateMailBody(UserDetail info) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
-		//private string GenerateMomoUrl(TransactionDTO model)
-		//{
-		//    UserDetail info = _service.UserDetailService.GetUserDetailById(model.UserId);
-		//    string content = $"User: {info.FirstName} {info.LastName} | ID: {model.UserId} | Phone: {info.Phone} | Mail: {info.Email} |";
-		//    string amount = "";
-		//    //---------------------------------------------------------
-		//    if (model.Type == "flexible")
-		//    {
-		//        amount = $"{model.Amount}";
-		//        content += $" Amount: {amount}";
-		//    }
-		//    //---------------------------------------------------------
-		//    else
-		//    {
-		//        if (model.Start != null && model.End != null)
-		//        {
-		//            if (model.Start < model.End && model.Start >= StartHour && model.End <= EndHour)
-		//            {
-		//                if (model.Date != null)
-		//                {
-		//                    if ((new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0) - DateTime.Now).TotalMinutes >= 10)
-		//                    {
-		//                        if (!model.CourtId.IsNullOrEmpty())
-		//                        {
-		//                            Court court = _service.CourtService.GetCourtByCourtId(model.CourtId);
-		//                            List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.Start.Value, 0, 0), new DateTime(model.Date.Value.Year, model.Date.Value.Month, model.Date.Value.Day, model.End.Value, 0, 0), model.CourtId);
-		//                            //---------------------------------------------------------
-		//                            if (tmpStorage.Count > 0) // Nếu sân có người đặt trước
-		//                                return "Slot";
-		//                            //---------------------------------------------------------
-
-		//                            if (model.Type == "playonce") // Đặt loại 1 lần chơi
-		//                            {
-		//                                amount = $"{(model.End - model.Start) * court.Price}";
-		//                                content += $" Date: {model.Date.Value.ToString("yyyy-MM-dd")} {model.Start}h - {model.End}h | Court: {model.CourtId}";
-		//                            }
-		//                            //---------------------------------------------------------
-		//                            else  // Cố định. Vd: ngày 1/1/2001 15h-17h 2 tháng sân A	
-		//                            {
-		//                                amount = $"{(model.End - model.Start) * court.Price * model.NumMonth}";
-		//                                content += $" Start date on schedule: {model.Date.Value.ToString("yyyy-MM-dd")} {model.Start}h - {model.End}h | Court: {model.CourtId} | Number of months: {model.NumMonth}";
-		//                            }
-		//                        }
-		//                        else return "Court";
-		//                    }
-		//                    else return "Time";
-		//                }
-		//                else return "Time";
-		//            }
-		//            else return "Time";
-		//        }
-		//        else return "Time";
-		//    }
-		//    //---------------------------------------------------------
-		//    var reqdata = _service.MomoService.CreateRequestData(content, $"{amount}", "");
-		//    var response = _service.MomoService.SendMoMoRequest(reqdata);
-		//    return response.Result.PayUrl;
-		//}
 
 		/// <summary>
 		/// Create info for both methods. It will have the following format:
@@ -617,19 +506,8 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
 				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-                _service.MailService.SendMail(info.Email, $@"
-<p>Dear {info.FirstName} {info.LastName},</p>
-<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>
-<p>If you have any questions or need further assistance, please contact us.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
-"BMTC - Booking Notification");
-
-            }
+				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
+			}
             return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
@@ -646,18 +524,7 @@ Email: externalauthdemo1234@gmail.com</p>",
 			{
 				string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
 				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-                _service.MailService.SendMail(info.Email, $@"
-<p>Dear {info.FirstName} {info.LastName},</p>
-<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>
-<p>If you have any questions or need further assistance, please contact us.</p>
-<p>Best regards,<br>
-BadmintonCourtBooking BMTC</p>
-<p>Contact Information:<br>
-Phone: 0977300916<br>
-Address: 123 Badminton St, Hanoi, Vietnam<br>
-Email: externalauthdemo1234@gmail.com</p>",
-"BMTC - Booking Notification");
-
+				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
             }
             return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
@@ -672,7 +539,6 @@ Email: externalauthdemo1234@gmail.com</p>",
 			if (expected != actual) 
 				return false;
 
-			string mailBody = "Thanks for your purchasement. ";
 			var map = TransformToDictionary(info, '|', ':');
 			string userId = map["User"];
 			User user = _service.UserService.GetUserById(userId);
@@ -734,17 +600,12 @@ Email: externalauthdemo1234@gmail.com</p>",
 						EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0)
 					});
 				}
-				mailBody += $"You have successfully booked the slot {rawDate} {start}h - {end}h in Court{courtId} with type of {map["Type"]}. ";
 			}
 			else
 			{
 				user.Balance += amount;
-				_service.UserService.UpdateUser(user, userId);
-				mailBody += $"Your balance was successfully added with the amount of {amount}. ";
 			}
 			_service.PaymentService.AddPayment(payment);
-			mailBody += "You now can check it in payment history.";
-			// _service.MailService.SendMail(map["Email"], mailBody, "BMTC - Booking Notification");
 			List<Discount> discountList = _service.DiscountService.GetAllDiscounts().OrderByDescending(x => x.Amount).ToList();
 			foreach (Discount discount in discountList)
 			{
