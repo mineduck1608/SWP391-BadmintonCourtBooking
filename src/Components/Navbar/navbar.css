@@ -170,7 +170,7 @@
   }
   .navBarSection .header1 .navBar .navLists .loginBtn {
     background: none;
-    border: 1px solid var(--PrimaryColor);
+    border: 2px solid var(--PrimaryColor);
   }
   .navBarSection .header1 .navBar .navLists .loginBtn:hover {
     background: var(--PrimaryColor);

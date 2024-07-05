@@ -78,6 +78,21 @@ const App = () => {
             <Route path="line" element={<Line />} />
             <Route path="geography" element={<Geography />} />
           </Route>
+
+          <Route path="/staff/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
+            <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="user" element={<User />} />
+            <Route path="branch" element={<Branch />} />
+            <Route path="court" element={<Court />} />
+            <Route path="timeSlot" element={<SlotManagement />} />
+            <Route path="timeManage" element={<BadmintonCourtHours />} />
+            <Route path="payment" element={<Payment />} />
+            <Route path="bar" element={<Bar />} />
+            <Route path="pie" element={<Pie />} />
+            <Route path="line" element={<Line />} />
+            <Route path="geography" element={<Geography />} />
+          </Route>
            {/* Route for CreateFeedbackModal */}
            <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />
         </Routes>
