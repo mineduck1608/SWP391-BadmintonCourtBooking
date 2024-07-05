@@ -1,5 +1,3 @@
-/* CreateFeedbackModal.css */
-
 .cfm-modal-overlay {
     position: fixed;
     top: 0;
@@ -64,5 +62,9 @@
   
   .cfm-btn-cancel {
     margin-left: 0;
+  }
+
+  .cfm-fb-info {
+    text-align: center;
   }
   
