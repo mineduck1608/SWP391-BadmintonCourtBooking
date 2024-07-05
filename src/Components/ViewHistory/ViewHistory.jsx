@@ -7,41 +7,7 @@ import { Modal, Button, DatePicker } from 'antd'
 import { Link } from 'react-router-dom';
 import { HttpStatusCode } from 'axios';
 import { getHours } from 'date-fns';
-
-const FeedbackModal = ({ show, onClose, onSave, bookingId, feedback }) => {
-  const [newFeedback, setNewFeedback] = useState(feedback);
-
-  useEffect(() => {
-    setNewFeedback(feedback);
-  }, [feedback]);
-
-  const handleSave = () => {
-    onSave(bookingId, newFeedback);
-    onClose();
-  };
-
-  if (!show) {
-    return null;
-  }
-
-  return (
-    <div className="view-history-modal-overlay">
-      <div className="view-history-modal">
-        <div className="view-history-modal-content">
-          <span className="view-history-close" onClick={onClose}>&times;</span>
-          <h2>Feedback for Booking ID: {bookingId}</h2>
-          <textarea
-            value={newFeedback}
-            onChange={(e) => setNewFeedback(e.target.value)}
-            rows="5"
-            cols="50"
-          />
-          <button onClick={handleSave}>Save</button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { useNavigate } from 'react-router-dom';
 
 export default function ViewHistory() {
   const [bookings, setBookings] = useState([]);
@@ -71,6 +37,7 @@ export default function ViewHistory() {
   };
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
+  const navigate = useNavigate();
 
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
@@ -189,6 +156,75 @@ export default function ViewHistory() {
     fetchData();
     loadTimeFrame()
   }, [token]);
+
+  const renderTableRows = (filterType) => {
+    const filteredBookings = bookings.filter((booking) => {
+      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
+      const slotDate = slot ? new Date(slot.date) : null;
+
+      switch (filterType) {
+        case 'today':
+          return slotDate && slotDate.toDateString() === currentDateString;
+        case 'upcoming':
+          return slotDate && slotDate > currentDate;
+        case 'past':
+          return slotDate && slotDate < currentDate;
+        default:
+          return false;
+      }
+    });
+
+    const sortedBookings = filteredBookings.sort((a, b) => {
+      return new Date(b.bookingDate) - new Date(a.bookingDate);
+    });
+
+    return sortedBookings.map((booking) => {
+      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
+      const slotDate = slot ? new Date(slot.date).toLocaleDateString() : 'N/A';
+      const startTime = slot ? formatTime(slot.start) : 'N/A';
+      const endTime = slot ? formatTime(slot.end) : 'N/A';
+      const courtId = slot ? slot.courtId : 'Unknown Court';
+      const court = courts.find(court => court.courtId === courtId);
+      const courtName = court ? court.courtName : 'Unknown Court';
+      const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+      const branchName = branch ? branch.branchName : 'Unknown Branch';
+      
+
+      return (
+        !booking.isDeleted &&
+        <tr key={booking.bookingId}>
+          <td>
+            {booking.bookingId}
+
+          </td>
+          <td>{formatNumber(booking.amount)}</td>
+          <td>{getBookingTypeLabel(booking.bookingType)}</td>
+          <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+          <td>{slotDate}</td>
+          <td>{startTime}</td>
+          <td>{endTime}</td>
+          <td>{courtName}</td>
+          <td>{branchName}</td>
+          {
+            filterType == 'past' && (
+          <td>
+             <button onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>feedback</button>
+          </td>
+          )
+        }
+
+          {
+            filterType !== 'past' && (
+              <td>
+                <button className='view-history-button' onClick={() => onClickEdit(slot)}>Edit</button>
+                <button className='view-history-button' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
+              </td>
+            )
+          }
+        </tr>
+      );
+    });
+  };
 
   const onClickEdit = (slot) => {
     setOpen(true)
@@ -342,83 +378,9 @@ export default function ViewHistory() {
   const currentDate = new Date();
   const currentDateString = currentDate.toDateString();
 
-  const handleFeedbackClick = (booking) => {
-    setSelectedBooking(booking);
-    setShowModal(true);
-  };
-
-  const handleSaveFeedback = (bookingId, feedback) => {
-    setBookings((prevBookings) =>
-      prevBookings.map((booking) =>
-        booking.bookingId === bookingId ? { ...booking, feedback } : booking
-      )
-    );
-  };
-
-  const renderTableRows = (filterType) => {
-    const filteredBookings = bookings.filter((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date) : null;
-
-      switch (filterType) {
-        case 'today':
-          return slotDate && slotDate.toDateString() === currentDateString;
-        case 'upcoming':
-          return slotDate && slotDate > currentDate;
-        case 'past':
-          return slotDate && slotDate < currentDate;
-        default:
-          return false;
-      }
-    });
-
-    const sortedBookings = filteredBookings.sort((a, b) => {
-      return new Date(b.bookingDate) - new Date(a.bookingDate);
-    });
-
-    return sortedBookings.map((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date).toLocaleDateString() : 'N/A';
-      const startTime = slot ? formatTime(slot.start) : 'N/A';
-      const endTime = slot ? formatTime(slot.end) : 'N/A';
-      const courtId = slot ? slot.courtId : 'Unknown Court';
-      const court = courts.find(court => court.courtId === courtId);
-      const courtName = court ? court.courtName : 'Unknown Court';
-      const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
-      const branchName = branch ? branch.branchName : 'Unknown Branch';
-      const feedback = booking.feedback ? booking.feedback : 'N/A';
-
-      return (
-        !booking.isDeleted &&
-        <tr key={booking.bookingId}>
-          <td>
-            {booking.bookingId}
-
-          </td>
-          <td>{formatNumber(booking.amount)}</td>
-          <td>{getBookingTypeLabel(booking.bookingType)}</td>
-          <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
-          <td>{slotDate}</td>
-          <td>{startTime}</td>
-          <td>{endTime}</td>
-          <td>{courtName}</td>
-          <td>{branchName}</td>
-          <td>
-            <button onClick={() => handleFeedbackClick(booking)}>
-              {feedback}
-            </button>
-          </td>
-          {
-            filterType !== 'past' && (
-              <td>
-                <button className='view-history-button' onClick={() => onClickEdit(slot)}>Edit</button>
-                <button className='view-history-button' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
-              </td>
-            )
-          }
-        </tr>
-      );
-    });
+  const handleFeedbackClick = (bookingId, branchId, userId) => {
+    const token = sessionStorage.getItem('token');
+    navigate('/createFeedbackModal', { state: { bookingId, branchId, userId, token } });
   };
 
   const renderNoBookingsMessage = (filterType) => {
@@ -567,7 +529,6 @@ export default function ViewHistory() {
                               <th>END TIME</th>
                               <th>COURT NAME</th>
                               <th>BRANCH NAME</th>
-                              <th>FEEDBACK</th>
                               <th>EDIT/CANCEL</th>
                             </tr>
                           </thead>
@@ -578,24 +539,23 @@ export default function ViewHistory() {
                       </div>
                     </div>
 
-                    <div className="view-history-upcoming-table">
+                    <div>
                       <h3>Upcoming Bookings</h3>
                       <div className="view-history-table-wrapper">
                         {renderNoBookingsMessage('upcoming')}
                         <table className="view-history-upcoming-booking-table">
                           <thead>
                             <tr>
-                              <th className="view-history-upcoming-table">BOOKING ID</th>
-                              <th className="view-history-upcoming-table">PRICE</th>
-                              <th className="view-history-upcoming-table">BOOKING TYPE</th>
-                              <th className="view-history-upcoming-table">BOOKING DATE</th>
-                              <th className="view-history-upcoming-table">SLOT DATE</th>
-                              <th className="view-history-upcoming-table">START TIME</th>
-                              <th className="view-history-upcoming-table">END TIME</th>
-                              <th className="view-history-upcoming-table">COURT NAME</th>
-                              <th className="view-history-upcoming-table">BRANCH NAME</th>
-                              <th className="view-history-upcoming-table">FEEDBACK</th>
-                              <th className="view-history-upcoming-table">EDIT/CANCEL</th>
+                              <th>BOOKING ID</th>
+                              <th>PRICE</th>
+                              <th>BOOKING TYPE</th>
+                              <th>BOOKING DATE</th>
+                              <th>SLOT DATE</th>
+                              <th>START TIME</th>
+                              <th>END TIME</th>
+                              <th>COURT NAME</th>
+                              <th>BRANCH NAME</th>
+                              <th>EDIT/CANCEL</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -639,15 +599,6 @@ export default function ViewHistory() {
       <div className='view-history-footer'>
         <Footer />
       </div>
-      {selectedBooking && (
-        <FeedbackModal
-          show={showModal}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveFeedback}
-          bookingId={selectedBooking.bookingId}
-          feedback={selectedBooking.feedback}
-        />
-      )}
     </div>
   );
 }
