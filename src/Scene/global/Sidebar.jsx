@@ -43,6 +43,7 @@ const Sidebar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [selected, setSelected] = useState('Dashboard');
     const navigate = useNavigate(); // Ensure useNavigate is called inside the component
+    const [role, setRole] = useState();
 
     useEffect(() => {
         let token = sessionStorage.getItem('token');
@@ -62,13 +63,14 @@ const Sidebar = () => {
         }
 
         const { Role: role } = decodedToken;
+        setRole(role);
 
         if (!role) {
             navigate('/signin'); // Redirect to sign-in if role is missing
             return;
         }
 
-        if (role !== "Admin") {
+        if (role !== "Admin" && role !== "Staff") {
             sessionStorage.clear();
             navigate('/'); // Redirect to home if the role is not 'Admin'
             return;
@@ -142,10 +144,10 @@ const Sidebar = () => {
                                     fontWeight="bold"
                                     sx={{ m: "10px 0 0 0" }}
                                 >
-                                    Admin
+                                    {role}
                                 </Typography>
                                 <Typography className="role" variant="h5" color={colors.greenAccent[500]}>
-                                    VP Fancy Admin
+                                    VP Fancy {role}
                                 </Typography>
                             </Box>
                         </Box>

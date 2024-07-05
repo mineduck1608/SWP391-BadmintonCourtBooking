@@ -23,7 +23,7 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly BadmintonCourtService _service = null;
 		private const string resultRedirectUrl = "http://localhost:3000/paySuccess";
 		private const string flexibleBooking = "flexible";
-		private const string playonceBooking = "playonce";
+		private const string playonceBooking = "playOnce";
 		private const string fixedBooking = "fixed";
 		private const string buyTime = "buyTime";
 		public PaymentController(IConfiguration config)
