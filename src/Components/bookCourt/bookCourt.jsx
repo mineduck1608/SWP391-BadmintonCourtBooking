@@ -379,10 +379,10 @@ const BookCourt = () => {
                         </div>
                         <div className="bookCourt-form-group2">
                             <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => {
-                                setBookingType('playonce')
+                                setBookingType('playOnce')
                                 handleCalcAmount()
                             }}
-                                checked={bookingType === 'playonce'}
+                                checked={bookingType === 'playOnce'}
                             />
                             <label htmlFor="once">Once (reserves at the specified time and date)</label>
                         </div>
@@ -459,7 +459,7 @@ const BookCourt = () => {
                             <span>Banking</span>
                         </div>
                         {
-                            bookingType === 'playonce' &&
+                            bookingType === 'playOnce' &&
                             (
                                 <div className='inlineDiv'>
                                     <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
