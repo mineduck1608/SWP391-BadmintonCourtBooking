@@ -4,6 +4,7 @@ import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 import { HttpStatusCode } from "axios";
+import { toast } from "react-toastify";
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
@@ -37,7 +38,7 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            //
+            toast.error('Server error')
         }
     }
     const fetchCourts = async () => {
@@ -59,7 +60,7 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            //Toast: ko fetch dc branch
+            toast.error('Server error')
         }
     }
     const loadTimeFrame = async () => {
@@ -80,7 +81,7 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            console.log(err);
+            toast.error('Server error')
         }
     }
     useEffect(() => {
@@ -121,7 +122,6 @@ const BookCourt = () => {
         getUser()
     }, [])
     const checkAvailableSlot = async (courtId) => {
-        // console.log("Check for: " + courtId);
         try {
             if (validateDateTime() === 0) {
                 var bookingDate = document.getElementById("datePicker").value
@@ -146,7 +146,7 @@ const BookCourt = () => {
                 setIsOccupied(data.length > 0)
             }
         } catch (err) {
-            console.log(err);
+            toast.error('Server error')
         }
     }
 
@@ -160,7 +160,7 @@ const BookCourt = () => {
             setCourtInfo(data)
             await checkAvailableSlot(document.getElementById('court').value)
         } catch (error) {
-            console.log(error);
+            toast.error('Server error')
         }
     }
 
@@ -186,7 +186,7 @@ const BookCourt = () => {
         if (tmp)
             try {
                 var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
-                if(!checkBalance) alert('Balance not enough')
+                if (!checkBalance) toast.error('Balance is not enough')
                 tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
                 return tmp
             } catch (error) {
@@ -202,7 +202,7 @@ const BookCourt = () => {
                 fetchApi()
             }
         } catch (error) {
-            console.log(error);
+            toast.error('Server error')
         }
     };
 
@@ -248,40 +248,36 @@ const BookCourt = () => {
                 + `end=${endTime}&`
                 + `courtId=${courtInfo['courtId']}&`
                 + `userId=${user['userId']}`
-            try {
-                var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    })
-                if (paymentType !== 'flexible') {
-                    var data = await (res.json())
-                    var payUrl = data['url']
-                    if (payUrl !== undefined) {
-                        window.location.assign(payUrl)
+            var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     }
-                }
-                else {
-                    if (res.status === HttpStatusCode.Ok)
-                        window.location.assign('/bookingHistory')
-                    
-                    else {
-                        const data = await res.json()
-                        const msg = data['msg']
-                        if (msg.includes('not enough')) {
-                            alert(msg)
-                        }
-                    }
+                })
+            if (paymentType !== 'flexible') {
+                var data = await (res.json())
+                var payUrl = data['url']
+                if (payUrl !== undefined) {
+                    window.location.assign(payUrl)
                 }
             }
-            catch (err) {
+            else {
+                if (res.status === HttpStatusCode.Ok)
+                    window.location.assign('/bookingHistory')
 
+                else {
+                    const data = await res.json()
+                    const msg = data['msg']
+                    if (msg.includes('not enough')) {
+                        alert(msg)
+                    }
+                }
             }
         }
         catch (err) {
+            toast.error('Server error')
         }
     }
     const formatNumber = (n) => {
@@ -295,6 +291,7 @@ const BookCourt = () => {
             else rs = n + rs
             return rs
         }
+        n = Math.floor(n)
         var rs = ''
         do {
             rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
@@ -382,10 +379,10 @@ const BookCourt = () => {
                         </div>
                         <div className="bookCourt-form-group2">
                             <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => {
-                                setBookingType('playonce')
+                                setBookingType('playOnce')
                                 handleCalcAmount()
                             }}
-                                checked={bookingType === 'playonce'}
+                                checked={bookingType === 'playOnce'}
                             />
                             <label htmlFor="once">Once (reserves at the specified time and date)</label>
                         </div>
@@ -462,7 +459,7 @@ const BookCourt = () => {
                             <span>Banking</span>
                         </div>
                         {
-                            bookingType === 'playonce' &&
+                            bookingType === 'playOnce' &&
                             (
                                 <div className='inlineDiv'>
                                     <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
