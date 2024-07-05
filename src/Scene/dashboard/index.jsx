@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, IconButton, Typography, useTheme, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
 import Head from "../../Components/Head";
 import LineChart from "../../Components/LineChart";
-import GeographyChart from "../../Components/GeographyChart";
 import BarChart from "../../Components/BarChart";
-import StatBox from "../../Components/StatBox";
-import ProgressCircle from "../../Components/ProgressCircle";
 import './dashboard.css';
 
 const Dashboard = () => {
@@ -20,10 +13,16 @@ const Dashboard = () => {
   const colors = tokens(theme.palette.mode);
 
   const [payments, setPayments] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRevenue, setTotalRevenue] = useState(0);
+
+  const [filterType, setFilterType] = useState("year");
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [startMonth, setStartMonth] = useState(1);
+  const [numberOfMonths, setNumberOfMonths] = useState(1);
+  const [weekOfMonth, setWeekOfMonth] = useState(1);
+
+  const [paymentStatistics, setPaymentStatistics] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,14 +33,8 @@ const Dashboard = () => {
         const paymentResponse = await axios.get('https://localhost:7233/Payment/GetAll', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        const userResponse = await axios.get('https://localhost:7233/User/GetAll', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const userDetailResponse = await axios.get('https://localhost:7233/UserDetail/GetAll');
-         
+        
         setPayments(paymentResponse.data);
-        setUsers(userResponse.data);
-        setUserDetails(userDetailResponse.data);
 
         // Calculate the total revenue
         const total = paymentResponse.data.reduce((sum, payment) => sum + payment.amount, 0);
@@ -56,9 +49,25 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  const getUserName = (userId) => {
-    const userDetail = userDetails.find((detail) => detail.userId === userId);
-    return userDetail ? `${userDetail.firstName}` : 'Unknown';
+  const handleFilterChange = (event) => {
+    setFilterType(event.target.value);
+  };
+
+  const handleFetchStatistics = async () => {
+    try {
+      const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
+      const response = await axios.get(`https://localhost:7233/Payment/Statistic?Year=${year}&Type=${filterType === 'year' ? 1 : filterType === 'month' ? 2 : 3}&StartMonth=${startMonth}&MonthNum=${numberOfMonths}&Week=${weekOfMonth}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      console.log('Payment Statistics:', response.data);
+      setPaymentStatistics(response.data);
+
+      // Calculate the total revenue from the fetched statistics
+      const total = response.data.reduce((sum, payment) => sum + payment.amount, 0);
+      setTotalRevenue(total);
+    } catch (error) {
+      console.error("Error fetching statistics", error);
+    }
   };
 
   return (
@@ -90,87 +99,84 @@ const Dashboard = () => {
         gridAutoRows="140px"
         gap="17px"
       >
-        {/* ROW 1 */}
+        {/* FILTER ROW */}
         <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+          gridColumn="span 12"
+          className="filter-container"
         >
-          <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
-            progress="0.75"
-            increase="+14%"
-            icon={
-              <EmailIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
+          <FormControl className="filter-input" fullWidth>
+            <InputLabel>Filter Type</InputLabel>
+            <Select
+              value={filterType}
+              onChange={handleFilterChange}
+              label="Filter Type"
+            >
+              <MenuItem value="year">Year</MenuItem>
+              <MenuItem value="month">Month</MenuItem>
+              <MenuItem value="week">Week</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            label="Year"
+            type="number"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className="filter-input"
+            fullWidth
+            margin="normal"
           />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
-            progress="0.50"
-            increase="+21%"
-            icon={
-              <PointOfSaleIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="32,441"
-            subtitle="New Clients"
-            progress="0.30"
-            increase="+5%"
-            icon={
-              <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
-            increase="+43%"
-            icon={
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
+          {filterType === "month" || filterType === "week" ? (
+            <FormControl className="filter-input" fullWidth>
+              <InputLabel>Start Month</InputLabel>
+              <Select
+                value={startMonth}
+                onChange={(e) => setStartMonth(e.target.value)}
+                label="Start Month"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                  <MenuItem key={month} value={month}>{month}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : null}
+          {filterType === "month" ? (
+            <TextField
+              label="Number of Months"
+              type="number"
+              value={numberOfMonths}
+              onChange={(e) => setNumberOfMonths(e.target.value)}
+              className="filter-input"
+              fullWidth
+              margin="normal"
+            />
+          ) : null}
+          {filterType === "week" ? (
+            <FormControl className="filter-input" fullWidth>
+              <InputLabel>Week of Month</InputLabel>
+              <Select
+                value={weekOfMonth}
+                onChange={(e) => setWeekOfMonth(e.target.value)}
+                label="Week of Month"
+              >
+                {Array.from({ length: 4 }, (_, i) => i + 1).map(week => (
+                  <MenuItem key={week} value={week}>{week}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : null}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleFetchStatistics}
+            sx={{ mt: 2 }}
+          >
+            Fetch Payment Data
+          </Button>
         </Box>
 
         {/* ROW 2 */}
         <Box
-          gridColumn="span 8"
+          gridColumn="span 12"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -194,7 +200,7 @@ const Dashboard = () => {
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                $59,342.32
+                ${totalRevenue.toLocaleString()}
               </Typography>
             </Box>
             <Box>
@@ -206,89 +212,13 @@ const Dashboard = () => {
             </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
+            <LineChart data={paymentStatistics} isDashboard={true} />
           </Box>
         </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          overflow="auto"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
-          >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
-            </Typography>
-          </Box>
-          {payments.map((payment, i) => (
-            <Box
-              key={`${payment.transactionId}-${i}`}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
-            >
-              <Box>
-                <Typography
-                  color={colors.greenAccent[500]}
-                  variant="h5"
-                  fontWeight="600"
-                >
-                  {payment.transactionId}
-                </Typography>
-                <Typography color={colors.grey[100]}>
-                  {getUserName(payment.userId)}
-                </Typography>
-              </Box>
-              <Box color={colors.grey[100]}>{payment.date}</Box>
-              <Box
-                backgroundColor={colors.greenAccent[500]}
-                p="5px 10px"
-                borderRadius="4px"
-              >
-                ${payment.amount}
-              </Box>
-            </Box>
-          ))}
-        </Box>
-
+        
         {/* ROW 3 */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              ${totalRevenue.toLocaleString()} revenue generated
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
+          gridColumn="span 12"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -301,23 +231,6 @@ const Dashboard = () => {
           </Typography>
           <Box height="250px" mt="-20px">
             <BarChart isDashboard={true} />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Geography Based Traffic
-          </Typography>
-          <Box height="200px">
-            <GeographyChart isDashboard={true} />
           </Box>
         </Box>
       </Box>
