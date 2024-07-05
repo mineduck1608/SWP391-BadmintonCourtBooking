@@ -21,8 +21,6 @@ export default function ViewHistory() {
   const [open, setOpen] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
-  const [selectedBooking, setSelectedBooking] = useState({})
-  const [showModal, setShowModal] = useState(false)
   const [validSchedule, setValidSchedule] = useState(false)
   const token = sessionStorage.getItem('token');
   const apiUrl = 'https://localhost:7233'
@@ -220,7 +218,7 @@ export default function ViewHistory() {
             filterType !== 'past' && (
               <td>
                 <button className='view-history-button' onClick={() => onClickEdit(slot)}>Edit</button>
-                <button className='view-history-button' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
+                <button className='view-history-button view-history-cancel-btn' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
               </td>
             )
           }
@@ -316,7 +314,8 @@ export default function ViewHistory() {
         }
       }
       if (res.status === HttpStatusCode.BadRequest) {
-        toast.error('Couldn\'t change')
+        var data = await res.json()
+        toast.error(data['msg'])
       }
     }
     let t = validateTime(formState.date, formState.start, formState.end)
@@ -324,7 +323,8 @@ export default function ViewHistory() {
     try {
       if (t) {
         setOpen(false)
-        getPayment(formState.bookingId)
+        await getPayment(formState.bookingId)
+        console.log(payment);
         await update(formState.start, formState.end, formState.date, getUserId(token),
           formState.courtId, formState.slotId, payment.method, formState.bookingId
         )
@@ -335,7 +335,8 @@ export default function ViewHistory() {
       }
     }
     catch (err) {
-
+      console.log(err);
+      toast.error('Server error')
     }
   }
 
@@ -356,7 +357,8 @@ export default function ViewHistory() {
       if (res.ok)
         window.location.reload()
       else {
-        toast.error('Couldn\'t change')
+        var data = await res.json()
+        toast.error(data['msg'])
       }
     }
     catch (err) {
@@ -470,14 +472,14 @@ export default function ViewHistory() {
               <option value={t} selected={t === formState.end}>{t}:00:00</option>
             ))}
           </select>
-          Branch:
+          <p>Branch:</p>
           <select id='branch'>
             {branches.map((b, i) => (
               b.branchStatus === 1 &&
               <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
             ))}
           </select>
-          Court:
+          <p>Court:</p>
           <select id='court'>
             {courts.map(c => (
               c.courtStatus && c.branchId === formState.branchId
@@ -487,12 +489,14 @@ export default function ViewHistory() {
               )
             ))}
           </select>
-          <button className='view-history-button-small'
-            onClick={handleOk}
-          >Change slot</button>
-          <button className='view-history-button-small'
-            onClick={handleCancel}
-          >Return</button>
+          <div className='right-align-btn'>
+            <button className='view-history-button-small'
+              onClick={handleOk}
+            >Change slot</button>
+            <button className='view-history-button-small view-history-cancel-btn'
+              onClick={handleCancel}
+            >Cancel</button>
+          </div>
         </span>
       </Modal>
       <Modal title='Confirm cancel'
@@ -504,12 +508,14 @@ export default function ViewHistory() {
         <span>
           <p>Are you sure you want to cancel this slot?</p>
           <p id='warning'>THIS CANNOT BE UNDONE!</p>
-          <button className='view-history-button-small'
-            onClick={cancelSlot}
-          >Cancel booking</button>
-          <button className='view-history-button-small'
-            onClick={handleCancel}
-          >Return</button>
+          <div className='right-align-btn'>
+            <button className='view-history-button-small view-history-cancel-btn'
+              onClick={cancelSlot}
+            >Cancel booking</button>
+            <button className='view-history-button-small'
+              onClick={handleCancel}
+            >Return</button>
+          </div>
         </span>
       </Modal>
       <div className='view-history-header'>

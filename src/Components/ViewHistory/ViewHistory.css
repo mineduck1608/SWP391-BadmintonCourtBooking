@@ -161,7 +161,7 @@
 
 .view-history-button, .view-history-button-small {
   padding: 4%;
-  margin: 3%;
+  margin: 5%;
   background: #ff9900;
   outline: none;
   border-radius: 5px;
@@ -176,8 +176,12 @@
   background-color: #e68a00;
   transform: translateY(-2px);
 }
-.view-history-button-small{
-  padding: 2%;
+.view-history-cancel-btn{
+  background: #ff0000;
+}
+.view-history-cancel-btn:hover {
+  background-color: #aa0000;
+  transform: translateY(-2px);
 }
 #warning{
   font-weight: 700;
@@ -191,4 +195,9 @@
   width: 80px;
   height: 30px;
   border: none;
+}
+.right-align-btn{
+  display: flex;
+  justify-content: end;
+  align-items: flex-start;
 }
