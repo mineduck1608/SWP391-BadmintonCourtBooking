@@ -58,6 +58,8 @@
   .cfm-btn-cancel {
     width: 100%;
     margin-bottom: 8px;
+    color: white;
+    width: 150px;
   }
   
   .cfm-btn-cancel {
@@ -67,4 +69,11 @@
   .cfm-fb-info {
     text-align: center;
   }
+
+  .cfm-btn{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  
   
