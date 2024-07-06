@@ -1,0 +1,72 @@
+.view-payment-wrapper::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../../Assets/image5.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    z-index: -1;
+    opacity: 0.6;
+  }
+  
+  .view-payment-history {
+    width: 80%;
+    margin: 50px auto;
+    background-color: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 20px;
+  }
+  
+  .view-payment-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .view-payment-table th,
+  .view-payment-table td {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .view-payment-table th {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .view-payment-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .view-payment-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  .view-payment-error-message {
+    color: red;
+    text-align: center;
+  }
+  
+  .view-payment-profile-content h2 {
+    text-align: center;
+    margin: 50px 0;
+    font-size: 40px;
+    color: white;
+  }
+  
+  .view-payment-header {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .view-payment-footer {
+    width: 100%;
+    margin-top: 100px;
+    text-align: center;
+  }
+  
