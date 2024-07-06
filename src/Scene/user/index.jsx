@@ -5,10 +5,9 @@ import Head from "../../Components/Head";
 import { Modal } from 'antd';
 import './team.css'; // Import the custom CSS
 import { toast } from "react-toastify";
-import {ConfigProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-
 
 const User = () => {
   const [rows, setRows] = useState([]);
@@ -18,11 +17,9 @@ const User = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [roles, setRoles] = useState([]); // State to store roles
   const [branches, setBranches] = useState([]);
-  const [setAddFormState] = useState();
   const [addOpen, setAddOpen] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
 
   // Define initial state values
   const initialState = {
@@ -41,9 +38,8 @@ const User = () => {
   // Use a single state object to manage form fields
   const [formState, setFormState] = useState(initialState);
 
-
-  const showModal = (row) => { // Nhận hàng được chọn làm đối số
-    setSelectedRow(row); // Cập nhật selectedRow với hàng được chọn
+  const showModal = (row) => {
+    setSelectedRow(row); // Update selectedRow with the selected row
     // Set form state based on selectedRow values
     setFormState({
       id: row.userId,
@@ -63,12 +59,12 @@ const User = () => {
 
   const handleOk = () => {
     const userData = formState;
-  
+
     // If activeStatus is set to true, reset accessFail to 0
     if (userData.activeStatus === 'true') {
       userData.accessFail = 0;
     }
-  
+
     fetch(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance + "&accessFail=" + userData.accessFail, {
       method: "PUT",
       headers: {
@@ -77,16 +73,17 @@ const User = () => {
       },
       body: JSON.stringify(userData)
     })
-      .then(response => {
+      .then((response) => {
         toast(response.msg);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error updating user:', error);
       });
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setOpen(false);
+      setFormState(initialState); // Reset form state to initial values
     }, 1000);
   };
 
@@ -97,36 +94,34 @@ const User = () => {
 
   const isValidate = () => {
     let isProceed = true;
-  
+
     const email = formState.email;
     const phone = formState.phone;
     const password = formState.password;
-  
+
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
       isProceed = false;
       toast.warning('Please enter a valid email');
     }
-  
+
     if (!/^\d{10}$/.test(phone)) {
       isProceed = false;
       toast.warning('Please enter a valid phone number');
     }
-  
+
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}$/.test(password)) {
       isProceed = false;
       toast.warning('Please enter a secure password. It should be at least 12 characters long and include uppercase, lowercase, digit, and special character.');
     }
-  
+
     return isProceed;
-  }
-  
+  };
 
   const handleAddOk = () => {
-
     if (!isValidate()) {
       return;
     }
-    
+
     // Construct the data for the new user
     const newUser = {
       username: formState.username,
@@ -138,7 +133,7 @@ const User = () => {
       phone: formState.phone,
       role: formState.role
     };
-  
+
     // Send a POST request to the API endpoint to add the new user
     fetch(`https://localhost:7233/User/Add?UserName=` + newUser.username + "&Password=" + newUser.password + "&FirstName=" + newUser.firstName + "&LastName=" + newUser.lastName + "&Branch=" + newUser.branch + "&RoleId=" + newUser.role + "&Email=" + newUser.email + "&Phone=" + newUser.phone, {
       method: 'POST',
@@ -147,31 +142,27 @@ const User = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(newUser)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to add user');
-      }
-      return response.json();
-    })
-    .then(data => {
-      toast.success(data);
-    })
-    .catch(error => {
-      toast.warning('Error adding user:', error);
-      // Handle errors, such as displaying an error message to the user
-    });
-  
+    }).then(response => response.json())
+      .then((res) => {
+        toast.success(res.msg);
+        console.log(res.msg)
+      })
+      .catch((error) => {
+        toast.warning('Error adding user:', error);
+        // Handle errors, such as displaying an error message to the user
+      });
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setAddOpen(false);
+      setFormState(initialState); // Reset form state to initial values
     }, 1000);
   };
 
   const handleAddCancel = () => {
     setAddOpen(false);
-    setAddFormState(initialState); // Reset form state to initial values
+    setFormState(initialState); // Reset form state to initial values
   };
 
   const addUser = () => {
@@ -291,9 +282,9 @@ const User = () => {
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
+        console.error('Error deleting user:', error);
       });
   };
-
 
   const columns = [
     { field: "userId", headerName: "UserID", align: "center", headerAlign: "center" },
