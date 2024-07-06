@@ -46,6 +46,12 @@ const Login = () => {
                 toast.success("Login successful!");
               }
             }
+            if (roleToken == "Staff") {
+              if (status == 'True') {
+                navigate('/staff');
+                toast.success("Login successful!");
+              }
+            }
           } else if(resp.msg == 'Temporaly locked'){
             toast.warning("Please contact admin")
           }

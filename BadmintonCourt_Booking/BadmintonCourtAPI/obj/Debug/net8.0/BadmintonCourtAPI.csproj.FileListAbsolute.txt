@@ -1588,3 +1588,10 @@ D:\Coding\SWP391\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\
 D:\Coding\SWP391\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.pdb
 D:\Coding\SWP391\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.genruntimeconfig.cache
 D:\Coding\SWP391\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\ref\BadmintonCourtAPI.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\MailKit.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.InMemory.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\MimeKit.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Scrutor.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

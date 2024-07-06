@@ -188,64 +188,74 @@ const Dashboard = () => {
         </Box>
 
         {/* ROW 2 */}
-        <Box
-          gridColumn="span 12"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
+        {loading ? (
+          <Box gridColumn="span 12" display="flex" justifyContent="center" alignItems="center" height="100%">
+            <Typography variant="h6" color={colors.grey[100]}>
+              Loading...
+            </Typography>
+          </Box>
+        ) : (
+          <>
+            <Box
+              gridColumn="span 12"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+            >
+              <Box
+                mt="25px"
+                p="0 30px"
+                display="flex "
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Box>
+                  <Typography
+                    variant="h5"
+                    fontWeight="600"
+                    color={colors.grey[100]}
+                  >
+                    Revenue Generated
+                  </Typography>
+                  <Typography
+                    variant="h3"
+                    fontWeight="bold"
+                    color={colors.greenAccent[500]}
+                  >
+                    ${totalRevenue.toLocaleString()}
+                  </Typography>
+                </Box>
+                <Box>
+                  <IconButton>
+                    <DownloadOutlinedIcon
+                      sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+                    />
+                  </IconButton>
+                </Box>
+              </Box>
+              <Box height="250px" m="-20px 0 0 0">
+                <LineChart data={paymentStatistics} isDashboard={true} />
+              </Box>
+            </Box>
+            
+            {/* ROW 3 */}
+            <Box
+              gridColumn="span 12"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+            >
               <Typography
                 variant="h5"
                 fontWeight="600"
-                color={colors.grey[100]}
+                sx={{ padding: "30px 30px 0 30px" }}
               >
-                Revenue Generated
+                Sales Quantity
               </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                ${totalRevenue.toLocaleString()}
-              </Typography>
+              <Box height="250px" mt="-20px">
+                <BarChart isDashboard={true} />
+              </Box>
             </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart data={paymentStatistics} isDashboard={true} />
-          </Box>
-        </Box>
-        
-        {/* ROW 3 */}
-        <Box
-          gridColumn="span 12"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            Sales Quantity
-          </Typography>
-          <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
-          </Box>
-        </Box>
+          </>
+        )}
       </Box>
     </Box>
   );

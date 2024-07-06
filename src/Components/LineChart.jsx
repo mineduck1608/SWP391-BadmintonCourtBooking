@@ -7,14 +7,14 @@ const LineChart = ({ data = [], isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // Transform the data into the format required by nivo
-  const transformedData = [
+  // Đảm bảo dữ liệu không bị trống và có định dạng đúng
+  const transformedData = data.length ? [
     {
       id: "Amount",
       color: colors.greenAccent[500],
       data: data.map(d => ({ x: d.period, y: d.amount })),
     },
-  ];
+  ] : [];
 
   return (
     <ResponsiveLine

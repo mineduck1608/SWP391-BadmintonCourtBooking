@@ -31,19 +31,16 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly IVnPayService _vnPayService = new VnPayService();
 		private readonly IMailService _mailService = new MailService();
 
-
-
-
-		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
-		private const string flexibleBooking = "Flexible";
-		private const string playonceBooking = "One-time";
-		private const string fixedBooking = "Fixed";
-		private const string buyTime = "Buy Time";
 		public PaymentController(IPaymentService service)
 		{
 			_service = service;
 		}
 
+		private const string resultRedirectUrl = "http://localhost:3000/paySuccess";
+		private const string flexibleBooking = "flexible";
+		private const string playonceBooking = "playOnce";
+		private const string fixedBooking = "fixed";
+		private const string buyTime = "buyTime";
 
 		private string GenerateMailBody(UserDetail info) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
