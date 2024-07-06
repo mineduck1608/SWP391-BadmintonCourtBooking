@@ -16,13 +16,13 @@ namespace BadmintonCourtServices
 	public class VnPayService : IVnPayService
 	{
 
-		private readonly IConfiguration _config = null;
+		private static IConfiguration _config = new ConfigurationBuilder()
+			.SetBasePath(Directory.GetCurrentDirectory())
+			.AddJsonFile("appsettings.json", true, true).Build();
 		private readonly VnPayLib _vnPayLib = null;
 
-		public VnPayService(IConfiguration config)
+		public VnPayService()
 		{
-			if (_config == null)
-				_config = config;
 			if (_vnPayLib == null)
 				_vnPayLib = new VnPayLib();
 		}

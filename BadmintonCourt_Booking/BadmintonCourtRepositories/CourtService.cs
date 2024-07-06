@@ -20,6 +20,11 @@ namespace BadmintonCourtServices
                 _courtDAO = new CourtDAO();
             }
         }
+
+        public CourtService(CourtDAO dao)
+        {
+            _courtDAO = dao;
+        }
         public List<Court> GetAllCourts() => _courtDAO.GetAllCourts();
 
         public Court GetCourtByCourtId(string id) => _courtDAO.GetCourtByCourtId(id);

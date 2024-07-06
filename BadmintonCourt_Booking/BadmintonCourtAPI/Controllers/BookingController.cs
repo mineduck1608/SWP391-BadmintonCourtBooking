@@ -1,5 +1,6 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtServices;
+using BadmintonCourtServices.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -9,36 +10,34 @@ namespace BadmintonCourtAPI.Controllers
 	public class BookingController : Controller
 	{
 
-		private readonly BadmintonCourtService _service = null;
+		private readonly IBookingService _service = null;
+		private readonly ICourtService _courtService = new CourtService();
 
-		public BookingController(IConfiguration config)
+		public BookingController(IBookingService service)
 		{
-			if (_service == null)
-			{
-				_service = new BadmintonCourtService(config);
-			}
+			_service = service;
 		}
 
 
 		[HttpGet]
 		[Route("Booking/GetAll")]
 		[Authorize(Roles = "Admin,Staff")]
-		public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings() => Ok(_service.BookingService.GetAllBookings());
+		public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings() => Ok(_service.GetAllBookings());
 
 		[HttpGet]
 		[Route("Booking/GetByPaymentId")]
 		[Authorize]
-		public async Task<ActionResult<Booking>> GetBookingByPaymentId(string id) => Ok(_service.BookingService.GetBookingByBookingId(id));
+		public async Task<ActionResult<Booking>> GetBookingByPaymentId(string id) => Ok(_service.GetBookingByBookingId(id));
 
 		[HttpGet]
 		[Route("Booking/GetByUser")]
 		[Authorize]
-		public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByUserId(string id) => Ok(_service.BookingService.GetBookingsByUserId(id).ToList());
+		public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByUserId(string id) => Ok(_service.GetBookingsByUserId(id).ToList());
 
 		[HttpGet]
 		[Route("Bookinng/GetByType")]
 		[Authorize]
-		public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(_service.BookingService.GetBookingsByType(id).ToList());
+		public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByType(int id) => Ok(_service.GetBookingsByType(id).ToList());
 
 
 		[HttpDelete]
@@ -46,7 +45,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteBooking(string id)
 		{
-			_service.BookingService.DeleteBooking(id);
+			_service.DeleteBooking(id);
 			return Ok(new { msg = "Success" });
 		}
 
@@ -57,13 +56,13 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize]
 		public async Task<IActionResult> UpdateBooking(int? type, float? amount, string id)
 		{
-			Booking booking = _service.BookingService.GetBookingByBookingId(id);
+			Booking booking = _service.GetBookingByBookingId(id);
 			if (type.HasValue)
 				booking.BookingType = type.Value;
 			if (amount.HasValue)
-				if (amount.Value >= _service.CourtService.GetCourtByCourtId("C1").Price)
+				if (amount.Value >= _courtService.GetCourtByCourtId("C1").Price)
 					booking.Amount = amount.Value;
-			_service.BookingService.UpdatBooking(booking, id);
+			_service.UpdatBooking(booking, id);
 			return Ok();
 		}
 

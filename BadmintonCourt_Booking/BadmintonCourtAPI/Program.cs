@@ -18,8 +18,21 @@ namespace BadmintonCourtAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllers();
+			// Add services to the container.
+			builder.Services.AddScoped<IRoleService, RoleService>();
+			builder.Services.AddScoped<IUserService, UserService>();
+			builder.Services.AddScoped<IUserDetailService, UserDetailService>();
+			builder.Services.AddScoped<ICourtService, CourtService>();
+			builder.Services.AddScoped<ICourtBranchService, CourtBranchService>();
+			builder.Services.AddScoped<ISlotService, SlotService>();
+			builder.Services.AddScoped<IBookingService, BookingService>();
+			builder.Services.AddScoped<IPaymentService, PaymentService>();
+			builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+			builder.Services.AddScoped<IDiscountService, DiscountService>();
+			builder.Services.AddScoped<IMailService, MailService>();
+
+
+			builder.Services.AddControllers();
 
             var isTesting = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
             if (isTesting)

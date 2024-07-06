@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BadmintonCourtServices.IService
 {
-    internal interface IBookingService
+    public interface IBookingService
     {
         public List<Booking> GetAllBookings();
 

@@ -20,16 +20,28 @@ namespace BadmintonCourtAPI.Controllers
 {
 	public class PaymentController : Controller
 	{
-		private readonly BadmintonCourtService _service = null;
+		private readonly IPaymentService _service = null;
+		private readonly IBookingService _bookingService = new BookingService();
+		private readonly IDiscountService _discountService = new DiscountService();
+		private readonly IUserDetailService _userDetailService = new UserDetailService();
+		private readonly IUserService _userService = new UserService();
+		private readonly ISlotService _slotService = new SlotService();
+		private readonly ICourtService _courtService = new CourtService();
+		private readonly IMoMoService _moMoService = new MoMoService();
+		private readonly IVnPayService _vnPayService = new VnPayService();
+		private readonly IMailService _mailService = new MailService();
+
+
+
+
 		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
 		private const string flexibleBooking = "Flexible";
 		private const string playonceBooking = "One-time";
 		private const string fixedBooking = "Fixed";
 		private const string buyTime = "Buy Time";
-		public PaymentController(IConfiguration config)
+		public PaymentController(IPaymentService service)
 		{
-			if (_service == null)
-				_service = new BadmintonCourtService(config);
+			_service = service;
 		}
 
 
@@ -58,7 +70,7 @@ namespace BadmintonCourtAPI.Controllers
 
 			sb.Append($"Type: {type} | ");
 			sb.Append($"User: {userId} | ");
-			sb.Append($"Email: {_service.UserDetailService.GetUserDetailById(userId).Email}");
+			sb.Append($"Email: {_userDetailService.GetUserDetailById(userId).Email}");
 			if (type != buyTime && type != flexibleBooking)
 			{
 				DateTime? date = transactionDTO.Date;
@@ -79,7 +91,7 @@ namespace BadmintonCourtAPI.Controllers
 		private string ValidateOrder(TransactionDTO dto)
 		{
 
-			if (dto.UserId.IsNullOrEmpty() || _service.UserService.GetUserById(dto.UserId) == null)
+			if (dto.UserId.IsNullOrEmpty() || _userService.GetUserById(dto.UserId) == null)
 				return "User not exist";
 
 			if (dto.Type.IsNullOrEmpty())
@@ -87,12 +99,12 @@ namespace BadmintonCourtAPI.Controllers
 
 			if (dto.Type == fixedBooking || dto.Type == playonceBooking)
 			{
-				BookedSlot primitive = _service.SlotService.GetSlotById("S1");
+				BookedSlot primitive = _slotService.GetSlotById("S1");
 				//----------------------------------------------------------------
 				if (dto.CourtId.IsNullOrEmpty())
 					return "Court can't be empty";
 
-				if (_service.CourtService.GetCourtByCourtId(dto.CourtId).CourtStatus == false)
+				if (_courtService.GetCourtByCourtId(dto.CourtId).CourtStatus == false)
 					return "Court inactive";
 
 				if (dto.Start == null || dto.End == null || dto.Start > dto.End || dto.Date == null || dto.Start < primitive.StartTime.Hour || dto.End > primitive.EndTime.Hour)
@@ -104,7 +116,7 @@ namespace BadmintonCourtAPI.Controllers
 				if ((startDate - DateTime.Now).TotalMinutes <= 10)
 					return "Booking too close slot time";
 
-				List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, dto.CourtId);
+				List<BookedSlot> tmpStorage = _slotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, dto.CourtId);
 				if (tmpStorage.Count > 0)
 					return $"Court {dto.CourtId} on {dto.Date} {dto.Start}h - {dto.End}h has been booked";
 
@@ -131,14 +143,14 @@ namespace BadmintonCourtAPI.Controllers
 			if (model.Type == buyTime || model.Type == flexibleBooking) 
 				return (float)model.Amount; //Already caught if null
 
-			float courtPrice = _service.CourtService.GetCourtByCourtId(model.CourtId).Price;
+			float courtPrice = _courtService.GetCourtByCourtId(model.CourtId).Price;
 			var result = courtPrice * (model.End - model.Start) * (model.NumMonth == null ? 1 : (model.NumMonth * 4));
 			return (float)result;
 		}
 		private string GenerateMomoUrl(string orderInfo, float amount)
 		{
-			MoMoRequestData reqData = _service.MomoService.CreateRequestData(orderInfo, amount.ToString(), null);
-			var res = _service.MomoService.SendMoMoRequest(reqData);
+			MoMoRequestData reqData = _moMoService.CreateRequestData(orderInfo, amount.ToString(), null);
+			var res = _moMoService.SendMoMoRequest(reqData);
 			res.Wait();
 			return res.Result.PayUrl;
 		}
@@ -150,7 +162,7 @@ namespace BadmintonCourtAPI.Controllers
 				Amount = amount,
 				Content = orderInfo
 			};
-			return _service.VnPayService.CreatePaymentUrl(HttpContext, requestDTO, null);
+			return _vnPayService.CreatePaymentUrl(HttpContext, requestDTO, null);
 		}
 
 		[HttpGet]
@@ -165,7 +177,7 @@ namespace BadmintonCourtAPI.Controllers
 															  //-----------------------------------------------------------
 			DateTime end = new DateTime(model.Year.Value, 12, 31, 23, 59, 59);
 			DateTime start = new DateTime(model.Year.Value, 1, 1, 0, 0, 0);
-			List<Payment> pList = _service.PaymentService.GetAllPayments().Where(x => x.Date >= start && x.Date <= end).ToList();
+			List<Payment> pList = _service.GetAllPayments().Where(x => x.Date >= start && x.Date <= end).ToList();
 			//-----------------------------------------------------------
 			if (model.Type == 1) // Dashboard năm
 				return Ok(Util.GenerateYearDashboard(model.Year.Value, pList));
@@ -197,7 +209,7 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpGet]
 		[Authorize(Roles = "Admin,Staff")]
 		[Route("Payment/GetAll")]
-		public async Task<ActionResult<IEnumerable<Payment>>> GetAllPayments() => Ok(_service.PaymentService.GetAllPayments());
+		public async Task<ActionResult<IEnumerable<Payment>>> GetAllPayments() => Ok(_service.GetAllPayments());
 
 		[HttpGet]
 		[Route("Payment/GetByOrder")]
@@ -213,37 +225,37 @@ namespace BadmintonCourtAPI.Controllers
 			if (!userId.IsNullOrEmpty())
 			{
 				if (order == 1) // Sort tăng dần theo ngày
-					return Ok(_service.PaymentService.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
+					return Ok(_service.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
 
 				else if (order == 2)
-					return Ok(_service.PaymentService.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+					return Ok(_service.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
 
-				return Ok(_service.PaymentService.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).ToList()); // Default
+				return Ok(_service.GetPaymentsByUserId(userId).Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).ToList()); // Default
 			}
 
 			if (order == 1) // Sort tăng dần theo ngày
-				return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
+				return Ok(_service.GetAllPayments().Where(x => x.Date <= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderBy(x => x.Amount).ToList());
 
 			else if (order == 2)
-				return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+				return Ok(_service.GetAllPayments().Where(x => x.Date >= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
 
-			return Ok(_service.PaymentService.GetAllPayments().Where(x => x.Date <= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
+			return Ok(_service.GetAllPayments().Where(x => x.Date <= new DateTime(start.Value.Year, start.Value.Month, start.Value.Day, 0, 0, 0) && x.Date <= new DateTime(end.Value.Year, end.Value.Month, end.Value.Day, 23, 59, 59)).OrderByDescending(x => x.Amount).ToList());
 		}
 
 
 		[HttpGet]
 		[Route("Payment/GetByUser")]
 		[Authorize]
-		public async Task<ActionResult<IEnumerable<Payment>>> GetUserPayments(string id) => Ok(_service.PaymentService.GetPaymentsByUserId(id));
+		public async Task<ActionResult<IEnumerable<Payment>>> GetUserPayments(string id) => Ok(_service.GetPaymentsByUserId(id));
 
 
 		[HttpGet]
 		[Route("Payment/GetBySearch")]
 		[Authorize]
-		public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsBySearch(string? id, string? search) => Ok(_service.PaymentService.GetPaymentsBySearch(id, search));
+		public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsBySearch(string? id, string? search) => Ok(_service.GetPaymentsBySearch(id, search));
 
 		[HttpPost]
-		[Authorize]
+		//[Authorize]
 		[Route("Booking/TransactionProcess")]
 		public async Task<IActionResult> Payment(TransactionDTO model)
 		{
@@ -494,7 +506,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Payment/VnPayResult")]
 		public async Task<ActionResult> VnPayPaymentCallBack()
 		{
-			VnPayResponseDTO result = _service.VnPayService.PaymentExecute(Request.Query);
+			VnPayResponseDTO result = _vnPayService.PaymentExecute(Request.Query);
 			string content = result.Description;
 			DateTime date = result.Date;
 			string transId = result.TransactionId;
@@ -505,8 +517,8 @@ namespace BadmintonCourtAPI.Controllers
 			if (success)
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
-				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
+				UserDetail info = _userDetailService.GetUserDetailById(userId);
+				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
 			}
             return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
@@ -523,8 +535,8 @@ namespace BadmintonCourtAPI.Controllers
 			if (success)
 			{
 				string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
-				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
+				UserDetail info = _userDetailService.GetUserDetailById(userId);
+				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
             }
             return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
@@ -541,11 +553,11 @@ namespace BadmintonCourtAPI.Controllers
 
 			var map = TransformToDictionary(info, '|', ':');
 			string userId = map["User"];
-			User user = _service.UserService.GetUserById(userId);
+			User user = _userService.GetUserById(userId);
 			double amount = double.Parse(amountStr);
 			Payment payment = new()
 			{
-				PaymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7"),
+				PaymentId = "P" + (_service.GetAllPayments().Count + 1).ToString("D7"),
 				Date = responseDate,
 				UserId = userId,
 				TransactionId = transId,
@@ -555,7 +567,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (map["Type"] != buyTime && map["Type"] != flexibleBooking) //Capture buyTime
 			{
 				string courtId = map["Court"];
-				string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
+				string bookingId = "BK" + (_bookingService.GetAllBookings().Count + 1).ToString("D7");
 				string rawDate = map["Date"];
 				DateTime date = Convert.ToDateTime(rawDate);
 				int start = int.Parse(map["Start hour"]);
@@ -572,11 +584,11 @@ namespace BadmintonCourtAPI.Controllers
 					ChangeLog = 0
 				};
 
-				_service.BookingService.AddBooking(booking);
+				_bookingService.AddBooking(booking);
 				if (map["Type"] == fixedBooking)
 				{
 					int numMonth = int.Parse(map["Number of months"]);
-					List<BookedSlot> slotList = _service.SlotService.GetSlotsByFixedBooking(
+					List<BookedSlot> slotList = _slotService.GetSlotsByFixedBooking(
 						numMonth,
 						new DateTime(date.Year, date.Month, date.Day, start, 0, 0),
 						new DateTime(date.Year, date.Month, date.Day, end, 0, 0),
@@ -585,15 +597,15 @@ namespace BadmintonCourtAPI.Controllers
 					foreach (var item in slotList)
 					{
 						item.BookingId = bookingId;
-						item.SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7");
-						_service.SlotService.AddSlot(item);
+						item.SlotId = "S" + (_slotService.GetAllSlots().Count + 1).ToString("D7");
+						_slotService.AddSlot(item);
 					}
 				}
 				else if (map["Type"] == playonceBooking)
 				{
-					_service.SlotService.AddSlot(new BookedSlot
+					_slotService.AddSlot(new BookedSlot
 					{
-						SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"),
+						SlotId = "S" + (_slotService.GetAllSlots().Count + 1).ToString("D7"),
 						BookingId = bookingId,
 						CourtId = courtId,
 						StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0),
@@ -605,14 +617,19 @@ namespace BadmintonCourtAPI.Controllers
 			{
 				user.Balance += amount;
 			}
-			_service.PaymentService.AddPayment(payment);
-			List<Discount> discountList = _service.DiscountService.GetAllDiscounts().OrderByDescending(x => x.Amount).ToList();
+			_service.AddPayment(payment);
+			List<Discount> discountList = _discountService.GetAllDiscounts().OrderByDescending(x => x.Amount).ToList();
+			if (discountList.Count == 0)
+			{
+				_userService.UpdateUser(user, userId);
+				return true;
+			}
 			foreach (Discount discount in discountList)
 			{
 				if (amount >= discount.Amount)
 				{
 					user.Balance += (amount * discount.Proportion) / 100;
-					_service.UserService.UpdateUser(user, userId);
+					_userService.UpdateUser(user, userId);
 					break;
 				}
 			}

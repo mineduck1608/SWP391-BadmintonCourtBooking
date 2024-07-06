@@ -5,55 +5,55 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using BadmintonCourtAPI.Utils;
 using BadmintonCourtDAOs;
+using BadmintonCourtServices.IService;
 
 namespace BadmintonCourtAPI.Controllers
 {
 	public class RoleController : Controller
 	{
-		private readonly BadmintonCourtService _service = null;
+		private readonly IRoleService _service = null;
 
-		public RoleController(IConfiguration config)
+		//public RoleController(IConfiguration config)
+		//{
+		//	if (_service == null)
+		//	{
+		//		_service = new BadmintonCourtService(config);
+		//	}
+		//}
+
+
+		public RoleController(IRoleService service)
 		{
-			if (_service == null)
-			{
-				_service = new BadmintonCourtService(config);
-			}
-		}
-
-
-		public RoleController(RoleDAO dao)
-		{
-			if (_service == null)
-				_service = new BadmintonCourtService(dao);
+			_service = service;
 		}
 
 
 		[HttpGet]
 		[Route("Role/GetAll")]
-		[Authorize(Roles = "Admin,Staff")]
+		//[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles() =>
-			Ok(_service.RoleService.GetAllRoles());
+			Ok(_service.GetAllRoles());
 
 		[HttpGet]
 		[Route("Role/GetByName")]
 		[Authorize(Roles = "Admin,Staff")]
-		public async Task<ActionResult<IEnumerable<Role>>> GetRolesByName(string name) => Ok(_service.RoleService.GetRolesByName(name).ToList());
+		public async Task<ActionResult<IEnumerable<Role>>> GetRolesByName(string name) => Ok(_service.GetRolesByName(name).ToList());
 
 		[HttpGet]
 		[Route("Role/GetById")]
 		[Authorize(Roles = "Admin,Staff")]
-		public async Task<ActionResult<Role>> GetRoleById(string id) => Ok(_service.RoleService.GetRoleById(id));
+		public async Task<ActionResult<Role>> GetRoleById(string id) => Ok(_service.GetRoleById(id));
 
 		[HttpPost]
 		[Route("Role/Add")]
-		[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> AddRole(string roleName)
 		{
 			if (!roleName.IsNullOrEmpty())
 			{
-				if (_service.RoleService.GetAllRoles().FirstOrDefault(x => x.RoleName == roleName) != null)
+				if (_service.GetAllRoles().FirstOrDefault(x => x.RoleName == roleName) != null)
 					return BadRequest(new { msg = $"Role {roleName} has already existed" });
-				_service.RoleService.AddRole(new Role { RoleId = "R" + (_service.RoleService.GetAllRoles().Count + 1).ToString("D3"), RoleName = roleName });
+				_service.AddRole(new Role { RoleId = "R" + (_service.GetAllRoles().Count + 1).ToString("D3"), RoleName = roleName });
 				return Ok(new { msg = "Success" });
 			}
 			return BadRequest(new { msg = "Name is not full filled yet" });
@@ -64,7 +64,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteRole(string id)
 		{
-			_service.RoleService.DeleteRole(id);
+			_service.DeleteRole(id);
 			return Ok(new { msg = "Success" });
 		}
 
@@ -73,14 +73,14 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateRole(string roleName, string id)
 		{
-			Role tmp = _service.RoleService.GetRoleById(id);
+			Role tmp = _service.GetRoleById(id);
 			if (!roleName.IsNullOrEmpty())
 			{
-				if (_service.RoleService.GetAllRoles().FirstOrDefault(x => x.RoleName == roleName) != null)
+				if (_service.GetAllRoles().FirstOrDefault(x => x.RoleName == roleName) != null)
 					return BadRequest(new { msg = $"Role {roleName} has already existed" });
 				tmp.RoleName = roleName;
 			}
-			_service.RoleService.UpdateRole(tmp, id);
+			_service.UpdateRole(tmp, id);
 			return Ok(new { msg = "Success" });
 		}
 

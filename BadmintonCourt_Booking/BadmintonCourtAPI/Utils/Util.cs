@@ -18,15 +18,20 @@ namespace BadmintonCourtAPI.Utils
 	public class Util
 	{
 
+		private static IConfiguration _config = new ConfigurationBuilder()
+			.SetBasePath(Directory.GetCurrentDirectory())
+			.AddJsonFile("appsettings.json", true, true).Build();
+		static readonly HttpClient client = new HttpClient();
+
 		public static bool IsPhoneFormatted(string phone) => !phone.IsNullOrEmpty() ? new Regex(@"^0[9832]\d{8}$").IsMatch(phone) : false;
 
 		public static bool IsPasswordSecure(string password) => !password.IsNullOrEmpty() ? new Regex(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?])[A-Za-z\d!@#$%^&*()_\-+=<>?]{12,}$").IsMatch(password) : false;
 
 		public static bool IsMailFormatted(string mail) => !mail.IsNullOrEmpty() ? new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").IsMatch(mail) : false;
 
-		public static string GenerateToken(string id, bool status, string username, string roleName, IConfiguration config)
+		public static string GenerateToken(string id, bool status, string username, string roleName)
 		{
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 			if (username.IsNullOrEmpty())
 				username = "";
@@ -42,8 +47,8 @@ namespace BadmintonCourtAPI.Utils
 				new Claim("Role", roleName)
 			};
 			var token = new JwtSecurityToken(
-				issuer: config["Jwt:Issuer"],
-				audience: config["Jwt:Audience"],
+				issuer: _config["Jwt:Issuer"],
+				audience: _config["Jwt:Audience"],
 				claims: claims,
 				expires: DateTime.Now.AddMinutes(15),
 				signingCredentials: credentials

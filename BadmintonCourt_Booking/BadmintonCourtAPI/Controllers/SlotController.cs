@@ -10,29 +10,39 @@ using BadmintonCourtBusinessObjects.SupportEntities.Slot;
 using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Primitives;
+using BadmintonCourtServices.IService;
 namespace BadmintonCourtAPI.Controllers
 {
 	public class SlotController : Controller
 	{
-		private readonly BadmintonCourtService _service;
+		private readonly ISlotService _service = null;
+		private readonly IBookingService _bookingService = new BookingService();
+		private readonly IDiscountService _discountService = new DiscountService();
+		private readonly IUserDetailService _userDetailService = new UserDetailService();
+		private readonly IUserService _userService = new UserService();
+		private readonly ICourtService _courtService = new CourtService();
+		private readonly IMoMoService _moMoService = new MoMoService();
+		private readonly IVnPayService _vnPayService = new VnPayService();
+		private readonly IMailService _mailService = new MailService();
+		private readonly IPaymentService _paymentService = new PaymentService();
+
+
 		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
 		private const string updateResultMomoCallBack = "https://localhost:7233/Slot/UpdateResultProcessMomo";
 		private const string updateResultVnPayCallBack = "https://localhost:7233/Slot/UpdateResultProcessVnPay";
-		public SlotController(IConfiguration config)
+
+		public SlotController(ISlotService service)
 		{
-			if (_service == null)
-			{
-				_service = new BadmintonCourtService(config);
-			}
+			_service = service;
 		}
 
 		private void ExtractDataForUpdatingSlot(string slotId, out Payment? payment, out BookedSlot slot, out Court? court, out User? user, out Booking booking)
 		{
-			slot = _service.SlotService.GetSlotById(slotId);
-			court = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-			payment = _service.PaymentService.GetPaymentByBookingId(slot.BookingId);
-			booking = _service.BookingService.GetBookingByBookingId(slot.BookingId);
-			user = _service.UserService.GetUserById(booking.UserId);
+			slot = _service.GetSlotById(slotId);
+			court = _courtService.GetCourtByCourtId(slot.CourtId);
+			payment = _paymentService.GetPaymentByBookingId(slot.BookingId);
+			booking = _bookingService.GetBookingByBookingId(slot.BookingId);
+			user = _userService.GetUserById(booking.UserId);
 		}
 
 		private void ExtractSlotAndTime(string date, int start, int end, string courtId, out DateTime startDate, out DateTime endDate, out List<BookedSlot> tmpStorage)
@@ -40,12 +50,12 @@ namespace BadmintonCourtAPI.Controllers
 			string[] dateComponents = date.Split('-');
 			startDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), start, 0, 0);
 			endDate = new DateTime(int.Parse(dateComponents[0]), int.Parse(dateComponents[1]), int.Parse(dateComponents[2]), end, 0, 0);
-			tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
+			tmpStorage = _service.GetA_CourtSlotsInTimeInterval(startDate, endDate, courtId);
 		}
 		private bool IsTimeIntervalValid(string? date, int? start, int? end, string? courtId)
 		{
-			BookedSlot primitive = _service.SlotService.GetSlotById("S1");
-			if (date.IsNullOrEmpty() || start >= end || courtId.IsNullOrEmpty() || start < primitive.StartTime.Hour || end > primitive.EndTime.Hour || courtId.IsNullOrEmpty() || _service.CourtService.GetCourtByCourtId(courtId).CourtStatus == false)
+			BookedSlot primitive = _service.GetSlotById("S1");
+			if (date.IsNullOrEmpty() || start >= end || courtId.IsNullOrEmpty() || start < primitive.StartTime.Hour || end > primitive.EndTime.Hour || courtId.IsNullOrEmpty() || _courtService.GetCourtByCourtId(courtId).CourtStatus == false)
 				return false;
 			return true;
 		}
@@ -54,7 +64,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			// Update số dư
 			user.Balance = tmpBalance - newAmount; // Tru bot cho phan dat slot moi
-			_service.UserService.UpdateUser(user, user.UserId);
+			_userService.UpdateUser(user, user.UserId);
 			//----------------------------------------
 			// Update booking
 			if (booking.BookingType == 1) // 1 lần chơi -> Thay giá trị booking cũ thành mới
@@ -65,18 +75,18 @@ namespace BadmintonCourtAPI.Controllers
 				booking.Amount += newAmount; // Thêm giá trị của slot mới vừa thay đổi
 			}
 			booking.ChangeLog += 1;
-			_service.BookingService.UpdatBooking(booking, booking.BookingId);
+			_bookingService.UpdatBooking(booking, booking.BookingId);
 			slot.StartTime = startDate;
 			slot.EndTime = endDate;
 			slot.CourtId = courtId;
-			_service.SlotService.UpdateSlot(slot, slot.SlotId);
+			_service.UpdateSlot(slot, slot.SlotId);
 		}
 
 		private void ExtractAmountToValidateCondition(BookedSlot slot, Booking booking, DateTime startDate, DateTime endDate, string courtId, out double refund, out double tmpBalance, out double newAmount)
 		{
-			Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
-			Court court = _service.CourtService.GetCourtByCourtId(courtId);
-			User user = _service.UserService.GetUserById(booking.UserId);
+			Court oCourt = _courtService.GetCourtByCourtId(slot.CourtId);
+			Court court = _courtService.GetCourtByCourtId(courtId);
+			User user = _userService.GetUserById(booking.UserId);
 			refund = oCourt.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
 			tmpBalance = user.Balance.Value + refund;
 			newAmount = (endDate.Hour - startDate.Hour) * court.Price;
@@ -113,7 +123,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Slot/GetAll")]
-		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.SlotService.GetAllSlots()));
+		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.GetAllSlots()));
 
 		[HttpGet]
 		[Route("Slot/GetByDemand")]
@@ -127,15 +137,15 @@ namespace BadmintonCourtAPI.Controllers
 
 			// -----------------------------------------------------------
 			if (branchId.IsNullOrEmpty() && courtId.IsNullOrEmpty()) // Full
-				return Ok(Util.FormatSlotList(_service.SlotService.GetAllSlots().Where(x => x.StartTime >= start && x.EndTime <= end).ToList()));
+				return Ok(Util.FormatSlotList(_service.GetAllSlots().Where(x => x.StartTime >= start && x.EndTime <= end).ToList()));
 			// -----------------------------------------------------------
 			else if (!branchId.IsNullOrEmpty() && courtId.IsNullOrEmpty()) // Theo chi nhánh
 			{
-				List<Court> courtList = _service.CourtService.GetCourtsByBranchId(branchId);
+				List<Court> courtList = _courtService.GetCourtsByBranchId(branchId);
 				List<BookedSlot> result = new List<BookedSlot>();
 				foreach (var court in courtList)
 				{
-					List<BookedSlot> tmpStorage = _service.SlotService.GetA_CourtSlotsInTimeInterval(start, end, court.CourtId);
+					List<BookedSlot> tmpStorage = _service.GetA_CourtSlotsInTimeInterval(start, end, court.CourtId);
 					foreach (var slot in tmpStorage)
 						result.Add(slot);
 				}
@@ -143,7 +153,7 @@ namespace BadmintonCourtAPI.Controllers
 			}
 			// -----------------------------------------------------------
 			// Sân cụ thể
-			return Ok(Util.FormatSlotList(_service.SlotService.GetA_CourtSlotsInTimeInterval(start, end, courtId)));
+			return Ok(Util.FormatSlotList(_service.GetA_CourtSlotsInTimeInterval(start, end, courtId)));
 		}
 
 
@@ -163,16 +173,16 @@ namespace BadmintonCourtAPI.Controllers
 			ExtractSlotAndTime(date, start.Value, end.Value, courtId, out startDate, out endDate, out tmpStorage);
 			if (tmpStorage.Count == 0)
 			{
-				User user = _service.UserService.GetUserById(userId);
-				Court court = _service.CourtService.GetCourtByCourtId(courtId);
+				User user = _userService.GetUserById(userId);
+				Court court = _courtService.GetCourtByCourtId(courtId);
 				double amount = (end.Value - start.Value) * court.Price;
 				if (user.Balance >= amount)
 				{
-					string bookingId = "BK" + (_service.BookingService.GetAllBookings().Count + 1).ToString("D7");
-					_service.BookingService.AddBooking(new Booking { BookingId = bookingId, Amount = amount, BookingType = 1, UserId = userId, BookingDate = DateTime.Now, ChangeLog = 0 });
-					_service.SlotService.AddSlot(new BookedSlot { SlotId = "S" + (_service.SlotService.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate,  });
+					string bookingId = "BK" + (_bookingService.GetAllBookings().Count + 1).ToString("D7");
+					_bookingService.AddBooking(new Booking { BookingId = bookingId, Amount = amount, BookingType = 1, UserId = userId, BookingDate = DateTime.Now, ChangeLog = 0 });
+					_service.AddSlot(new BookedSlot { SlotId = "S" + (_service.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate,  });
 					user.Balance -= amount;
-					_service.UserService.UpdateUser(user, userId);
+					_userService.UpdateUser(user, userId);
 					return Ok(new { msg = "Success" });
 				}
 				return BadRequest(new { msg = "Balance not enough" });
@@ -182,15 +192,15 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Slot/GetSlotCourtInDay")]
-		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInDay(DateTime? date, string id) => date == null ? BadRequest(new { msg = "Date can't be empty" }) : Ok(Util.FormatSlotList(_service.SlotService.GetA_CourtSlotsInTimeInterval(new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, 0, 0, 1), new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, 23, 59, 59), id).ToList()));
+		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInDay(DateTime? date, string id) => date == null ? BadRequest(new { msg = "Date can't be empty" }) : Ok(Util.FormatSlotList(_service.GetA_CourtSlotsInTimeInterval(new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, 0, 0, 1), new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, 23, 59, 59), id).ToList()));
 
 		[HttpPost]
 		[Route("Slot/GetSlotCourtInInterval")]
-		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInInterval(DateTime startTime, DateTime endTime, string id) => (startTime == null || endTime == null) ? BadRequest(new { msg = "Date can't be empty" }) : Ok(_service.SlotService.GetA_CourtSlotsInTimeInterval(startTime, endTime, id));
+		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetA_CourtSlotsInInterval(DateTime startTime, DateTime endTime, string id) => (startTime == null || endTime == null) ? BadRequest(new { msg = "Date can't be empty" }) : Ok(_service.GetA_CourtSlotsInTimeInterval(startTime, endTime, id));
 
 		[HttpGet]
 		[Route("Slot/GetBeforeConfirm")]
-		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, string id) => Ok(Util.FormatSlotList(_service.SlotService.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList()));
+		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByFixedBookingBeforeConfirm(int monthNum, DateTime date, int start, int end, string id) => Ok(Util.FormatSlotList(_service.GetSlotsByFixedBooking(monthNum, new DateTime(date.Year, date.Month, date.Day, start, 0, 0), new DateTime(date.Year, date.Month, date.Day, end, 0, 0), id).ToList()));
 
 
 		[HttpPut]
@@ -200,10 +210,10 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (start >= end)
 				return BadRequest(new { msg = "End must be bigger than start" });
-			BookedSlot slot = _service.SlotService.GetSlotById("S1");
+			BookedSlot slot = _service.GetSlotById("S1");
 			slot.StartTime = new DateTime(1900, 1, 1, start, 0, 0);
 			slot.EndTime = new DateTime(1900, 1, 1, end, 0, 0);
-			_service.SlotService.UpdateSlot(slot, "S1");
+			_service.UpdateSlot(slot, "S1");
 			return Ok(new { msg = "Success" });
 		}
 
@@ -216,10 +226,10 @@ namespace BadmintonCourtAPI.Controllers
 				return BadRequest(new { msg = "Invalid time" });
 		
 
-			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
+			Booking booking = _bookingService.GetBookingByBookingId(bookingId);
 			if (booking.ChangeLog < 2)
 			{
-				BookedSlot slot = _service.SlotService.GetSlotById(slotId);
+				BookedSlot slot = _service.GetSlotById(slotId);
 				DateTime startDate = new();
 				DateTime endDate = new();
 				List<BookedSlot> tmpStorage = new();
@@ -235,7 +245,7 @@ namespace BadmintonCourtAPI.Controllers
 				double tmpBalance;
 				double newAmount;
 				ExtractAmountToValidateCondition(slot, booking, startDate, endDate, courtId, out refund, out tmpBalance, out newAmount);
-				User user = _service.UserService.GetUserById(booking.UserId);
+				User user = _userService.GetUserById(booking.UserId);
 				if (tmpBalance >= newAmount)
 				{
 					SupportUpdateSlotEnoughBalnce(tmpBalance, newAmount, refund, courtId, startDate, endDate, booking, slot, user);
@@ -256,11 +266,11 @@ namespace BadmintonCourtAPI.Controllers
 			if (!IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
 
-			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
+			Booking booking = _bookingService.GetBookingByBookingId(bookingId);
 			//--------------------------------------------------------------------------------------
 			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 2)
 			{
-				BookedSlot slot = _service.SlotService.GetSlotById(slotId);
+				BookedSlot slot = _service.GetSlotById(slotId);
 				DateTime startDate = new();
 				DateTime endDate = new();
 				List<BookedSlot> tmpStorage = new();
@@ -276,7 +286,7 @@ namespace BadmintonCourtAPI.Controllers
 				double tmpBalance;
 				double newAmount;
 				ExtractAmountToValidateCondition(slot, booking, startDate, endDate, courtId, out refund, out tmpBalance, out newAmount);
-				User user = _service.UserService.GetUserById(userId);
+				User user = _userService.GetUserById(userId);
 				// ---------------------------- 
 				if (tmpBalance >= newAmount) // Check số dư sau khi hoàn đã đủ tiền thanh toán
 				{
@@ -286,7 +296,7 @@ namespace BadmintonCourtAPI.Controllers
 				// Sau khi đã giả định số dư tổng sẽ có sau khi đc hoàn mà vẫn ko đủ thì tiến hành cho khách thực hiện giao dịch qua app bank / momo
 				else
 				{
-					UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
+					UserDetail info = _userDetailService.GetUserDetailById(userId);
 					string content = $"User: {info.FirstName} {info.LastName} | ID: {userId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {date} {start}h - {end}h | Court: {courtId} | Booking: {booking.BookingId} | Slot: {slotId} |";
 					double transactionAmount = (newAmount - tmpBalance) < 10000 ? float.Parse(newAmount.ToString()) : (newAmount - tmpBalance);
 					paymentMethod = paymentMethod == null ? 1 : paymentMethod;
@@ -300,7 +310,7 @@ namespace BadmintonCourtAPI.Controllers
 					string paymentUrl = "";
 					if (paymentMethod == 1)
 					{
-						paymentUrl = _service.VnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO
+						paymentUrl = _vnPayService.CreatePaymentUrl(HttpContext, new VnPayRequestDTO
 						{
 							Content = content,
 							Amount = float.Parse(transactionAmount.ToString())
@@ -310,8 +320,8 @@ namespace BadmintonCourtAPI.Controllers
 					}
 					else
 					{
-						var reqdata = _service.MomoService.CreateRequestData(content, (transactionAmount * 1000).ToString(), updateResultMomoCallBack);
-						var response = _service.MomoService.SendMoMoRequest(reqdata);
+						var reqdata = _moMoService.CreateRequestData(content, (transactionAmount * 1000).ToString(), updateResultMomoCallBack);
+						var response = _moMoService.SendMoMoRequest(reqdata);
 						paymentUrl = response.Result.PayUrl;
 					}
 					return Ok(new { url = paymentUrl });
@@ -335,20 +345,20 @@ namespace BadmintonCourtAPI.Controllers
 			float refund = court.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
 
 			slot.IsDeleted = true;
-			_service.SlotService.UpdateSlot(slot, slotId);
+			_service.UpdateSlot(slot, slotId);
 			if (booking.BookingType == 1) // 1 lan choi
 			{
 				booking.IsDeleted = true;
 				if (payment != null) // 1 lan choi dat = tien
 				{
 					payment.BookingId = null;
-					_service.PaymentService.UpdatePayment(payment, payment.PaymentId);
+					_paymentService.UpdatePayment(payment, payment.PaymentId);
 				}
 			}
 			else booking.Amount -= refund; // Choi thang' / choi co dinh
-			_service.BookingService.UpdatBooking(booking, booking.BookingId);
+			_bookingService.UpdatBooking(booking, booking.BookingId);
 			user.Balance += refund;
-			_service.UserService.UpdateUser(user, user.UserId);
+			_userService.UpdateUser(user, user.UserId);
 			return Ok(new { msg = "Success" });
 		}
 
@@ -358,7 +368,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize]
 		public async Task<IActionResult> CancelSlot(string slotId, string bookingId) // Khách hàng chủ động hủy slot
 		{
-			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
+			Booking booking = _bookingService.GetBookingByBookingId(bookingId);
 			if ((DateTime.Now - booking.BookingDate).TotalHours <= 1 && booking.ChangeLog < 2)
 			{
 				BookedSlot slot = new();
@@ -369,14 +379,14 @@ namespace BadmintonCourtAPI.Controllers
 				float refund = court.Price * (slot.EndTime.Hour - slot.StartTime.Hour);
 
 				slot.IsDeleted = true;
-				_service.SlotService.UpdateSlot(slot, slotId);
+				_service.UpdateSlot(slot, slotId);
 				if (booking.BookingType == 1) // 1 lan choi
 				{
 					booking.IsDeleted = true;
 					if (payment != null) // 1 lan choi dat = tien
 					{
 						payment.BookingId = null;
-						_service.PaymentService.UpdatePayment(payment, payment.PaymentId);
+						_paymentService.UpdatePayment(payment, payment.PaymentId);
 					}
 				}
 				else
@@ -384,9 +394,9 @@ namespace BadmintonCourtAPI.Controllers
 					booking.Amount -= refund; // Choi thang' / choi co dinh
 					booking.ChangeLog += 1;
 				}
-				_service.BookingService.UpdatBooking(booking, booking.BookingId);
+				_bookingService.UpdatBooking(booking, booking.BookingId);
 				user.Balance += refund / 2;
-				_service.UserService.UpdateUser(user, user.UserId);
+				_userService.UpdateUser(user, user.UserId);
 				return Ok(new { msg = "Success" });
 			}
 			return BadRequest(new { msg = "Can't change" });
@@ -396,13 +406,13 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Slot/UpdateResultProcessVnPay")]
 		public async Task<IActionResult> ProcessResultVnpay()
 		{
-			VnPayResponseDTO result = _service.VnPayService.PaymentExecute(Request.Query);
+			VnPayResponseDTO result = _vnPayService.PaymentExecute(Request.Query);
 			bool status = UpdateNewSlotToDB("00", result.VnPayResponseCode, result.Description, result.TransactionId, result.Amount, result.Date, 1);
 			if (status)
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
-				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
+				UserDetail info = _userDetailService.GetUserDetailById(userId);
+				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
             }
             return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
@@ -416,8 +426,8 @@ namespace BadmintonCourtAPI.Controllers
 			if (status)
 			{
 				string userId = result.OrderInfo.Split('|')[0].Trim().Split(':')[1].Trim();
-				UserDetail info = _service.UserDetailService.GetUserDetailById(userId);
-				_service.MailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
+				UserDetail info = _userDetailService.GetUserDetailById(userId);
+				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
 			}
             return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
@@ -430,7 +440,7 @@ namespace BadmintonCourtAPI.Controllers
 			Dictionary<string, string> infoStorage = ExtractPaymentInfo(content);
 			//---------------------------------------------------------------------
 			string userId = infoStorage["ID"];
-			User user = _service.UserService.GetUserById(userId);
+			User user = _userService.GetUserById(userId);
 			//---------------------------------------------------------------------
 			string rawDate = infoStorage["Date"];
 			DateOnly date = DateOnly.Parse(rawDate.Split(' ')[0]);
@@ -440,16 +450,15 @@ namespace BadmintonCourtAPI.Controllers
 			string courtId = infoStorage["Court"];
 			//---------------------------------------------------------------------
 			string bookingId = infoStorage["Booking"];
-			Booking booking = _service.BookingService.GetBookingByBookingId(bookingId);
+			Booking booking = _bookingService.GetBookingByBookingId(bookingId);
 			//---------------------------------------------------------------------
 			string slotId = infoStorage["Slot"];
-			BookedSlot slot = _service.SlotService.GetSlotById(slotId);
-			Court oCourt = _service.CourtService.GetCourtByCourtId(slot.CourtId);
+			BookedSlot slot = _service.GetSlotById(slotId);
+			Court oCourt = _courtService.GetCourtByCourtId(slot.CourtId);
 			//---------------------------------------------------------------------
-			string paymentId = "P" + (_service.PaymentService.GetAllPayments().Count + 1).ToString("D7");
-			_service.PaymentService.AddPayment(new Payment
+			_paymentService.AddPayment(new Payment
 			{
-				PaymentId = paymentId,
+				PaymentId = "P" + (_paymentService.GetAllPayments().Count + 1).ToString("D7"),
 				Amount = amount,
 				BookingId = bookingId,
 				Method = method,
@@ -475,14 +484,14 @@ namespace BadmintonCourtAPI.Controllers
 				else booking.Amount = amount;
 			}
 			//---------------------------------------------------------------------
-			_service.UserService.UpdateUser(user, userId);
+			_userService.UpdateUser(user, userId);
 			//---------------------------------------------------------------------
-			_service.BookingService.UpdatBooking(booking, bookingId);
+			_bookingService.UpdatBooking(booking, bookingId);
 			//---------------------------------------------------------------------
 			slot.CourtId = courtId;
 			slot.StartTime = new DateTime(date.Year, date.Month, date.Day, start, 0, 0);
 			slot.EndTime = new DateTime(date.Year, date.Month, date.Day, end, 0, 0);
-			_service.SlotService.UpdateSlot(slot, slotId);
+			_service.UpdateSlot(slot, slotId);
 			return true;
 		}
 

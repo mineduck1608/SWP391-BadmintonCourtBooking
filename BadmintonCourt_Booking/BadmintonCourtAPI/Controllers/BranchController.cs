@@ -2,6 +2,7 @@
 using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtBusinessObjects.SupportEntities.Court;
 using BadmintonCourtServices;
+using BadmintonCourtServices.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,12 @@ namespace BadmintonCourtAPI.Controllers
 	public class BranchController : Controller
 	{
 
-		private readonly BadmintonCourtService _service = null;
+		private readonly ICourtBranchService _service = null;
+		private readonly ICourtService _courtService = new CourtService();
 
-		public BranchController(IConfiguration config)
+		public BranchController(ICourtBranchService service)
 		{
-			_service = new BadmintonCourtService(config);
+			_service = service;
 		}
 
 		[HttpPost]
@@ -31,7 +33,7 @@ namespace BadmintonCourtAPI.Controllers
 				return BadRequest();
 			if (Util.IsPasswordSecure(phone))
 			{
-				_service.BranchService.AddBranch(new CourtBranch { BranchId = "B" + (_service.BranchService.GetAllCourtBranches().Count + 1).ToString("D3"), BranchImg = img, BranchName = name, Location = location, BranchPhone = phone, BranchStatus = 1, MapUrl = mapUrl });
+				_service.AddBranch(new CourtBranch { BranchId = "B" + (_service.GetAllCourtBranches().Count + 1).ToString("D3"), BranchImg = img, BranchName = name, Location = location, BranchPhone = phone, BranchStatus = 1, MapUrl = mapUrl });
 				// 1: hoạt động
 				// 0: bỏ
 				// -1: bảo trì
@@ -46,18 +48,18 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<CourtBranch>> DeleteBranch(string id)
 		{
-			_service.BranchService.DeleteBranch(id);
-			return NoContent();
+			_service.DeleteBranch(id);
+			return Ok(new { msg = "Success" });
 		}
 
 
 		[HttpGet]
 		[Route("Branch/GetAll")]
-		public async Task<ActionResult<IEnumerable<BranchDTO>>> GetAllBranches() => Ok(Util.FormatBranchList(_service.BranchService.GetAllCourtBranches()));
+		public async Task<ActionResult<IEnumerable<BranchDTO>>> GetAllBranches() => Ok(Util.FormatBranchList(_service.GetAllCourtBranches()));
 
 		[HttpGet]
 		[Route("Branch/GetBySearch")]
-		public async Task<ActionResult<IEnumerable<BranchDTO>>> GetBranchesBySearchResult(string search) => Ok(Util.FormatBranchList(_service.BranchService.GetBranchesBySearchResult(search)));
+		public async Task<ActionResult<IEnumerable<BranchDTO>>> GetBranchesBySearchResult(string search) => Ok(Util.FormatBranchList(_service.GetBranchesBySearchResult(search)));
 
 
 		[HttpPut]
@@ -65,7 +67,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<CourtBranch>> UpdateBranch(string location, string img, string name, string phone, int status, string id, string mapUrl)
 		{
-			CourtBranch branch = _service.BranchService.GetBranchById(id);
+			CourtBranch branch = _service.GetBranchById(id);
 			if (!location.IsNullOrEmpty())
 				branch.Location = location;
 			if (!name.IsNullOrEmpty())
@@ -79,17 +81,17 @@ namespace BadmintonCourtAPI.Controllers
 			branch.BranchStatus = status;
 			if (status == -1 || status == 0)
 			{
-				List<Court> courtList = _service.CourtService.GetCourtsByBranchId(id);
+				List<Court> courtList = _courtService.GetCourtsByBranchId(id);
 				if (courtList.Count > 0 || courtList != null)
 				{
 					foreach (var item in courtList)
 					{
 						item.CourtStatus = false;
-						_service.CourtService.UpdateCourt(item, item.CourtId);
+						_courtService.UpdateCourt(item, item.CourtId);
 					}
 				}
 			}
-			_service.BranchService.UpdateBranch(branch, id);
+			_service.UpdateBranch(branch, id);
 			return Ok(new { msg = "Success" });
 		}
 

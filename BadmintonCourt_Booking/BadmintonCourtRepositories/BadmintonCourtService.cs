@@ -79,7 +79,7 @@ namespace BadmintonCourtServices
 				UserDetailService = new UserDetailService();
 			}
 			if (VnPayService == null)
-				VnPayService = new VnPayService(config);
+				VnPayService = new VnPayService();
 			if (DiscountService == null)
 				DiscountService = new DiscountService();
 			if (MomoService == null)
@@ -91,6 +91,11 @@ namespace BadmintonCourtServices
 		public BadmintonCourtService(RoleDAO dao)
 		{
 			RoleService = new RoleService(dao);
+		}
+
+		public BadmintonCourtService(CourtDAO dao)
+		{
+			CourtService = new CourtService(dao);
 		}
 	}
 }
