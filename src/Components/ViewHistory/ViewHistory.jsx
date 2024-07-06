@@ -518,7 +518,7 @@ export default function ViewHistory() {
         <div className='view-history-background'>
           <div className="view-history-profile-container">
             <div className="view-history-profile-content">
-              <h2>Booking History</h2>
+              <h2>Booking Details</h2>
               <div className="view-history-booking-history">
                 {loading ? (
                   <p>Loading bookings...</p>
