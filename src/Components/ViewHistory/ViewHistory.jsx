@@ -432,7 +432,7 @@ export default function ViewHistory() {
         closable={false}
         centered={true}
       >
-        <span>
+        <span>centered={true}
           <p>Booking: {formState.bookingId}</p>
           <p>Slot: {formState.slotId}</p>
           <input type="date" id="datePicker" value={formState.date}
@@ -618,6 +618,7 @@ export default function ViewHistory() {
       bookingId={feedbackData.bookingId}
       branchId={feedbackData.branchId}
       userId={feedbackData.userId}
+      centered={true}
       />
     </div>
   );

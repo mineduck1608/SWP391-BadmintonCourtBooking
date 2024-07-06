@@ -39,6 +39,7 @@ const CreateFeedbackModal = ({ visible, onCancel, bookingId, branchId, userId })
       visible={visible}
       onCancel={onCancel}
       footer={null}
+      centered={true}
     >
       <div className="cfm-fb-info">
       <h1>FeedBack</h1>

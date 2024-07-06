@@ -45,8 +45,9 @@ const Register = () => {
         method: "POST",
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(regobj),
-      }).then((res) => {
-        toast.success('Registered successfuly.');
+      }).then(response => response.json())
+      .then((res) => {
+        toast(res.msg);
         usenavigate('/signin');
       }).catch((err) => {
         toast.error('Failed: ' + err.message);
