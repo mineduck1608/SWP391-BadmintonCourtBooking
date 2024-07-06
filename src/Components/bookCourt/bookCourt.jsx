@@ -169,7 +169,8 @@ const BookCourt = () => {
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
-        if (selectedDate === '' || t1 === '' || t2 === '') return -1
+        if (selectedDate === '' || t1 === '' || t2 === '') return -1;
+        selectedDate = Date.parse(selectedDate) - 7 * 3600000
         var startTime = Date.parse(selectedDate) + t1 * 3600000
         var endTime = Date.parse(selectedDate) + t2 * 3600000
         var curDateNum = Date.parse(curDate)
@@ -264,9 +265,12 @@ const BookCourt = () => {
                 }
             }
             else {
-                if (res.status === HttpStatusCode.Ok)
-                    window.location.assign('/bookingHistory')
-
+                if (res.ok){
+                    toast.success('Created booking!')
+                    setTimeout(() => {
+                        window.location.assign('/bookingHistory')
+                    }, 500);
+                }
                 else {
                     const data = await res.json()
                     const msg = data['msg']

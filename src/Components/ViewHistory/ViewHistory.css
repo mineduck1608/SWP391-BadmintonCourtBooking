@@ -183,7 +183,7 @@
   background-color: #aa0000;
   transform: translateY(-2px);
 }
-#warning{
+.warning{
   font-weight: 700;
   color: #f00;
 }
@@ -200,4 +200,10 @@
   display: flex;
   justify-content: end;
   align-items: flex-start;
+}
+.btn-disabled{
+  background-color: #aaaaaa;
+}
+.btn-disabled:hover{
+  background-color: #999999;
 }
