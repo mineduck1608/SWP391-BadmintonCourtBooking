@@ -64,6 +64,7 @@
   
   .cfm-btn-cancel {
     margin-left: 0;
+    background-color: red;
   }
 
   .cfm-fb-info {
