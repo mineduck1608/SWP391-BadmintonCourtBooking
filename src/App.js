@@ -36,6 +36,7 @@ import BuyFail from './Components/BuyFail/BuyFail';
 import GoogleMap from './Components/googleMap/googleMap';
 import VerifyAccount from './Components/verifyAccount/verifyAccount';
 import CreateFeedbackModal from './Components/CreateFeedbackModal/CreateFeedbackModal'; 
+import PaymentHistory from './Components/ViewPayment/ViewPayment';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -62,6 +63,7 @@ const App = () => {
           <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />
           <Route path="/payFail" element={<div><Header /><BuyFail /><Footer /></div>} />
           <Route path="/bookingHistory" element={<BookingHistory />} />
+          <Route path="/paymentHistory" element={<PaymentHistory/>} /> 
           <Route path="/googleMap" element={<GoogleMap />} />
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
@@ -86,7 +88,6 @@ const App = () => {
             <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
             <Route path="timeSlot" element={<SlotManagement />} />
-            <Route path="timeManage" element={<BadmintonCourtHours />} />
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
             <Route path="pie" element={<Pie />} />

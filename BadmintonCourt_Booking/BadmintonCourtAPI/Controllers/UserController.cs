@@ -75,7 +75,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("User/GetAll")]
-		[Authorize(Roles = "Admin,Staff")]
+		[Authorize]
 		public async Task<ActionResult<IEnumerable<User>>> GetAllUsers() => Ok(_service.GetAllUsers());
 
 		[HttpGet]

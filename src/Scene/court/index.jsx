@@ -11,6 +11,9 @@ import { imageDb } from '../../Components/googleSignin/config.js';
 import { ConfigProvider, Modal, Spin, Form } from 'antd';
 import { toast, ToastContainer } from 'react-toastify';
 import './court.css';
+import { jwtDecode } from 'jwt-decode';
+
+
 
 const Court = () => {
     const theme = useTheme();
@@ -38,8 +41,11 @@ const Court = () => {
         description: '',
     });
     const [imgs, setImgs] = useState([]);
+    const [userRole, setUserRole] = useState('');
 
     const [form] = Form.useForm();
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,6 +73,12 @@ const Court = () => {
                     branchName: branchMap[court.branchId]
                 }));
 
+                let token;
+                token = sessionStorage.getItem('token');
+                let decodedToken;
+                decodedToken = jwtDecode(token);
+                
+                setUserRole(decodedToken.Role);
                 setData(newData);
                 setBranches(branches);
                 setLoading(false);
@@ -288,9 +300,11 @@ const Court = () => {
             <Box m="20px">
                 <Head title="COURTS" subtitle="List of Badminton Courts" />
                 <Box display="flex" justifyContent="flex-start" mb={2}>
-                    <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
-                        Add Court
-                    </Button>
+                    {userRole === 'Admin' && (
+                        <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
+                            Add Court
+                        </Button>
+                    )}
                 </Box>
                 <Box
                     m="40px 0 0 0"

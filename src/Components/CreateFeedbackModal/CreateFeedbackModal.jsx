@@ -39,6 +39,7 @@ const CreateFeedbackModal = ({ visible, onCancel, bookingId, branchId, userId })
       visible={visible}
       onCancel={onCancel}
       footer={null}
+      centered={true}
     >
       <div className="cfm-fb-info">
       <h1>FeedBack</h1>
@@ -66,8 +67,10 @@ const CreateFeedbackModal = ({ visible, onCancel, bookingId, branchId, userId })
             onChange={(e) => setFeedback(e.target.value)}
           />
         </div>
-        <Button className="cfm-btn-submit" type="primary" htmlType="submit">Submit Feedback</Button>
-        <Button className="cfm-btn-cancel" type="default" onClick={onCancel}>Cancel</Button>
+        <div className="cfm-btn">
+          <Button className="cfm-btn-cancel" type="default" onClick={onCancel}>Cancel</Button>
+          <Button className="cfm-btn-submit" type="primary" htmlType="submit">Submit Feedback</Button>
+        </div>
       </form>
     </Modal>
   );

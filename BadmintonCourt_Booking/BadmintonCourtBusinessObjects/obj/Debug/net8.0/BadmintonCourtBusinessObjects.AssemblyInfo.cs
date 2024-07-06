@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BadmintonCourtBusinessObjects")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4004db450165cbaa21c274383113d8594f9e5157")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ed10709ac0c13ed05f5bdc8232e6424791df819")]
 [assembly: System.Reflection.AssemblyProductAttribute("BadmintonCourtBusinessObjects")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BadmintonCourtBusinessObjects")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

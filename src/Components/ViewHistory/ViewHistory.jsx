@@ -22,7 +22,9 @@ export default function ViewHistory() {
   const [openCancel, setOpenCancel] = useState(false);
   const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
   const [validSchedule, setValidSchedule] = useState(false)
-  const token = sessionStorage.getItem('token');
+  const token = sessionStorage.getItem('token')
+  const [amount, setAmount] = useState()
+  const [currentAmount, setCurrentAmount] = useState(0)
   const apiUrl = 'https://localhost:7233'
   const initialState = {
     start: '',
@@ -38,7 +40,24 @@ export default function ViewHistory() {
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
   const navigate = useNavigate();
+  const refreshToken = async () => {
+    try {
+      var decodedToken = jwtDecode(token)
+      if (decodedToken['exp'] < Date.parse(new Date())) {
+        var res = await fetch(`${apiUrl}/User/ExternalLogAuth?` +
+          `token=${token}`
+          , {
+            method: 'post'
+          })
+        var data = await res.json()
+        sessionStorage.removeItem('token')
+        sessionStorage.setItem('token')
+      }
+    }
+    catch (err) {
 
+    }
+  }
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
       var res = await fetch(`${apiUrl}/Slot/GetAll`)
@@ -157,6 +176,16 @@ export default function ViewHistory() {
     fetchData();
     loadTimeFrame()
   }, [token]);
+  const calculateAmount = (courtId, start, end) => {
+    var c = courts.find(c => c['courtId'] === courtId)
+    return c['price'] * (end - start)
+  }
+  const handleCalculateAmount = () => {
+    var courtId = document.getElementById('court').value
+    var start = document.getElementById('startingTime').value
+    var end = document.getElementById('endingTime').value
+    setAmount(calculateAmount(courtId, start, end))
+  }
 
   const renderTableRows = (filterType) => {
     const filteredBookings = bookings.filter((booking) => {
@@ -178,10 +207,10 @@ export default function ViewHistory() {
     const sortedBookings = filteredBookings.sort((a, b) => {
       return new Date(b.bookingDate) - new Date(a.bookingDate);
     });
-  
+
     return sortedBookings.flatMap((booking) => {
       const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
-  
+
       return relatedSlots.map((slot) => {
         const slotDate = new Date(slot.date).toLocaleDateString();
         const startTime = formatTime(slot.start);
@@ -191,7 +220,7 @@ export default function ViewHistory() {
         const courtName = court ? court.courtName : 'Unknown Court';
         const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
         const branchName = branch ? branch.branchName : 'Unknown Branch';
-  
+
         return (
           !booking.isDeleted &&
           <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
@@ -210,8 +239,14 @@ export default function ViewHistory() {
               </td>
             ) : (
               <td>
-                <button className='view-history-button' onClick={() => onClickEdit(slot)}>Edit</button>
-                <button className='view-history-button view-history-cancel-btn' onClick={() => onClickCancelSlot(slot)}>Cancel</button>
+                <button className={'view-history-button' + (booking['changeLog'] > 2 ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+                  disabled={booking['changeLog'] > 2}
+                >Edit ({booking['changeLog']}/3 changes)</button>
+                <button
+                  className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] > 2 ? ' btn-disabled' : '')}
+                  onClick={() => onClickCancelSlot(slot)}
+                  disabled={booking['changeLog'] > 2}
+                >Cancel</button>
               </td>
             )}
           </tr>
@@ -221,6 +256,9 @@ export default function ViewHistory() {
   };
 
   const onClickEdit = (slot) => {
+    var t = calculateAmount(slot.courtId, slot.start, slot.end)
+    setCurrentAmount(t)
+    setAmount(t)
     setOpen(true)
     loadTimeFrame()
     let court = courts.find(c => c.courtId === slot.courtId)
@@ -312,12 +350,10 @@ export default function ViewHistory() {
       }
     }
     let t = validateTime(formState.date, formState.start, formState.end)
-    setValidSchedule(t)
     try {
       if (t) {
         setOpen(false)
         await getPayment(formState.bookingId)
-        console.log(payment);
         await update(formState.start, formState.end, formState.date, getUserId(token),
           formState.courtId, formState.slotId, payment.method, formState.bookingId
         )
@@ -332,7 +368,19 @@ export default function ViewHistory() {
       toast.error('Server error')
     }
   }
-
+  //delta = amount - currentAmount
+  const createOnEditActionComment = (amount, current) => {
+    let delta = amount - current
+    var comment = ''
+    if (validateTime(formState.date, formState.start, formState.end)) {
+      if (delta > 0) comment = `You\'ll need to pay ${formatNumber(delta)}đ to change this booking`
+      if (delta < 0) comment = `You\'ll gain ${formatNumber(Math.abs(delta))}đ as time balance when this change is made`
+    }
+    else {
+      comment = 'Invalid time'
+    }
+    return comment
+  }
   const cancelSlot = async () => {
     async function cancel(slotId, bookingId) {
       return res = await fetch(`${apiUrl}/Slot/Cancel?`
@@ -347,8 +395,12 @@ export default function ViewHistory() {
     }
     try {
       var res = await cancel(formState.slotId, formState.bookingId)
-      if (res.ok)
-        window.location.reload()
+      if (res.ok) {
+        toast.success('Cancelled')
+        setTimeout(() => {
+          window.location.reload()
+        }, 500);
+      }
       else {
         var data = await res.json()
         toast.error(data['msg'])
@@ -419,7 +471,9 @@ export default function ViewHistory() {
     return null;
   };
   const validateTime = (date, start, end) => {
-    let now = Date.parse(new Date())
+    let now = new Date()
+    //Convert a date string to number automatically shift 7 hours
+    date = new Date(Date.parse(date) - 7 * 3600000)
     let startTime = Date.parse(date) + start * 3600000
     let endTime = Date.parse(date) + end * 3600000
     return (startTime < endTime) && (startTime > now)
@@ -433,21 +487,26 @@ export default function ViewHistory() {
         centered={true}
       >
         <span>
-          <p>Booking: {formState.bookingId}</p>
-          <p>Slot: {formState.slotId}</p>
+          <h4>Edit for booking: {formState.bookingId}, slot: {formState.slotId}</h4>
+          <p className='warning'>You can only change a booking up to 3 times!</p>
+          <p>Date:</p>
           <input type="date" id="datePicker" value={formState.date}
-            onChange={() => setFormState({
-              ...formState,
-              date: document.getElementById('datePicker').value
-            })}
+            onChange={() => {
+              setFormState({
+                ...formState,
+                date: document.getElementById('datePicker').value
+              })
+              handleCalculateAmount()
+            }}
           />
           <p>Starting time:</p>
           <select id='startingTime'
             onChange={() => {
               setFormState({
                 ...formState,
-                start: document.getElementById('startingTime').value
+                start: parseInt(document.getElementById('startingTime').value)
               })
+              handleCalculateAmount()
             }}
           >
             {timeBound.map(t => (
@@ -456,24 +515,41 @@ export default function ViewHistory() {
           </select>
           <p>Ending time:</p>
           <select id='endingTime'
-            onChange={() => setFormState({
-              ...formState,
-              end: document.getElementById('endingTime').value
-            })}
+            onChange={() => {
+              setFormState({
+                ...formState,
+                end: parseInt(document.getElementById('endingTime').value)
+              })
+              handleCalculateAmount()
+            }}
           >
             {timeBound.map(t => (
               <option value={t} selected={t === formState.end}>{t}:00:00</option>
             ))}
           </select>
           <p>Branch:</p>
-          <select id='branch'>
+          <select id='branch'
+            onChange={() => {
+              setFormState({
+                ...formState,
+                branchId: document.getElementById('branch').value
+              })
+            }}
+          >
             {branches.map((b, i) => (
               b.branchStatus === 1 &&
               <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
             ))}
           </select>
           <p>Court:</p>
-          <select id='court'>
+          <select id='court' onChange={() => {
+            setFormState({
+              ...formState,
+              courtId: document.getElementById('court').value
+            })
+            handleCalculateAmount()
+          }}
+          >
             {courts.map(c => (
               c.courtStatus && c.branchId === formState.branchId
               &&
@@ -482,6 +558,7 @@ export default function ViewHistory() {
               )
             ))}
           </select>
+          <h4>{createOnEditActionComment(amount, currentAmount)}</h4>
           <div className='right-align-btn'>
             <button className='view-history-button-small'
               onClick={handleOk}
@@ -500,7 +577,7 @@ export default function ViewHistory() {
       >
         <span>
           <p>Are you sure you want to cancel this slot?</p>
-          <p id='warning'>THIS CANNOT BE UNDONE!</p>
+          <p className='warning'>THIS CANNOT BE UNDONE!</p>
           <div className='right-align-btn'>
             <button className='view-history-button-small view-history-cancel-btn'
               onClick={cancelSlot}
@@ -518,7 +595,7 @@ export default function ViewHistory() {
         <div className='view-history-background'>
           <div className="view-history-profile-container">
             <div className="view-history-profile-content">
-              <h2>Booking History</h2>
+              <h2>Booking Details</h2>
               <div className="view-history-booking-history">
                 {loading ? (
                   <p>Loading bookings...</p>
@@ -613,11 +690,12 @@ export default function ViewHistory() {
         <Footer />
       </div>
       <CreateFeedbackModal
-      visible={feedbackModalVisible}
-      onCancel={() => setFeedbackModalVisible(false)}
-      bookingId={feedbackData.bookingId}
-      branchId={feedbackData.branchId}
-      userId={feedbackData.userId}
+        visible={feedbackModalVisible}
+        onCancel={() => setFeedbackModalVisible(false)}
+        bookingId={feedbackData.bookingId}
+        branchId={feedbackData.branchId}
+        userId={feedbackData.userId}
+      centered={true}
       />
     </div>
   );

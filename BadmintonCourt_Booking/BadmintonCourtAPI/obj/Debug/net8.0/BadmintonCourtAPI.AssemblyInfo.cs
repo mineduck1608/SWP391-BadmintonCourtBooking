@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BadmintonCourtAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+871b45e01ffe6633476265e8d89b8c8e999d5f60")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ed10709ac0c13ed05f5bdc8232e6424791df819")]
 [assembly: System.Reflection.AssemblyProductAttribute("BadmintonCourtAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BadmintonCourtAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
