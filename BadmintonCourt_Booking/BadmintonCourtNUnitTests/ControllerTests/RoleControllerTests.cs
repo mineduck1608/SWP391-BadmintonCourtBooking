@@ -70,7 +70,6 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			Assert.IsInstanceOf<OkObjectResult>(ok);
 			List<Role> list = ok.Value as List<Role>;
 			Assert.AreEqual(primitiveLength, list.Count);
-		
 		}
 
 		[Test]

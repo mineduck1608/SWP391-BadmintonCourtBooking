@@ -164,7 +164,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Payment/Statistic")]
-		//[Authorize]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<DashboardResponseDTO>>> GetPaymentsForStatistic(DashboardRequestDTO model)
 		{
 
@@ -252,7 +252,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsBySearch(string? id, string? search) => Ok(_service.GetPaymentsBySearch(id, search));
 
 		[HttpPost]
-		//[Authorize]
+		[Authorize]
 		[Route("Booking/TransactionProcess")]
 		public async Task<IActionResult> Payment(TransactionDTO model)
 		{
@@ -510,7 +510,7 @@ namespace BadmintonCourtAPI.Controllers
 			string amount = result.Amount.ToString();
 			string expected = "00";
 			string actual = result.VnPayResponseCode;
-			bool success = SaveToDB(content, date, transId, amount, expected, actual);
+			bool success = SaveToDB(content, date, transId, amount, expected, actual, 1);
 			if (success)
 			{
 				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
@@ -528,7 +528,7 @@ namespace BadmintonCourtAPI.Controllers
 			var rawdate = timeStr.Split(' ')[0].Split('-');
 			DateTime date = new(int.Parse(rawdate[0]), int.Parse(rawdate[1]), int.Parse(rawdate[2]));
 
-			bool success = SaveToDB(result.OrderInfo, date, result.TransId, result.Amount, result.Message, "Success");
+			bool success = SaveToDB(result.OrderInfo, date, result.TransId, result.Amount, result.Message, "Success", 2);
 			if (success)
 			{
 				string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
@@ -543,7 +543,7 @@ namespace BadmintonCourtAPI.Controllers
 		// As for buying time:
 		// Type: Buy Time, User id: (userId), Email: (email)
 
-		public bool SaveToDB(string info, DateTime responseDate, string transId, string amountStr, string expected, string actual)
+		public bool SaveToDB(string info, DateTime responseDate, string transId, string amountStr, string expected, string actual, int method)
 		{
 			if (expected != actual) 
 				return false;
@@ -558,7 +558,8 @@ namespace BadmintonCourtAPI.Controllers
 				Date = responseDate,
 				UserId = userId,
 				TransactionId = transId,
-				Amount = amount
+				Amount = amount,
+				Method = method
 				//BookingId missing
 			};
 			if (map["Type"] != buyTime && map["Type"] != flexibleBooking) //Capture buyTime

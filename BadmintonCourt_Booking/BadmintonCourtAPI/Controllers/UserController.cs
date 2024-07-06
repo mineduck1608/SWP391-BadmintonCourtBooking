@@ -80,7 +80,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("User/GetStaffsInBranch")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<User>>> GetStaffsByBranch(string id) => Ok(_service.GetStaffsByBranch(id).ToList());
 
 		[HttpGet]
@@ -109,7 +109,7 @@ namespace BadmintonCourtAPI.Controllers
 
 
 				_infoService.AddUserDetail(new UserDetail { UserId = userId, Email = email, FirstName = "", LastName = "", Phone = "" });
-				return Ok(new { token = Util.GenerateToken(userId, true, "", "Customer") });
+				return Ok(new { token = Util.GenerateToken(userId, true, "", "Customer", 1) });
 			}
 
 			// Co acc
@@ -117,7 +117,7 @@ namespace BadmintonCourtAPI.Controllers
 			User user = _service.GetUserById(info.UserId);
 			if (user.Token != null || user.ActionPeriod != null)
 				ResetFailAction(user);
-			return Ok(new { token = Util.GenerateToken(info.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName) });
+			return Ok(new { token = Util.GenerateToken(info.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName, 1) });
 		}
 
 
@@ -149,7 +149,7 @@ namespace BadmintonCourtAPI.Controllers
 			user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 			user.ActiveStatus = true;
 			_service.UpdateUser(user, user.UserId);
-			return Util.GenerateToken(user.UserId, true, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName);
+			return Util.GenerateToken(user.UserId, true, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName, 1);
 		}
 
 
@@ -186,7 +186,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (user != null)
 			{
 				if (user.RoleId == "R001")
-					return Ok(new { token = Util.GenerateToken(user.UserId, true, username, "Admin") });
+					return Ok(new { token = Util.GenerateToken(user.UserId, true, username, "Admin", 1) });
 
 				if (user.Token != null || user.ActionPeriod != null)
 					ResetFailAction(user);
@@ -195,7 +195,7 @@ namespace BadmintonCourtAPI.Controllers
 				{
 					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
 					_service.UpdateUser(user, user.UserId);
-					return Ok(new { token = Util.GenerateToken(user.UserId, true, username, _roleService.GetRoleById(user.RoleId).RoleName) });
+					return Ok(new { token = Util.GenerateToken(user.UserId, true, username, _roleService.GetRoleById(user.RoleId).RoleName, 1) });
 				}   // Legit, nhập đúng từ lần đầu
 					//-------------------------------------------------------------------------
 				else if (user.AccessFail < 3) // Trước đó nhập sai chưa tới lần 3
@@ -317,7 +317,7 @@ namespace BadmintonCourtAPI.Controllers
 				User user = _service.GetUserById(info.UserId);
 				if (user.AccessFail <= 5) // Chưa bị ban vv
 				{
-					string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName);
+					string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName, 0);
 					user.ActionPeriod = DateTime.Now;
 					user.Token = token;
 					_service.UpdateUser(user, user.UserId);
@@ -415,25 +415,32 @@ namespace BadmintonCourtAPI.Controllers
 			}
 			if (!string.IsNullOrEmpty(email))
 			{
-				if (info.Email == email)
+				if (info.Email.ToLower() == email.ToLower())
 					info.Email = email;
-				else if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
+				else
 				{
-					string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName);
-					user.ActionPeriod = DateTime.Now;
-					user.Token = token;
-					_service.UpdateUser(user, id);
-					_infoService.UpdateUserDetail(info, id);
-					//---------------------------------------------------------
-					int type = 3;
-					string begin = "<p>Dear ";
-					begin += (info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{email}," : $"{info.FirstName} {info.LastName},";
-					begin += $"</p><p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}:{email}'>HERE</a></p>";
-					//---------------------------------------------------------
-					_mailService.SendMail(email, begin + GenerateMailBody(type), "BMTC - Account Update Mail Profile Verification");
-					return Ok(new { msg = "Please check your mail box to activate your new email" });
+					if (Util.IsMailFormatted(email))
+					{
+						if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == email.ToLower()) == null)
+						{
+							string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName, 0);
+							user.ActionPeriod = DateTime.Now;
+							user.Token = token;
+							_service.UpdateUser(user, id);
+							_infoService.UpdateUserDetail(info, id);
+							//---------------------------------------------------------
+							int type = 3;
+							string begin = "<p>Dear ";
+							begin += (info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{email}," : $"{info.FirstName} {info.LastName},";
+							begin += $"</p><p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}:{email}'>HERE</a></p>";
+							//---------------------------------------------------------
+							_mailService.SendMail(email, begin + GenerateMailBody(type), "BMTC - Account Update Mail Profile Verification");
+							return Ok(new { msg = "Please check your mail box to activate your new email" });
+						}
+						else return BadRequest(new { msg = "Email registered" });
+					}
+					else return BadRequest(new { msg = "Email is not properly formatted" });
 				}
-				else return BadRequest(new { msg = "Email registered" });
 			}
 			_service.UpdateUser(user, id);
 			_infoService.UpdateUserDetail(info, id);
@@ -444,28 +451,37 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("User/Register")]
 		public async Task<IActionResult> Register(string? username, string? password, string? firstName, string? lastName, string? email, string? phone)
 		{
-			if (!Util.IsPhoneFormatted(phone))
+			if (!Util.IsPhoneFormatted(phone.Trim()))
 				return BadRequest(new { msg = "Phone number is not properly formatted" });
 			if (username.IsNullOrEmpty())
 				return BadRequest(new { msg = "Username can't be empty" });
 			if (email.IsNullOrEmpty())
 				return BadRequest(new { msg = "Email can't be empty" });
+			if (!Util.IsMailFormatted(email.Trim()))
+				return BadRequest(new { msg = "Email is not properly formatted" });
 			if (firstName.IsNullOrEmpty() || lastName.IsNullOrEmpty())
 				return BadRequest(new { msg = "Name can't be empty" });
 			//if (Util.IsPasswordSecure(password))  // Check password manh. yeu^'
 			//	return BadRequest(new { msg = "Password invalid" });
 			if (password.IsNullOrEmpty())
 				return BadRequest(new { msg = "Password can't be empty" });
+			if (Util.IsPasswordSecure(password))
+				return BadRequest(new { msg = "Password is not secure enough" });
 
 
 			//User user = _service.UserService.GetAllUsers().FirstOrDefault(x => x.UserName == username);
 			//UserDetail info = _service.UserDetailService.GetAllUserDetails().FirstOrDefault(x => x.Phone == phone || x.Email == email);
 			List<User> checkStorage = GetUserListFromFilterFailAccount();
-			if (checkStorage.FirstOrDefault(x => x.UserName == username) != null || GetUserDetailListFromFilterFailAccount(checkStorage).FirstOrDefault(x => x.Phone == phone || x.Email == email) != null)
-				return BadRequest(new { msg = "Account existed" });
+			List<UserDetail> infoCheckStorage = GetUserDetailListFromFilterFailAccount(checkStorage);
+			if (checkStorage.FirstOrDefault(x => x.UserName == username) != null)
+				return BadRequest(new { msg = "Username existed" });
+			if (infoCheckStorage.FirstOrDefault(x => x.Phone == phone) != null)
+				return BadRequest(new { msg = "Phone number registered" });
+			if (infoCheckStorage.FirstOrDefault(x => x.Email.ToLower() == email.ToLower()) != null)
+				return BadRequest(new { msg = "Email registered" });
 
 			string userId = "U" + (_service.GetAllUsers().Count() + 1).ToString("D7");
-			string token = Util.GenerateToken(userId, false, username, "R003");
+			string token = Util.GenerateToken(userId, false, username, "R003", 0);
 			_service.AddUser(new User
 			{
 				UserId = userId,
@@ -473,30 +489,21 @@ namespace BadmintonCourtAPI.Controllers
 				LastFail = new DateTime(1900, 1, 1, 0, 0, 0),
 				Balance = 0,
 				ActiveStatus = false,
-				UserName = username,
-				//Password = Util.ToHashString(password),   // Hash pass
-				Password = password,
+				UserName = username.Trim(),
+				//Password = Util.ToHashString(password.Trim()),   // Hash pass
+				Password = password.Trim(),
 				RoleId = "R003",
 				Token = token,
 				ActionPeriod = DateTime.Now
 			});
 
-			//_service.UserDetailService.AddUserDetail(new UserDetail
-			//{
-			//	UserId = userId,
-			//	Email = email,
-			//	FirstName = firstName,
-			//	LastName = lastName,
-			//	Phone = phone,
-			//});
-
 			_infoService.AddUserDetail(new UserDetail
 			{
 				UserId = userId,
-				Email = email,
-				FirstName = firstName,
-				LastName = lastName,
-				Phone = phone,
+				Email = email.Trim(),
+				FirstName = firstName.Trim(),
+				LastName = lastName.Trim(),
+				Phone = phone.Trim(),
 			});
 
 			int type = 1;
@@ -578,7 +585,7 @@ namespace BadmintonCourtAPI.Controllers
 
 			if (!account.UserName.IsNullOrEmpty())
 				if (storage.FirstOrDefault(x => x.UserName == account.UserName) != null)
-					return BadRequest(new { msg = "Account existed" });
+					return BadRequest(new { msg = "Usrname existed" });
 			if (!account.Email.IsNullOrEmpty())
 			{
 				if (infoStorage.FirstOrDefault(x => x.Email == account.Email) != null)

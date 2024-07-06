@@ -30,7 +30,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Role/GetAll")]
-		//[Authorize(Roles = "Admin,Staff")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles() =>
 			Ok(_service.GetAllRoles());
 
@@ -46,7 +46,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Role/Add")]
-		//[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> AddRole(string roleName)
 		{
 			if (!roleName.IsNullOrEmpty())

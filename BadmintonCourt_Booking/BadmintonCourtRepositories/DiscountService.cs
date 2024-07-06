@@ -21,7 +21,7 @@ namespace BadmintonCourtServices
 		}
 		public void AddDiscount(Discount discount) => _discountDAO.AddDiscount(discount);
 
-		public void DeleteRole(string id) => _discountDAO.DeleteDiscount(id);
+		public void DeleteDiscount(string id) => _discountDAO.DeleteDiscount(id);
 
 		public List<Discount> GetAllDiscounts() => _discountDAO.GetAllDiscounts();
 		public Discount GetDiscountById(string id) => _discountDAO.GetDiscountById(id);

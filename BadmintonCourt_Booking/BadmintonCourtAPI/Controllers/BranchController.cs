@@ -28,10 +28,10 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<CourtBranch>> AddBranch(string location, string img, string name, string phone, string mapUrl)
 		{
 			if (location.IsNullOrEmpty())
-				return BadRequest();
+				return BadRequest(new { msg = "Location can't be empty"});
 			if (name.IsNullOrEmpty())
-				return BadRequest();
-			if (Util.IsPasswordSecure(phone))
+				return BadRequest(new { msg = "Name can't be empty" });
+			if (Util.IsPhoneFormatted(phone))
 			{
 				_service.AddBranch(new CourtBranch { BranchId = "B" + (_service.GetAllCourtBranches().Count + 1).ToString("D3"), BranchImg = img, BranchName = name, Location = location, BranchPhone = phone, BranchStatus = 1, MapUrl = mapUrl });
 				// 1: hoạt động
@@ -39,7 +39,7 @@ namespace BadmintonCourtAPI.Controllers
 				// -1: bảo trì
 				return Ok(new { msg = "Success" });
 			}
-			return BadRequest();
+			return BadRequest(new { msg = "Phone number is not properly formatted"});
 		}
 
 
@@ -76,8 +76,12 @@ namespace BadmintonCourtAPI.Controllers
 				branch.BranchImg = img;
 			if (!mapUrl.IsNullOrEmpty())
 				branch.MapUrl = mapUrl;
-			if (Util.IsPhoneFormatted(phone))
-				branch.BranchPhone = phone;
+			if (!phone.IsNullOrEmpty())
+			{
+				if (Util.IsPhoneFormatted(phone))
+					branch.BranchPhone = phone;
+				else return BadRequest(new { msg = "Phone number is not properly formatted" });
+			}
 			branch.BranchStatus = status;
 			if (status == -1 || status == 0)
 			{

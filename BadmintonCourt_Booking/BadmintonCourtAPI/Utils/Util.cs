@@ -29,7 +29,7 @@ namespace BadmintonCourtAPI.Utils
 
 		public static bool IsMailFormatted(string mail) => !mail.IsNullOrEmpty() ? new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").IsMatch(mail) : false;
 
-		public static string GenerateToken(string id, bool status, string username, string roleName)
+		public static string GenerateToken(string id, bool status, string username, string roleName, int type)
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -46,13 +46,23 @@ namespace BadmintonCourtAPI.Utils
 				new Claim(ClaimTypes.Role, roleName),
 				new Claim("Role", roleName)
 			};
-			var token = new JwtSecurityToken(
+			int duration;
+			if (type == 1) // Để đăng nhập
+			{
+				if (roleName != "Customer") // Loại đăng nhập - ko phải khác
+					duration = 480; // Expire trong vòng 1 tiếng
+				duration = 60; // Admin/nhân viên thì 8 tiếng
+			}
+			else duration = 15; // Dùng chung cho các loại như quên pass, update mail, đkí acc mới ko quan tâm role - mặc định 15'
+			// Cho mặc định các loại ngoài login là 0
+            var token = new JwtSecurityToken(
 				issuer: _config["Jwt:Issuer"],
 				audience: _config["Jwt:Audience"],
 				claims: claims,
-				expires: DateTime.Now.AddMinutes(15),
+				expires: DateTime.Now.AddMinutes(duration),
 				signingCredentials: credentials
 				);
+			
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 
@@ -84,6 +94,9 @@ namespace BadmintonCourtAPI.Utils
 
 		public static List<CourtDTO> FormatCourtList(List<Court> courts)
 		{
+			if (courts.Count == 0)
+				return new List<CourtDTO>();
+
 			List<CourtDTO> result = new List<CourtDTO>();
 			foreach (var item in courts)
 			{

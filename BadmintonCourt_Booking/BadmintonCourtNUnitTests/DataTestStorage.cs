@@ -55,24 +55,24 @@ namespace BadmintonCourtNUnitTests
 		public List<CourtBranch> branchStorage = new List<CourtBranch>()
 		{
 			// Active
-			new CourtBranch() { BranchId = "B001", BranchName = "Nha van hoa", BranchStatus = 1, BranchPhone = "0831255640", Location = "Binh Duong" },
+			new CourtBranch() { BranchId = "B001", BranchName = "Nha van hoa", BranchStatus = 1, BranchPhone = "0831255640", Location = "Binh Duong", BranchImg = "img1" },
 			// Closed
-			new CourtBranch() { BranchId = "B002", BranchName = "Khu Cong Nghe Cao", BranchStatus = 0, BranchPhone = "0831255622", Location = "Thu Duc" },
+			new CourtBranch() { BranchId = "B002", BranchName = "Khu Cong Nghe Cao", BranchStatus = 0, BranchPhone = "0831255622", Location = "Thu Duc", BranchImg = "img2" },
 			// Maintained
-			new CourtBranch() { BranchId = "B003", BranchName = "Hoa Lac", BranchStatus = -1, BranchPhone = "0846250640", Location = "Ha Noi" }
+			new CourtBranch() { BranchId = "B003", BranchName = "Hoa Lac", BranchStatus = -1, BranchPhone = "0846250640", Location = "Ha Noi", BranchImg = "img3" }
 		};
 
 		public List<Court> courtStorage = new List<Court>()
 		{ 
 			// Branch B001 - active branch
-			new Court() { CourtId = "C1", CourtName = "Court 1", BranchId = "B001", CourtStatus = true, Price = 20000, Description = "VIP"}, // active court
-			new Court() { CourtId = "C2", CourtName = "Court 2", BranchId = "B001", CourtStatus = false, Price = 25000, Description = "GHevatsao"}, // maintained court
+			new Court() { CourtId = "C1", CourtName = "Court 1", BranchId = "B001", CourtStatus = true, Price = 20000, Description = "VIP", CourtImg = "img1"}, // active court
+			new Court() { CourtId = "C2", CourtName = "Court 2", BranchId = "B001", CourtStatus = false, Price = 25000, Description = "GHevatsao", CourtImg = "img2"}, // maintained court
 			// Branch B002 - closed branch -> All courts of B002 closed
-			new Court() { CourtId = "C3", CourtName = "Court A", BranchId = "B002", CourtStatus = false, Price = 30000, Description = "VIP"},
-			new Court() { CourtId = "C4", CourtName = "Court B", BranchId = "B002", CourtStatus = false, Price = 30000, Description = "VIP"},
+			new Court() { CourtId = "C3", CourtName = "Court A", BranchId = "B002", CourtStatus = false, Price = 30000, Description = "VIP", CourtImg = "img3"},
+			new Court() { CourtId = "C4", CourtName = "Court B", BranchId = "B002", CourtStatus = false, Price = 30000, Description = "VIP", CourtImg = "img4"},
 			// Branch B003 - maintained branch -> All courts temorarily closed for maintainence
-			new Court() { CourtId = "C5", CourtName = "Court C", BranchId = "B003", CourtStatus = false, Price = 40000, Description = "VIP"},
-			new Court() { CourtId = "C6", CourtName = "Court D", BranchId = "B003", CourtStatus = false, Price = 30000, Description = "VIP"}
+			new Court() { CourtId = "C5", CourtName = "Court C", BranchId = "B003", CourtStatus = false, Price = 40000, Description = "VIP", CourtImg = "img5"},
+			new Court() { CourtId = "C6", CourtName = "Court D", BranchId = "B003", CourtStatus = false, Price = 30000, Description = "VIP", CourtImg = "img6"}
 		};
 
 		public List<Payment> paymentStorage = new List<Payment>()

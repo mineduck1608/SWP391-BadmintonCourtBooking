@@ -17,6 +17,6 @@ namespace BadmintonCourtServices.IService
 
 		public void AddDiscount(Discount discount);
 
-		public void DeleteRole(string id);
+		public void DeleteDiscount(string id);
 	}
 }

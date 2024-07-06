@@ -25,7 +25,7 @@ namespace BadmintonCourtAPI.Controllers
         [Route("UserDetail/GetById")]
         //[Authorize(Roles = "Admin")]
         //[Authorize(Roles = "Staff")]
-        public async Task<ActionResult<UserDetail>> GetUserDetailByUserId(string id) => Ok(_service.UserDetailService.GetUserDetailById(id));
+        public async Task<ActionResult<UserDetail>> GetUserDetailByUserId(string id) => Ok( _service.UserDetailService.GetUserDetailById(id));
 
         [HttpGet]
         [Route("UserDetail/GetByName")]

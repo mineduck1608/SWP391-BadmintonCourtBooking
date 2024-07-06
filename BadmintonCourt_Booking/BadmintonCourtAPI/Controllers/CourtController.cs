@@ -61,7 +61,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Court/GetByPrice")]
-		public async Task<ActionResult<IEnumerable<CourtDTO>>> GetCourtsByPriceInterval(string txtMin, string txtMax)
+		public async Task<ActionResult<IEnumerable<CourtDTO>>> GetCourtsByPriceInterval(string? txtMin, string? txtMax)
 		{
 			try
 			{
@@ -70,7 +70,7 @@ namespace BadmintonCourtAPI.Controllers
 				bool status = Util.ArePricesValid(min, max);
 				if (status)
 					return Ok(Util.FormatCourtList(_service.GetCourtsByPriceInterval(min, max).ToList()));
-				return BadRequest("Max must be larger than min");
+				return BadRequest(new { msg = "Max must be larger than min"});
 			}
 			catch (Exception ex)
 			{
@@ -84,12 +84,11 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPost]
 		[Route("Court/Add")]
-		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> AddCourt(string courtImg, string branchId, string? description, float? price)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> AddCourt(string? courtImg, string branchId, string? description, float? price)
 		{
-
-			_service.AddCourt(new Court { CourtId = "C" + (_service.GetAllCourts().Count + 1).ToString("D3"), BranchId = branchId, CourtImg = courtImg, Price = price == null ? 20000 : price.Value, CourtStatus = true, Description = description, CourtName = $"Court {_service.GetCourtsByBranchId(branchId).Count + 1}" });
-			return Ok();
+			_service.AddCourt(new Court { CourtId = "C" + (_service.GetAllCourts().Count + 1).ToString("D3"), BranchId = branchId, CourtImg = courtImg.IsNullOrEmpty() ? "" : courtImg, Price = price == null || price <= 0 ? 20000 : price.Value, CourtStatus = true, Description = description.IsNullOrEmpty() ? "" : description, CourtName = $"Court {_service.GetCourtsByBranchId(branchId).Count + 1}" });
+			return Ok(new { msg = "Success"});
 		}
 
 		[HttpPut]
@@ -106,7 +105,8 @@ namespace BadmintonCourtAPI.Controllers
 				if (!description.IsNullOrEmpty())
 					tmp.Description = description;
 				if (price != null)
-					tmp.Price = price.Value;
+					tmp.Price = price < 0 ? tmp.Price : price.Value;
+				
 				tmp.CourtStatus = activeStatus;
 				_service.UpdateCourt(tmp, id);
 				return Ok(new { msg = "Success" });

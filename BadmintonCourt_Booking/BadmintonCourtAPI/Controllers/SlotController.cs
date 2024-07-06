@@ -92,8 +92,6 @@ namespace BadmintonCourtAPI.Controllers
 			newAmount = (endDate.Hour - startDate.Hour) * court.Price;
 		}
 
-		
-
 		private Dictionary<string, string> ExtractPaymentInfo(string content)
 		{
 			string[] components = content.Split('|');
@@ -127,7 +125,6 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Slot/GetByDemand")]
-
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByDemand(string? branchId, string? courtId, DateOnly? startDate, DateOnly? endDate)
 		{
 			DateTime start = startDate == null ? new DateTime(2000, 1, 1, 0, 0, 1) : new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day, 0, 0, 1);
@@ -257,7 +254,6 @@ namespace BadmintonCourtAPI.Controllers
 			return BadRequest(new { msg = "Can't change" });
 		}
 
-		// Status: on going
 		[HttpPut]
 		[Route("Slot/UpdateByUser")]
 		[Authorize]
