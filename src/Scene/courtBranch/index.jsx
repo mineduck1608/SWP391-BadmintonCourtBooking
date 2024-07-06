@@ -12,10 +12,12 @@ import { v4 } from 'uuid';
 import { uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ref } from 'firebase/storage';
 import { imageDb } from '../../Components/googleSignin/config.js';
+import { jwtDecode } from 'jwt-decode';
 
 const Branch = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [userRole, setUserRole] = useState('');
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,13 @@ const Branch = () => {
           id: index + 1,
           feedbacks: feedbackMap[branch.branchId] ? feedbackMap[branch.branchId].join(', ') : 'No feedbacks'
         }));
+
+        let token;
+        token = sessionStorage.getItem('token');
+        let decodedToken;
+        decodedToken = jwtDecode(token);
+
+        setUserRole(decodedToken.Role);
 
         setData(combinedData);
         setLoading(false);
@@ -243,9 +252,11 @@ const Branch = () => {
       <Box m="20px">
         <Head title="BRANCHES" subtitle="List of Branches for Future Reference" />
         <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="20px">
+        {userRole === 'Admin' && (
           <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
             Add Branch
           </Button>
+          )}
         </Box>
         <Box
           m="40px 0 0 0"
@@ -351,8 +362,8 @@ const Branch = () => {
                 />
               </div>
               <div className="uploaded-branchimage-upload">
-              <input className="button-branch-input" type="file" onChange={handleImageChange} />
-              <button className="button upload" onClick={handleClick}>Upload</button>
+                <input className="button-branch-input" type="file" onChange={handleImageChange} />
+                <button className="button upload" onClick={handleClick}>Upload</button>
               </div>
               <FormControl component="fieldset" margin="normal">
                 <FormLabel component="legend">Branch Status</FormLabel>
