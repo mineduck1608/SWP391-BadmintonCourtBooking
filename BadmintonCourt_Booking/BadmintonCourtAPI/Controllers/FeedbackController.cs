@@ -27,7 +27,7 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			_service = service;
 		}
-	
+
 		[HttpGet]
 		[Route("Feedback/GetAll")]
 		public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks() => Ok(_service.GetAllFeedbacks());
@@ -84,23 +84,24 @@ namespace BadmintonCourtAPI.Controllers
 				}
 				if (!status)
 					return BadRequest(new { msg = "Can't post feedback" });
-			}	
+			}
 
 			if (content.IsNullOrEmpty())
 				return BadRequest(new { msg = "Full fill your comment" });
 			_service.AddFeedback(new Feedback { FeedbackId = "F" + (_service.GetAllFeedbacks().Count + 1).ToString("D8"), UserId = id, BranchId = branchId, Content = content, Rating = rate, Period = DateTime.Now });
-			return Ok(new { msg = "Success"});
+			return Ok(new { msg = "Success" });
 		}
 
 		[HttpPut]
 		[Route("Feedback/Update")]
 		[Authorize]
-		public async Task<IActionResult> UpdateFeedback(int rate, string content, string id, string userId)
+		public async Task<IActionResult> UpdateFeedback(int? rate, string content, string id, string userId)
 		{
 			Feedback feedback = _service.GetFeedbackByFeedbackId(id);
 			if (feedback.UserId != userId)
 				return BadRequest(new { msg = "Can't edit others' feedback" });
-			feedback.Rating = int.Parse(rate.ToString());
+			if (rate != null)
+				feedback.Rating = rate.Value;
 			if (!content.IsNullOrEmpty())
 				feedback.Content = content;
 			feedback.Period = DateTime.Now;
@@ -108,13 +109,29 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok(new { msg = "Success" });
 		}
 
+
+		//[HttpDelete]
+		//[Route("Feedback/Delete")]
+		//[Authorize]
+		//public async Task<IActionResult> DeleteFeedback(string id, string userID)
+		//{
+		//	Feedback feedback = _service.GetFeedbackByFeedbackId(id);
+		//	User user = _userService.GetUserById(userID);
+		//	if (user.RoleId == "R001" || feedback.UserId == userID)
+		//	{
+		//		_service.DeleteFeedback(id);
+		//		return Ok(new { msg = "Success" });
+		//	}
+		//	return BadRequest(new { msg = "Can't delete other's feedback" });
+		//}
+
 		[HttpDelete]
 		[Route("Feedback/Delete")]
 		[Authorize]
 		public async Task<IActionResult> DeleteFeedback(string id)
 		{
 			_service.DeleteFeedback(id);
-			return Ok();
+			return Ok(new { msg = "Success" });
 		}
 
 	}

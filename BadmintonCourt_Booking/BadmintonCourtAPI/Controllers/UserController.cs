@@ -279,7 +279,8 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			if (password.IsNullOrEmpty() || confirmPassword.IsNullOrEmpty() || confirmPassword != password)
 			{
-				return Redirect($"{resetPassUrl}?id={id}&&msg=fail");
+				return Redirect($"{resetPassUrl}?id={id}&&msg=initial");
+				//return BadRequest(new { url = $"{resetPassUrl}?id={id}&&msg=fail" });
 			}
 			if (Util.IsPasswordSecure(password))
 			{
@@ -351,10 +352,10 @@ namespace BadmintonCourtAPI.Controllers
 					user.UserName = username;
 				else return BadRequest(new { msg = "Username existed" });
 			}
-			if (Util.IsPasswordSecure(password))
-				//if (user.Password != Util.ToHashString(password)) // hash pass
-				//user.Password = Util.ToHashString(password); // Lay lai pass cu
-				user.Password = password;
+			if (Util.IsPasswordSecure(password.Trim()))
+				if (user.Password != Util.ToHashString(password)) // hash pass
+					user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
+				//user.Password = password;
 			if (accessFail != null)
 			{
 				if (accessFail == 0)
