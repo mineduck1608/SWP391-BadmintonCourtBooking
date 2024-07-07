@@ -109,12 +109,9 @@ const BookCourt = () => {
                 }
             }
         }
-        async function startFetch() {
+        async function loadData() {
             await fetchBranches()
             await fetchCourts()
-        }
-        async function loadData() {
-            await startFetch()
             await loadTimeFrame()
             setCurDate(new Date())
         }
@@ -142,7 +139,6 @@ const BookCourt = () => {
                     }
                 })
                 const data = await res.json()
-                // console.log('Length: ' + data.length);
                 setIsOccupied(data.length > 0)
             }
         } catch (err) {
@@ -184,7 +180,7 @@ const BookCourt = () => {
 
     const validateBooking = () => {
         var tmp = (validateDateTime() === 0)
-        if (tmp)
+        if (tmp){
             try {
                 var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
                 if (!checkBalance) toast.error('Balance is not enough')
@@ -193,6 +189,8 @@ const BookCourt = () => {
             } catch (error) {
                 return false;
             }
+        }
+        else return tmp
     };
 
     const completeBooking = async () => {
@@ -200,7 +198,7 @@ const BookCourt = () => {
             const result = validateBooking();
             if (result) {
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
-                fetchApi()
+                pushBooking()
             }
         } catch (error) {
             toast.error('Server error')
@@ -216,7 +214,7 @@ const BookCourt = () => {
             return calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
         }
         catch (err) {
-            return -1
+            return 0
         }
     }
     function calcAmount(bkType, price, start, end, month) {
@@ -225,7 +223,7 @@ const BookCourt = () => {
         setAmount(Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
-    const fetchApi = async () => {
+    const pushBooking = async () => {
         var token = sessionStorage.getItem('token')
         try {
             let startTime = document.getElementById('time-start').value
