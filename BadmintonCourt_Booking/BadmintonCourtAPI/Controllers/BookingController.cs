@@ -25,9 +25,9 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings() => Ok(_service.GetAllBookings());
 
 		[HttpGet]
-		[Route("Booking/GetByPaymentId")]
+		[Route("Booking/GetById")]
 		[Authorize]
-		public async Task<ActionResult<Booking>> GetBookingByPaymentId(string id) => Ok(_service.GetBookingByBookingId(id));
+		public async Task<ActionResult<Booking>> GetBookingById(string id) => Ok(_service.GetBookingByBookingId(id));
 
 		[HttpGet]
 		[Route("Booking/GetByUser")]
@@ -59,11 +59,10 @@ namespace BadmintonCourtAPI.Controllers
 			Booking booking = _service.GetBookingByBookingId(id);
 			if (type.HasValue)
 				booking.BookingType = type.Value;
-			if (amount.HasValue)
-				if (amount.Value >= _courtService.GetCourtByCourtId("C1").Price)
-					booking.Amount = amount.Value;
+			if (amount.HasValue && amount > 0)
+				booking.Amount = amount.Value;
 			_service.UpdatBooking(booking, id);
-			return Ok();
+			return Ok(new { msg = "Success"});
 		}
 
 

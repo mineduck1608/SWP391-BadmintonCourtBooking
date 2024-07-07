@@ -38,14 +38,12 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPut]
 		[Route("Discount/Update")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> UpdateDiescount(string id, float? amount, float? proportion)
+		public async Task<IActionResult> UpdateDiscount(string id, float? amount, float? proportion)
 		{
-			amount = amount < 0 ? 0 : amount.Value;
-			proportion = proportion < 0 ? 0 : proportion.Value;
 			Discount discount = _service.GetDiscountById(id);
-			if (amount.HasValue)
+			if (amount.HasValue && amount > 0)
 				discount.Amount = amount.Value;
-			if (proportion.HasValue)
+			if (proportion.HasValue && proportion > 0)
 				discount.Proportion = proportion.Value;
 			_service.UpdateDiscount(discount, id);
 			return Ok(new { msg = "Success" });
