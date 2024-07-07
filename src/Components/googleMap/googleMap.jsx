@@ -41,7 +41,6 @@ const GoogleMap = () => {
     console.log(branches)
     return (
         <>
-            <Header />
             <div className="googlemap-container">
                 <Typography variant="h4" gutterBottom className="googlemap-title">
                     Badminton Court Booking System
@@ -123,7 +122,6 @@ const GoogleMap = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </>
     );
 };

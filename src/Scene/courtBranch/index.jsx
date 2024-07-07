@@ -30,6 +30,7 @@ const Branch = () => {
     branchName: '',
     branchPhone: '',
     branchImg: '',
+    mapUrl: '',  // Added mapUrl
   });
 
   useEffect(() => {
@@ -109,10 +110,10 @@ const Branch = () => {
   const token = sessionStorage.getItem('token');
 
   const handleSave = async () => {
-    const { location, branchImg, branchName, branchPhone, branchStatus, branchId } = selectedBranch;
+    const { location, branchImg, branchName, branchPhone, branchStatus, branchId, mapUrl } = selectedBranch;  // Added mapUrl
     const statusValue = branchStatus ? 1 : 0; // Convert boolean to 1 or 0
     try {
-      const response = await fetch(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}`, {
+      const response = await fetch(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}&mapUrl=${mapUrl}`, {  // Added mapUrl
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -136,9 +137,9 @@ const Branch = () => {
 
 
   const handleAddBranch = async () => {
-    const { location, branchImg, branchName, branchPhone } = newBranch;
+    const { location, branchImg, branchName, branchPhone, mapUrl } = newBranch;  // Added mapUrl
     try {
-      const response = await fetch(`https://localhost:7233/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}`, {
+      const response = await fetch(`https://localhost:7233/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&mapUrl=${mapUrl}`, {  // Added mapUrl
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -149,6 +150,7 @@ const Branch = () => {
           branchImg,
           branchName,
           branchPhone,
+          mapUrl,  // Added mapUrl
         }),
       });
 
@@ -169,6 +171,7 @@ const Branch = () => {
     { field: "branchName", headerName: "Branch Name", flex: 1, cellClassName: "name-column--cell", align: "center", headerAlign: "center" },
     { field: "branchPhone", headerName: "Phone", type: "number", headerAlign: "center", align: "center", flex: 1 },
     { field: "branchImg", headerName: "Image", flex: 1, align: "center", headerAlign: "center" },
+    { field: "mapUrl", headerName: "Map URL", flex: 1, align: "center", headerAlign: "center" },  // Added mapUrl column
     {
       field: "branchStatus",
       headerName: "Status",
@@ -308,7 +311,7 @@ const Branch = () => {
             <Button key="cancel" variant="contained" color="primary" onClick={() => setModalVisible(false)}>
               Cancel
             </Button>,
-            <Button key="submit" variant="contained" color="secondary" onClick={handleSave}>
+            <Button key="submit" variant="contained" color="secondary" onClick={handleSave} style={{ marginLeft: 8 }}>
               Save
             </Button>
           ]}
@@ -345,6 +348,14 @@ const Branch = () => {
                 label="Phone"
                 name="branchPhone"
                 value={selectedBranch.branchPhone}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Map URL"
+                name="mapUrl"
+                value={selectedBranch.mapUrl}  // Added mapUrl
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -425,6 +436,14 @@ const Branch = () => {
               label="Image"
               name="branchImg"
               value={newBranch.branchImg}
+              onChange={handleAddInputChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Map URL"
+              name="mapUrl"  // Added mapUrl
+              value={newBranch.mapUrl}
               onChange={handleAddInputChange}
               fullWidth
               margin="normal"

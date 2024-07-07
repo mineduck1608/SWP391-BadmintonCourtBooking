@@ -45,17 +45,15 @@ const Navbar = () => {
                 <div className={active}>
                     <ul className="navLists flex">
 
-                        <li className="navItem">
+                        <Link to={'/'}><li className="navItem">
                             <a href="#" className="navLink">Home</a>
                         </li>
+                        </Link>
 
-                        <li className="navItem">
-                            <a href="#" className="navLink">Booking Details</a>
-                        </li>
-
-                        <li className="navItem">
+                        <Link to={'contacts'}><li className="navItem">
                             <a href="#" className="navLink">Contacts</a>
                         </li>
+                        </Link>
 
                         <div className="headerBtns flex">
                             <button className='btn loginBtn'>

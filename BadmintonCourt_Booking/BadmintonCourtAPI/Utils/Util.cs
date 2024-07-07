@@ -51,7 +51,7 @@ namespace BadmintonCourtAPI.Utils
 			{
 				if (roleName != "Customer") // Loại đăng nhập - ko phải khác
 					duration = 480; // Expire trong vòng 1 tiếng
-				duration = 60; // Admin/nhân viên thì 8 tiếng
+				else  duration = 60;  // Admin/nhân viên thì 8 tiếng
 			}
 			else duration = 15; // Dùng chung cho các loại như quên pass, update mail, đkí acc mới ko quan tâm role - mặc định 15'
 			// Cho mặc định các loại ngoài login là 0

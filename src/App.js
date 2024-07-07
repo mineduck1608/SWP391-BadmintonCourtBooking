@@ -64,7 +64,8 @@ const App = () => {
           <Route path="/payFail" element={<div><Header /><BuyFail /><Footer /></div>} />
           <Route path="/bookingHistory" element={<BookingHistory />} />
           <Route path="/paymentHistory" element={<PaymentHistory/>} /> 
-          <Route path="/googleMap" element={<GoogleMap />} />
+          <Route path="/googleMap" element={<div><Header /><GoogleMap /><Footer /></div>} />
+          <Route path="/contacts" element={<div><Navbar /><GoogleMap /><Footer /></div>} />
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
