@@ -86,7 +86,6 @@ const BookCourt = () => {
     }
     useEffect(() => {
         async function getUser() {
-            console.log('get user');
             var token = sessionStorage.getItem('token')
             if (!token) {
             } else {
