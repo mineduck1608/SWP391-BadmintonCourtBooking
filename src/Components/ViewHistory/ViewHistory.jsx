@@ -36,9 +36,11 @@ export default function ViewHistory() {
     branchId: '',
     userId: '',
     paymentType: '',
+    changeLog: 0,
   };
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
+  const numOfChanges = 2
   const navigate = useNavigate();
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
@@ -221,13 +223,13 @@ export default function ViewHistory() {
               </td>
             ) : (
               <td>
-                <button className={'view-history-button' + (booking['changeLog'] > 2 ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
-                  disabled={booking['changeLog'] > 2}
-                >Edit ({booking['changeLog']}/3 changes)</button>
+                <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+                  disabled={booking['changeLog'] >= numOfChanges}
+                >Edit</button>
                 <button
-                  className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] > 2 ? ' btn-disabled' : '')}
+                  className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
                   onClick={() => onClickCancelSlot(slot)}
-                  disabled={booking['changeLog'] > 2}
+                  disabled={booking['changeLog'] >= numOfChanges}
                 >Cancel</button>
               </td>
             )}
@@ -245,6 +247,7 @@ export default function ViewHistory() {
     loadTimeFrame()
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
+    let booking = bookings.find(b => b.bookingId === slot.bookingId)
 
     setFormState({
       date: slot.date,
@@ -254,6 +257,7 @@ export default function ViewHistory() {
       bookingId: slot.bookingId,
       branchId: branchId,
       slotId: slot.bookedSlotId,
+      changeLog: booking.changeLog
     })
   }
   const onClickCancelSlot = (slot) => {
@@ -319,11 +323,16 @@ export default function ViewHistory() {
       if (res.ok) {
         var data = await res.json()
         if (Object.is(data['url'], undefined)) {
-          toast.success('Saved')
-          window.location.reload()
+          toast.success('Saved changes!')
+          setTimeout(() => {
+            window.location.reload()
+          }, 500);
         }
         else {
-          window.location.assign(data['url'])
+          toast.success('Since your balance isn\'t enough, you\'ll be redirected to the payment page')
+          setTimeout(() => {
+            window.location.assign(data['url'])
+          }, 1000);
         }
       }
       if (res.status === HttpStatusCode.BadRequest) {
@@ -378,7 +387,8 @@ export default function ViewHistory() {
     try {
       var res = await cancel(formState.slotId, formState.bookingId)
       if (res.ok) {
-        toast.success('Cancelled')
+        let price = bookings.find(b => b.bookingId === formState.bookingId).amount
+        toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
         setTimeout(() => {
           window.location.reload()
         }, 500);
@@ -389,7 +399,8 @@ export default function ViewHistory() {
       }
     }
     catch (err) {
-      toast.error('Server error')
+      console.log(err);
+      toast.error(err)
     }
   }
 
@@ -470,7 +481,7 @@ export default function ViewHistory() {
       >
         <span>
           <h4>Edit for booking: {formState.bookingId}, slot: {formState.slotId}</h4>
-          <p className='warning'>You can only change a booking up to 3 times!</p>
+          <p className='warning'>You can only change a booking up to {numOfChanges} times ({numOfChanges - formState.changeLog} changes left).</p>
           <p>Date:</p>
           <input type="date" id="datePicker" value={formState.date}
             onChange={() => {
@@ -677,7 +688,7 @@ export default function ViewHistory() {
         bookingId={feedbackData.bookingId}
         branchId={feedbackData.branchId}
         userId={feedbackData.userId}
-      centered={true}
+        centered={true}
       />
     </div>
   );
