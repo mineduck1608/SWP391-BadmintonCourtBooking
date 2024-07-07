@@ -40,24 +40,6 @@ export default function ViewHistory() {
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
   const navigate = useNavigate();
-  const refreshToken = async () => {
-    try {
-      var decodedToken = jwtDecode(token)
-      if (decodedToken['exp'] < Date.parse(new Date())) {
-        var res = await fetch(`${apiUrl}/User/ExternalLogAuth?` +
-          `token=${token}`
-          , {
-            method: 'post'
-          })
-        var data = await res.json()
-        sessionStorage.removeItem('token')
-        sessionStorage.setItem('token')
-      }
-    }
-    catch (err) {
-
-    }
-  }
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
       var res = await fetch(`${apiUrl}/Slot/GetAll`)
