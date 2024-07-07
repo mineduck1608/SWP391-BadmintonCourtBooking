@@ -160,8 +160,8 @@
 }
 
 .view-history-button, .view-history-button-small {
-  padding: 4%;
-  margin: 5%;
+  padding: 5%;
+  margin: 4%;
   background: #ff9900;
   outline: none;
   border-radius: 5px;
@@ -205,5 +205,6 @@
   background-color: #aaaaaa;
 }
 .btn-disabled:hover{
-  background-color: #999999;
+  background-color: #aaaaaa;
+  transform: translateY(0px);
 }

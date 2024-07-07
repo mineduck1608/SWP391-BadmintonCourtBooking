@@ -11,7 +11,7 @@
 }
 
 .navBarSection .header1 {
-  position: fixed;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -59,9 +59,7 @@
     width: 100%;
     margin-left: -10%;
   }
-  .navBarSection .header1 .navBar .navLists .navItem {
-    padding: 1rem 0;
-  }
+
   .navBarSection .header1 .navBar .navLists .navItem .navLink {
     color: var(--textColor);
     font-size: 0.9rem;
@@ -177,11 +175,6 @@
   }
   .navBarSection .header1 .navBar .navLists .loginBtn:hover a {
     color: var(--whiteColor);
-  }
-}
-@media screen and (min-width: 960px) {
-  .header1 .navBar .navLists .navItem {
-    padding: 0 0.7rem;
   }
 }
 @media screen and (min-width: 1024px) {
