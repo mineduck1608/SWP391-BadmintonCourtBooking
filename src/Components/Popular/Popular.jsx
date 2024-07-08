@@ -23,20 +23,22 @@ const Popular = ({ searchCriteria }) => {
             return response.json();
         })
         .then((data) => {
-            const parsedData = data.map(branch => {
-                let imgURL = '';
-                if (branch.branchImg && branch.branchImg.length > 0) {
-                    const urlString = branch.branchImg[0];
-                    const parts = urlString.split(': ');
-                    if (parts.length > 1) {
-                        imgURL = parts[1].trim();
+            const parsedData = data
+                .filter(branch => branch.branchStatus !== 0)  // Filter out branches with branchStatus of 0
+                .map(branch => {
+                    let imgURL = '';
+                    if (branch.branchImg && branch.branchImg.length > 0) {
+                        const urlString = branch.branchImg[0];
+                        const parts = urlString.split(': ');
+                        if (parts.length > 1) {
+                            imgURL = parts[1].trim();
+                        }
                     }
-                }
-                return {
-                    ...branch,
-                    branchImg: imgURL
-                };
-            });
+                    return {
+                        ...branch,
+                        branchImg: imgURL
+                    };
+                });
             setCourtBranches(parsedData);
             setFilteredBranches(parsedData);
         })

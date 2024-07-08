@@ -21,7 +21,7 @@ export default function ViewHistory() {
   const [open, setOpen] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
-  const [validSchedule, setValidSchedule] = useState(false)
+  const [timeError, setTimeError] = useState(0)
   const token = sessionStorage.getItem('token')
   const [amount, setAmount] = useState()
   const [currentAmount, setCurrentAmount] = useState(0)
@@ -320,6 +320,9 @@ export default function ViewHistory() {
             'Authorization': `Bearer ${token}`
           }
         })
+      handleResult(res)
+    }
+    const handleResult = async (res) => {
       if (res.ok) {
         var data = await res.json()
         if (Object.is(data['url'], undefined)) {
@@ -342,17 +345,16 @@ export default function ViewHistory() {
     }
     let t = validateTime(formState.date, formState.start, formState.end)
     try {
-      if (t) {
-        setOpen(false)
-        await getPayment(formState.bookingId)
-        await update(formState.start, formState.end, formState.date, getUserId(token),
-          formState.courtId, formState.slotId, payment.method, formState.bookingId
-        )
-        setFormState(initialState)
-      }
-      else {
+      if (!t) {
         toast.error('Invalid time')
+        return;
       }
+      setOpen(false)
+      await getPayment(formState.bookingId)
+      await update(formState.start, formState.end, formState.date, getUserId(token),
+        formState.courtId, formState.slotId, payment.method, formState.bookingId
+      )
+      setFormState(initialState)
     }
     catch (err) {
       console.log(err);
@@ -386,20 +388,18 @@ export default function ViewHistory() {
     }
     try {
       var res = await cancel(formState.slotId, formState.bookingId)
-      if (res.ok) {
-        let price = bookings.find(b => b.bookingId === formState.bookingId).amount
-        toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
-        setTimeout(() => {
-          window.location.reload()
-        }, 500);
-      }
-      else {
+      if (!res.ok) {
         var data = await res.json()
         toast.error(data['msg'])
+        return;
       }
+      let price = bookings.find(b => b.bookingId === formState.bookingId).amount
+      toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
+      setTimeout(() => {
+        window.location.reload()
+      }, 500);
     }
     catch (err) {
-      console.log(err);
       toast.error(err)
     }
   }

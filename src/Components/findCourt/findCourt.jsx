@@ -67,8 +67,6 @@ const FindCourt = () => {
     );
   });
 
-  // Function to extract image URLs from the courtImg string
-
   const extractImageUrls = (courtImg) => {
     const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
     let matches;
@@ -77,7 +75,7 @@ const FindCourt = () => {
       urls.push(matches[1]);
     }
     return urls;
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,7 +99,7 @@ const FindCourt = () => {
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
 
-
+        const filteredBranchData = branchData.filter(branch => branch.branchStatus !== 0);
 
         const courtsWithImages = courtData.map(court => {
           const imageUrl = court.courtImg ? extractImageUrls(court.courtImg)[0] : image2;
@@ -111,7 +109,7 @@ const FindCourt = () => {
           };
         });
 
-        setBranches(branchData);
+        setBranches(filteredBranchData);
         setCourts(courtsWithImages);
 
       } catch (error) {
@@ -250,7 +248,6 @@ const FindCourt = () => {
       setErrorFeedback('Failed to update feedback');
     }
   };
-
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
