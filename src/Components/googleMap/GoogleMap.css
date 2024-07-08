@@ -57,6 +57,10 @@
     background-color: #fff;
 }
 
+.googlemap-branch-content span{
+    margin-top: 10px;
+}
+
 .googlemap-branch-content .MuiTypography-h5 {
     margin-bottom: 8px;
     color: #333;
