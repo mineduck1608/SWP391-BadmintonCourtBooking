@@ -191,7 +191,7 @@ const ViewCourtInfo = () => {
                                     <div className="viewcourtinfo-info">
                                         <p className='viewcourt-title'>Address: {branch?.location}</p>
                                         <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
-                                        <p className='viewcourt-title'>Price: {mainCourt?.price}</p>
+                                        <p className='viewcourt-title'>Price: {mainCourt?.price}VND</p>
                                     </div>
                                 </div>
                             </div>
