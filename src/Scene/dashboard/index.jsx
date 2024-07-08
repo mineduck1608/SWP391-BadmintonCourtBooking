@@ -221,7 +221,7 @@ const Dashboard = () => {
                     fontWeight="bold"
                     color={colors.greenAccent[500]}
                   >
-                    ${totalRevenue.toLocaleString()}
+                    {totalRevenue.toLocaleString()}VND
                   </Typography>
                 </Box>
                 <Box>
