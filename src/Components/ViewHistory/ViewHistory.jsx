@@ -42,6 +42,9 @@ export default function ViewHistory() {
   const [payment, setPayment] = useState({})
   const numOfChanges = 2
   const navigate = useNavigate();
+  const todayLabel = 'today'
+  const upcomingLabel = 'upcoming'
+  const pastLabel = 'past'
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
       var res = await fetch(`${apiUrl}/Slot/GetAll`)
@@ -110,7 +113,6 @@ export default function ViewHistory() {
         const bookingsData = await bookingsResponse.json();
         const userBookings = bookingsData.filter(booking => booking.userId === userIdToken);
         setBookings(userBookings);
-
         const slotsResponse = await fetch(`${apiUrl}/Slot/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -122,8 +124,9 @@ export default function ViewHistory() {
         }
 
         const slotsData = await slotsResponse.json();
-        setSlots(slotsData);
-
+        const bookingIds = bookingsData.map(b => b.bookingId)
+        const slotsOfUser = slotsData.filter(s => bookingIds.includes(s.bookingId))
+        setSlots(slotsOfUser);
         const courtsResponse = await fetch(`${apiUrl}/Court/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -159,7 +162,7 @@ export default function ViewHistory() {
 
     fetchData();
     loadTimeFrame()
-  }, [token]);
+  }, []);
   const calculateAmount = (courtId, start, end) => {
     var c = courts.find(c => c['courtId'] === courtId)
     return c['price'] * (end - start)
@@ -171,73 +174,73 @@ export default function ViewHistory() {
     setAmount(calculateAmount(courtId, start, end))
   }
 
-  const renderTableRows = (filterType) => {
-    const filteredBookings = bookings.filter((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date) : null;
+  // const renderTableRows = (filterType) => {
+  //   const filteredBookings = bookings.filter((booking) => {
+  //     const slot = slots.find(slot => slot.bookingId === booking.bookingId);
+  //     const slotDate = slot ? new Date(slot.date) : null;
 
-      switch (filterType) {
-        case 'today':
-          return slotDate && slotDate.toDateString() === currentDateString;
-        case 'upcoming':
-          return slotDate && slotDate > currentDate;
-        case 'past':
-          return slotDate && slotDate < currentDate;
-        default:
-          return false;
-      }
-    });
+  //     switch (filterType) {
+  //       case 'today':
+  //         return slotDate && slotDate.toDateString() === currentDateString;
+  //       case 'upcoming':
+  //         return slotDate && slotDate > currentDate;
+  //       case 'past':
+  //         return slotDate && slotDate < currentDate;
+  //       default:
+  //         return false;
+  //     }
+  //   });
 
-    const sortedBookings = filteredBookings.sort((a, b) => {
-      return new Date(b.bookingDate) - new Date(a.bookingDate);
-    });
+  //   const sortedBookings = filteredBookings.sort((a, b) => {
+  //     return new Date(b.bookingDate) - new Date(a.bookingDate);
+  //   });
 
-    return sortedBookings.flatMap((booking) => {
-      const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
+  //   return sortedBookings.flatMap((booking) => {
+  //     const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
 
-      return relatedSlots.map((slot) => {
-        const slotDate = new Date(slot.date).toLocaleDateString();
-        const startTime = formatTime(slot.start);
-        const endTime = formatTime(slot.end);
-        const courtId = slot.courtId;
-        const court = courts.find(court => court.courtId === courtId);
-        const courtName = court ? court.courtName : 'Unknown Court';
-        const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
-        const branchName = branch ? branch.branchName : 'Unknown Branch';
+  //     return relatedSlots.map((slot) => {
+  //       const slotDate = new Date(slot.date).toLocaleDateString();
+  //       const startTime = formatTime(slot.start);
+  //       const endTime = formatTime(slot.end);
+  //       const courtId = slot.courtId;
+  //       const court = courts.find(court => court.courtId === courtId);
+  //       const courtName = court ? court.courtName : 'Unknown Court';
+  //       const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+  //       const branchName = branch ? branch.branchName : 'Unknown Branch';
 
-        return (
-          !booking.isDeleted &&
-          <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
-            <td>{booking.bookingId}</td>
-            <td>{formatNumber(booking.amount)}</td>
-            <td>{getBookingTypeLabel(booking.bookingType)}</td>
-            <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
-            <td>{slotDate}</td>
-            <td>{startTime}</td>
-            <td>{endTime}</td>
-            <td>{courtName}</td>
-            <td>{branchName}</td>
-            {filterType === 'past' ? (
-              <td>
-                <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
-              </td>
-            ) : (
-              <td>
-                <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
-                  disabled={booking['changeLog'] >= numOfChanges}
-                >Edit</button>
-                <button
-                  className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
-                  onClick={() => onClickCancelSlot(slot)}
-                  disabled={booking['changeLog'] >= numOfChanges}
-                >Cancel</button>
-              </td>
-            )}
-          </tr>
-        );
-      });
-    });
-  };
+  //       return (
+  //         !booking.isDeleted &&
+  //         <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
+  //           <td>{booking.bookingId}</td>
+  //           <td>{formatNumber(booking.amount)}</td>
+  //           <td>{getBookingTypeLabel(booking.bookingType)}</td>
+  //           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+  //           <td>{slotDate}</td>
+  //           <td>{startTime}</td>
+  //           <td>{endTime}</td>
+  //           <td>{courtName}</td>
+  //           <td>{branchName}</td>
+  //           {filterType === 'past' ? (
+  //             <td>
+  //               <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
+  //             </td>
+  //           ) : (
+  //             <td>
+  //               <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+  //                 disabled={booking['changeLog'] >= numOfChanges}
+  //               >Edit</button>
+  //               <button
+  //                 className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
+  //                 onClick={() => onClickCancelSlot(slot)}
+  //                 disabled={booking['changeLog'] >= numOfChanges}
+  //               >Cancel</button>
+  //             </td>
+  //           )}
+  //         </tr>
+  //       );
+  //     });
+  //   });
+  // };
 
   const onClickEdit = (slot) => {
     var t = calculateAmount(slot.courtId, slot.start, slot.end)
@@ -361,7 +364,7 @@ export default function ViewHistory() {
       toast.error('Server error')
     }
   }
-  //delta = amount - currentAmount
+  
   const createOnEditActionComment = (amount, current) => {
     let delta = amount - current
     var comment = ''
@@ -388,10 +391,14 @@ export default function ViewHistory() {
     }
     try {
       var res = await cancel(formState.slotId, formState.bookingId)
-      if (!res.ok) {
+      if (res.status === HttpStatusCode.BadRequest) {
         var data = await res.json()
         toast.error(data['msg'])
         return;
+      }
+      if(res.status === HttpStatusCode.Unauthorized){
+        toast.error('Unauthorized')
+        return
       }
       let price = bookings.find(b => b.bookingId === formState.bookingId).amount
       toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
@@ -432,30 +439,77 @@ export default function ViewHistory() {
     setFeedbackData({ bookingId, branchId, userId });
     setFeedbackModalVisible(true);
   };
-
-  const renderNoBookingsMessage = (filterType) => {
-    const filteredBookings = bookings.filter((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date) : null;
-
-      switch (filterType) {
-        case 'today':
-          return slotDate && slotDate.toDateString() === currentDateString;
-        case 'upcoming':
-          return slotDate && slotDate > currentDate;
-        case 'past':
-          return slotDate && slotDate < currentDate;
-        default:
-          return false;
+  const filterSlots = (type) => {
+    const compareDate = (dateStr1, dateStr2) => {
+      var date1 = new Date(dateStr1).setHours(0)
+      var date2 = new Date(dateStr2).setHours(0)
+      return date1 - date2
+    }
+    return slots.filter(s => {
+      switch (type) {
+        case todayLabel:
+          return compareDate(s.date, currentDateString) === 0
+        case upcomingLabel:
+          return compareDate(s.date, currentDateString) > 0
+        case pastLabel:
+          return compareDate(s.date, currentDateString) < 0
+        default: return false
       }
-    });
+    })
+  }
+  const renderSlotsType = (type) => {
+    var collection = filterSlots(type)
+    return collection.map((slot) => {
+      const booking = bookings.find(b => b.bookingId === slot.bookingId)
+      const slotDate = new Date(slot.date).toLocaleDateString();
+      const startTime = formatTime(slot.start);
+      const endTime = formatTime(slot.end);
+      const courtId = slot.courtId;
+      const court = courts.find(court => court.courtId === courtId);
+      const courtName = court ? court.courtName : 'Unknown Court';
+      const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+      const branchName = branch ? branch.branchName : 'Unknown Branch';
 
-    if (filteredBookings.length === 0) {
+      return (
+        !booking.isDeleted &&
+        <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
+          <td>{slot.bookingId}</td>
+          <td>{formatNumber(booking.amount)}</td>
+          <td>{getBookingTypeLabel(booking.bookingType)}</td>
+          <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+          <td>{slotDate}</td>
+          <td>{startTime}</td>
+          <td>{endTime}</td>
+          <td>{courtName}</td>
+          <td>{branchName}</td>
+          {type === pastLabel ? (
+            <td>
+              <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
+            </td>
+          ) : (
+            <td>
+              <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+                disabled={booking['changeLog'] >= numOfChanges}
+              >Edit</button>
+              <button
+                className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
+                onClick={() => onClickCancelSlot(slot)}
+                disabled={booking['changeLog'] >= numOfChanges}
+              >Cancel</button>
+            </td>
+          )}
+        </tr>
+      )
+    }
+    )
+  }
+  const renderNoBookingsMessage = (filterType) => {
+    if (filterSlots(filterType).length === 0) {
       switch (filterType) {
-        case 'today':
-          return <p>Have no booking today, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
-        case 'upcoming':
-          return <p>Have no upcoming booking, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
+        case todayLabel:
+          return <p>No booking today, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
+        case upcomingLabel:
+          return <p>No upcoming booking, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
         default:
           return null;
       }
@@ -599,7 +653,7 @@ export default function ViewHistory() {
                     <div className="view-history-today-table">
                       <h3>Today's Bookings</h3>
                       <div className="view-history-table-wrapper">
-                        {renderNoBookingsMessage('today')}
+                        {renderNoBookingsMessage(todayLabel)}
                         <table className="view-history-today-booking-table">
                           <thead>
                             <tr>
@@ -616,7 +670,7 @@ export default function ViewHistory() {
                             </tr>
                           </thead>
                           <tbody>
-                            {renderTableRows('today')}
+                            {renderSlotsType(todayLabel)}
                           </tbody>
                         </table>
                       </div>
@@ -625,7 +679,7 @@ export default function ViewHistory() {
                     <div>
                       <h3>Upcoming Bookings</h3>
                       <div className="view-history-table-wrapper">
-                        {renderNoBookingsMessage('upcoming')}
+                        {renderNoBookingsMessage(upcomingLabel)}
                         <table className="view-history-upcoming-booking-table">
                           <thead>
                             <tr>
@@ -642,7 +696,7 @@ export default function ViewHistory() {
                             </tr>
                           </thead>
                           <tbody>
-                            {renderTableRows('upcoming')}
+                            {renderSlotsType(upcomingLabel)}
                           </tbody>
                         </table>
                       </div>
@@ -667,7 +721,7 @@ export default function ViewHistory() {
                             </tr>
                           </thead>
                           <tbody>
-                            {renderTableRows('past')}
+                            {renderSlotsType(pastLabel)}
                           </tbody>
                         </table>
                       </div>
