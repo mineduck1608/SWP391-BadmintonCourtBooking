@@ -1,50 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import './viewpayment.css';
-import { toast } from 'react-toastify';
-import { Box, Button, TextField } from '@mui/material';
+import { jwtDecode } from 'jwt-decode';
+import {toast} from 'react-toastify';
 
 export default function ViewPayment() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState('');
   const token = sessionStorage.getItem('token');
   const apiUrl = 'https://localhost:7233';
+  const decodedToken = jwtDecode(token);
+  const userIdToken = decodedToken.UserId;
 
-  const fetchPayments = async (userId) => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    const fetchPayments = async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const paymentsResponse = await fetch(`${apiUrl}/Payment/GetByUser?id=${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      try {
+        const paymentsResponse = await fetch(`${apiUrl}/Payment/GetByUser?id=${userIdToken}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!paymentsResponse.ok) {
+          throw new Error('Failed to fetch payments');
         }
-      });
 
-      if (!paymentsResponse.ok) {
-        throw new Error('Failed to fetch payments');
+        const paymentsData = await paymentsResponse.json();
+        setPayments(paymentsData);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+        toast.error('Error fetching payments: ' + err.message);
       }
+    };
 
-      const paymentsData = await paymentsResponse.json();
-      setPayments(paymentsData);
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  const handleSearch = () => {
-    if (userId.trim() === '') {
-      toast.error('Please enter a valid user ID');
-      return;
-    }
-    fetchPayments(userId);
-  };
+    fetchPayments();
+  }, [token, apiUrl]);
 
   const formatNumber = (n) => {
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -59,23 +56,7 @@ export default function ViewPayment() {
         <div className='view-payment-background'>
           <div className="view-payment-profile-container">
             <div className="view-payment-profile-content">
-              <h2>Payment History</h2>
-              <Box display="flex" justifyContent="center" mb={2}>
-                <TextField
-                  label="User ID"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  variant="outlined"
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSearch}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Search
-                </Button>
-              </Box>
+              <h2>Payment Details</h2>
               <div className="view-payment-history">
                 {loading ? (
                   <p>Loading payments...</p>
@@ -83,30 +64,40 @@ export default function ViewPayment() {
                   <p className="view-payment-error-message">Error: {error}</p>
                 ) : (
                   <div className="view-payment-table">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Payment ID</th>
-                          <th>Date</th>
-                          <th>Time</th>
-                          <th>Booking ID</th>
-                          <th>Method</th>
-                          <th>Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {payments.map(payment => (
-                          <tr key={payment.paymentId}>
-                            <td>{payment.paymentId}</td>
-                            <td>{new Date(payment.date).toLocaleDateString()}</td>
-                            <td>{new Date(payment.date).toLocaleTimeString()}</td>
-                            <td>{payment.bookingId}</td>
-                            <td>{payment.method}</td>
-                            <td>{formatNumber(payment.amount)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <div className="view-payment-table-wrapper">
+                      {payments.length === 0 ? (
+                        <p>No payments found</p>
+                      ) : (
+                        <>
+                          <div className="view-payment-section">
+                            <table className="view-payment-table">
+                              <thead>
+                                <tr>
+                                  <th>PAYMENT ID</th>
+                                  <th>DATE</th>
+                                  <th>TIME</th>
+                                  <th>BOOKING ID</th>
+                                  <th>METHOD</th>
+                                  <th>AMOUNT</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {payments.map(payment => (
+                                  <tr key={payment.paymentId}>
+                                    <td>{payment.paymentId}</td>
+                                    <td>{new Date(payment.date).toLocaleDateString()}</td>
+                                    <td>{new Date(payment.date).toLocaleTimeString()}</td>
+                                    <td>{payment.bookingId}</td>
+                                    <td>{payment.method}</td>
+                                    <td>{formatNumber(payment.amount)}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
