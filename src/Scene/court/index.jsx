@@ -446,7 +446,7 @@ const Court = () => {
                         <Button key="cancel" variant="contained" color="secondary" onClick={() => setAddModalVisible(false)}>
                             Cancel
                         </Button>,
-                        <Button key="submit" variant="contained" color="primary" onClick={handleAddCourt}>
+                        <Button key="submit" variant="contained" color="primary" onClick={handleAddCourt} style={{ marginLeft: 8 }}>
                             Add
                         </Button>
                     ]}
