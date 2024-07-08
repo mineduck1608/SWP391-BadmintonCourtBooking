@@ -31,6 +31,7 @@ const Login = () => {
             const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
             const roleToken = decodedToken.Role; // Extract userId from the decoded token
             const status = decodedToken.Status
+            console.log(status)
             if (roleToken == "Customer") {
               if (status == 'True') {
                 navigate('/home');
