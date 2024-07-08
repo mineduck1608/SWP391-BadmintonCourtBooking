@@ -30,7 +30,11 @@ export default function ViewPayment() {
           throw new Error('Failed to fetch payments');
         }
 
+        
         const paymentsData = await paymentsResponse.json();
+        console.log('Fetched Payment Data', paymentsData);
+
+
         setPayments(paymentsData);
         setLoading(false);
       } catch (err) {
@@ -88,7 +92,7 @@ export default function ViewPayment() {
                                     <td>{new Date(payment.date).toLocaleDateString()}</td>
                                     <td>{new Date(payment.date).toLocaleTimeString()}</td>
                                     <td>{payment.bookingId}</td>
-                                    <td>{payment.method}</td>
+                                    <td>{payment.method === 1 ? 'VnPay' : payment.method === 2 ? 'Momo' : payment.method}</td>
                                     <td>{formatNumber(payment.amount)}</td>
                                   </tr>
                                 ))}

@@ -92,6 +92,7 @@ const Header = () => {
                 <div className={`text-header ${dropdownOpen ? 'show' : ''}`}>
                     <Link to={'/home'} className="header-link">Home</Link>
                     <Link to={'/bookingHistory'} className="header-link">Booking Details</Link>
+                    <Link to={'/paymentHistory'} className="header-link">Payment</Link>
                     <Link to={'/buyTime'} className="header-link">Time Balance</Link>
                     <Link to={'/googleMap'} className="header-link">Contacts</Link>
                     <a className="header-link time-balance" onClick={handleLogout}>Logout</a>
