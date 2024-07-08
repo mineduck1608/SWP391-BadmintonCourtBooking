@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BadmintonCourtDAOs")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25ecf44e2c2251196771a815fa647d701e91492a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4fea52830c38df71f11999befcebe0318db5fe51")]
 [assembly: System.Reflection.AssemblyProductAttribute("BadmintonCourtDAOs")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BadmintonCourtDAOs")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

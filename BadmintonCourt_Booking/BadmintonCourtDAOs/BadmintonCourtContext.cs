@@ -38,7 +38,7 @@ public partial class BadmintonCourtContext : DbContext
 	public virtual DbSet<UserDetail> UserDetails { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		=> optionsBuilder.UseSqlServer("Server=local;Database= BadmintonCourt;UID=sa;PWD=12345;TrustServerCertificate=True");
+		=> optionsBuilder.UseSqlServer("Server=(local);Database= BadmintonCourt;UID=sa;PWD=12345;TrustServerCertificate=True");
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
