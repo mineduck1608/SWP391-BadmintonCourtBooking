@@ -133,11 +133,12 @@ const ViewCourtInfo = () => {
         for (let i = startHour; i < startHour + maxVisibleHours; i++) {
             const hourStart = i % 24;
             const hourEnd = (i + 1) % 24;
+            
             const isBooked = slots.some(slot => 
                 slot.courtId === mainCourt?.courtId &&
                 new Date(slot.date).toDateString() === new Date(date).toDateString() &&
-                slot.start === hourStart &&
-                slot.end === hourEnd
+                hourStart >= slot.start &&
+                hourStart < slot.end
             );
 
             const status = !mainCourt?.courtStatus ? 'maintenance' : isBooked ? 'booked' : 'available';
