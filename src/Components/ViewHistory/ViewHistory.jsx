@@ -21,7 +21,6 @@ export default function ViewHistory() {
   const [open, setOpen] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
-  const [timeError, setTimeError] = useState(0)
   const token = sessionStorage.getItem('token')
   const [amount, setAmount] = useState()
   const [currentAmount, setCurrentAmount] = useState(0)
@@ -37,6 +36,7 @@ export default function ViewHistory() {
     userId: '',
     paymentType: '',
     changeLog: 0,
+    bookingDate: '',
   };
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
@@ -45,6 +45,9 @@ export default function ViewHistory() {
   const todayLabel = 'today'
   const upcomingLabel = 'upcoming'
   const pastLabel = 'past'
+  const maxHourCanChange = 1
+  const currentDate = new Date();
+  const currentDateString = currentDate.toDateString();
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
       var res = await fetch(`${apiUrl}/Slot/GetAll`)
@@ -260,7 +263,8 @@ export default function ViewHistory() {
       bookingId: slot.bookingId,
       branchId: branchId,
       slotId: slot.bookedSlotId,
-      changeLog: booking.changeLog
+      changeLog: booking.changeLog,
+      bookingDate: booking.bookingDate
     })
   }
   const onClickCancelSlot = (slot) => {
@@ -364,7 +368,7 @@ export default function ViewHistory() {
       toast.error('Server error')
     }
   }
-  
+
   const createOnEditActionComment = (amount, current) => {
     let delta = amount - current
     var comment = ''
@@ -396,7 +400,7 @@ export default function ViewHistory() {
         toast.error(data['msg'])
         return;
       }
-      if(res.status === HttpStatusCode.Unauthorized){
+      if (res.status === HttpStatusCode.Unauthorized) {
         toast.error('Unauthorized')
         return
       }
@@ -429,10 +433,6 @@ export default function ViewHistory() {
         return 'Buy Time';
     }
   };
-
-  const currentDate = new Date();
-  const currentDateString = currentDate.toDateString();
-
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [feedbackData, setFeedbackData] = useState({});
   const handleFeedbackClick = (bookingId, branchId, userId) => {
@@ -457,8 +457,22 @@ export default function ViewHistory() {
       }
     })
   }
+  const isEditable = (booking) => {
+    var bookingDateNum = Date.parse(new Date(booking.bookingDate))
+    var currentTime = Date.parse(new Date())
+    return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 &&
+      booking['changeLog'] < numOfChanges
+  }
+  function convertDateAndHour(date, hour) {
+    return new Date(date).setHours(hour)
+  }
   const renderSlotsType = (type) => {
     var collection = filterSlots(type)
+      .sort((s1, s2) => {
+        var s1StartTime = convertDateAndHour(s1.date, s1.start)
+        var s2StartTime = convertDateAndHour(s2.date, s2.start)
+        return s1StartTime - s2StartTime
+      })
     return collection.map((slot) => {
       const booking = bookings.find(b => b.bookingId === slot.bookingId)
       const slotDate = new Date(slot.date).toLocaleDateString();
@@ -477,6 +491,7 @@ export default function ViewHistory() {
           <td>{formatNumber(booking.amount)}</td>
           <td>{getBookingTypeLabel(booking.bookingType)}</td>
           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+          <td>{new Date(booking.bookingDate).toLocaleTimeString()}</td>
           <td>{slotDate}</td>
           <td>{startTime}</td>
           <td>{endTime}</td>
@@ -488,13 +503,13 @@ export default function ViewHistory() {
             </td>
           ) : (
             <td>
-              <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
-                disabled={booking['changeLog'] >= numOfChanges}
+              <button className={'view-history-button' + (!isEditable(booking) ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+                disabled={!isEditable(booking)}
               >Edit</button>
               <button
-                className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
+                className={'view-history-button view-history-cancel-btn' + (!isEditable(booking) ? ' btn-disabled' : '')}
                 onClick={() => onClickCancelSlot(slot)}
-                disabled={booking['changeLog'] >= numOfChanges}
+                disabled={!isEditable(booking)}
               >Cancel</button>
             </td>
           )}
@@ -519,11 +534,20 @@ export default function ViewHistory() {
   };
   const validateTime = (date, start, end) => {
     let now = new Date()
-    //Convert a date string to number automatically shift 7 hours
-    date = new Date(Date.parse(date) - 7 * 3600000)
-    let startTime = Date.parse(date) + start * 3600000
-    let endTime = Date.parse(date) + end * 3600000
+    let startTime = convertDateAndHour(date, start)
+    let endTime = convertDateAndHour(date, end)
     return (startTime < endTime) && (startTime > now)
+  }
+  const formatTimeRange = (time) => {
+    var range = new Date() - new Date(time)
+    range = maxHourCanChange * 3600000 - range
+    var rs = ''
+    let hour = Math.floor(range / 3600000)
+    range = range - hour * 3600000
+    let min = Math.floor(range / 60000)
+    range = range - min * 60000
+    let sec = Math.floor(range / 1000)
+    return `${hour}h${min}m${sec}s`
   }
   return (
     <div className='view-history'>
@@ -535,7 +559,12 @@ export default function ViewHistory() {
       >
         <span>
           <h4>Edit for booking: {formState.bookingId}, slot: {formState.slotId}</h4>
-          <p className='warning'>You can only change a booking up to {numOfChanges} times ({numOfChanges - formState.changeLog} changes left).</p>
+          <p className='warning'>
+            You can only change a booking up to {numOfChanges} times, and must not be more than {maxHourCanChange} hour(s) since booking time.</p>
+          <p>
+            Currently <span className='warning'>{numOfChanges - formState.changeLog}</span> changes left,
+            and <span className='warning'>{formatTimeRange(formState.bookingDate)}</span> left.
+          </p>
           <p>Date:</p>
           <input type="date" id="datePicker" value={formState.date}
             onChange={() => {
@@ -661,6 +690,7 @@ export default function ViewHistory() {
                               <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
+                              <th>BOOKING TIME</th>
                               <th>SLOT DATE</th>
                               <th>START TIME</th>
                               <th>END TIME</th>
@@ -687,6 +717,7 @@ export default function ViewHistory() {
                               <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
+                              <th>BOOKING TIME</th>
                               <th>SLOT DATE</th>
                               <th>START TIME</th>
                               <th>END TIME</th>
@@ -712,6 +743,7 @@ export default function ViewHistory() {
                               <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
+                              <th>BOOKING TIME</th>
                               <th>SLOT DATE</th>
                               <th>START TIME</th>
                               <th>END TIME</th>
