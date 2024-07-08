@@ -93,7 +93,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpPut]
 		[Route("Court/Update")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> UpdateCourt(string courtImg, string description, string id, bool activeStatus, float? price)
 		{
 			try

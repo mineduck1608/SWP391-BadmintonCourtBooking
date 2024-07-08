@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\badmintoncourtapi\\controllers\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\controllers\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F9A84595-42F8-4953-AB19-4DE3F9DD2BFF}|BadmintonCourtNUnitTests\\BadmintonCourtNUnitTests.csproj|d:\\swp391-mainpull\\badmintoncourtbooking\\badmintoncourt_booking\\badmintoncourtnunittests\\controllertests\\discountcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F9A84595-42F8-4953-AB19-4DE3F9DD2BFF}|BadmintonCourtNUnitTests\\BadmintonCourtNUnitTests.csproj|solutionrelative:badmintoncourtnunittests\\controllertests\\discountcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|d:\\swp391-mainpull\\badmintoncourtbooking\\badmintoncourt_booking\\badmintoncourtapi\\utils\\util.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7DF0A92D-29DF-4174-8F22-25D98266B7F8}|BadmintonCourtAPI\\BadmintonCourtAPI.csproj|solutionrelative:badmintoncourtapi\\utils\\util.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,27 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BookingController.cs",
-              "DocumentMoniker": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BookingController.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Controllers\\BookingController.cs",
-              "ToolTip": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Controllers\\BookingController.cs",
-              "RelativeToolTip": "BadmintonCourtAPI\\Controllers\\BookingController.cs",
-              "ViewState": "AQIAADUAAAAAAAAAAAAuwEAAAAAhAAAA",
+              "Title": "Util.cs",
+              "DocumentMoniker": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Utils\\Util.cs",
+              "RelativeDocumentMoniker": "BadmintonCourtAPI\\Utils\\Util.cs",
+              "ToolTip": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtAPI\\Utils\\Util.cs",
+              "RelativeToolTip": "BadmintonCourtAPI\\Utils\\Util.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAcwDUAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-07T07:26:28.898Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DiscountControllerTests.cs",
-              "DocumentMoniker": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtNUnitTests\\ControllerTests\\DiscountControllerTests.cs",
-              "RelativeDocumentMoniker": "BadmintonCourtNUnitTests\\ControllerTests\\DiscountControllerTests.cs",
-              "ToolTip": "D:\\SWP391-MainPull\\badmintoncourtbooking\\BadmintonCourt_Booking\\BadmintonCourtNUnitTests\\ControllerTests\\DiscountControllerTests.cs",
-              "RelativeToolTip": "BadmintonCourtNUnitTests\\ControllerTests\\DiscountControllerTests.cs",
-              "ViewState": "AQIAAKQAAAAAAAAAAAAAwLMAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-07T07:30:56.583Z",
+              "WhenOpened": "2024-07-07T18:18:22.484Z",
               "EditorCaption": ""
             }
           ]

@@ -44,6 +44,8 @@ const Court = () => {
     const [userRole, setUserRole] = useState('');
 
     const [form] = Form.useForm();
+    let token;
+                token = sessionStorage.getItem('token');
 
 
 
@@ -126,6 +128,7 @@ const Court = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     courtId,
@@ -156,6 +159,7 @@ const Court = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     courtImg,

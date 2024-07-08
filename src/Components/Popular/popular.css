@@ -13,6 +13,9 @@
   .popular {
     padding-top: 19rem;
   }
+  .popular .secContainer {
+    margin-left: -50px;
+  }
   .popular .secContainer .secHeader {
     flex-direction: column;
     align-items: flex-start;
@@ -127,7 +130,7 @@
   }
   
   .popular .secContainer .mainContent .singleDestination .destFooter .number {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     width: -moz-max-content;
     width: max-content;

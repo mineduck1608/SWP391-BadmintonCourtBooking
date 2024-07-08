@@ -11,6 +11,10 @@ const ResetPassword = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userId = params.get('id');
+    const msg = params.get('msg');
+    if (msg) {
+      setMessage(msg === 'fail' ? 'Passwords do not match. Please try again.' : '');
+    }
     if (userId) {
       setUserId(userId);
     }
@@ -23,7 +27,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await fetch(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
+      const response = await fetch(`https://localhost:7233/User/ForgotPassReset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -32,10 +36,17 @@ const ResetPassword = () => {
       });
 
       if (response.ok) {
-        setMessage('Password updated successfully. You can now log in with your new password.');
+        const data = await response.json();
+        setMessage(data.msg);
+        if (data.msg === 'Success') {
+          window.history.pushState({}, '', `?id=${userId}&&msg=success`);
+        }
       } else {
         const responseData = await response.json();
         setMessage(responseData.msg);
+        if (responseData.msg === 'fail') {
+          window.history.pushState({}, '', `?id=${userId}&&msg=fail`);
+        }
       }
     } catch (error) {
       setMessage('Error updating password. Please try again.');
@@ -44,36 +55,36 @@ const ResetPassword = () => {
 
   return (
     <>
-    <div><Navbar/></div>
-    <div className='reset-password-wrapper'>
-      <div className="reset-password-container">
-        <h1 className='reset-password-title'>Reset Password</h1>
-        <div className="reset-password-input-box">
-          <i className="reset-password-input-icon fas fa-lock"></i>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="reset-password-input"
-            placeholder='Enter new password'
-            required
-          />
+      <div><Navbar/></div>
+      <div className='reset-password-wrapper'>
+        <div className="reset-password-container">
+          <h1 className='reset-password-title'>Reset Password</h1>
+          <div className="reset-password-input-box">
+            <i className="reset-password-input-icon fas fa-lock"></i>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="reset-password-input"
+              placeholder='Enter new password'
+              required
+            />
+          </div>
+          <div className="reset-password-input-box">
+            <i className="reset-password-input-icon fas fa-lock"></i>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="reset-password-input"
+              placeholder='Confirm new password'
+              required
+            />
+          </div>
+          <button className='reset-password-button' onClick={handleResetPassword}>Reset Password</button>
+          {message && <p className="forget-password-message">{message}</p>}
         </div>
-        <div className="reset-password-input-box">
-          <i className="reset-password-input-icon fas fa-lock"></i>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="reset-password-input"
-            placeholder='Confirm new password'
-            required
-          />
-        </div>
-        <button className='reset-password-button' onClick={handleResetPassword}>Reset Password</button>
-        {message && <p className="forget-password-message">{message}</p>}
       </div>
-    </div>
     </>
   );
 }

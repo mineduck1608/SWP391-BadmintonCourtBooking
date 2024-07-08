@@ -44,7 +44,6 @@ const Navbar = () => {
 
                 <div className={active}>
                     <ul className="navLists flex">
-
                         <div className="headerBtns flex">
                             <button className='btn loginBtn'>
                                 <Link to={'/signin'}>Login</Link>
