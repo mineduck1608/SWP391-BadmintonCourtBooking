@@ -40,7 +40,7 @@
 }
 
 .view-payment-history {
-  width: 80%;
+  width: 92%;
   margin: 50px auto;
   background-color: #ffffff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -50,7 +50,7 @@
 }
 
 .view-payment-table-wrapper {
-  max-height: 250px;
+  max-height: 320px;
   overflow-y: auto;
 }
 
@@ -63,8 +63,9 @@
 
 .view-payment-table th,
 .view-payment-table td {
-  padding: 15px;
+  padding: 18px;
   text-align: center;
+  font-size: 14px;
 }
 
 .view-payment-table th {
