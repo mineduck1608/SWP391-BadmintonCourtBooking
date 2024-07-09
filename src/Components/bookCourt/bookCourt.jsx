@@ -5,6 +5,8 @@ import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 import { toast } from "react-toastify";
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { HttpStatusCode } from "axios";
+import { Link } from "react-router-dom";
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
@@ -20,6 +22,26 @@ const BookCourt = () => {
     const apiUrl = "https://localhost:7233"
     const [selectedBranch, setSelectedBranch] = useState({})
     const [user, setUser] = useState({})
+    const [discounts, setDiscounts] = useState([])
+    const [useDiscount, setUseDiscount] = useState({})
+    const fetchDiscounts = async () => {
+        try {
+            setDiscounts([])
+            const discountData = await (
+                await fetch(`${apiUrl}/Discount/GetAll`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+                    }
+                })
+            ).json()
+            for (let index = 0; index < discountData.length; index++) {
+                setDiscounts(t => [...t, discountData[index]])
+            }
+        }
+        catch (err) {
+            toast.error('Server error')
+        }
+    }
     const fetchBranches = async () => {
         try {
             setBranches(b => [])
@@ -107,6 +129,7 @@ const BookCourt = () => {
 
         }
         async function loadData() {
+            await fetchDiscounts()
             await fetchBranches()
             await fetchCourts()
             await loadTimeFrame()
@@ -182,7 +205,7 @@ const BookCourt = () => {
         var tmp = (validateDateTime() === 0)
         if (!tmp) return false
         try {
-            var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
+            var checkBalance = (paymentType === 'flexible' ? user['balance'] >= amount : true)
             if (!checkBalance) toast.error('Balance is not enough')
             tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
             return tmp
@@ -209,7 +232,9 @@ const BookCourt = () => {
             let endTime = document.getElementById('time-end').value
             let t = document.getElementById('monthNum');
             let monthNum = t == null ? 1 : t.value
-            return calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
+            let calculatedAmount = calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
+            setAmount(calculatedAmount)
+            calculateDiscount(calculatedAmount)
         }
         catch (err) {
             return 0
@@ -218,7 +243,6 @@ const BookCourt = () => {
     const calcAmount = (bkType, price, start, end, month) => {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
-        setAmount(Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
     const pushBooking = async () => {
@@ -267,13 +291,17 @@ const BookCourt = () => {
         }
     }
     const handleFinishFetch = async (res, type) => {
+        if (res.status === HttpStatusCode.InternalServerError) {
+            toast.error('Server error')
+            return
+        }
         const data = await res.json()
         if (type !== 'flexible') {
             var payUrl = data['url']
             if (payUrl !== undefined) {
                 window.location.assign(payUrl)
             }
-            return;
+            return
         }
         if (res.ok) {
             toast.success('Created booking!')
@@ -284,7 +312,7 @@ const BookCourt = () => {
         }
         const msg = data['msg']
         if (msg.includes('not enough')) {
-            alert(msg)
+            toast.error(msg)
         }
     }
     const formatNumber = (n) => {
@@ -307,6 +335,22 @@ const BookCourt = () => {
         }
         while (n > 0)
         return rs
+    }
+    const calculateDiscount = (a) => {
+        let arr = discounts.sort((d1, d2) => d2.amount - d1.amount)
+        setUseDiscount({
+            proportion: 0,
+            threshold: 0
+        })
+        for (let i = 0; i < arr.length; i++) {
+            if (a >= arr[i].amount) {
+                setUseDiscount({
+                    proportion: arr[i].proportion * a,
+                    threshold: arr[i].amount
+                })
+                break
+            }
+        }
     }
     return (
         <div className="bookCourt-container">
@@ -452,11 +496,23 @@ const BookCourt = () => {
                         <h2 className="notes">
                             4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
                         <p>Price: <span className='priceSpan'>{formatNumber(amount)}</span></p>
-                        <p>Your balance:
-                            <span className='priceSpan'>
-                                {' ' + (Object.is(user, undefined) || Object.is(user['balance'], undefined) ? '_' : formatNumber(user['balance']))}
+                        {
+                            useDiscount.proportion > 0 &&
+                            (
+                                <p>
+                                    You'll gain
+                                    <span className='priceSpan'> {formatNumber(useDiscount['proportion'])}đ </span>
+                                    as time balance when this booking is made.
+                                </p>
+                            )
+                        }
+                        <p>
+                            Your balance:
+                            <span className='priceSpan'> {(Object.is(user, undefined) || Object.is(user['balance'], undefined) ? '_' : formatNumber(user['balance']))}
                             </span>
+
                         </p>
+
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
@@ -478,6 +534,10 @@ const BookCourt = () => {
                                     <span>Time balance</span>
                                 </div>
                             )
+                        }
+                        {
+                            amount > user['balance'] && paymentType === 'flexible' &&
+                            <button className='buyTimeBtn' onClick={() => window.location.assign('/buyTime')}>Buy Balance</button>
                         }
                         {
                             //Banking

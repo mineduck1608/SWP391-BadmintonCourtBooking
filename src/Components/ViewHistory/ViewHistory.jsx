@@ -680,6 +680,9 @@ export default function ViewHistory() {
                   <p className="view-history-error-message">Error: {error}</p>
                 ) : (
                   <div className="view-history-table">
+                    <h3 className='warning'>
+                      You can only change or cancel a booking within {numOfChanges} change(s), and within {maxHourCanChange} hour(s) after it has been created
+                    </h3>
                     <div className="view-history-today-table">
                       <h3>Today's Bookings</h3>
                       <div className="view-history-table-wrapper">

@@ -9,21 +9,44 @@ const BuyTime = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [validAmount, setValidAmount] = useState(false)
   const apiUrl = 'https://localhost:7233'
-  const intRegex = /^(0{0,})[1-9]{1}[0-9]*$/
-  var amount
+  //Allow as many leading 0s as wanted
+  const intRegex = /^0{0,}[1-9]{1}[0-9]*$/
+  const [amount, setAmount] = useState(0)
   var token = sessionStorage.getItem('token')
+  const [discounts, setDiscounts] = useState([])
+  const [useDiscount, setUseDiscount] = useState({})
+  const minAmount = 10000
+  const fetchDiscounts = async () => {
+    try {
+      setDiscounts([])
+      const discountData = await (
+        await fetch(`${apiUrl}/Discount/GetAll`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          }
+        })
+      ).json()
+      for (let index = 0; index < discountData.length; index++) {
+        setDiscounts(t => [...t, discountData[index]])
+      }
+    }
+    catch (err) {
+      toast.error('Server error')
+    }
+  }
   const validateAmount = () => {
     var temp = (document.getElementById('amount').value).toString()
     if (!Object.is(temp, undefined) && intRegex.test(temp)) {
-      amount = parseInt(temp)
-      setValidAmount(amount >= 10000)
+      var tmpAmount = parseInt(temp)
+      setAmount(tmpAmount)
+      setValidAmount(tmpAmount >= minAmount)
+      return tmpAmount >= minAmount
     }
-    else
-      setValidAmount(false)
+    setValidAmount(false)
+    return false
   }
   const completeBooking = async () => {
-    validateAmount()
-    if (validAmount) {
+    if (validateAmount()) {
       //Create a cookie
       document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
       try {
@@ -55,35 +78,32 @@ const BuyTime = () => {
   }
   //Get the userID
   useEffect(() => {
-    async function fetchData() {
-      
-      if (!token) {
-        alert('Please log in')
-      } else {
-        try {
-          var decodedToken = jwtDecode(token)
-          setUserID(u => decodedToken.UserId)
-          var res = await fetchWithAuth(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`,{
-            method: 'GET',
-            headers: {
-              'Authorization': `bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          })
-          var data = await res.json()
-          if (decodedToken.UserId !== data['userId']) {
-            throw new Error('Authorize failed')
-          } else {
-            setUserID(data['userId'])
-            setRemainingTime(data['balance'])
+    async function fetchUserBalance() {
+      try {
+        var decodedToken = jwtDecode(token)
+        setUserID(u => decodedToken.UserId)
+        var res = await fetchWithAuth(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `bearer ${token}`,
+            'Content-Type': 'application/json'
           }
-        }
-        catch (err) {
-          toast.error('Server error')
+        })
+        var data = await res.json()
+        if (decodedToken.UserId !== data['userId']) {
+          throw new Error('Authorize failed')
+        } else {
+          setUserID(data['userId'])
+          setRemainingTime(data['balance'])
         }
       }
+      catch (err) {
+        toast.error('Server error')
+      }
+
     }
-    fetchData()
+    fetchUserBalance()
+    fetchDiscounts()
   }, [])
 
   const formatNumber = (n) => {
@@ -107,33 +127,53 @@ const BuyTime = () => {
     while (n > 0)
     return rs
   }
-
-return (
-  <div className='buyTime'>
-    <div className='buyTime_bodyContainer'>
-      <h1 className='buyTime_title'>Buy more flexible money</h1>
-      <article className='buyTime_article'>
-        <p className='buyTime_p'>Remaining money: {formatNumber(Math.floor(remainingTime))}</p>
-        <div className='buyTime_centerDiv'>
-          <input className='buyTime_counter1' id='amount' type='number' min='10000' onChange={() => validateAmount()} />
-        </div>
-        {!validAmount && (
-          <p className='buyTime_err'>Input a valid number of money to buy!<br />Min: 10.000VND</p>
-        )}
-        <p className='buyTime_p' >Payment method</p>
-        <select className='buyTime_select' id='method'>
-          <option value={2}>MoMo</option>
-          <option value={1}>VnPay</option>
-        </select>
-        <div className='buyTime_centerDiv'>
-          <button className='buyTime_btn' onClick={() => window.history.back()}>Cancel</button>
-          <button className='buyTime_btn' onClick={() => {
-            completeBooking()
-          }}>Confirm</button>
-        </div>
-      </article>
+  const calculateDiscount = (a) => {
+    let arr = discounts.sort((d1, d2) => d2.amount - d1.amount)
+    setUseDiscount({
+      proportion: 0,
+      threshold: 0
+    })
+    for (let i = 0; i < arr.length; i++) {
+      if (a >= arr[i].amount) {
+        setUseDiscount({
+          proportion: arr[i].proportion * a,
+          threshold: arr[i].amount
+        })
+        break
+      }
+    }
+  }
+  return (
+    <div className='buyTime'>
+      <div className='buyTime_bodyContainer'>
+        <h1 className='buyTime_title'>Buy more flexible moneyA</h1>
+        <article className='buyTime_article'>
+          <p className='buyTime_p'>Remaining money: {formatNumber(Math.floor(remainingTime))}</p>
+          <div className='buyTime_centerDiv'>
+            <input className='buyTime_counter1' id='amount' type='text' 
+            inputMode='numeric' onChange={() => {
+              if (validateAmount()) {
+                
+              }
+            }} />
+          </div>
+          {!validAmount && (
+            <p className='buyTime_err'>Input a valid number of money to buy!<br />Min: {formatNumber(minAmount)}đ</p>
+          )}
+          <p className='buyTime_p' >Payment method</p>
+          <select className='buyTime_select' id='method'>
+            <option value={1}>VnPay</option>
+            <option value={2}>MoMo</option>
+          </select>
+          <div className='buyTime_centerDiv'>
+            <button className='buyTime_btn' onClick={() => window.history.back()}>Cancel</button>
+            <button className='buyTime_btn' onClick={() => {
+              completeBooking()
+            }}>Confirm</button>
+          </div>
+        </article>
+      </div>
     </div>
-  </div>
-)
+  )
 }
 export default BuyTime

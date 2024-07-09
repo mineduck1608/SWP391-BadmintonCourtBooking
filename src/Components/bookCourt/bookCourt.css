@@ -204,7 +204,11 @@ select {
 
 .buyTimeBtn {
   display: block;
-  background-color: black;
+  background-color: #ff9900;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
   padding: 2%;
   width:fit-content;
 }
@@ -239,12 +243,11 @@ select {
 .bookCourt_span {
   position: relative;
   float: left;
-  /* display: flow-root; */
+  display: block;
   cursor: pointer;
   border-radius: 10px;
-  height: auto;
-  width: 20%;
-  /* height: 15%; */
+  width: 100px;
+  height: 80px;
 }
 
 .bookCourt_span img {
