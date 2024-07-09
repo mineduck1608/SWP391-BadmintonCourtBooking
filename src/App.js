@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Components/Home/Home';
@@ -37,11 +37,31 @@ import GoogleMap from './Components/googleMap/googleMap';
 import VerifyAccount from './Components/verifyAccount/verifyAccount';
 import CreateFeedbackModal from './Components/CreateFeedbackModal/CreateFeedbackModal'; 
 import PaymentHistory from './Components/ViewPayment/ViewPayment';
+import { jwtDecode } from 'jwt-decode';
 
 const App = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [searchCriteria, setSearchCriteria] = useState({ branch: '', location: '' });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            const decoded = jwtDecode.decode(token);
+            if (decoded.exp * 1000 < Date.now()) {
+                logout();
+            }
+        } catch (err) {
+            logout();
+        }
+    }
+}, []);
+
+const logout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/signin'; 
+};
 
   return (
     <ColorModeContext.Provider value={colorMode}>

@@ -7,6 +7,7 @@ import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
 import { jwtDecode } from 'jwt-decode';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const { RangePicker } = TimePicker;
 const { TextArea } = Input;
@@ -85,8 +86,8 @@ const FindCourt = () => {
       try {
         setLoading(true);
         const [branchResponse, courtResponse] = await Promise.all([
-          fetch(branchUrl),
-          fetch(courtUrl),
+          fetchWithAuth(branchUrl),
+          fetchWithAuth(courtUrl),
         ]);
 
         if (!branchResponse.ok) {
@@ -133,15 +134,15 @@ const FindCourt = () => {
       setLoadingFeedback(true);
       try {
         const [feedbackResponse, userResponse, userDetailsResponse] = await Promise.all([
-          fetch(feedbackUrl),
-          fetch(userUrl, {
+          fetchWithAuth(feedbackUrl),
+          fetchWithAuth(userUrl, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(userDetailsUrl)
+          fetchWithAuth(userDetailsUrl)
         ]);
 
         if (!feedbackResponse.ok) {
@@ -219,7 +220,7 @@ const FindCourt = () => {
 
     try {
       const url = `https://localhost:7233/Feedback/Update?rate=${feedbackData.rating}&content=${feedbackData.content}&id=${feedbackData.feedbackId}&userId=${feedbackData.userId}`;
-      const response = await fetch(url, {
+      const response = await fetchWithAuth(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +262,7 @@ const FindCourt = () => {
     const token = sessionStorage.getItem('token');
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchWithAuth(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

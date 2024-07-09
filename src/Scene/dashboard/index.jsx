@@ -7,6 +7,7 @@ import Head from "../../Components/Head";
 import LineChart from "../../Components/LineChart";
 import BarChart from "../../Components/BarChart";
 import './dashboard.css';
+import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -32,7 +33,7 @@ const Dashboard = () => {
         setLoading(true);
         const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
 
-        const paymentResponse = await axios.get('https://localhost:7233/Payment/GetAll', {
+        const paymentResponse = await fetchWithAuth.get('https://localhost:7233/Payment/GetAll', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -43,7 +44,7 @@ const Dashboard = () => {
         setTotalRevenue(total);
 
         // Fetch initial statistics
-        const response = await axios.get(`https://localhost:7233/Payment/Statistic?Year=${currentYear}&Type=1&StartMonth=1&MonthNum=1&Week=1`, {
+        const response = await fetchWithAuth.get(`https://localhost:7233/Payment/Statistic?Year=${currentYear}&Type=1&StartMonth=1&MonthNum=1&Week=1`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         setPaymentStatistics(response.data);
@@ -69,7 +70,7 @@ const Dashboard = () => {
   const handleFetchStatistics = async () => {
     try {
       const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
-      const response = await axios.get(`https://localhost:7233/Payment/Statistic?Year=${year}&Type=${filterType === 'year' ? 1 : filterType === 'month' ? 2 : 3}&StartMonth=${startMonth}&MonthNum=${numberOfMonths}&Week=${weekOfMonth}`, {
+      const response = await fetchWithAuth.get(`https://localhost:7233/Payment/Statistic?Year=${year}&Type=${filterType === 'year' ? 1 : filterType === 'month' ? 2 : 3}&StartMonth=${startMonth}&MonthNum=${numberOfMonths}&Week=${weekOfMonth}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       console.log('Payment Statistics:', response.data);

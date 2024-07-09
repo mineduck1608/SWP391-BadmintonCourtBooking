@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal, Rate, Input, Button } from 'antd';
 import './CreateFeedbackModal.css';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+
 
 const { TextArea } = Input;
 
@@ -14,7 +16,7 @@ const CreateFeedbackModal = ({ visible, onCancel, bookingId, branchId, userId })
     const token = sessionStorage.getItem('token');
 
     try {
-      const response = await axios.post('https://localhost:7233/Feedback/Post', null, {
+      const response = await fetchWithAuth.post('https://localhost:7233/Feedback/Post', null, {
         params: {
           rate: rating,
           content: feedback,

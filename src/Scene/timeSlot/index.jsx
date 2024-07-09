@@ -9,6 +9,7 @@ import { ConfigProvider } from 'antd';
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import dayjs from 'dayjs';
+import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 
 const TimeSlotManagement = () => {
   const [rows, setRows] = useState([]);
@@ -103,7 +104,7 @@ const TimeSlotManagement = () => {
 
   const showModal = async (row) => {
     try {
-      const bookingsRes = await fetch(`https://localhost:7233/Booking/GetAll`, {
+      const bookingsRes = await fetchWithAuth(`https://localhost:7233/Booking/GetAll`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -118,7 +119,7 @@ const TimeSlotManagement = () => {
       const bookingsData = await bookingsRes.json();
       const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
 
-      const userRes = await fetch(`https://localhost:7233/User/GetById?id=${booking.userId}`, {
+      const userRes = await fetchWithAuth(`https://localhost:7233/User/GetById?id=${booking.userId}`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -132,7 +133,7 @@ const TimeSlotManagement = () => {
 
       const userData = await userRes.json();
 
-      const userDetailsRes = await fetch(`https://localhost:7233/UserDetail/GetAll`, {
+      const userDetailsRes = await fetchWithAuth(`https://localhost:7233/UserDetail/GetAll`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -176,7 +177,7 @@ const TimeSlotManagement = () => {
       start: addFormState.startValue,
       end: addFormState.endValue,
     };
-    fetch(`https://localhost:7233/Slot/BookingByBalence?date=${slotData.date}&start=${slotData.start}&end=${slotData.end}&userId=${slotData.userId}&courtId=${slotData.courtId}`, {
+    fetchWithAuth(`https://localhost:7233/Slot/BookingByBalence?date=${slotData.date}&start=${slotData.start}&end=${slotData.end}&userId=${slotData.userId}&courtId=${slotData.courtId}`, {
       method: "POST",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -227,28 +228,28 @@ const TimeSlotManagement = () => {
   const fetchData = async () => {
     try {
       const [branchesRes, courtsRes, slotsRes, bookingsRes] = await Promise.all([
-        fetch(`https://localhost:7233/Branch/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Branch/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`https://localhost:7233/Court/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Court/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`https://localhost:7233/Slot/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Slot/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`https://localhost:7233/Booking/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Booking/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -300,7 +301,7 @@ const TimeSlotManagement = () => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch(`https://localhost:7233/UserDetail/GetAll`, {
+      const response = await fetchWithAuth(`https://localhost:7233/UserDetail/GetAll`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -447,28 +448,28 @@ const TimeSlotManagement = () => {
 
     try {
       const [branchesRes, courtsRes, slotsRes, bookingsRes] = await Promise.all([
-        fetch(`https://localhost:7233/Branch/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Branch/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`https://localhost:7233/Court/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Court/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`https://localhost:7233/Slot/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Slot/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch(`https://localhost:7233/Booking/GetAll`, {
+        fetchWithAuth(`https://localhost:7233/Booking/GetAll`, {
           method: "GET",
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -562,7 +563,7 @@ const TimeSlotManagement = () => {
     };
   
   
-    fetch(`https://localhost:7233/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
+    fetchWithAuth(`https://localhost:7233/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,

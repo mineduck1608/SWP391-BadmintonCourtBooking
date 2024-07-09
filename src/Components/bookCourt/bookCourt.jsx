@@ -4,6 +4,7 @@ import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
 import { toast } from "react-toastify";
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
@@ -23,7 +24,7 @@ const BookCourt = () => {
         try {
             setBranches(b => [])
             const branchData = await (
-                await fetch(`${apiUrl}/Branch/GetAll`, {
+                await fetchWithAuth(`${apiUrl}/Branch/GetAll`, {
                     headers: {
                         Authorization: `Bearer ${sessionStorage.getItem('token')}`
                     }
@@ -45,7 +46,7 @@ const BookCourt = () => {
             var params = new URLSearchParams(queryStr)
             setCourts([])
             const courtData = await (
-                await fetch(`${apiUrl}/Court/GetAll`)
+                await fetchWithAuth(`${apiUrl}/Court/GetAll`)
             ).json()
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
@@ -63,7 +64,7 @@ const BookCourt = () => {
     }
     const loadTimeFrame = async () => {
         const fetchTime = async () => {
-            var res = await fetch(`${apiUrl}/Slot/GetAll`)
+            var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
             var data = await res.json()
             return data
         }
@@ -89,7 +90,7 @@ const BookCourt = () => {
             try {
                 var decodedToken = jwtDecode(token)
                 var data = await (await
-                    fetch(`${apiUrl}/User/GetById?id=${decodedToken['UserId']}`,
+                    fetchWithAuth(`${apiUrl}/User/GetById?id=${decodedToken['UserId']}`,
                         {
                             method: 'get',
                             headers: {
@@ -123,7 +124,7 @@ const BookCourt = () => {
                 let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
                 let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
 
-                const res = await fetch(`${apiUrl}/Slot/GetSlotCourtInInterval?`
+                const res = await fetchWithAuth(`${apiUrl}/Slot/GetSlotCourtInInterval?`
                     + `startTime=${startTime}&`
                     + `endTime=${endTime}&`
                     + `id=${courtId}`, {
@@ -251,7 +252,7 @@ const BookCourt = () => {
             let date = document.getElementById('datePicker').value
             let url = paymentType === 'flexible' ? buildFlexibleUrl(date, startTime, endTime, courtInfo['courtId'], user['userId'])
                 : buildTransferUrl(transferMethod, startTime, endTime, user['userId'], date, courtInfo['courtId'], bookingType, monthNum)
-            var res = await fetch(url,
+            var res = await fetchWithAuth(url,
                 {
                     method: 'POST',
                     headers: {

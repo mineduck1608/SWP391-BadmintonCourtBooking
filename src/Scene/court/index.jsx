@@ -12,6 +12,7 @@ import { ConfigProvider, Modal, Spin, Form } from 'antd';
 import { toast, ToastContainer } from 'react-toastify';
 import './court.css';
 import { jwtDecode } from 'jwt-decode';
+import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth.jsx";
 
 
 
@@ -53,8 +54,8 @@ const Court = () => {
         const fetchData = async () => {
             try {
                 const [courtResponse, branchResponse] = await Promise.all([
-                    fetch('https://localhost:7233/Court/GetAll'),
-                    fetch('https://localhost:7233/Branch/GetAll')
+                    fetchWithAuth('https://localhost:7233/Court/GetAll'),
+                    fetchWithAuth('https://localhost:7233/Branch/GetAll')
                 ]);
 
                 if (!courtResponse.ok || !branchResponse.ok) {
@@ -124,7 +125,7 @@ const Court = () => {
     const handleSave = async () => {
         const { courtId, courtImg, price, courtStatus, description, branchName } = selectedCourt;
         try {
-            const response = await fetch(`https://localhost:7233/Court/Update?courtImg=${courtImg}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
+            const response = await fetchWithAuth(`https://localhost:7233/Court/Update?courtImg=${courtImg}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -155,7 +156,7 @@ const Court = () => {
     const handleAddCourt = async () => {
         const { courtImg, branchId, price, description } = newCourtData;
         try {
-            const response = await fetch(`https://localhost:7233/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
+            const response = await fetchWithAuth(`https://localhost:7233/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -5,6 +5,7 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Head from "../../Components/Head";
 import { ConfigProvider } from 'antd';
+import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 
 const UserTable = () => {
     const [rows, setRows] = useState([]);
@@ -20,7 +21,7 @@ const UserTable = () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://localhost:7233/Payment/GetAll`, {
+                const response = await fetchWithAuth(`https://localhost:7233/Payment/GetAll`, {
                     method: "GET",
                     headers: {
                         'Authorization': `Bearer ${token}`,

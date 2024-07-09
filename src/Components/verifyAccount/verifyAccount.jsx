@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './verifyAccount.css';
 import Navbar from '../Navbar/Navbar';
-import Footer from '../Footer/Footer';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const VerifyAccount = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ const VerifyAccount = () => {
 
   const handleSendResetLink = async () => {
     try {
-      const response = await fetch(`https://localhost:7233/User/VerifyBeforeReset?mail=${email}`, {
+      const response = await fetchWithAuth(`https://localhost:7233/User/VerifyBeforeReset?mail=${email}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -10,6 +10,7 @@ import { getHours } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CreateFeedbackModal from '../CreateFeedbackModal/CreateFeedbackModal';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 export default function ViewHistory() {
   const [bookings, setBookings] = useState([]);
@@ -50,7 +51,7 @@ export default function ViewHistory() {
   const currentDateString = currentDate.toDateString();
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
-      var res = await fetch(`${apiUrl}/Slot/GetAll`)
+      var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
       var data = await res.json()
       return data
     }
@@ -103,7 +104,7 @@ export default function ViewHistory() {
         const decodedToken = jwtDecode(token);
         const userIdToken = decodedToken.UserId;
 
-        const bookingsResponse = await fetch(`https://localhost:7233/Booking/GetByUser?id=${userIdToken}`, {
+        const bookingsResponse = await fetchWithAuth(`https://localhost:7233/Booking/GetByUser?id=${userIdToken}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -116,7 +117,7 @@ export default function ViewHistory() {
         const bookingsData = await bookingsResponse.json();
         const userBookings = bookingsData.filter(booking => booking.userId === userIdToken);
         setBookings(userBookings);
-        const slotsResponse = await fetch(`${apiUrl}/Slot/GetAll`, {
+        const slotsResponse = await fetchWithAuth(`${apiUrl}/Slot/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -130,7 +131,7 @@ export default function ViewHistory() {
         const bookingIds = bookingsData.map(b => b.bookingId)
         const slotsOfUser = slotsData.filter(s => bookingIds.includes(s.bookingId))
         setSlots(slotsOfUser);
-        const courtsResponse = await fetch(`${apiUrl}/Court/GetAll`, {
+        const courtsResponse = await fetchWithAuth(`${apiUrl}/Court/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -143,7 +144,7 @@ export default function ViewHistory() {
         const courtsData = await courtsResponse.json();
         setCourts(courtsData);
 
-        const branchesResponse = await fetch(`${apiUrl}/Branch/GetAll`, {
+        const branchesResponse = await fetchWithAuth(`${apiUrl}/Branch/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -293,7 +294,7 @@ export default function ViewHistory() {
   const getPayment = async (bookingID) => {
     async function fetchPayment(bookingID) {
       try {
-        var res = await fetch(`${apiUrl}/Payment/GetByUser?id=${getUserId(token)}`,
+        var res = await fetchWithAuth(`${apiUrl}/Payment/GetByUser?id=${getUserId(token)}`,
           {
             method: 'get',
             headers: {
@@ -312,7 +313,7 @@ export default function ViewHistory() {
   }
   const handleOk = async () => {
     const update = async (start, end, date, userId, courtId, slotId, paymentMethod, bookingId) => {
-      var res = await fetch(`${apiUrl}/Slot/UpdateByUser?`
+      var res = await fetchWithAuth(`${apiUrl}/Slot/UpdateByUser?`
         + `start=${start}&`
         + `end=${end}&`
         + `date=${date}&`
@@ -383,7 +384,7 @@ export default function ViewHistory() {
   }
   const cancelSlot = async () => {
     async function cancel(slotId, bookingId) {
-      return res = await fetch(`${apiUrl}/Slot/Cancel?`
+      return res = await fetchWithAuth(`${apiUrl}/Slot/Cancel?`
         + `slotId=${slotId}&`
         + `bookingId=${bookingId}`
         , {

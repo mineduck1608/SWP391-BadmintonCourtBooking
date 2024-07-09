@@ -5,6 +5,7 @@ import Footer from "../Footer/Footer";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -31,9 +32,9 @@ const ViewCourtInfo = () => {
             try {
                 setLoading(true);
                 const [branchResponse, courtResponse, slotResponse] = await Promise.all([
-                    fetch(branchUrl),
-                    fetch(courtUrl),
-                    fetch(slotUrl),
+                    fetchWithAuth(branchUrl),
+                    fetchWithAuth(courtUrl),
+                    fetchWithAuth(slotUrl),
                 ]);
 
                 if (!branchResponse.ok) {

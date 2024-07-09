@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './forgetpassword.css';
 import Navbar from '../Navbar/Navbar';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+
 
 const ResetPassword = () => {
   const [userId, setUserId] = useState('');
@@ -23,7 +25,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await fetch(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
+      const response = await fetchWithAuth(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

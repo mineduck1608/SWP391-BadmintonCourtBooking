@@ -13,6 +13,7 @@ import { uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ref } from 'firebase/storage';
 import { imageDb } from '../../Components/googleSignin/config.js';
 import { jwtDecode } from 'jwt-decode';
+import { fetchWithAuth } from '../../Components/fetchWithAuth/fetchWithAuth.jsx';
 
 const Branch = () => {
   const theme = useTheme();
@@ -36,13 +37,13 @@ const Branch = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const branchResponse = await fetch('https://localhost:7233/Branch/GetAll');
+        const branchResponse = await fetchWithAuth('https://localhost:7233/Branch/GetAll');
         if (!branchResponse.ok) {
           throw new Error('Failed to fetch branch data');
         }
         const branchData = await branchResponse.json();
 
-        const feedbackResponse = await fetch('https://localhost:7233/Feedback/GetAll');
+        const feedbackResponse = await fetchWithAuth('https://localhost:7233/Feedback/GetAll');
         if (!feedbackResponse.ok) {
           throw new Error('Failed to fetch feedback data');
         }
@@ -113,7 +114,7 @@ const Branch = () => {
     const { location, branchImg, branchName, branchPhone, branchStatus, branchId, mapUrl } = selectedBranch;  // Added mapUrl
     const statusValue = branchStatus ? 1 : 0; // Convert boolean to 1 or 0
     try {
-      const response = await fetch(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}&mapUrl=${mapUrl}`, {  // Added mapUrl
+      const response = await fetchWithAuth(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}&mapUrl=${mapUrl}`, {  // Added mapUrl
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -139,7 +140,7 @@ const Branch = () => {
   const handleAddBranch = async () => {
     const { location, branchImg, branchName, branchPhone, mapUrl } = newBranch;  // Added mapUrl
     try {
-      const response = await fetch(`https://localhost:7233/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&mapUrl=${mapUrl}`, {  // Added mapUrl
+      const response = await fetchWithAuth(`https://localhost:7233/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&mapUrl=${mapUrl}`, {  // Added mapUrl
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

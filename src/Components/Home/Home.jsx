@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './home.css';  
 import { Link } from 'react-router-dom';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const Home = ({ setSearchCriteria }) => {
     const [branches, setBranches] = useState([]);
@@ -9,7 +10,7 @@ const Home = ({ setSearchCriteria }) => {
     const [selectedLocation, setSelectedLocation] = useState('');
 
     useEffect(() => {
-        fetch('https://localhost:7233/Branch/GetAll')
+        fetchWithAuth('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
             .then(data => {
                 setBranches(data);

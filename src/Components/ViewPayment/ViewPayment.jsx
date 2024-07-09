@@ -4,6 +4,9 @@ import Footer from '../Footer/Footer';
 import './viewpayment.css';
 import { jwtDecode } from 'jwt-decode';
 import {toast} from 'react-toastify';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+
+
 
 export default function ViewPayment() {
   const [payments, setPayments] = useState([]);
@@ -20,7 +23,7 @@ export default function ViewPayment() {
       setError(null);
 
       try {
-        const paymentsResponse = await fetch(`${apiUrl}/Payment/GetByUser?id=${userIdToken}`, {
+        const paymentsResponse = await fetchWithAuth(`${apiUrl}/Payment/GetByUser?id=${userIdToken}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

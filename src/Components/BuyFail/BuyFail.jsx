@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './BuyFail.css';
 import { jwtDecode } from 'jwt-decode';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const BuyFail = () => {
   const [userID, setUserID] = useState('');
@@ -18,7 +19,7 @@ const BuyFail = () => {
         try {
           var decodedToken = jwtDecode(token);
           setUserID(u => decodedToken.UserId);
-          var res = await fetch(`${apiUrl}User/GetById?id=${decodedToken.UserId}`);
+          var res = await fetchWithAuth(`${apiUrl}User/GetById?id=${decodedToken.UserId}`);
           var data = await res.json();
           if (decodedToken.UserId !== data['userId']) {
             throw new Error('Authorize failed');
