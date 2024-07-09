@@ -31,7 +31,7 @@ namespace BadmintonCourtAPI.Controllers
 		private const string verifyUrl = "https://localhost:7233/User/VerifyAction";
 		private const string resetPassUrl = "http://localhost:3000/ResetPassword";
 		private const string loginUrl = "http://localhost:3000/signin";
-		private const string viewInfoUrl = "http://localhost:3000/";
+		private const string viewInfoUrl = "http://localhost:3000/viewInfo";
 		private const string registerMsg = "If you did not register for this account, ";
 		public const string emailUpdateMsg = "If you did not request an email update, ";
 		public const string resetPassMsg = "If you did not request a password reset, ";
