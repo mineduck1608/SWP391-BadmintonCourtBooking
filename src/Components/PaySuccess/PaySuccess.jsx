@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './PaySuccess.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+
+
 
 const PaySuccess = () => {
   const [success, setSuccess] = useState(null); // null initially, can be 1 for success or -1 for fail

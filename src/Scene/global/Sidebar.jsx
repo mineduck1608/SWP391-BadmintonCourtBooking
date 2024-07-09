@@ -18,7 +18,8 @@ import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {jwtDecode} from 'jwt-decode';  // Fixed import statement
+import { jwtDecode } from 'jwt-decode';  // Fixed import statement
+import DiscountIcon from '@mui/icons-material/Discount';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
     const theme = useTheme();
@@ -72,7 +73,7 @@ const Sidebar = () => {
 
         if (role !== "Admin" && role !== "Staff") {
             sessionStorage.clear();
-            navigate('/'); // Redirect to home if the role is not 'Admin'
+            navigate('/'); // Redirect to home if the role is not 'Admin' or 'Staff'
             return;
         }
     }, [navigate]);
@@ -202,19 +203,29 @@ const Sidebar = () => {
                         </Typography>
 
                         <Item className="menu-item"
+                            title="Discount"
+                            to="discount"
+                            icon={<DiscountIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+
+                        <Item className="menu-item"
                             title="Time Slot"
                             to="timeSlot"
                             icon={<AccessAlarmIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />
-                        <Item className="menu-item"
-                            title="Time Manage"
-                            to="timeManage"
-                            icon={<CalendarTodayOutlinedIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
+                        {role === 'Admin' && (
+                            <Item className="menu-item"
+                                title="Time Manage"
+                                to="timeManage"
+                                icon={<CalendarTodayOutlinedIcon />}
+                                selected={selected}
+                                setSelected={setSelected}
+                            />
+                        )}
                         <Item className="menu-item"
                             title="Payment"
                             to="payment"

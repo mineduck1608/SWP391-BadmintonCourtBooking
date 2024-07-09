@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import SignIn from '../googleSignin/signIn';
 import { jwtDecode } from 'jwt-decode';
 
+
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -31,6 +33,7 @@ const Login = () => {
             const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
             const roleToken = decodedToken.Role; // Extract userId from the decoded token
             const status = decodedToken.Status
+            console.log(status)
             if (roleToken == "Customer") {
               if (status == 'True') {
                 navigate('/home');

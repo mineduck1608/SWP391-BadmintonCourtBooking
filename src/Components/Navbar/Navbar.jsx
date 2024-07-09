@@ -21,7 +21,7 @@ const Navbar = () => {
 
     //Code to add background color to the header...
     const [transparent, setTransparent] = useState('header1')
-    const addBg = ()=>{
+    const addBg = () => {
         if (window.scrollY >= 10) {
             setTransparent('header1 activeHeader')
         }
@@ -44,6 +44,15 @@ const Navbar = () => {
 
                 <div className={active}>
                     <ul className="navLists flex">
+
+                    <Link to={'/'}><li className="navItem">
+                            <a href="#" className="navLink">Home</a>
+                        </li>
+                        </Link>
+                        <Link to={'/contacts'}><li className="navItem">
+                            <a href="#" className="navLink">Contacts</a>
+                        </li>
+                        </Link>
                         <div className="headerBtns flex">
                             <button className='btn loginBtn'>
                                 <Link to={'/signin'}>Login</Link>

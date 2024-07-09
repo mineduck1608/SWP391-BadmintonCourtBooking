@@ -3,8 +3,8 @@ import './bookCourt.css';
 import momoLogo from '../../Assets/MoMo_Logo.png'
 import vnpayLogo from '../../Assets/vnpay.png'
 import { jwtDecode } from 'jwt-decode';
-import { HttpStatusCode } from "axios";
 import { toast } from "react-toastify";
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
@@ -12,9 +12,8 @@ const BookCourt = () => {
     const [courts, setCourts] = useState([]) //all courts if active
     const [paymentType, setPaymentType] = useState('') //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
-    const [curDate, setCurDate] = useState('') //current date (time this page is interacted)
     const [timeError, setTimeError] = useState(0) //
-    const [transferMethod, setTransferMethod] = useState(0) //momo, vnpay
+    const [transferMethod, setTransferMethod] = useState(1) //momo, vnpay
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
@@ -25,7 +24,7 @@ const BookCourt = () => {
         try {
             setBranches(b => [])
             const branchData = await (
-                await fetch(`${apiUrl}/Branch/GetAll`, {
+                await fetchWithAuth(`${apiUrl}/Branch/GetAll`, {
                     headers: {
                         Authorization: `Bearer ${sessionStorage.getItem('token')}`
                     }
@@ -47,7 +46,7 @@ const BookCourt = () => {
             var params = new URLSearchParams(queryStr)
             setCourts([])
             const courtData = await (
-                await fetch(`${apiUrl}/Court/GetAll`)
+                await fetchWithAuth(`${apiUrl}/Court/GetAll`)
             ).json()
             for (let index = 0; index < courtData.length; index++) {
                 if ((courtData[index])["courtStatus"] === true) {
@@ -65,7 +64,7 @@ const BookCourt = () => {
     }
     const loadTimeFrame = async () => {
         const fetchTime = async () => {
-            var res = await fetch(`${apiUrl}/Slot/GetAll`)
+            var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
             var data = await res.json()
             return data
         }
@@ -87,32 +86,30 @@ const BookCourt = () => {
     useEffect(() => {
         async function getUser() {
             var token = sessionStorage.getItem('token')
-            if (!token) {
-            } else {
-                try {
-                    var decodedToken = jwtDecode(token)
-                    var data = await (await
-                        fetch(`${apiUrl}/User/GetById?id=${decodedToken['UserId']}`,
-                            {
-                                method: 'get',
-                                headers: {
-                                    Authorization: `Bearer ${token}`
-                                }
+            if (!token) return;
+            try {
+                var decodedToken = jwtDecode(token)
+                var data = await (await
+                    fetchWithAuth(`${apiUrl}/User/GetById?id=${decodedToken['UserId']}`,
+                        {
+                            method: 'get',
+                            headers: {
+                                Authorization: `Bearer ${token}`
                             }
-                        )).json()
-                    setUser(data)
-                }
-                catch (err) {
-                    console.log('error getting user');
-                    console.log(err);
-                }
+                        }
+                    )).json()
+                setUser(data)
             }
+            catch (err) {
+                console.log('error getting user');
+                console.log(err);
+            }
+
         }
         async function loadData() {
             await fetchBranches()
             await fetchCourts()
             await loadTimeFrame()
-            setCurDate(new Date())
         }
         loadData()
         getUser()
@@ -127,7 +124,7 @@ const BookCourt = () => {
                 let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
                 let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
 
-                const res = await fetch(`${apiUrl}/Slot/GetSlotCourtInInterval?`
+                const res = await fetchWithAuth(`${apiUrl}/Slot/GetSlotCourtInInterval?`
                     + `startTime=${startTime}&`
                     + `endTime=${endTime}&`
                     + `id=${courtId}`, {
@@ -158,38 +155,40 @@ const BookCourt = () => {
             toast.error('Server error')
         }
     }
-
+    const check = (date, start, end) => {
+        date = date + ' 00:00:00'
+        let dateNum = Date.parse(date)
+        let startTime = dateNum + start * 3600000
+        let endTime = dateNum + end * 3600000
+        let r = 0
+        if (startTime >= endTime) r = 1
+        if (startTime <= Date.parse(new Date())) r = 2
+        setTimeError(r)
+        return r
+    }
     const validateDateTime = () => {
         // console.log('Validate time');
         var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
-        if (selectedDate === '' || t1 === '' || t2 === '') return -1;
-        selectedDate = Date.parse(selectedDate) - 7 * 3600000
-        var startTime = Date.parse(selectedDate) + t1 * 3600000
-        var endTime = Date.parse(selectedDate) + t2 * 3600000
-        var curDateNum = Date.parse(curDate)
-        var r = 0
-        if (startTime >= endTime) r = 1
-        if (startTime < curDateNum) r = 2
-        setTimeError(t => r)
-        // console.log(r);
-        return r
+
+        if (selectedDate === '' || Object.is(t1, NaN) || Object.is(t2, NaN)) {
+            return 2
+        }
+        return check(selectedDate, t1, t2)
     }
 
     const validateBooking = () => {
         var tmp = (validateDateTime() === 0)
-        if (tmp){
-            try {
-                var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
-                if (!checkBalance) toast.error('Balance is not enough')
-                tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
-                return tmp
-            } catch (error) {
-                return false;
-            }
+        if (!tmp) return false
+        try {
+            var checkBalance = (paymentType === 'flexible' ? user['balance'] >= handleCalcAmount() : true)
+            if (!checkBalance) toast.error('Balance is not enough')
+            tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
+            return tmp
+        } catch (error) {
+            return false;
         }
-        else return tmp
     };
 
     const completeBooking = async () => {
@@ -204,7 +203,7 @@ const BookCourt = () => {
         }
     };
 
-    function handleCalcAmount() {
+    const handleCalcAmount = () => {
         try {
             let startTime = document.getElementById('time-start').value
             let endTime = document.getElementById('time-end').value
@@ -216,13 +215,34 @@ const BookCourt = () => {
             return 0
         }
     }
-    function calcAmount(bkType, price, start, end, month) {
+    const calcAmount = (bkType, price, start, end, month) => {
         var amount = price * (end - start)
         if (bkType === 'fixed') amount *= (4 * month)
         setAmount(Object.is(amount, NaN) ? 0 : amount)
         return amount
     }
     const pushBooking = async () => {
+        const buildTransferUrl = (method, start, end, userId, date, courtId, type, monthNum) => {
+            let amount = calcAmount(bookingType, courtInfo['price'], start, end, monthNum)
+            return `${apiUrl}/Booking/TransactionProcess?`
+                + `Method=${method}&`
+                + `Start=${start}&`
+                + `End=${end}&`
+                + `UserId=${userId}&`
+                + `Date=${date}&`
+                + `CourtId=${courtId}&`
+                + `Type=${type}&`
+                + `NumMonth=${monthNum}&`
+                + `Amount=${amount}`
+        }
+        const buildFlexibleUrl = (date, start, end, courtId, userId) => {
+            return `${apiUrl}/Slot/BookingByBalance?`
+                + `date=${date}&`
+                + `start=${start}&`
+                + `end=${end}&`
+                + `courtId=${courtId}&`
+                + `userId=${userId}`
+        }
         var token = sessionStorage.getItem('token')
         try {
             let startTime = document.getElementById('time-start').value
@@ -230,23 +250,9 @@ const BookCourt = () => {
             let t = document.getElementById('monthNum');
             let monthNum = t == null ? null : t.value
             let date = document.getElementById('datePicker').value
-            const urlTransfer = `${apiUrl}/Booking/TransactionProcess?`
-                + `Method=${transferMethod}&`
-                + `Start=${startTime}&`
-                + `End=${endTime}&`
-                + `UserId=${user['userId']}&`
-                + `Date=${date}&`
-                + `CourtId=${courtInfo['courtId']}&`
-                + `Type=${bookingType}&`
-                + `NumMonth=${monthNum}&`
-                + `Amount=${handleCalcAmount()}`
-            const urlFlexible = `${apiUrl}/Slot/BookingByBalance?`
-                + `date=${date}&`
-                + `start=${startTime}&`
-                + `end=${endTime}&`
-                + `courtId=${courtInfo['courtId']}&`
-                + `userId=${user['userId']}`
-            var res = await fetch(paymentType === 'flexible' ? urlFlexible : urlTransfer,
+            let url = paymentType === 'flexible' ? buildFlexibleUrl(date, startTime, endTime, courtInfo['courtId'], user['userId'])
+                : buildTransferUrl(transferMethod, startTime, endTime, user['userId'], date, courtInfo['courtId'], bookingType, monthNum)
+            var res = await fetchWithAuth(url,
                 {
                     method: 'POST',
                     headers: {
@@ -254,31 +260,31 @@ const BookCourt = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 })
-            if (paymentType !== 'flexible') {
-                var data = await (res.json())
-                var payUrl = data['url']
-                if (payUrl !== undefined) {
-                    window.location.assign(payUrl)
-                }
-            }
-            else {
-                if (res.ok){
-                    toast.success('Created booking!')
-                    setTimeout(() => {
-                        window.location.assign('/bookingHistory')
-                    }, 500);
-                }
-                else {
-                    const data = await res.json()
-                    const msg = data['msg']
-                    if (msg.includes('not enough')) {
-                        alert(msg)
-                    }
-                }
-            }
+            handleFinishFetch(res, paymentType)
         }
         catch (err) {
             toast.error('Server error')
+        }
+    }
+    const handleFinishFetch = async (res, type) => {
+        const data = await res.json()
+        if (type !== 'flexible') {
+            var payUrl = data['url']
+            if (payUrl !== undefined) {
+                window.location.assign(payUrl)
+            }
+            return;
+        }
+        if (res.ok) {
+            toast.success('Created booking!')
+            setTimeout(() => {
+                window.location.assign('/bookingHistory')
+            }, 500);
+            return
+        }
+        const msg = data['msg']
+        if (msg.includes('not enough')) {
+            alert(msg)
         }
     }
     const formatNumber = (n) => {

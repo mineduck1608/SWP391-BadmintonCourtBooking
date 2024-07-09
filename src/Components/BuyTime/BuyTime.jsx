@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './BuyTime.css'
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const BuyTime = () => {
   const [userID, setUserID] = useState('');
@@ -27,7 +28,7 @@ const BuyTime = () => {
       document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
       try {
         let method = document.getElementById('method').value
-        var res = await fetch(`${apiUrl}/Booking/TransactionProcess?`
+        var res = await fetchWithAuth(`${apiUrl}/Booking/TransactionProcess?`
           + `Method=${method}&`
           + `UserId=${userID}&`
           + `Type=flexible&`
@@ -62,7 +63,7 @@ const BuyTime = () => {
         try {
           var decodedToken = jwtDecode(token)
           setUserID(u => decodedToken.UserId)
-          var res = await fetch(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`,{
+          var res = await fetchWithAuth(`${apiUrl}/User/GetById?id=${decodedToken.UserId}`,{
             method: 'GET',
             headers: {
               'Authorization': `bearer ${token}`,

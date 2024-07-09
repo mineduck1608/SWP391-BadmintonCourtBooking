@@ -10,6 +10,7 @@ import { getHours } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CreateFeedbackModal from '../CreateFeedbackModal/CreateFeedbackModal';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 export default function ViewHistory() {
   const [bookings, setBookings] = useState([]);
@@ -21,7 +22,6 @@ export default function ViewHistory() {
   const [open, setOpen] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
-  const [validSchedule, setValidSchedule] = useState(false)
   const token = sessionStorage.getItem('token')
   const [amount, setAmount] = useState()
   const [currentAmount, setCurrentAmount] = useState(0)
@@ -37,14 +37,21 @@ export default function ViewHistory() {
     userId: '',
     paymentType: '',
     changeLog: 0,
+    bookingDate: '',
   };
   const [formState, setFormState] = useState(initialState)
   const [payment, setPayment] = useState({})
   const numOfChanges = 2
   const navigate = useNavigate();
+  const todayLabel = 'today'
+  const upcomingLabel = 'upcoming'
+  const pastLabel = 'past'
+  const maxHourCanChange = 1
+  const currentDate = new Date();
+  const currentDateString = currentDate.toDateString();
   const loadTimeFrame = async () => {
     const fetchTime = async () => {
-      var res = await fetch(`${apiUrl}/Slot/GetAll`)
+      var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
       var data = await res.json()
       return data
     }
@@ -97,7 +104,7 @@ export default function ViewHistory() {
         const decodedToken = jwtDecode(token);
         const userIdToken = decodedToken.UserId;
 
-        const bookingsResponse = await fetch(`https://localhost:7233/Booking/GetByUser?id=${userIdToken}`, {
+        const bookingsResponse = await fetchWithAuth(`https://localhost:7233/Booking/GetByUser?id=${userIdToken}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -110,8 +117,7 @@ export default function ViewHistory() {
         const bookingsData = await bookingsResponse.json();
         const userBookings = bookingsData.filter(booking => booking.userId === userIdToken);
         setBookings(userBookings);
-
-        const slotsResponse = await fetch(`${apiUrl}/Slot/GetAll`, {
+        const slotsResponse = await fetchWithAuth(`${apiUrl}/Slot/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -122,9 +128,10 @@ export default function ViewHistory() {
         }
 
         const slotsData = await slotsResponse.json();
-        setSlots(slotsData);
-
-        const courtsResponse = await fetch(`${apiUrl}/Court/GetAll`, {
+        const bookingIds = bookingsData.map(b => b.bookingId)
+        const slotsOfUser = slotsData.filter(s => bookingIds.includes(s.bookingId))
+        setSlots(slotsOfUser);
+        const courtsResponse = await fetchWithAuth(`${apiUrl}/Court/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -137,7 +144,7 @@ export default function ViewHistory() {
         const courtsData = await courtsResponse.json();
         setCourts(courtsData);
 
-        const branchesResponse = await fetch(`${apiUrl}/Branch/GetAll`, {
+        const branchesResponse = await fetchWithAuth(`${apiUrl}/Branch/GetAll`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -159,7 +166,7 @@ export default function ViewHistory() {
 
     fetchData();
     loadTimeFrame()
-  }, [token]);
+  }, []);
   const calculateAmount = (courtId, start, end) => {
     var c = courts.find(c => c['courtId'] === courtId)
     return c['price'] * (end - start)
@@ -171,73 +178,73 @@ export default function ViewHistory() {
     setAmount(calculateAmount(courtId, start, end))
   }
 
-  const renderTableRows = (filterType) => {
-    const filteredBookings = bookings.filter((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date) : null;
+  // const renderTableRows = (filterType) => {
+  //   const filteredBookings = bookings.filter((booking) => {
+  //     const slot = slots.find(slot => slot.bookingId === booking.bookingId);
+  //     const slotDate = slot ? new Date(slot.date) : null;
 
-      switch (filterType) {
-        case 'today':
-          return slotDate && slotDate.toDateString() === currentDateString;
-        case 'upcoming':
-          return slotDate && slotDate > currentDate;
-        case 'past':
-          return slotDate && slotDate < currentDate;
-        default:
-          return false;
-      }
-    });
+  //     switch (filterType) {
+  //       case 'today':
+  //         return slotDate && slotDate.toDateString() === currentDateString;
+  //       case 'upcoming':
+  //         return slotDate && slotDate > currentDate;
+  //       case 'past':
+  //         return slotDate && slotDate < currentDate;
+  //       default:
+  //         return false;
+  //     }
+  //   });
 
-    const sortedBookings = filteredBookings.sort((a, b) => {
-      return new Date(b.bookingDate) - new Date(a.bookingDate);
-    });
+  //   const sortedBookings = filteredBookings.sort((a, b) => {
+  //     return new Date(b.bookingDate) - new Date(a.bookingDate);
+  //   });
 
-    return sortedBookings.flatMap((booking) => {
-      const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
+  //   return sortedBookings.flatMap((booking) => {
+  //     const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
 
-      return relatedSlots.map((slot) => {
-        const slotDate = new Date(slot.date).toLocaleDateString();
-        const startTime = formatTime(slot.start);
-        const endTime = formatTime(slot.end);
-        const courtId = slot.courtId;
-        const court = courts.find(court => court.courtId === courtId);
-        const courtName = court ? court.courtName : 'Unknown Court';
-        const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
-        const branchName = branch ? branch.branchName : 'Unknown Branch';
+  //     return relatedSlots.map((slot) => {
+  //       const slotDate = new Date(slot.date).toLocaleDateString();
+  //       const startTime = formatTime(slot.start);
+  //       const endTime = formatTime(slot.end);
+  //       const courtId = slot.courtId;
+  //       const court = courts.find(court => court.courtId === courtId);
+  //       const courtName = court ? court.courtName : 'Unknown Court';
+  //       const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+  //       const branchName = branch ? branch.branchName : 'Unknown Branch';
 
-        return (
-          !booking.isDeleted &&
-          <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
-            <td>{booking.bookingId}</td>
-            <td>{formatNumber(booking.amount)}</td>
-            <td>{getBookingTypeLabel(booking.bookingType)}</td>
-            <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
-            <td>{slotDate}</td>
-            <td>{startTime}</td>
-            <td>{endTime}</td>
-            <td>{courtName}</td>
-            <td>{branchName}</td>
-            {filterType === 'past' ? (
-              <td>
-                <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
-              </td>
-            ) : (
-              <td>
-                <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
-                  disabled={booking['changeLog'] >= numOfChanges}
-                >Edit</button>
-                <button
-                  className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
-                  onClick={() => onClickCancelSlot(slot)}
-                  disabled={booking['changeLog'] >= numOfChanges}
-                >Cancel</button>
-              </td>
-            )}
-          </tr>
-        );
-      });
-    });
-  };
+  //       return (
+  //         !booking.isDeleted &&
+  //         <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
+  //           <td>{booking.bookingId}</td>
+  //           <td>{formatNumber(booking.amount)}</td>
+  //           <td>{getBookingTypeLabel(booking.bookingType)}</td>
+  //           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+  //           <td>{slotDate}</td>
+  //           <td>{startTime}</td>
+  //           <td>{endTime}</td>
+  //           <td>{courtName}</td>
+  //           <td>{branchName}</td>
+  //           {filterType === 'past' ? (
+  //             <td>
+  //               <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
+  //             </td>
+  //           ) : (
+  //             <td>
+  //               <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+  //                 disabled={booking['changeLog'] >= numOfChanges}
+  //               >Edit</button>
+  //               <button
+  //                 className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
+  //                 onClick={() => onClickCancelSlot(slot)}
+  //                 disabled={booking['changeLog'] >= numOfChanges}
+  //               >Cancel</button>
+  //             </td>
+  //           )}
+  //         </tr>
+  //       );
+  //     });
+  //   });
+  // };
 
   const onClickEdit = (slot) => {
     var t = calculateAmount(slot.courtId, slot.start, slot.end)
@@ -257,7 +264,8 @@ export default function ViewHistory() {
       bookingId: slot.bookingId,
       branchId: branchId,
       slotId: slot.bookedSlotId,
-      changeLog: booking.changeLog
+      changeLog: booking.changeLog,
+      bookingDate: booking.bookingDate
     })
   }
   const onClickCancelSlot = (slot) => {
@@ -286,7 +294,7 @@ export default function ViewHistory() {
   const getPayment = async (bookingID) => {
     async function fetchPayment(bookingID) {
       try {
-        var res = await fetch(`${apiUrl}/Payment/GetByUser?id=${getUserId(token)}`,
+        var res = await fetchWithAuth(`${apiUrl}/Payment/GetByUser?id=${getUserId(token)}`,
           {
             method: 'get',
             headers: {
@@ -305,7 +313,7 @@ export default function ViewHistory() {
   }
   const handleOk = async () => {
     const update = async (start, end, date, userId, courtId, slotId, paymentMethod, bookingId) => {
-      var res = await fetch(`${apiUrl}/Slot/UpdateByUser?`
+      var res = await fetchWithAuth(`${apiUrl}/Slot/UpdateByUser?`
         + `start=${start}&`
         + `end=${end}&`
         + `date=${date}&`
@@ -320,6 +328,9 @@ export default function ViewHistory() {
             'Authorization': `Bearer ${token}`
           }
         })
+      handleResult(res)
+    }
+    const handleResult = async (res) => {
       if (res.ok) {
         var data = await res.json()
         if (Object.is(data['url'], undefined)) {
@@ -342,24 +353,23 @@ export default function ViewHistory() {
     }
     let t = validateTime(formState.date, formState.start, formState.end)
     try {
-      if (t) {
-        setOpen(false)
-        await getPayment(formState.bookingId)
-        await update(formState.start, formState.end, formState.date, getUserId(token),
-          formState.courtId, formState.slotId, payment.method, formState.bookingId
-        )
-        setFormState(initialState)
-      }
-      else {
+      if (!t) {
         toast.error('Invalid time')
+        return;
       }
+      setOpen(false)
+      await getPayment(formState.bookingId)
+      await update(formState.start, formState.end, formState.date, getUserId(token),
+        formState.courtId, formState.slotId, payment.method, formState.bookingId
+      )
+      setFormState(initialState)
     }
     catch (err) {
       console.log(err);
       toast.error('Server error')
     }
   }
-  //delta = amount - currentAmount
+
   const createOnEditActionComment = (amount, current) => {
     let delta = amount - current
     var comment = ''
@@ -374,7 +384,7 @@ export default function ViewHistory() {
   }
   const cancelSlot = async () => {
     async function cancel(slotId, bookingId) {
-      return res = await fetch(`${apiUrl}/Slot/Cancel?`
+      return res = await fetchWithAuth(`${apiUrl}/Slot/Cancel?`
         + `slotId=${slotId}&`
         + `bookingId=${bookingId}`
         , {
@@ -386,20 +396,22 @@ export default function ViewHistory() {
     }
     try {
       var res = await cancel(formState.slotId, formState.bookingId)
-      if (res.ok) {
-        let price = bookings.find(b => b.bookingId === formState.bookingId).amount
-        toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
-        setTimeout(() => {
-          window.location.reload()
-        }, 500);
-      }
-      else {
+      if (res.status === HttpStatusCode.BadRequest) {
         var data = await res.json()
         toast.error(data['msg'])
+        return;
       }
+      if (res.status === HttpStatusCode.Unauthorized) {
+        toast.error('Unauthorized')
+        return
+      }
+      let price = bookings.find(b => b.bookingId === formState.bookingId).amount
+      toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
+      setTimeout(() => {
+        window.location.reload()
+      }, 500);
     }
     catch (err) {
-      console.log(err);
       toast.error(err)
     }
   }
@@ -422,40 +434,98 @@ export default function ViewHistory() {
         return 'Buy Time';
     }
   };
-
-  const currentDate = new Date();
-  const currentDateString = currentDate.toDateString();
-
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [feedbackData, setFeedbackData] = useState({});
   const handleFeedbackClick = (bookingId, branchId, userId) => {
     setFeedbackData({ bookingId, branchId, userId });
     setFeedbackModalVisible(true);
   };
-
-  const renderNoBookingsMessage = (filterType) => {
-    const filteredBookings = bookings.filter((booking) => {
-      const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-      const slotDate = slot ? new Date(slot.date) : null;
-
-      switch (filterType) {
-        case 'today':
-          return slotDate && slotDate.toDateString() === currentDateString;
-        case 'upcoming':
-          return slotDate && slotDate > currentDate;
-        case 'past':
-          return slotDate && slotDate < currentDate;
-        default:
-          return false;
+  const filterSlots = (type) => {
+    const compareDate = (dateStr1, dateStr2) => {
+      var date1 = new Date(dateStr1).setHours(0)
+      var date2 = new Date(dateStr2).setHours(0)
+      return date1 - date2
+    }
+    return slots.filter(s => {
+      switch (type) {
+        case todayLabel:
+          return compareDate(s.date, currentDateString) === 0
+        case upcomingLabel:
+          return compareDate(s.date, currentDateString) > 0
+        case pastLabel:
+          return compareDate(s.date, currentDateString) < 0
+        default: return false
       }
-    });
+    })
+  }
+  const isEditable = (booking) => {
+    var bookingDateNum = Date.parse(new Date(booking.bookingDate))
+    var currentTime = Date.parse(new Date())
+    return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 &&
+      booking['changeLog'] < numOfChanges
+  }
+  function convertDateAndHour(date, hour) {
+    return new Date(date).setHours(hour)
+  }
+  const renderSlotsType = (type) => {
+    var collection = filterSlots(type)
+      .sort((s1, s2) => {
+        var s1StartTime = convertDateAndHour(s1.date, s1.start)
+        var s2StartTime = convertDateAndHour(s2.date, s2.start)
+        return s1StartTime - s2StartTime
+      })
+    return collection.map((slot) => {
+      const booking = bookings.find(b => b.bookingId === slot.bookingId)
+      const slotDate = new Date(slot.date).toLocaleDateString();
+      const startTime = formatTime(slot.start);
+      const endTime = formatTime(slot.end);
+      const courtId = slot.courtId;
+      const court = courts.find(court => court.courtId === courtId);
+      const courtName = court ? court.courtName : 'Unknown Court';
+      const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
+      const branchName = branch ? branch.branchName : 'Unknown Branch';
 
-    if (filteredBookings.length === 0) {
+      return (
+        !booking.isDeleted &&
+        <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
+          <td>{slot.bookingId}</td>
+          <td>{formatNumber(booking.amount)}</td>
+          <td>{getBookingTypeLabel(booking.bookingType)}</td>
+          <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
+          <td>{new Date(booking.bookingDate).toLocaleTimeString()}</td>
+          <td>{slotDate}</td>
+          <td>{startTime}</td>
+          <td>{endTime}</td>
+          <td>{courtName}</td>
+          <td>{branchName}</td>
+          {type === pastLabel ? (
+            <td>
+              <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
+            </td>
+          ) : (
+            <td>
+              <button className={'view-history-button' + (!isEditable(booking) ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
+                disabled={!isEditable(booking)}
+              >Edit</button>
+              <button
+                className={'view-history-button view-history-cancel-btn' + (!isEditable(booking) ? ' btn-disabled' : '')}
+                onClick={() => onClickCancelSlot(slot)}
+                disabled={!isEditable(booking)}
+              >Cancel</button>
+            </td>
+          )}
+        </tr>
+      )
+    }
+    )
+  }
+  const renderNoBookingsMessage = (filterType) => {
+    if (filterSlots(filterType).length === 0) {
       switch (filterType) {
-        case 'today':
-          return <p>Have no booking today, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
-        case 'upcoming':
-          return <p>Have no upcoming booking, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
+        case todayLabel:
+          return <p>No booking today, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
+        case upcomingLabel:
+          return <p>No upcoming booking, <Link to="../findCourt" className="view-history-book-now">Book now</Link> !!</p>;
         default:
           return null;
       }
@@ -465,11 +535,20 @@ export default function ViewHistory() {
   };
   const validateTime = (date, start, end) => {
     let now = new Date()
-    //Convert a date string to number automatically shift 7 hours
-    date = new Date(Date.parse(date) - 7 * 3600000)
-    let startTime = Date.parse(date) + start * 3600000
-    let endTime = Date.parse(date) + end * 3600000
+    let startTime = convertDateAndHour(date, start)
+    let endTime = convertDateAndHour(date, end)
     return (startTime < endTime) && (startTime > now)
+  }
+  const formatTimeRange = (time) => {
+    var range = new Date() - new Date(time)
+    range = maxHourCanChange * 3600000 - range
+    var rs = ''
+    let hour = Math.floor(range / 3600000)
+    range = range - hour * 3600000
+    let min = Math.floor(range / 60000)
+    range = range - min * 60000
+    let sec = Math.floor(range / 1000)
+    return `${hour}h${min}m${sec}s`
   }
   return (
     <div className='view-history'>
@@ -481,7 +560,12 @@ export default function ViewHistory() {
       >
         <span>
           <h4>Edit for booking: {formState.bookingId}, slot: {formState.slotId}</h4>
-          <p className='warning'>You can only change a booking up to {numOfChanges} times ({numOfChanges - formState.changeLog} changes left).</p>
+          <p className='warning'>
+            You can only change a booking up to {numOfChanges} times, and must not be more than {maxHourCanChange} hour(s) since booking time.</p>
+          <p>
+            Currently <span className='warning'>{numOfChanges - formState.changeLog}</span> changes left,
+            and <span className='warning'>{formatTimeRange(formState.bookingDate)}</span> left.
+          </p>
           <p>Date:</p>
           <input type="date" id="datePicker" value={formState.date}
             onChange={() => {
@@ -599,7 +683,7 @@ export default function ViewHistory() {
                     <div className="view-history-today-table">
                       <h3>Today's Bookings</h3>
                       <div className="view-history-table-wrapper">
-                        {renderNoBookingsMessage('today')}
+                        {renderNoBookingsMessage(todayLabel)}
                         <table className="view-history-today-booking-table">
                           <thead>
                             <tr>
@@ -607,6 +691,7 @@ export default function ViewHistory() {
                               <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
+                              <th>BOOKING TIME</th>
                               <th>SLOT DATE</th>
                               <th>START TIME</th>
                               <th>END TIME</th>
@@ -616,7 +701,7 @@ export default function ViewHistory() {
                             </tr>
                           </thead>
                           <tbody>
-                            {renderTableRows('today')}
+                            {renderSlotsType(todayLabel)}
                           </tbody>
                         </table>
                       </div>
@@ -625,7 +710,7 @@ export default function ViewHistory() {
                     <div>
                       <h3>Upcoming Bookings</h3>
                       <div className="view-history-table-wrapper">
-                        {renderNoBookingsMessage('upcoming')}
+                        {renderNoBookingsMessage(upcomingLabel)}
                         <table className="view-history-upcoming-booking-table">
                           <thead>
                             <tr>
@@ -633,6 +718,7 @@ export default function ViewHistory() {
                               <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
+                              <th>BOOKING TIME</th>
                               <th>SLOT DATE</th>
                               <th>START TIME</th>
                               <th>END TIME</th>
@@ -642,7 +728,7 @@ export default function ViewHistory() {
                             </tr>
                           </thead>
                           <tbody>
-                            {renderTableRows('upcoming')}
+                            {renderSlotsType(upcomingLabel)}
                           </tbody>
                         </table>
                       </div>
@@ -658,6 +744,7 @@ export default function ViewHistory() {
                               <th>PRICE</th>
                               <th>BOOKING TYPE</th>
                               <th>BOOKING DATE</th>
+                              <th>BOOKING TIME</th>
                               <th>SLOT DATE</th>
                               <th>START TIME</th>
                               <th>END TIME</th>
@@ -667,7 +754,7 @@ export default function ViewHistory() {
                             </tr>
                           </thead>
                           <tbody>
-                            {renderTableRows('past')}
+                            {renderSlotsType(pastLabel)}
                           </tbody>
                         </table>
                       </div>

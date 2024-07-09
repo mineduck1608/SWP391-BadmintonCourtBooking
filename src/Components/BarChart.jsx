@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
+import { fetchWithAuth } from '../Components/fetchWithAuth/fetchWithAuth';
+
 
 const fetchData = async (url, options = {}) => {
-  const response = await fetch(url, options);
+  const response = await fetchWithAuth(url, options);
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }

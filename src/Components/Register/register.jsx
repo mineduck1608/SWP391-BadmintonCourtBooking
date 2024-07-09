@@ -3,6 +3,7 @@ import './register.css';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const Register = () => {
   const [id, idChange] = useState("");
@@ -41,7 +42,7 @@ const Register = () => {
     let regobj = { id, password, firstName, lastName, email, phone };
     //console.log(regobj);
     if (isValidate()) {
-      fetch("https://localhost:7233/User/Register?username=" + id + "&password=" + password + "&firstName=" + firstName + "&lastName=" + lastName + "&email=" + email + "&phone=" + phone, {
+      fetchWithAuth("https://localhost:7233/User/Register?username=" + id + "&password=" + password + "&firstName=" + firstName + "&lastName=" + lastName + "&email=" + email + "&phone=" + phone, {
         method: "POST",
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(regobj),

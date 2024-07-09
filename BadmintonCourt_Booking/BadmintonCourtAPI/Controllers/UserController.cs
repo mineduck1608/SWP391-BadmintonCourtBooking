@@ -347,13 +347,10 @@ namespace BadmintonCourtAPI.Controllers
 			User user = _service.GetUserById(userId);
 			User actor = _service.GetUserById(actorId);
 			bool isAdmin = false;
-			bool isStaff = false;
 			if (userId != actorId)
 			{
 				if (actor.RoleId == "R001")
 					isAdmin = true;
-				else if (actor.RoleId == "R002")
-					isStaff = true;
 			}
 
 
@@ -371,6 +368,13 @@ namespace BadmintonCourtAPI.Controllers
 							user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
 																		//user.Password = password;
 			if (accessFail != null)
+			if(!password.IsNullOrEmpty()) { 
+			if (Util.IsPasswordSecure(password.Trim()))
+				if (user.Password != Util.ToHashString(password)) // hash pass
+					user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
+                                                                        //user.Password = password;
+            }
+            if (accessFail != null)
 			{
 				if (accessFail == 0)
 					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
@@ -490,7 +494,7 @@ namespace BadmintonCourtAPI.Controllers
 			//	return BadRequest(new { msg = "Password invalid" });
 			if (password.IsNullOrEmpty())
 				return BadRequest(new { msg = "Password can't be empty" });
-			if (Util.IsPasswordSecure(password))
+			if (!Util.IsPasswordSecure(password))
 				return BadRequest(new { msg = "Password is not secure enough" });
 
 

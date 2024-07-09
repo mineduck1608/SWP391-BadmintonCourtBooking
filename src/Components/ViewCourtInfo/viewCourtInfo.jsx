@@ -5,6 +5,7 @@ import Footer from "../Footer/Footer";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -31,9 +32,9 @@ const ViewCourtInfo = () => {
             try {
                 setLoading(true);
                 const [branchResponse, courtResponse, slotResponse] = await Promise.all([
-                    fetch(branchUrl),
-                    fetch(courtUrl),
-                    fetch(slotUrl),
+                    fetchWithAuth(branchUrl),
+                    fetchWithAuth(courtUrl),
+                    fetchWithAuth(slotUrl),
                 ]);
 
                 if (!branchResponse.ok) {
@@ -133,11 +134,12 @@ const ViewCourtInfo = () => {
         for (let i = startHour; i < startHour + maxVisibleHours; i++) {
             const hourStart = i % 24;
             const hourEnd = (i + 1) % 24;
+            
             const isBooked = slots.some(slot => 
                 slot.courtId === mainCourt?.courtId &&
                 new Date(slot.date).toDateString() === new Date(date).toDateString() &&
-                slot.start === hourStart &&
-                slot.end === hourEnd
+                hourStart >= slot.start &&
+                hourStart < slot.end
             );
 
             const status = !mainCourt?.courtStatus ? 'maintenance' : isBooked ? 'booked' : 'available';
@@ -190,7 +192,7 @@ const ViewCourtInfo = () => {
                                     <div className="viewcourtinfo-info">
                                         <p className='viewcourt-title'>Address: {branch?.location}</p>
                                         <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
-                                        <p className='viewcourt-title'>Price: {mainCourt?.price}</p>
+                                        <p className='viewcourt-title'>Price: {mainCourt?.price}VND</p>
                                     </div>
                                 </div>
                             </div>

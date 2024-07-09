@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import { listAll, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ref } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 export default function EditInfo() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function EditInfo() {
   const userIdToken = decodedToken.UserId; // Extract userId from the decoded token
 
   useEffect(() => {
-    fetch(`https://localhost:7233/UserDetail/GetAll`, { // Fetch all user details
+    fetchWithAuth(`https://localhost:7233/UserDetail/GetAll`, { // Fetch all user details
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -61,7 +62,7 @@ export default function EditInfo() {
   const handleSave = () => {
     // Ensure userInfo.img is not empty
     const updatedUserInfo = userInfo;
-    fetch(`https://localhost:7233/User/Update?id=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}`, {
+    fetchWithAuth(`https://localhost:7233/User/Update?id=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}`, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,

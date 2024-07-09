@@ -5,6 +5,7 @@ import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import { jwtDecode } from 'jwt-decode'; 
 import userImg from '../../Assets/user.jpg';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 export default function ViewInfo() {
   const [userInfo, setUserInfo] = useState({
@@ -25,7 +26,7 @@ export default function ViewInfo() {
     const decodedToken = jwtDecode(token); 
     const userIdToken = decodedToken.UserId; 
 
-    fetch(`https://localhost:7233/UserDetail/GetAll`, { 
+    fetchWithAuth(`https://localhost:7233/UserDetail/GetAll`, { 
       method: "GET",
       headers: {
         'Authorization': `Bearer ${token}`,

@@ -5,6 +5,7 @@ import userImg from '../../Assets/user.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { jwtDecode } from 'jwt-decode'; // Import jwt-decode without curly braces
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ const Header = () => {
         const userDetailsUrl = `https://localhost:7233/UserDetail/GetById?id=${userId}`;
         
         try {
-            const response = await fetch(userDetailsUrl);
+            const response = await fetchWithAuth(userDetailsUrl);
             if (response.ok) {
                 const userDetails = await response.json();
                 if (userDetails.img) {
@@ -92,6 +93,7 @@ const Header = () => {
                 <div className={`text-header ${dropdownOpen ? 'show' : ''}`}>
                     <Link to={'/home'} className="header-link">Home</Link>
                     <Link to={'/bookingHistory'} className="header-link">Booking Details</Link>
+                    <Link to={'/paymentHistory'} className="header-link">Payment</Link>
                     <Link to={'/buyTime'} className="header-link">Time Balance</Link>
                     <Link to={'/googleMap'} className="header-link">Contacts</Link>
                     <a className="header-link time-balance" onClick={handleLogout}>Logout</a>

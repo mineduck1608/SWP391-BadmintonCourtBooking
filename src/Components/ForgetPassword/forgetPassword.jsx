@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './forgetpassword.css';
 import Navbar from '../Navbar/Navbar';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+
 
 const ResetPassword = () => {
   const [userId, setUserId] = useState('');
@@ -11,10 +13,6 @@ const ResetPassword = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userId = params.get('id');
-    const msg = params.get('msg');
-    if (msg) {
-      setMessage(msg === 'fail' ? 'Passwords do not match. Please try again.' : '');
-    }
     if (userId) {
       setUserId(userId);
     }
@@ -27,7 +25,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await fetch(`https://localhost:7233/User/ForgotPassReset`, {
+      const response = await fetchWithAuth(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -36,17 +34,10 @@ const ResetPassword = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setMessage(data.msg);
-        if (data.msg === 'Success') {
-          window.history.pushState({}, '', `?id=${userId}&&msg=success`);
-        }
+        setMessage('Password updated successfully. You can now log in with your new password.');
       } else {
         const responseData = await response.json();
         setMessage(responseData.msg);
-        if (responseData.msg === 'fail') {
-          window.history.pushState({}, '', `?id=${userId}&&msg=fail`);
-        }
       }
     } catch (error) {
       setMessage('Error updating password. Please try again.');
@@ -55,7 +46,7 @@ const ResetPassword = () => {
 
   return (
     <>
-      <div><Navbar/></div>
+      <div><Navbar /></div>
       <div className='reset-password-wrapper'>
         <div className="reset-password-container">
           <h1 className='reset-password-title'>Reset Password</h1>

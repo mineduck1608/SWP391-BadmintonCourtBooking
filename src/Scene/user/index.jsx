@@ -8,6 +8,9 @@ import { toast } from "react-toastify";
 import { ConfigProvider } from 'antd';
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
+
+
 
 const User = () => {
   const [rows, setRows] = useState([]);
@@ -65,7 +68,7 @@ const User = () => {
       userData.accessFail = 0;
     }
 
-    fetch(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance + "&accessFail=" + userData.accessFail, {
+    fetchWithAuth(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance + "&accessFail=" + userData.accessFail, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -135,7 +138,7 @@ const User = () => {
     };
 
     // Send a POST request to the API endpoint to add the new user
-    fetch(`https://localhost:7233/User/Add?UserName=` + newUser.username + "&Password=" + newUser.password + "&FirstName=" + newUser.firstName + "&LastName=" + newUser.lastName + "&Branch=" + newUser.branch + "&RoleId=" + newUser.role + "&Email=" + newUser.email + "&Phone=" + newUser.phone, {
+    fetchWithAuth(`https://localhost:7233/User/Add?UserName=` + newUser.username + "&Password=" + newUser.password + "&FirstName=" + newUser.firstName + "&LastName=" + newUser.lastName + "&Branch=" + newUser.branch + "&RoleId=" + newUser.role + "&Email=" + newUser.email + "&Phone=" + newUser.phone, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -178,28 +181,28 @@ const User = () => {
     const fetchData = async () => {
       try {
         const [userDetailsRes, rolesRes, usersRes, branchesRes] = await Promise.all([
-          fetch(`https://localhost:7233/UserDetail/GetAll`, {
+          fetchWithAuth(`https://localhost:7233/UserDetail/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(`https://localhost:7233/Role/GetAll`, {
+          fetchWithAuth(`https://localhost:7233/Role/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(`https://localhost:7233/User/GetAll`, {
+          fetchWithAuth(`https://localhost:7233/User/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(`https://localhost:7233/Branch/GetAll`, {
+          fetchWithAuth(`https://localhost:7233/Branch/GetAll`, {
             method: "GET",
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -264,7 +267,7 @@ const User = () => {
   }, [token]);
 
   const handleDelete = (id) => {
-    fetch(`https://localhost:7233/User/Delete?id=${id}`, {
+    fetchWithAuth(`https://localhost:7233/User/Delete?id=${id}`, {
       method: "DELETE",
       headers: {
         'Authorization': `Bearer ${token}`,

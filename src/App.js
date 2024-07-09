@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Components/Home/Home';
@@ -37,11 +37,32 @@ import GoogleMap from './Components/googleMap/googleMap';
 import VerifyAccount from './Components/verifyAccount/verifyAccount';
 import CreateFeedbackModal from './Components/CreateFeedbackModal/CreateFeedbackModal'; 
 import PaymentHistory from './Components/ViewPayment/ViewPayment';
+import { jwtDecode } from 'jwt-decode';
+import Discount from './Scene/discount/discount';
 
 const App = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [searchCriteria, setSearchCriteria] = useState({ branch: '', location: '' });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            const decoded = jwtDecode.decode(token);
+            if (decoded.exp * 1000 < Date.now()) {
+                logout();
+            }
+        } catch (err) {
+            logout();
+        }
+    }
+}, []);
+
+const logout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/signin'; 
+};
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -73,13 +94,12 @@ const App = () => {
             <Route path="user" element={<User />} />
             <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
+            <Route path="discount" element={<Discount />} />
             <Route path="timeSlot" element={<SlotManagement />} />
             <Route path="timeManage" element={<BadmintonCourtHours />} />
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
-            <Route path="pie" element={<Pie />} />
             <Route path="line" element={<Line />} />
-            <Route path="geography" element={<Geography />} />
           </Route>
 
           <Route path="/staff/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
@@ -91,9 +111,7 @@ const App = () => {
             <Route path="timeSlot" element={<SlotManagement />} />
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
-            <Route path="pie" element={<Pie />} />
             <Route path="line" element={<Line />} />
-            <Route path="geography" element={<Geography />} />
           </Route>
            {/* Route for CreateFeedbackModal */}
            <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />

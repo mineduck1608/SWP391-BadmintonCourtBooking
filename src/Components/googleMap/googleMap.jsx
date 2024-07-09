@@ -7,38 +7,53 @@ import './GoogleMap.css'; // Import the CSS file
 import { GrMapLocation } from "react-icons/gr";
 import { BsFillInfoCircleFill, BsPhoneVibrate } from "react-icons/bs";
 
+const ITEMS_PER_PAGE = 4;
+
 const GoogleMap = () => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
         fetch('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
             .then(data => {
-                const parsedData = data.map(branch => {
-                    let imgURL = '';
-                    if (branch.branchImg && branch.branchImg.length > 0) {
-                        const urlString = branch.branchImg[0];
-                        const parts = urlString.split(': ');
-                        if (parts.length > 1) {
-                            imgURL = parts[1].trim();
+                const parsedData = data
+                    .filter(branch => branch.branchStatus !== 0) // Filter out branches with branchStatus of 0
+                    .map(branch => {
+                        let imgURL = '';
+                        if (branch.branchImg && branch.branchImg.length > 0) {
+                            const urlString = branch.branchImg[0];
+                            const parts = urlString.split(': ');
+                            if (parts.length > 1) {
+                                imgURL = parts[1].trim();
+                            }
                         }
-                    }
-                    return {
-                        ...branch,
-                        branchImg: imgURL
-                    };
-                });
+                        return {
+                            ...branch,
+                            branchImg: imgURL
+                        };
+                    });
                 setBranches(parsedData);
                 setSelectedBranch(parsedData[0]); // Select the first branch by default
             })
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
 
+    const handleNextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, Math.ceil(branches.length / ITEMS_PER_PAGE) - 1));
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+    };
+
     if (!selectedBranch) {
         return <div>Loading...</div>;
     }
-    console.log(branches)
+
+    const displayedBranches = branches.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
+
     return (
         <>
             <div className="googlemap-container">
@@ -46,7 +61,7 @@ const GoogleMap = () => {
                     Badminton Court Booking System
                 </Typography>
                 <div className="googlemap-branch-grid">
-                    {branches.map((branch, index) => (
+                    {displayedBranches.map((branch, index) => (
                         <div className="googlemap-branch-card" key={index}>
                             <img 
                                 src={branch.branchImg} 
@@ -81,6 +96,14 @@ const GoogleMap = () => {
                             </div>
                         </div>
                     ))}
+                </div>
+                <div className="googlemap-pagination-container">
+                    <Button variant="contained" onClick={handlePrevPage} disabled={currentPage === 0}>
+                        Previous
+                    </Button>
+                    <Button variant="contained" onClick={handleNextPage} disabled={(currentPage + 1) * ITEMS_PER_PAGE >= branches.length}>
+                        Next
+                    </Button>
                 </div>
                 <div className='googlemap-position'>
                     <iframe

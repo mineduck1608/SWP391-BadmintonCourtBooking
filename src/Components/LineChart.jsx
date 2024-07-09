@@ -7,7 +7,6 @@ const LineChart = ({ data = [], isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // Đảm bảo dữ liệu không bị trống và có định dạng đúng
   const transformedData = data.length ? [
     {
       id: "Amount",

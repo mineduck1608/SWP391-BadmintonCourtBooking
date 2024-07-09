@@ -13,6 +13,7 @@ import {
 import Head from "../../Components/Head";
 import './BadmintonCourtHours.css';
 import { toast } from "react-toastify";
+import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 
 
 const BadmintonCourtHours = () => {
@@ -22,7 +23,7 @@ const BadmintonCourtHours = () => {
   const [end, setEnd] = useState('');
 
   const fetchWorkingHours = () => {
-    fetch('https://localhost:7233/Slot/GetAll')
+    fetchWithAuth('https://localhost:7233/Slot/GetAll')
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch slot data');
@@ -73,7 +74,7 @@ const BadmintonCourtHours = () => {
     };
     let token = sessionStorage.getItem('token');
   
-    fetch(`https://localhost:7233/Slot/UpdateOfficeHours?start=${data.start}&end=${data.end}`, {
+    fetchWithAuth(`https://localhost:7233/Slot/UpdateOfficeHours?start=${data.start}&end=${data.end}`, {
       method: 'PUT', // or 'PUT' depending on your API
       headers: {
         'Content-Type': 'application/json',

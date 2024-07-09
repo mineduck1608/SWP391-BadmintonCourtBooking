@@ -7,6 +7,7 @@ import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
 import { jwtDecode } from 'jwt-decode';
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const { RangePicker } = TimePicker;
 const { TextArea } = Input;
@@ -67,8 +68,6 @@ const FindCourt = () => {
     );
   });
 
-  // Function to extract image URLs from the courtImg string
-
   const extractImageUrls = (courtImg) => {
     const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
     let matches;
@@ -77,7 +76,7 @@ const FindCourt = () => {
       urls.push(matches[1]);
     }
     return urls;
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,8 +86,8 @@ const FindCourt = () => {
       try {
         setLoading(true);
         const [branchResponse, courtResponse] = await Promise.all([
-          fetch(branchUrl),
-          fetch(courtUrl),
+          fetchWithAuth(branchUrl),
+          fetchWithAuth(courtUrl),
         ]);
 
         if (!branchResponse.ok) {
@@ -101,7 +100,7 @@ const FindCourt = () => {
         const branchData = await branchResponse.json();
         const courtData = await courtResponse.json();
 
-
+        const filteredBranchData = branchData.filter(branch => branch.branchStatus !== 0);
 
         const courtsWithImages = courtData.map(court => {
           const imageUrl = court.courtImg ? extractImageUrls(court.courtImg)[0] : image2;
@@ -111,7 +110,7 @@ const FindCourt = () => {
           };
         });
 
-        setBranches(branchData);
+        setBranches(filteredBranchData);
         setCourts(courtsWithImages);
 
       } catch (error) {
@@ -135,15 +134,15 @@ const FindCourt = () => {
       setLoadingFeedback(true);
       try {
         const [feedbackResponse, userResponse, userDetailsResponse] = await Promise.all([
-          fetch(feedbackUrl),
-          fetch(userUrl, {
+          fetchWithAuth(feedbackUrl),
+          fetchWithAuth(userUrl, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch(userDetailsUrl)
+          fetchWithAuth(userDetailsUrl)
         ]);
 
         if (!feedbackResponse.ok) {
@@ -221,7 +220,7 @@ const FindCourt = () => {
 
     try {
       const url = `https://localhost:7233/Feedback/Update?rate=${feedbackData.rating}&content=${feedbackData.content}&id=${feedbackData.feedbackId}&userId=${feedbackData.userId}`;
-      const response = await fetch(url, {
+      const response = await fetchWithAuth(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -251,7 +250,6 @@ const FindCourt = () => {
     }
   };
 
-
   const handleModalCancel = () => {
     setIsModalVisible(false);
     setSelectedFeedback(null);
@@ -264,7 +262,7 @@ const FindCourt = () => {
     const token = sessionStorage.getItem('token');
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchWithAuth(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

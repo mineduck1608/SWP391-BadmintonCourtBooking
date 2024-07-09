@@ -4,6 +4,7 @@ import { signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
+import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const SignIn = () => {
   const [value, setValue] = useState('');
@@ -15,7 +16,7 @@ const SignIn = () => {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
       console.log(token);
-      const response = await fetch("https://localhost:7233/User/ExternalLogAuth?token=" + token, {
+      const response = await fetchWithAuth("https://localhost:7233/User/ExternalLogAuth?token=" + token, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: token }), // Convert token to object
