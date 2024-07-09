@@ -94,7 +94,7 @@ export default function ViewPayment() {
                                     <td>{payment.paymentId}</td>
                                     <td>{new Date(payment.date).toLocaleDateString()}</td>
                                     <td>{new Date(payment.date).toLocaleTimeString()}</td>
-                                    <td>{payment.bookingId ? 'Book Slot' : 'Buy Time Balance'}</td>
+                                    <td>{payment.bookingId ? 'Booked Slot' : 'Buy Time Balance'}</td>
                                     <td>{payment.method === 1 ? 'VnPay' : payment.method === 2 ? 'Momo' : payment.method}</td>
                                     <td>{formatNumber(payment.amount)}</td>
                                   </tr>
