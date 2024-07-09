@@ -403,7 +403,7 @@ const Branch = () => {
             <Button key="cancel" variant="contained" color="primary" onClick={() => setAddModalVisible(false)}>
               Cancel
             </Button>,
-            <Button key="submit" variant="contained" color="secondary" onClick={handleAddBranch}>
+            <Button key="submit" variant="contained" color="secondary" onClick={handleAddBranch} style={{ marginLeft: 8 }}>
               Save
             </Button>,
           ]}

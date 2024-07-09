@@ -6,7 +6,6 @@ import { Phone, LocationOn, CheckCircle, Cancel } from '@mui/icons-material';
 import './GoogleMap.css'; // Import the CSS file
 import { GrMapLocation } from "react-icons/gr";
 import { BsFillInfoCircleFill, BsPhoneVibrate } from "react-icons/bs";
-import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const ITEMS_PER_PAGE = 4;
 
@@ -16,7 +15,7 @@ const GoogleMap = () => {
     const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
-        fetchWithAuth('https://localhost:7233/Branch/GetAll')
+        fetch('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
             .then(data => {
                 const parsedData = data

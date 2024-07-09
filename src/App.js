@@ -38,6 +38,7 @@ import VerifyAccount from './Components/verifyAccount/verifyAccount';
 import CreateFeedbackModal from './Components/CreateFeedbackModal/CreateFeedbackModal'; 
 import PaymentHistory from './Components/ViewPayment/ViewPayment';
 import { jwtDecode } from 'jwt-decode';
+import Discount from './Scene/discount/discount';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -93,13 +94,12 @@ const logout = () => {
             <Route path="user" element={<User />} />
             <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
+            <Route path="discount" element={<Discount />} />
             <Route path="timeSlot" element={<SlotManagement />} />
             <Route path="timeManage" element={<BadmintonCourtHours />} />
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
-            <Route path="pie" element={<Pie />} />
             <Route path="line" element={<Line />} />
-            <Route path="geography" element={<Geography />} />
           </Route>
 
           <Route path="/staff/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
@@ -111,9 +111,7 @@ const logout = () => {
             <Route path="timeSlot" element={<SlotManagement />} />
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
-            <Route path="pie" element={<Pie />} />
             <Route path="line" element={<Line />} />
-            <Route path="geography" element={<Geography />} />
           </Route>
            {/* Route for CreateFeedbackModal */}
            <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />

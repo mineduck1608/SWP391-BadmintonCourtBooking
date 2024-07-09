@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './popular.css';
 import { BsArrowLeftShort, BsArrowRightShort } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const Popular = ({ searchCriteria }) => {
     const [courtBranches, setCourtBranches] = useState([]);
@@ -10,7 +9,7 @@ const Popular = ({ searchCriteria }) => {
     const token = sessionStorage.getItem('token');
 
     useEffect(() => {
-        fetchWithAuth("https://localhost:7233/Branch/GetAll", {
+        fetch("https://localhost:7233/Branch/GetAll", {
             method: "GET",
             headers: {
                 'Authorization': `Bearer ${token}`,  
