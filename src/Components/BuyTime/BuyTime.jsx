@@ -9,12 +9,10 @@ const BuyTime = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [validAmount, setValidAmount] = useState(false)
   const apiUrl = 'https://localhost:7233'
-  //Allow as many leading 0s as wanted
-  const intRegex = /^0{0,}[1-9]{1}[0-9]*$/
-  const [amount, setAmount] = useState(0)
   var token = sessionStorage.getItem('token')
   const [discounts, setDiscounts] = useState([])
   const [useDiscount, setUseDiscount] = useState({})
+  const [amount, setAmount] = useState(0)
   const minAmount = 10000
   const fetchDiscounts = async () => {
     try {
@@ -34,19 +32,17 @@ const BuyTime = () => {
       toast.error('Server error')
     }
   }
-  const validateAmount = () => {
-    var temp = (document.getElementById('amount').value).toString()
-    if (!Object.is(temp, undefined) && intRegex.test(temp)) {
-      var tmpAmount = parseInt(temp)
-      setAmount(tmpAmount)
-      setValidAmount(tmpAmount >= minAmount)
-      return tmpAmount >= minAmount
-    }
-    setValidAmount(false)
-    return false
+  const process = (value) => {
+    var r = value.replace('.', '').replace(/[^0-9]/g, '')
+    return parseInt(r)
+  }
+  const validateAmount = (amount) => {
+    let r = amount >= minAmount
+    setValidAmount(r)
+    return r
   }
   const completeBooking = async () => {
-    if (validateAmount()) {
+    if (validateAmount(amount)) {
       //Create a cookie
       document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
       try {
@@ -117,6 +113,7 @@ const BuyTime = () => {
       else rs = n + rs
       return rs
     }
+    if (Object.is(n, NaN)) return 0
     n = Math.floor(n)
     var rs = ''
     do {
@@ -146,20 +143,26 @@ const BuyTime = () => {
   return (
     <div className='buyTime'>
       <div className='buyTime_bodyContainer'>
-        <h1 className='buyTime_title'>Buy more flexible moneyA</h1>
+        <h1 className='buyTime_title'>Buy more flexible money</h1>
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining money: {formatNumber(Math.floor(remainingTime))}</p>
           <div className='buyTime_centerDiv'>
-            <input className='buyTime_counter1' id='amount' type='text' 
-            inputMode='numeric' onChange={() => {
-              if (validateAmount()) {
-                
-              }
-            }} />
+            <input className='buyTime_counter1' id='amount' type='text'
+              value={formatNumber(amount)}
+              inputMode='numeric' onChange={async (e) => {
+                let t = process(e.target.value)
+                setAmount(t)
+                validateAmount(t)
+                calculateDiscount(t)
+              }} />
           </div>
           {!validAmount && (
             <p className='buyTime_err'>Input a valid number of money to buy!<br />Min: {formatNumber(minAmount)}đ</p>
           )}
+          {
+            useDiscount.proportion > 0 &&
+            <p>You'll get {formatNumber(useDiscount.proportion / 100)}đ after this transaction is completed!</p>
+          }
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>
             <option value={1}>VnPay</option>

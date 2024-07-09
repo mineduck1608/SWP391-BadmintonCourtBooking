@@ -345,7 +345,7 @@ const BookCourt = () => {
         for (let i = 0; i < arr.length; i++) {
             if (a >= arr[i].amount) {
                 setUseDiscount({
-                    proportion: arr[i].proportion * a,
+                    proportion: arr[i].proportion * a / 100,
                     threshold: arr[i].amount
                 })
                 break
