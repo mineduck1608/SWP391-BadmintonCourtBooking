@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Modal, Rate, Input, Button } from 'antd';
 import './CreateFeedbackModal.css';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
-
 
 const { TextArea } = Input;
 
@@ -13,23 +11,23 @@ const CreateFeedbackModal = ({ visible, onCancel, bookingId, branchId, userId })
 
   const handleSubmitFeedback = async (event) => {
     event.preventDefault();
-    const token = sessionStorage.getItem('token');
 
     try {
-      const response = await fetchWithAuth.post('https://localhost:7233/Feedback/Post', null, {
-        params: {
+      const response = await fetchWithAuth('https://localhost:7233/Feedback/Post', {
+        method: 'POST',
+        body: JSON.stringify({
           rate: rating,
           content: feedback,
           id: userId,
           branchId: branchId,
-        },
+        }),
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': '*/*',
+          'Accept': '*/*',
         },
       });
 
-      console.log('Feedback submitted successfully:', response.data);
+      const responseData = await response.json();
+      console.log('Feedback submitted successfully:', responseData);
       onCancel(); // Close the modal after submission
     } catch (error) {
       console.error('Error submitting feedback:', error);
@@ -44,9 +42,9 @@ const CreateFeedbackModal = ({ visible, onCancel, bookingId, branchId, userId })
       centered={true}
     >
       <div className="cfm-fb-info">
-      <h1>FeedBack</h1>
-      <p>Booking ID: {bookingId}</p>
-      <p>Branch Id: {branchId}</p>
+        <h1>Feedback</h1>
+        <p>Booking ID: {bookingId}</p>
+        <p>Branch Id: {branchId}</p>
       </div>
 
       <form onSubmit={handleSubmitFeedback}>

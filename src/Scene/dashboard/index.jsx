@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
 import { Box, Button, IconButton, Typography, useTheme, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
@@ -31,26 +30,27 @@ const Dashboard = () => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
-        const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
 
-        const paymentResponse = await fetchWithAuth.get('https://localhost:7233/Payment/GetAll', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const paymentResponse = await fetchWithAuth('https://localhost:7233/Payment/GetAll', {
+          method: 'GET'
         });
         
-        setPayments(paymentResponse.data);
+        const paymentsData = await paymentResponse.json();
+        setPayments(paymentsData);
 
         // Calculate the total revenue
-        const total = paymentResponse.data.reduce((sum, payment) => sum + payment.amount, 0);
+        const total = paymentsData.reduce((sum, payment) => sum + payment.amount, 0);
         setTotalRevenue(total);
 
         // Fetch initial statistics
-        const response = await fetchWithAuth.get(`https://localhost:7233/Payment/Statistic?Year=${currentYear}&Type=1&StartMonth=1&MonthNum=1&Week=1`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const statisticsResponse = await fetchWithAuth(`https://localhost:7233/Payment/Statistic?Year=${currentYear}&Type=1&StartMonth=1&MonthNum=1&Week=1`, {
+          method: 'GET'
         });
-        setPaymentStatistics(response.data);
+        const statisticsData = await statisticsResponse.json();
+        setPaymentStatistics(statisticsData);
 
         // Calculate the total revenue from the fetched statistics
-        const initialTotal = response.data.reduce((sum, payment) => sum + payment.amount, 0);
+        const initialTotal = statisticsData.reduce((sum, payment) => sum + payment.amount, 0);
         setTotalRevenue(initialTotal);
 
       } catch (error) {
@@ -69,15 +69,15 @@ const Dashboard = () => {
 
   const handleFetchStatistics = async () => {
     try {
-      const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
-      const response = await fetchWithAuth.get(`https://localhost:7233/Payment/Statistic?Year=${year}&Type=${filterType === 'year' ? 1 : filterType === 'month' ? 2 : 3}&StartMonth=${startMonth}&MonthNum=${numberOfMonths}&Week=${weekOfMonth}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetchWithAuth(`https://localhost:7233/Payment/Statistic?Year=${year}&Type=${filterType === 'year' ? 1 : filterType === 'month' ? 2 : 3}&StartMonth=${startMonth}&MonthNum=${numberOfMonths}&Week=${weekOfMonth}`, {
+        method: 'GET'
       });
-      console.log('Payment Statistics:', response.data);
-      setPaymentStatistics(response.data);
+      const data = await response.json();
+      console.log('Payment Statistics:', data);
+      setPaymentStatistics(data);
 
       // Calculate the total revenue from the fetched statistics
-      const total = response.data.reduce((sum, payment) => sum + payment.amount, 0);
+      const total = data.reduce((sum, payment) => sum + payment.amount, 0);
       setTotalRevenue(total);
     } catch (error) {
       console.error("Error fetching statistics", error);
