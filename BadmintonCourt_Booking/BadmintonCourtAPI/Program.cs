@@ -30,9 +30,8 @@ namespace BadmintonCourtAPI
 			builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 			builder.Services.AddScoped<IDiscountService, DiscountService>();
 			builder.Services.AddScoped<IMailService, MailService>();
-
-
-			builder.Services.AddControllers();
+            builder.Services.AddScoped<IMoMoService, MoMoService>();
+            builder.Services.AddControllers();
 
             var isTesting = builder.Configuration.GetValue<bool>("UseInMemoryDatabase");
             if (isTesting)
