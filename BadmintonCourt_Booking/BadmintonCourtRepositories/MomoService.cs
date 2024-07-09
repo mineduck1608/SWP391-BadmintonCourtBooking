@@ -1,10 +1,12 @@
-﻿using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo;
+﻿using Azure;
+using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo;
 using BadmintonCourtServices.IService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,9 +16,10 @@ namespace BadmintonCourtServices
 {
 	public class MoMoService : IMoMoService
 	{
-		private static IConfiguration _config = new ConfigurationBuilder()
+		private IConfiguration _config = new ConfigurationBuilder()
 			.SetBasePath(Directory.GetCurrentDirectory())
 			.AddJsonFile("appsettings.json", true, true).Build();
+
 		static readonly HttpClient client = new HttpClient();
 
 		public string CreateRawData(MoMoRequestData request) => $"partnerCode={request.PartnerCode}" +
@@ -68,6 +71,7 @@ namespace BadmintonCourtServices
 			httpRequestMessage.Content = httpContent;
 			try
 			{
+				Debug.WriteLine(httpRequestMessage.Headers.ToString());
 				var t = await client.SendAsync(httpRequestMessage);
 				string responseBody = "";
 				using (var streamReader = new StreamReader(t.Content.ReadAsStream()))

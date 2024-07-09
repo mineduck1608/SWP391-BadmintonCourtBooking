@@ -19,5 +19,11 @@ namespace BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.
 		public string NotifyUrl { get; set; }
 		public string Amount { get; set; }
 		public string ExtraData { get; set; }
+
+
+		public override string ToString()
+		{
+			return Endpoint + "|" + OrderID + "|" + OrderInfo + "|" + AccessKey + "|" + SecretKey + "|" + PartnerCode + "|" + RequestType + "|" + ReturnUrl + "|" + Amount + "|" + ExtraData;
+		}
 	}
 }

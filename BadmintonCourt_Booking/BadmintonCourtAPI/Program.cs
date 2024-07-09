@@ -30,6 +30,8 @@ namespace BadmintonCourtAPI
 			builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 			builder.Services.AddScoped<IDiscountService, DiscountService>();
 			builder.Services.AddScoped<IMailService, MailService>();
+			builder.Services.AddScoped<IMoMoService, MoMoService>();
+			builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 
 			builder.Services.AddControllers();
@@ -47,7 +49,7 @@ namespace BadmintonCourtAPI
                 //     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             }
 
-            // Configure CORS policy
+            //Configure CORS policy
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
@@ -59,8 +61,8 @@ namespace BadmintonCourtAPI
                 });
             });
 
-            // Configure Swagger/OpenAPI
-            builder.Services.AddEndpointsApiExplorer();
+			// Configure Swagger/OpenAPI
+			builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
                 options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -92,7 +94,6 @@ namespace BadmintonCourtAPI
             builder.Services.AddRazorPages();
             builder.Services.AddMvc();
 
-            builder.Services.AddSingleton<IVnPayService, VnPayService>();
 
             var app = builder.Build();
 
@@ -109,11 +110,11 @@ namespace BadmintonCourtAPI
 
             app.UseRouting();
 
-            // Apply the CORS policy globally
-            app.UseCors("AllowSpecificOrigin");
+			// Apply the CORS policy globally
+			app.UseCors("AllowSpecificOrigin");
 
-            // Authentication must come before Authorization
-            app.UseAuthentication();
+			// Authentication must come before Authorization
+			app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

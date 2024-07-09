@@ -55,11 +55,11 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Branch/GetAll")]
-		public async Task<ActionResult<IEnumerable<BranchDTO>>> GetAllBranches() => Ok(Util.FormatBranchList(_service.GetAllCourtBranches()));
+		public async Task<ActionResult<IEnumerable<CourtBranch>>> GetAllBranches() => Ok(_service.GetAllCourtBranches());
 
 		[HttpGet]
 		[Route("Branch/GetBySearch")]
-		public async Task<ActionResult<IEnumerable<BranchDTO>>> GetBranchesBySearchResult(string search) => Ok(Util.FormatBranchList(_service.GetBranchesBySearchResult(search)));
+		public async Task<ActionResult<IEnumerable<CourtBranch>>> GetBranchesBySearchResult(string search) => Ok(_service.GetBranchesBySearchResult(search));
 
 
 		[HttpPut]

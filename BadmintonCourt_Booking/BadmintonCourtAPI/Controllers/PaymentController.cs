@@ -27,13 +27,15 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly IUserService _userService = new UserService();
 		private readonly ISlotService _slotService = new SlotService();
 		private readonly ICourtService _courtService = new CourtService();
-		private readonly IMoMoService _moMoService = new MoMoService();
+		private readonly MoMoService _moMoService = new MoMoService();
+		private BadmintonCourtService bmtnService = null;
 		private readonly IVnPayService _vnPayService = new VnPayService();
 		private readonly IMailService _mailService = new MailService();
 
 		public PaymentController(IPaymentService service)
 		{
 			_service = service;
+			bmtnService = new BadmintonCourtService();
 		}
 
 		private const string resultRedirectUrl = "http://localhost:3000/paySuccess";
@@ -65,8 +67,8 @@ namespace BadmintonCourtAPI.Controllers
 			int? numMonth = transactionDTO.NumMonth;
 			float? amount = transactionDTO.Amount;
 
-			sb.Append($"Type: {type} | ");
-			sb.Append($"User: {userId} | ");
+			sb.Append($"Type: {type} , ");
+			sb.Append($"User: {userId} , ");
 			sb.Append($"Email: {_userDetailService.GetUserDetailById(userId).Email}");
 			if (type != buyTime && type != flexibleBooking)
 			{
@@ -75,12 +77,12 @@ namespace BadmintonCourtAPI.Controllers
 				int month = date.Value.Month; 
 				int day = date.Value.Day;	
 				string dateStr = $"{year}-{month}-{day}";
-				sb.Append($" | Court: {courtId}");
-				sb.Append($" | Date: {dateStr}");
-				sb.Append($" | Start hour: {start}");
-				sb.Append($" | End hour: {end}");
+				sb.Append($" , Court: {courtId}");
+				sb.Append($" , Date: {dateStr}");
+				sb.Append($" , Start hour: {start}");
+				sb.Append($" , End hour: {end}");
 				if (type == fixedBooking)
-					sb.Append($" | Number of months: {numMonth}");
+					sb.Append($" , Number of months: {numMonth}");
 			}
 			return sb.ToString();
 		}
@@ -252,7 +254,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsBySearch(string? id, string? search) => Ok(_service.GetPaymentsBySearch(id, search));
 
 		[HttpPost]
-		[Authorize]
+		//[Authorize]
 		[Route("Booking/TransactionProcess")]
 		public async Task<IActionResult> Payment(TransactionDTO model)
 		{
@@ -548,7 +550,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (expected != actual) 
 				return false;
 
-			var map = TransformToDictionary(info, '|', ':');
+			var map = TransformToDictionary(info, ',', ':');
 			string userId = map["User"];
 			User user = _userService.GetUserById(userId);
 			double amount = double.Parse(amountStr);

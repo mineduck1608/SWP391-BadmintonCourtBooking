@@ -21,7 +21,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Court/GetAll")]
-		public async Task<ActionResult<IEnumerable<CourtDTO>>> GettAllCourts() => Ok(Util.FormatCourtList(_service.GetAllCourts().ToList()));
+		public async Task<ActionResult<IEnumerable<Court>>> GettAllCourts() => Ok(_service.GetAllCourts());
 
 
 		//[HttpGet]
@@ -29,27 +29,31 @@ namespace BadmintonCourtAPI.Controllers
 		////[Authorize(Roles = "Admin")]
 		//public async Task<ActionResult<IEnumerable<CourtDTO>>> GetDeletedCourts() => Ok();
 
+		//[HttpGet]
+		//[Route("Court/GetById")]
+		//public async Task<ActionResult<CourtDTO>> GetCourtById(string id)
+		//{
+		//	Court court = _service.GetCourtByCourtId(id);
+		//	string[] components = court.CourtImg.Split('|');
+		//	List<string> courtImg = new List<string>();
+		//	for (int i = 0; i < components.Length; i++)
+		//		courtImg.Add($"Image {i + 1}:{components[i]}");
+		//	return Ok(new CourtDTO
+		//	{
+		//		CourtId = court.CourtId,
+		//		CourtImg = courtImg,
+		//		BranchId = court.BranchId,
+		//		CourtName = court.CourtName,
+		//		CourtStatus = court.CourtStatus,
+		//		Description = court.Description,
+		//		Price = court.Price
+		//	});
+		//}
+
+
 		[HttpGet]
 		[Route("Court/GetById")]
-		public async Task<ActionResult<CourtDTO>> GetCourtById(string id)
-		{
-			Court court = _service.GetCourtByCourtId(id);
-			string[] components = court.CourtImg.Split('|');
-			List<string> courtImg = new List<string>();
-			for (int i = 0; i < components.Length; i++)
-				courtImg.Add($"Image {i + 1}:{components[i]}");
-			return Ok(new CourtDTO
-			{
-				CourtId = court.CourtId,
-				CourtImg = courtImg,
-				BranchId = court.BranchId,
-				CourtName = court.CourtName,
-				CourtStatus = court.CourtStatus,
-				Description = court.Description,
-				Price = court.Price
-			});
-		}
-
+		public async Task<ActionResult<Court>> GetCourtById(string id) => Ok(_service.GetCourtByCourtId(id));
 
 		[HttpGet]
 		[Route("Court/GetByStatus")]
@@ -57,11 +61,11 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Court/GetByBranch")]
-		public async Task<ActionResult<IEnumerable<CourtDTO>>> GetCourtsByBranch(string id) => Ok(Util.FormatCourtList(_service.GetCourtsByBranchId(id)));
+		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsByBranch(string id) => Ok(_service.GetCourtsByBranchId(id));
 
 		[HttpGet]
 		[Route("Court/GetByPrice")]
-		public async Task<ActionResult<IEnumerable<CourtDTO>>> GetCourtsByPriceInterval(string? txtMin, string? txtMax)
+		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsByPriceInterval(string? txtMin, string? txtMax)
 		{
 			try
 			{
@@ -69,7 +73,7 @@ namespace BadmintonCourtAPI.Controllers
 				double max = string.IsNullOrEmpty(txtMax) ? float.MaxValue : Double.Parse(txtMax);
 				bool status = Util.ArePricesValid(min, max);
 				if (status)
-					return Ok(Util.FormatCourtList(_service.GetCourtsByPriceInterval(min, max).ToList()));
+					return Ok(_service.GetCourtsByPriceInterval(min, max));
 				return BadRequest(new { msg = "Max must be larger than min"});
 			}
 			catch (Exception ex)
@@ -80,7 +84,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Court/GetBySearch")]
-		public async Task<ActionResult<IEnumerable<CourtDTO>>> GetCourtsBySearch(string txtSearch) => Ok(Util.FormatCourtList(_service.GetCourtsBySearchResult(txtSearch).ToList()));
+		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsBySearch(string txtSearch) => Ok(Util.FormatCourtList(_service.GetCourtsBySearchResult(txtSearch).ToList()));
 
 		[HttpPost]
 		[Route("Court/Add")]

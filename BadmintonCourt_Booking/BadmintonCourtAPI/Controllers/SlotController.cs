@@ -94,7 +94,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		private Dictionary<string, string> ExtractPaymentInfo(string content)
 		{
-			string[] components = content.Split('|');
+			string[] components = content.Split(',');
 			Dictionary<string, string> result = new Dictionary<string, string>();
 			int tail = components.Length - 2;
 			for (int i = 0; i < components.Length - 1; i++)
@@ -293,15 +293,15 @@ namespace BadmintonCourtAPI.Controllers
 				else
 				{
 					UserDetail info = _userDetailService.GetUserDetailById(userId);
-					string content = $"User: {info.FirstName} {info.LastName} | ID: {userId} | Phone: {info.Phone} | Mail: {info.Email} | Date: {date} {start}h - {end}h | Court: {courtId} | Booking: {booking.BookingId} | Slot: {slotId} |";
+					string content = $"User: {info.FirstName} {info.LastName} , ID: {userId} , Phone: {info.Phone} , Mail: {info.Email} , Date: {date} {start}h - {end}h , Court: {courtId} , Booking: {booking.BookingId} , Slot: {slotId} ,";
 					double transactionAmount = (newAmount - tmpBalance) < 10000 ? float.Parse(newAmount.ToString()) : (newAmount - tmpBalance);
 					paymentMethod = paymentMethod == null ? 1 : paymentMethod;
 					// Thực hiện giao dịch thanh toán
 					if (transactionAmount < 10000) // GIao dịch VNPay chưa tới 10k -> thanh toán full ko cấn số dư
-						content += " Balance not enough | Change Slot";
+						content += " Balance not enough , Change Slot";
 					else // Sau khi cấn số dư thì số tiền cần phải thanh toán trên 10k -> tiến hành cook giao dịch app bank
 						 // Thực hiện giao dịch thanh toán
-						content += " Balance enough | Change Slot";
+						content += " Balance enough , Change Slot";
 					//------------------------------------------------------------------------
 					string paymentUrl = "";
 					if (paymentMethod == 1)

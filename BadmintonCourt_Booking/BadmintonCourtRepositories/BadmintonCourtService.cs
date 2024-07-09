@@ -97,5 +97,53 @@ namespace BadmintonCourtServices
 		{
 			CourtService = new CourtService(dao);
 		}
+
+		public BadmintonCourtService()
+		{
+			if (BookingService == null)
+			{
+				BookingService = new BookingService();
+			}
+			if (CourtService == null)
+			{
+				CourtService = new CourtService();
+			}
+			if (BranchService == null)
+			{
+				BranchService = new CourtBranchService();
+			}
+			if (FeedbackService == null)
+			{
+				FeedbackService = new FeedbackService();
+			}
+			if (PaymentService == null)
+			{
+				PaymentService = new PaymentService();
+			}
+			if (RoleService == null)
+			{
+				RoleService = new RoleService();
+			}
+			if (SlotService == null)
+			{
+				SlotService = new SlotService();
+			}
+			if (UserService == null)
+			{
+				UserService = new UserService();
+			}
+			if (UserDetailService == null)
+			{
+				UserDetailService = new UserDetailService();
+			}
+			if (VnPayService == null)
+				VnPayService = new VnPayService();
+			if (DiscountService == null)
+				DiscountService = new DiscountService();
+			if (MomoService == null)
+				MomoService = new MoMoService();
+			if (MailService == null)
+				MailService = new MailService();
+		}
 	}
 }
