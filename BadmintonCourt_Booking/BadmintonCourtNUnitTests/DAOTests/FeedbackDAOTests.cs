@@ -105,8 +105,11 @@ namespace BadmintonCourtNUnitTests.DAOTests
 		{
 			var context = new BadmintonCourtContext(_options);
 			FeedbackDAO dao = new FeedbackDAO(context);
+			Feedback previous = dao.GetFeedbackByFeedbackId(existedId);
+			Assert.IsTrue(previous.IsDelete == null);
 			dao.DeleteFeedback(existedId);
-			Assert.AreEqual(primitiveLength - 1, dao.GetAllFeedbacks().Count());
+			Feedback afterUpdated = dao.GetFeedbackByFeedbackId(existedId);
+			Assert.IsTrue(afterUpdated.IsDelete == true);
 		}
 
 		[Test]

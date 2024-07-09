@@ -60,8 +60,8 @@ namespace BadmintonCourtDAOs
             Feedback fb = GetFeedbackByFeedbackId(id);
             if (fb != null)
             {
-				_dbContext.Feedbacks.Remove(fb);
-				_dbContext.SaveChanges();
+				fb.IsDelete = true;
+                UpdateFeedback(fb, id);
 			}
         }
 

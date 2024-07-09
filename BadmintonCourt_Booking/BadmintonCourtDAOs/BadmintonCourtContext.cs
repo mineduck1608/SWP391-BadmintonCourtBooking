@@ -38,13 +38,13 @@ public partial class BadmintonCourtContext : DbContext
 	public virtual DbSet<UserDetail> UserDetails { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		=> optionsBuilder.UseSqlServer("Server=local;Database= BadmintonCourt;UID=sa;PWD=12345;TrustServerCertificate=True");
+		=> optionsBuilder.UseSqlServer("Server=(local);Database= BadmintonCourt;UID=sa;PWD=12345;TrustServerCertificate=True");
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<BookedSlot>(entity =>
 		{
-			entity.HasKey(e => e.SlotId).HasName("PK__BookedSl__9C4A67F3E7A71D50");
+			entity.HasKey(e => e.SlotId).HasName("PK__BookedSl__9C4A67F340752D9C");
 
 			entity.ToTable("BookedSlot");
 
@@ -81,7 +81,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Booking>(entity =>
 		{
-			entity.HasKey(e => e.BookingId).HasName("PK__Booking__C6D03BED48C54A9A");
+			entity.HasKey(e => e.BookingId).HasName("PK__Booking__C6D03BED41FE9562");
 
 			entity.ToTable("Booking");
 
@@ -109,7 +109,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Court>(entity =>
 		{
-			entity.HasKey(e => e.CourtId).HasName("PK__Court__4E6E368852E89D4E");
+			entity.HasKey(e => e.CourtId).HasName("PK__Court__4E6E368830B36B74");
 
 			entity.ToTable("Court");
 
@@ -127,12 +127,10 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnName("courtImg");
 			entity.Property(e => e.CourtName)
 				.HasMaxLength(30)
-				.IsUnicode(false)
 				.HasColumnName("courtName");
 			entity.Property(e => e.CourtStatus).HasColumnName("courtStatus");
 			entity.Property(e => e.Description)
 				.HasMaxLength(500)
-				.IsUnicode(false)
 				.HasColumnName("description");
 			entity.Property(e => e.Price).HasColumnName("price");
 
@@ -144,7 +142,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<CourtBranch>(entity =>
 		{
-			entity.HasKey(e => e.BranchId).HasName("PK__CourtBra__751EBD3F37D2DAD2");
+			entity.HasKey(e => e.BranchId).HasName("PK__CourtBra__751EBD3FE88897B0");
 
 			entity.ToTable("CourtBranch");
 
@@ -158,7 +156,6 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnName("branchImg");
 			entity.Property(e => e.BranchName)
 				.HasMaxLength(50)
-				.IsUnicode(false)
 				.HasColumnName("branchName");
 			entity.Property(e => e.BranchPhone)
 				.HasMaxLength(10)
@@ -167,7 +164,6 @@ public partial class BadmintonCourtContext : DbContext
 			entity.Property(e => e.BranchStatus).HasColumnName("branchStatus");
 			entity.Property(e => e.Location)
 				.HasMaxLength(50)
-				.IsUnicode(false)
 				.HasColumnName("location");
 			entity.Property(e => e.MapUrl)
 				.HasMaxLength(500)
@@ -177,7 +173,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Discount>(entity =>
 		{
-			entity.HasKey(e => e.DiscountId).HasName("PK__Discount__D2130A0658B14792");
+			entity.HasKey(e => e.DiscountId).HasName("PK__Discount__D2130A06EBDFAFA2");
 
 			entity.ToTable("Discount");
 
@@ -186,12 +182,13 @@ public partial class BadmintonCourtContext : DbContext
 				.IsUnicode(false)
 				.HasColumnName("discountID");
 			entity.Property(e => e.Amount).HasColumnName("amount");
+			entity.Property(e => e.IsDelete).HasColumnName("isDelete");
 			entity.Property(e => e.Proportion).HasColumnName("proportion");
 		});
 
 		modelBuilder.Entity<Feedback>(entity =>
 		{
-			entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__2613FDC4651CB45E");
+			entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__2613FDC4C0588C5F");
 
 			entity.ToTable("Feedback");
 
@@ -206,6 +203,7 @@ public partial class BadmintonCourtContext : DbContext
 			entity.Property(e => e.Content)
 				.HasMaxLength(500)
 				.HasColumnName("content");
+			entity.Property(e => e.IsDelete).HasColumnName("isDelete");
 			entity.Property(e => e.Period)
 				.HasColumnType("datetime")
 				.HasColumnName("period");
@@ -227,7 +225,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Payment>(entity =>
 		{
-			entity.HasKey(e => e.PaymentId).HasName("PK__Payment__A0D9EFA696711A8B");
+			entity.HasKey(e => e.PaymentId).HasName("PK__Payment__A0D9EFA66493AEE3");
 
 			entity.ToTable("Payment");
 
@@ -265,7 +263,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<Role>(entity =>
 		{
-			entity.HasKey(e => e.RoleId).HasName("PK__Role__CD98460A771D1C5C");
+			entity.HasKey(e => e.RoleId).HasName("PK__Role__CD98460AE4E0E051");
 
 			entity.ToTable("Role");
 
@@ -281,7 +279,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<User>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CDFBAA82A28");
+			entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CDFE7EF05FE");
 
 			entity.ToTable("User");
 
@@ -303,7 +301,7 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnType("datetime")
 				.HasColumnName("lastFail");
 			entity.Property(e => e.Password)
-				.HasMaxLength(50)
+				.HasMaxLength(200)
 				.IsUnicode(false)
 				.HasColumnName("password");
 			entity.Property(e => e.RoleId)
@@ -316,7 +314,6 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnName("token");
 			entity.Property(e => e.UserName)
 				.HasMaxLength(50)
-				.IsUnicode(false)
 				.HasColumnName("userName");
 
 			entity.HasOne(d => d.Branch).WithMany(p => p.Users)
@@ -331,7 +328,7 @@ public partial class BadmintonCourtContext : DbContext
 
 		modelBuilder.Entity<UserDetail>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("PK__UserDeta__CB9A1CDF398245B1");
+			entity.HasKey(e => e.UserId).HasName("PK__UserDeta__CB9A1CDF3FA913B5");
 
 			entity.ToTable("UserDetail");
 

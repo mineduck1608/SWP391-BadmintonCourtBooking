@@ -31,6 +31,7 @@ namespace BadmintonCourtAPI.Controllers
 		private const string verifyUrl = "https://localhost:7233/User/VerifyAction";
 		private const string resetPassUrl = "http://localhost:3000/ResetPassword";
 		private const string loginUrl = "http://localhost:3000/signin";
+		private const string viewInfoUrl = "http://localhost:3000/";
 		private const string registerMsg = "If you did not register for this account, ";
 		public const string emailUpdateMsg = "If you did not request an email update, ";
 		public const string resetPassMsg = "If you did not request a password reset, ";
@@ -338,12 +339,24 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPut]
 		[Route("User/Update")]
 		[Authorize]
-		public async Task<IActionResult> UpdateUser(string id, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string? email, string facebook, float balence, int? accessFail, bool status, string img)
+		public async Task<IActionResult> UpdateUser(string userId, string username, string password, string branchId, string roleId, string firstName, string lastName, string phone, string? email, string facebook, float balence, int? accessFail, bool status, string img, string actorId)
 		{
 			List<User> storage = GetUserListFromFilterFailAccount();
 			List<UserDetail> infoStorage = GetUserDetailListFromFilterFailAccount(storage);
 
-			User user = _service.GetUserById(id);
+			User user = _service.GetUserById(userId);
+			User actor = _service.GetUserById(actorId);
+			bool isAdmin = false;
+			bool isStaff = false;
+			if (userId != actorId)
+			{
+				if (actor.RoleId == "R001")
+					isAdmin = true;
+				else if (actor.RoleId == "R002")
+					isStaff = true;
+			}
+
+
 			if (!username.IsNullOrEmpty())
 			{
 				if (user.UserName == username)
@@ -352,10 +365,11 @@ namespace BadmintonCourtAPI.Controllers
 					user.UserName = username;
 				else return BadRequest(new { msg = "Username existed" });
 			}
-			if (Util.IsPasswordSecure(password.Trim()))
-				if (user.Password != Util.ToHashString(password)) // hash pass
-					user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
-				//user.Password = password;
+			if (!password.IsNullOrEmpty()) 
+				if (!Util.IsPasswordSecure(password.Trim()))
+					if (user.Password != Util.ToHashString(password)) // hash pass
+							user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
+																		//user.Password = password;
 			if (accessFail != null)
 			{
 				if (accessFail == 0)
@@ -385,66 +399,76 @@ namespace BadmintonCourtAPI.Controllers
 			}
 
 			// Update xong user chuyển tiếp qua detail
-			UserDetail info = _infoService.GetUserDetailById(id);
+			UserDetail info = _infoService.GetUserDetailById(userId);
 			if (!firstName.IsNullOrEmpty())
 				info.FirstName = firstName;
 			if (!lastName.IsNullOrEmpty())
 				info.LastName = lastName;
 			if (!img.IsNullOrEmpty())
 				info.Img = img;
-			if (!phone.IsNullOrEmpty())
+			
+			if (isAdmin == true || userId == actorId)
 			{
-				if (Util.IsPhoneFormatted(phone))
+				if (!phone.IsNullOrEmpty())
 				{
-					if (info.Phone == phone)
-						info.Phone = phone;
-					else if (infoStorage.FirstOrDefault(x => x.Phone == phone) == null)
-						info.Phone = phone;
-					else return BadRequest(new { msg = "Phone number registered" });
-				}
-				else return BadRequest(new { msg = "Phone number is not properly formatted" });
-			}
-
-
-			if (!facebook.IsNullOrEmpty())
-			{
-				if (info.Facebook == facebook)
-					info.Facebook = facebook;
-				else if (infoStorage.FirstOrDefault(x => x.Facebook == facebook) == null)
-					info.Facebook = facebook;
-				else return BadRequest(new { msg = "Facebook registered" });
-			}
-			if (!string.IsNullOrEmpty(email))
-			{
-				if (info.Email.ToLower() == email.ToLower())
-					info.Email = email;
-				else
-				{
-					if (Util.IsMailFormatted(email))
+					if (Util.IsPhoneFormatted(phone))
 					{
-						if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == email.ToLower()) == null)
-						{
-							string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName, 0);
-							user.ActionPeriod = DateTime.Now;
-							user.Token = token;
-							_service.UpdateUser(user, id);
-							_infoService.UpdateUserDetail(info, id);
-							//---------------------------------------------------------
-							int type = 3;
-							string begin = "<p>Dear ";
-							begin += (info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{email}," : $"{info.FirstName} {info.LastName},";
-							begin += $"</p><p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}:{email}'>HERE</a></p>";
-							//---------------------------------------------------------
-							_mailService.SendMail(email, begin + GenerateMailBody(type), "BMTC - Account Update Mail Profile Verification");
-							return Ok(new { msg = "Please check your mail box to activate your new email" });
-						}
-						else return BadRequest(new { msg = "Email registered" });
+						if (info.Phone == phone)
+							info.Phone = phone;
+						else if (infoStorage.FirstOrDefault(x => x.Phone == phone) == null)
+							info.Phone = phone;
+						else return BadRequest(new { msg = "Phone number registered" });
 					}
-					else return BadRequest(new { msg = "Email is not properly formatted" });
+					else return BadRequest(new { msg = "Phone number is not properly formatted" });
+				}
+
+
+				if (!facebook.IsNullOrEmpty())
+				{
+					if (info.Facebook == facebook)
+						info.Facebook = facebook;
+					else if (infoStorage.FirstOrDefault(x => x.Facebook == facebook) == null)
+						info.Facebook = facebook;
+					else return BadRequest(new { msg = "Facebook registered" });
+				}
+
+				if (!string.IsNullOrEmpty(email))
+				{
+					if (info.Email.ToLower() == email.ToLower())
+						info.Email = email;
+					else
+					{
+						if (Util.IsMailFormatted(email))
+						{
+							if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == email.ToLower()) == null)
+							{
+								if (!isAdmin)
+								{
+									string token = Util.GenerateToken(user.UserId, user.ActiveStatus.Value, user.UserName, _roleService.GetRoleById(user.RoleId).RoleName, 0);
+									user.ActionPeriod = DateTime.Now;
+									user.Token = token;
+									_service.UpdateUser(user, userId);
+									_infoService.UpdateUserDetail(info, userId);
+									//---------------------------------------------------------
+									int type = 3;
+									string begin = "<p>Dear ";
+									begin += (info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{email}," : $"{info.FirstName} {info.LastName},";
+									begin += $"</p><p>We received a request to update your email for your BadmintonCourtBooking account. Click the link below to verify your reset-password process:</p>\r\n<p><a href='{verifyUrl}?rawToken={token}:{type}:{email}'>HERE</a></p>";
+									//---------------------------------------------------------
+									_mailService.SendMail(email, begin + GenerateMailBody(type), "BMTC - Account Update Mail Profile Verification");
+									return Ok(new { msg = "Please check your mail box to activate your new email" });
+								}
+								else info.Email = email;
+							}
+							else return BadRequest(new { msg = "Email registered" });
+						}
+						else return BadRequest(new { msg = "Email is not properly formatted" });
+					}
 				}
 			}
-			_service.UpdateUser(user, id);
-			_infoService.UpdateUserDetail(info, id);
+
+			_service.UpdateUser(user, userId);
+			_infoService.UpdateUserDetail(info, userId);
 			return Ok(new { msg = "Success" });
 		}
 
@@ -565,7 +589,7 @@ namespace BadmintonCourtAPI.Controllers
 					info.Email = rawToken.Split(':')[2];
 					_infoService.UpdateUserDetail(info, user.UserId);
 					_service.UpdateUser(user, user.UserId);
-					return Ok(new { msg = "Success" });
+					return Redirect(viewInfoUrl);
 				}
 				user.ActiveStatus = true;
 				_service.UpdateUser(user, user.UserId);
@@ -586,18 +610,23 @@ namespace BadmintonCourtAPI.Controllers
 
 			if (!account.UserName.IsNullOrEmpty())
 				if (storage.FirstOrDefault(x => x.UserName == account.UserName) != null)
-					return BadRequest(new { msg = "Usrname existed" });
+					return BadRequest(new { msg = "Username registered" });
 			if (!account.Email.IsNullOrEmpty())
 			{
-				if (infoStorage.FirstOrDefault(x => x.Email == account.Email) != null)
-					return BadRequest(new { msg = "Account existed" });
+				if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == account.Email.Trim().ToLower()) != null)
+					return BadRequest(new { msg = "Email registered" });
 			}
 			else return BadRequest(new { msg = "At least email can't be empty" });
 			if (!account.Facebook.IsNullOrEmpty())
 				if (infoStorage.FirstOrDefault(p => p.Facebook == account.Facebook) != null)
-					return BadRequest(new { msg = "Account existed" });
-			if (account.Balance < 0)
-				return BadRequest(new { msg = "Balance must be at least 0" });
+					return BadRequest(new { msg = "Facebook registered" });
+
+
+			if (!account.Phone.IsNullOrEmpty())
+				if (infoStorage.FirstOrDefault(x => x.Phone == account.Phone) != null)
+					return BadRequest(new { msg = "Phone number registered" });
+
+			
 
 			if (account.RoleId != "R002")
 				if (!account.BranchId.IsNullOrEmpty())
@@ -606,7 +635,7 @@ namespace BadmintonCourtAPI.Controllers
 
 
 			string id = "U" + (_service.GetAllUsers().Count + 1).ToString("D7");
-			_service.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = account.Password, Balance = account.Balance == null ? 0 : account.Balance.Value, BranchId = account.BranchId, RoleId = account.RoleId });
+			_service.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = account.Password, Balance = account.Balance == null || account.Balance < 0 ? 0 : account.Balance.Value, BranchId = account.BranchId, RoleId = account.RoleId });
 			//_service.UserDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = Util.IsPhoneFormatted(account.Phone) ? account.Phone : null, UserId = id, Img = account.Img });
 
 			_infoService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = Util.IsPhoneFormatted(account.Phone) ? account.Phone : null, UserId = id, Img = account.Img });

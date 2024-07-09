@@ -616,7 +616,8 @@ namespace BadmintonCourtAPI.Controllers
 				user.Balance += amount;
 			}
 			_service.AddPayment(payment);
-			List<Discount> discountList = _discountService.GetAllDiscounts().OrderByDescending(x => x.Amount).ToList();
+
+			List<Discount> discountList = _discountService.GetAllDiscounts().Where(x => x.IsDelete == null).OrderByDescending(x => x.Amount).ToList();
 			if (discountList.Count == 0)
 			{
 				_userService.UpdateUser(user, userId);

@@ -97,8 +97,12 @@ namespace BadmintonCourtNUnitTests.DAOTests
 		{
 			var context = new BadmintonCourtContext(_options);
 			DiscountDAO dao = new DiscountDAO(context);
+			Discount previous = dao.GetDiscountById(existedId);
+			Assert.IsTrue(previous.IsDelete == null);
 			dao.DeleteDiscount(existedId);
-			Assert.AreEqual(primitiveLength - 1, dao.GetAllDiscounts().Count());
+			Discount afterUpdated = dao.GetDiscountById(existedId);
+			Assert.IsTrue(afterUpdated.IsDelete == true);
+
 		}
 
 		[Test]

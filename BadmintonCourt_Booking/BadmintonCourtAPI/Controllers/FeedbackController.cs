@@ -110,29 +110,29 @@ namespace BadmintonCourtAPI.Controllers
 		}
 
 
-		//[HttpDelete]
-		//[Route("Feedback/Delete")]
-		//[Authorize]
-		//public async Task<IActionResult> DeleteFeedback(string id, string userID)
-		//{
-		//	Feedback feedback = _service.GetFeedbackByFeedbackId(id);
-		//	User user = _userService.GetUserById(userID);
-		//	if (user.RoleId == "R001" || feedback.UserId == userID)
-		//	{
-		//		_service.DeleteFeedback(id);
-		//		return Ok(new { msg = "Success" });
-		//	}
-		//	return BadRequest(new { msg = "Can't delete other's feedback" });
-		//}
-
 		[HttpDelete]
 		[Route("Feedback/Delete")]
 		[Authorize]
-		public async Task<IActionResult> DeleteFeedback(string id)
+		public async Task<IActionResult> DeleteFeedback(string id, string userID)
 		{
-			_service.DeleteFeedback(id);
-			return Ok(new { msg = "Success" });
+			Feedback feedback = _service.GetFeedbackByFeedbackId(id);
+			User user = _userService.GetUserById(userID);
+			if (user.RoleId == "R001" || feedback.UserId == userID)
+			{
+				_service.DeleteFeedback(id);
+				return Ok(new { msg = "Success" });
+			}
+			return BadRequest(new { msg = "Can't delete other's feedback" });
 		}
+
+		//[HttpDelete]
+		//[Route("Feedback/Delete")]
+		//[Authorize]
+		//public async Task<IActionResult> DeleteFeedback(string id)
+		//{
+		//	_service.DeleteFeedback(id);
+		//	return Ok(new { msg = "Success" });
+		//}
 
 	}
 }

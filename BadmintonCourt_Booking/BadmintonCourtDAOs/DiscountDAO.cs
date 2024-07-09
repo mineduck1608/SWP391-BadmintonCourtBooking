@@ -52,8 +52,8 @@ namespace BadmintonCourtDAOs
 			Discount discount = GetDiscountById(id);
 			if (discount != null)
 			{
-				_dbContext.Discounts.Remove(discount);
-				_dbContext.SaveChanges();
+				discount.IsDelete = true;
+				UpdateDiscount(discount, id);
 			}
 		}
 

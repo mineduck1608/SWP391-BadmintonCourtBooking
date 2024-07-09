@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BadmintonCourtBusinessObjects.Entities;
+namespace ClassLibrary3.Entities;
 
 public partial class Discount
 {
