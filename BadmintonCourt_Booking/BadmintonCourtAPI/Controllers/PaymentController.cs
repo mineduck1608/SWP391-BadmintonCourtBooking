@@ -515,7 +515,7 @@ namespace BadmintonCourtAPI.Controllers
 			bool success = SaveToDB(content, date, transId, amount, expected, actual, 1);
 			if (success)
 			{
-				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
+				string userId = result.Description.Split(',')[1].Trim().Split(':')[1].Trim();
 				UserDetail info = _userDetailService.GetUserDetailById(userId);
 				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
 			}
