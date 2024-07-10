@@ -372,7 +372,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (Util.IsPasswordSecure(password.Trim()))
 				if (user.Password != Util.ToHashString(password)) // hash pass
 					user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
-                                                                        //user.Password = password;
+                                                                     //user.Password = password;
             }
             if (accessFail != null)
 			{
@@ -387,10 +387,10 @@ namespace BadmintonCourtAPI.Controllers
 					if (!branchId.IsNullOrEmpty())
 						return BadRequest(new { msg = "Only staffs can contain working place" });
 			}
-			if (!branchId.IsNullOrEmpty())
-			{
-                user.BranchId = branchId;
-            }
+			if (roleId == "R002") {
+				if (!branchId.IsNullOrEmpty())
+					user.BranchId = branchId;
+			}
             if (balence != null)
 			{
 				if (balence >= 0)

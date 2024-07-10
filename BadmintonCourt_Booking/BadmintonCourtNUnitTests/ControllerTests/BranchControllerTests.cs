@@ -69,7 +69,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetAllBranches();
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<BranchDTO> list = ok.Value as List<BranchDTO>;
+			List<CourtBranch> list = ok.Value as List<CourtBranch>;
 			Assert.AreEqual(primitiveLength, list.Count);
 		}
 

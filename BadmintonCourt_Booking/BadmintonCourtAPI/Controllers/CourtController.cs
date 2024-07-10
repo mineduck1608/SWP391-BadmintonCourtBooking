@@ -57,7 +57,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		[HttpGet]
 		[Route("Court/GetByStatus")]
-		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsByStatus(bool status) => Ok(Util.FormatCourtList(_service.GetCourtsByStatus(status)));
+		public async Task<ActionResult<IEnumerable<Court>>> GetCourtsByStatus(bool status) => Ok(_service.GetCourtsByStatus(status));
 
 		[HttpGet]
 		[Route("Court/GetByBranch")]
