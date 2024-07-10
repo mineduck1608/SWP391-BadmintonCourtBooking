@@ -235,6 +235,14 @@ const Sidebar = () => {
                             setSelected={setSelected}
                         />
 
+                        <Item className="menu-item"
+                            title="Discount"
+                            to="discount"
+                            icon={<LocalOfferOutlinedIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+
                         <Typography
                             className='sidebar-section-title3'
                             color={colors.grey[300]}
