@@ -406,7 +406,7 @@ namespace BadmintonCourtAPI.Controllers
 			bool status = UpdateNewSlotToDB("00", result.VnPayResponseCode, result.Description, result.TransactionId, result.Amount, result.Date, 1);
 			if (status)
 			{
-				string userId = result.Description.Split('|')[1].Trim().Split(':')[1].Trim();
+				string userId = result.Description.Split(',')[1].Trim().Split(':')[1].Trim();
 				UserDetail info = _userDetailService.GetUserDetailById(userId);
 				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
             }
@@ -421,7 +421,7 @@ namespace BadmintonCourtAPI.Controllers
 			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), DateTime.Parse(result.ResponseTime.Split(' ')[0]), 2);
 			if (status)
 			{
-				string userId = result.OrderInfo.Split('|')[0].Trim().Split(':')[1].Trim();
+				string userId = result.OrderInfo.Split(',')[0].Trim().Split(':')[1].Trim();
 				UserDetail info = _userDetailService.GetUserDetailById(userId);
 				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Slot Update Notification");
 			}
