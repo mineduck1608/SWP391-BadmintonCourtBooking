@@ -33,7 +33,6 @@ const Login = () => {
             const decodedToken = jwtDecode(resp.token); // Decode the JWT token to get user information
             const roleToken = decodedToken.Role; // Extract userId from the decoded token
             const status = decodedToken.Status
-            console.log(status)
             if (roleToken == "Customer") {
               if (status == 'True') {
                 navigate('/home');
@@ -55,11 +54,8 @@ const Login = () => {
                 toast.success("Login successful!");
               }
             }
-          } else if(resp.msg == 'Temporaly locked'){
-            toast.warning("Please contact admin")
-          }
-           else {
-            toast.warning("Wrong username or password!")
+          } if(!resp.ok){
+            toast.warning(resp.msg)
           }
         }).catch((err) => {
           toast.error('Login failed. Please try again.');

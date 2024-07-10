@@ -6,7 +6,6 @@ import { jwtDecode } from 'jwt-decode';
 import { toast } from "react-toastify";
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 import { HttpStatusCode } from "axios";
-import { Link } from "react-router-dom";
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible

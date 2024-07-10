@@ -3,10 +3,8 @@ import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import './viewpayment.css';
 import { jwtDecode } from 'jwt-decode';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
-
-
 
 export default function ViewPayment() {
   const [payments, setPayments] = useState([]);
@@ -33,10 +31,11 @@ export default function ViewPayment() {
           throw new Error('Failed to fetch payments');
         }
 
-        
         const paymentsData = await paymentsResponse.json();
         console.log('Fetched Payment Data', paymentsData);
 
+        // Sort payments by date in descending order
+        paymentsData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         setPayments(paymentsData);
         setLoading(false);
@@ -48,7 +47,7 @@ export default function ViewPayment() {
     };
 
     fetchPayments();
-  }, [token, apiUrl]);
+  }, [token, apiUrl, userIdToken]);
 
   const formatNumber = (n) => {
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
