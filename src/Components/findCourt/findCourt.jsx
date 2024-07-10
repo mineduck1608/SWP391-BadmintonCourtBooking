@@ -8,6 +8,7 @@ import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
 import { jwtDecode } from 'jwt-decode';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { SettingsSuggestOutlined } from '@mui/icons-material';
 
 const { RangePicker } = TimePicker;
 const { TextArea } = Input;
@@ -55,6 +56,49 @@ const FindCourt = () => {
     setSelectedCourt(courtId);
   };
 
+  const handleDelete = async (feedbackId, feedbackUserId) => {
+    const token = sessionStorage.getItem('token');
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(token);
+    } catch (error) {
+      sessionStorage.clear();
+      navigate('/');
+      return;
+    }
+
+    const currentUserId = decodedToken.UserId;
+
+    if (currentUserId !== feedbackUserId) {
+      alert("You don't have permission to delete this feedback.");
+      return;
+    }
+
+    try {
+      const response = await fetchWithAuth(
+        `https://localhost:7233/Feedback/Delete?id=${feedbackId}&userID=${currentUserId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete feedback');
+      }
+
+      // Remove the deleted feedback from the state
+      setFeedback(prevFeedback => prevFeedback.filter(fb => fb.feedbackId !== feedbackId));
+      alert('Feedback deleted successfully');
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      alert('Failed to delete feedback. Please try again.');
+    }
+  };
+
   const filteredCourts = courts.filter((court) => {
     return (
       (selectedBranch === '' || court.branchId === selectedBranch) &&
@@ -69,13 +113,27 @@ const FindCourt = () => {
   });
 
   const extractImageUrls = (courtImg) => {
-    const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+    const regex = /([^|]+)/g;
     let matches;
     const urls = [];
     while ((matches = regex.exec(courtImg)) !== null) {
-      urls.push(matches[1]);
+      urls.push(matches[0]);
     }
     return urls;
+  };
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).replace(/\//g, '-');
+    const formattedTime = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    return `${formattedDate} ${formattedTime}`;
   };
 
   useEffect(() => {
@@ -156,6 +214,7 @@ const FindCourt = () => {
         }
 
         const feedbackData = await feedbackResponse.json();
+        console.log('fetched feedback data', feedbackData);
         const userData = await userResponse.json();
         const userDetailsData = await userDetailsResponse.json();
 
@@ -164,6 +223,7 @@ const FindCourt = () => {
           const userDetails = userDetailsData.find(detail => detail.userId === fb.userId);
           return {
             ...fb,
+            formattedDateTime: formatDateTime(fb.period),
             user: {
               ...user,
               image: userDetails ? userDetails.img : null,
@@ -366,15 +426,28 @@ const FindCourt = () => {
 
                     return (
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
+
                         <div className="findcourt-feedbackInfo">
                           <div className="findcourt-user-info">
                             <img src={user ? user.image || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
-                            <p><strong>{user ? user.firstName + " " + user.lastName : 'Anonymous'}</strong></p>
+                            <div className="findourt-user-details">
+                              <p className="findcourt-user-name"><strong>{user ? user.firstName + " " + user.lastName : 'Anonymous'}</strong></p>
+                              <p className="findcourt-user-rating"><span className="stars">{renderStars(fb.rating)}</span></p>
+                            </div>
                           </div>
-                          <p>Rating: <span className="stars">{renderStars(fb.rating)}</span></p>
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                           <p>Feedback: {fb.content}</p>
-                          {user && user.userId === userIdToken && <button className="find-court-edit-feedback-btn" onClick={() => handleEdit(fb.feedbackId, fb.rating, fb.content)}>Edit</button>}
+                          <p className='feedback-datetime'>{fb.formattedDateTime}</p>
+
+                        </div>
+                        <div className="feedback-actions">
+                          <button
+                            className="find-court-delete-feedback-btn"
+                            onClick={() => handleDelete(fb.feedbackId, fb.userId)}
+                            disabled={userIdToken !== fb.userId}
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     );

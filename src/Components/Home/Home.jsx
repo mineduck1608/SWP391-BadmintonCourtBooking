@@ -11,9 +11,16 @@ const Home = ({ setSearchCriteria }) => {
     useEffect(() => {
         fetch('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
-            .then(data => {
-                setBranches(data);
-                setLocations(data.map(branch => branch.location));
+            .then((data) => {
+                const parsedData = data
+                .filter(branch => branch.branchStatus !== 0)  // Filter out branches with branchStatus of 0
+                .map(branch => {
+                    return {
+                        ...branch,
+                    };
+                });
+                setBranches(parsedData);
+                setLocations(parsedData.map(branch => branch.location));
             })
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
@@ -51,7 +58,7 @@ const Home = ({ setSearchCriteria }) => {
                             onChange={handleBranchChange}
                         >
                             <option value="">All Branch</option>
-                            {branches.map(branch => (
+                            {branches.map(branch  => (
                                 <option key={branch.id} value={branch.branchName}>
                                     {branch.branchName}
                                 </option>

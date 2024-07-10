@@ -225,15 +225,15 @@ button {
 }
 
 .findcourt-feedbackBox {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    background-color: #ffffff;
+    border: 1px solid hsl(0, 0%, 0%);
     padding: 20px;
     margin-top: 20px;
     border-radius: 8px;
-    max-height: 750px;
+    max-height: 450px;
     overflow-y: auto;
     width: 200%;
-    max-width: 1500px;
+    max-width: 1800px;
 }
 
 .findcourt-feedbackBox h1 {
@@ -251,13 +251,17 @@ button {
 }
 
 .findcourt-feedbackCard {
-    background-color: #ebe7e7;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
+    position: relative;
     display: flex;
+    justify-content: space-between;
     align-items: flex-start;
-}
+    background-color: #ffffff;
+    border: 1px solid hsl(26, 93%, 50%);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    min-height: 200px;
+  }
 
 .findcourt-feedbackImage {
     flex-shrink: 0;
@@ -276,6 +280,7 @@ button {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex-grow: 1;
 }
 
 .findcourt-feedbackInfo p {
@@ -298,12 +303,91 @@ button {
     align-items: center;
 }
 
+.findcourt-user-info {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  
+  .findcourt-user-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .findcourt-user-name {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .findcourt-user-rating {
+    margin-top: -10px !important;
+    font-size: 14px;
+  }
+  
+  .stars {
+    color: #ffcc00;
+    font-size: 16px;
+  }
+  
+  .findcourt-feedbackInfo p {
+    margin: 5px 0;
+  }
+  
+  .feedback-datetime {
+    font-style: italic;
+    color: #858585 !important;
+    margin-top: 10px;
+  }
+
+  .feedback-actions{
+    display: flex;
+    justify-content: center; /* Moves the buttons to the right */
+    margin-top: 65px;
+    padding-left: 50px;
+    width: 20%; /* Ensure the buttons are aligned within the card width */
+  }
+
+  .find-court-delete-feedback-btn {
+    background-color: #b32936;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .find-court-delete-feedback-btn:hover:not(:disabled) {
+    background-color: #c82333;
+  }
+
+  .find-court-delete-feedback-btn:disabled{
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+  
+  .find-court-edit-feedback-btn {
+    background-color: hsl(26, 93%, 50%);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .find-court-edit-feedback-btn:hover {
+    background-color: hsl(26, 90%, 42%);
+  }
+
 .findcourt-user-image {
-    width: 80px;
-    height: 80px; /* Ensure the height is the same as the width to make a perfect circle */
-    border-radius: 50%;
-    object-fit: cover; /* Ensures the image covers the container without distortion */
     display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
 }
 .stars {
     color: #ffcc00; /* Gold color for stars */
@@ -365,4 +449,3 @@ button {
     margin: 0;
     padding-right: 8px; 
 }
-  

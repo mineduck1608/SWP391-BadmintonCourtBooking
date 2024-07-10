@@ -85,7 +85,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GettAllCourts();
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> list = ok.Value as List<CourtDTO>;
+			List<Court> list = ok.Value as List<Court>;
 			Assert.AreEqual(primitiveLength, list.Count);
 		}
 
@@ -95,7 +95,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtById(existedId);
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			CourtDTO tmp = ok.Value as CourtDTO;
+			Court tmp = ok.Value as Court;
 			Assert.IsNotNull(tmp);
 			Assert.AreEqual(tmp.CourtId, existedId);
 		}
@@ -106,7 +106,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtsByStatus(true);
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> tmpStorage = ok.Value as List<CourtDTO>;
+			List<Court> tmpStorage = ok.Value as List<Court>;
 			Assert.AreEqual(active, tmpStorage.Count);
 		}
 
@@ -116,7 +116,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtsByStatus(false);
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> tmpStorage = ok.Value as List<CourtDTO>;
+			List<Court> tmpStorage = ok.Value as List<Court>;
 			Assert.AreEqual(inactive, tmpStorage.Count);
 		}
 
@@ -126,7 +126,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtsByBranch(existedBranchId);
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> tmpStorage = ok.Value as List<CourtDTO>;
+			List<Court> tmpStorage = ok.Value as List<Court>;
 			Assert.IsTrue(tmpStorage.Count > 0);
 		}
 
@@ -136,7 +136,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtsByPriceInterval(existedMin.ToString(), existedMax.ToString());
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> tmpStorage = ok.Value as List<CourtDTO>;
+			List<Court> tmpStorage = ok.Value as List<Court>;
 			Assert.IsTrue(tmpStorage.Count == primitiveLength);
 		}
 
@@ -163,7 +163,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtsByPriceInterval("", "");
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> tmpStorage = ok.Value as List<CourtDTO>;
+			List<Court> tmpStorage = ok.Value as List<Court>;
 			Assert.IsTrue(tmpStorage.Count == primitiveLength);
 		}
 
@@ -175,7 +175,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			var actual = await _controller.GetCourtsByPriceInterval(min.ToString(), max.ToString());
 			var ok = actual.Result as OkObjectResult;
 			Assert.IsInstanceOf<OkObjectResult>(ok);
-			List<CourtDTO> tmpStorage = ok.Value as List<CourtDTO>;
+			List<Court> tmpStorage = ok.Value as List<Court>;
 			Assert.IsTrue(tmpStorage.Count == 0);
 		}
 
@@ -201,7 +201,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 		{
 			var before = await _controller.GetCourtById(existedId);
 			var beforeOk = before.Result as OkObjectResult;
-			CourtDTO tmpBefore = beforeOk.Value as CourtDTO;
+			Court tmpBefore = beforeOk.Value as Court;
 			Assert.AreNotEqual(tmpBefore.Price, 1000000);
 			
 			var actual = await _controller.UpdateCourt("", "", existedId, true, 100000);
@@ -219,7 +219,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			//--------------------------------------------------------------
 			var search = await _controller.GetCourtById(existedId);
 			var searchOk = search.Result as OkObjectResult;
-			CourtDTO tmpAfter = searchOk.Value as CourtDTO;
+			Court tmpAfter = searchOk.Value as Court;
 			Assert.AreEqual(tmpAfter.Price, 100000);
 		}
 
@@ -228,7 +228,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 		{
 			var before = await _controller.GetCourtById(existedId);
 			var beforeOk = before.Result as OkObjectResult;
-			CourtDTO tmpBefore = beforeOk.Value as CourtDTO;
+			Court tmpBefore = beforeOk.Value as Court;
 			Assert.AreNotEqual(tmpBefore.Price, -1);
 
 			var actual = await _controller.UpdateCourt("", "", existedId, true, -1);
@@ -246,7 +246,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			//--------------------------------------------------------------
 			var search = await _controller.GetCourtById(existedId);
 			var searchOk = search.Result as OkObjectResult;
-			CourtDTO tmpAfter = searchOk.Value as CourtDTO;
+			Court tmpAfter = searchOk.Value as Court;
 			Assert.AreEqual(tmpAfter.Price, tmpBefore.Price);
 		}
 
@@ -255,7 +255,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 		{
 			var before = await _controller.GetCourtById(existedId);
 			var beforeOk = before.Result as OkObjectResult;
-			CourtDTO tmpBefore = beforeOk.Value as CourtDTO;
+			Court tmpBefore = beforeOk.Value as Court;
 
 			var actual = await _controller.UpdateCourt("", "", existedId, true, null);
 			var ok = actual as OkObjectResult;
@@ -272,7 +272,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 			//--------------------------------------------------------------
 			var search = await _controller.GetCourtById(existedId);
 			var searchOk = search.Result as OkObjectResult;
-			CourtDTO tmpAfter = searchOk.Value as CourtDTO;
+			Court tmpAfter = searchOk.Value as Court;
 			Assert.AreEqual(tmpAfter.Price, tmpBefore.Price);
 		}
 

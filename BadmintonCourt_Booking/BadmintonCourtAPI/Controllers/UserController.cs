@@ -391,7 +391,7 @@ namespace BadmintonCourtAPI.Controllers
 				if (!branchId.IsNullOrEmpty())
 					user.BranchId = branchId;
 			}
-			if (balence != null)
+            if (balence != null)
 			{
 				if (balence >= 0)
 					user.Balance = balence;
