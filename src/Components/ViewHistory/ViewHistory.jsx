@@ -40,7 +40,7 @@ export default function ViewHistory() {
     bookingDate: '',
   };
   const [formState, setFormState] = useState(initialState)
-  const [payment, setPayment] = useState({})
+  const [chooseTypeModal, setChooseTypeModal] = useState(false)
   const numOfChanges = 2
   const navigate = useNavigate();
   const todayLabel = 'today'
@@ -178,74 +178,6 @@ export default function ViewHistory() {
     setAmount(calculateAmount(courtId, start, end))
   }
 
-  // const renderTableRows = (filterType) => {
-  //   const filteredBookings = bookings.filter((booking) => {
-  //     const slot = slots.find(slot => slot.bookingId === booking.bookingId);
-  //     const slotDate = slot ? new Date(slot.date) : null;
-
-  //     switch (filterType) {
-  //       case 'today':
-  //         return slotDate && slotDate.toDateString() === currentDateString;
-  //       case 'upcoming':
-  //         return slotDate && slotDate > currentDate;
-  //       case 'past':
-  //         return slotDate && slotDate < currentDate;
-  //       default:
-  //         return false;
-  //     }
-  //   });
-
-  //   const sortedBookings = filteredBookings.sort((a, b) => {
-  //     return new Date(b.bookingDate) - new Date(a.bookingDate);
-  //   });
-
-  //   return sortedBookings.flatMap((booking) => {
-  //     const relatedSlots = slots.filter(slot => slot.bookingId === booking.bookingId);
-
-  //     return relatedSlots.map((slot) => {
-  //       const slotDate = new Date(slot.date).toLocaleDateString();
-  //       const startTime = formatTime(slot.start);
-  //       const endTime = formatTime(slot.end);
-  //       const courtId = slot.courtId;
-  //       const court = courts.find(court => court.courtId === courtId);
-  //       const courtName = court ? court.courtName : 'Unknown Court';
-  //       const branch = branches.find(branch => branch.branchId === (court ? court.branchId : null));
-  //       const branchName = branch ? branch.branchName : 'Unknown Branch';
-
-  //       return (
-  //         !booking.isDeleted &&
-  //         <tr key={`${booking.bookingId}-${slot.bookedSlotId}`}>
-  //           <td>{booking.bookingId}</td>
-  //           <td>{formatNumber(booking.amount)}</td>
-  //           <td>{getBookingTypeLabel(booking.bookingType)}</td>
-  //           <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
-  //           <td>{slotDate}</td>
-  //           <td>{startTime}</td>
-  //           <td>{endTime}</td>
-  //           <td>{courtName}</td>
-  //           <td>{branchName}</td>
-  //           {filterType === 'past' ? (
-  //             <td>
-  //               <button className="vh-feedback-btn" onClick={() => handleFeedbackClick(booking.bookingId, branch.branchId, booking.userId)}>Feedback</button>
-  //             </td>
-  //           ) : (
-  //             <td>
-  //               <button className={'view-history-button' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')} onClick={() => onClickEdit(slot)}
-  //                 disabled={booking['changeLog'] >= numOfChanges}
-  //               >Edit</button>
-  //               <button
-  //                 className={'view-history-button view-history-cancel-btn' + (booking['changeLog'] >= numOfChanges ? ' btn-disabled' : '')}
-  //                 onClick={() => onClickCancelSlot(slot)}
-  //                 disabled={booking['changeLog'] >= numOfChanges}
-  //               >Cancel</button>
-  //             </td>
-  //           )}
-  //         </tr>
-  //       );
-  //     });
-  //   });
-  // };
-
   const onClickEdit = (slot) => {
     var t = calculateAmount(slot.courtId, slot.start, slot.end)
     setCurrentAmount(t)
@@ -272,7 +204,7 @@ export default function ViewHistory() {
     setOpenCancel(true)
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
-
+    let cancelAmount = (slot.end - slot.start) * court.price * 0.5
     setFormState({
       date: slot.date,
       start: slot.start,
@@ -281,6 +213,7 @@ export default function ViewHistory() {
       bookingId: slot.bookingId,
       branchId: branchId,
       slotId: slot.bookedSlotId,
+      cancelAmount: cancelAmount
     })
   }
   const formatTime = (time) => {
@@ -303,13 +236,13 @@ export default function ViewHistory() {
           })
         var data = await res.json()
         var payment = data.find(d => d.bookingId === bookingID)
-        setPayment(payment)
+        return payment
       }
       catch (err) {
         toast.error('Server error')
       }
     }
-    await fetchPayment(bookingID)
+    return await fetchPayment(bookingID)
   }
   const handleOk = async () => {
     const update = async (start, end, date, userId, courtId, slotId, paymentMethod, bookingId) => {
@@ -340,10 +273,8 @@ export default function ViewHistory() {
           }, 500);
         }
         else {
-          toast.success('Since your balance isn\'t enough, you\'ll be redirected to the payment page')
-          setTimeout(() => {
-            window.location.assign(data['url'])
-          }, 1000);
+          setFormState({ ...formState, payUrl: data['url'] })
+          setChooseTypeModal(true)
         }
       }
       if (res.status === HttpStatusCode.BadRequest) {
@@ -358,9 +289,9 @@ export default function ViewHistory() {
         return;
       }
       setOpen(false)
-      await getPayment(formState.bookingId)
+      let payment = await getPayment(formState.bookingId)
       await update(formState.start, formState.end, formState.date, getUserId(token),
-        formState.courtId, formState.slotId, payment.method, formState.bookingId
+        formState.courtId, formState.slotId, payment ? payment.method : 1, formState.bookingId
       )
       setFormState(initialState)
     }
@@ -405,8 +336,7 @@ export default function ViewHistory() {
         toast.error('Unauthorized')
         return
       }
-      let price = bookings.find(b => b.bookingId === formState.bookingId).amount
-      toast.success(`Booking cancelled. \n${formatNumber(price)}đ has been transferred into your balance`)
+      toast.success(`Booking cancelled`)
       setTimeout(() => {
         window.location.reload()
       }, 500);
@@ -542,7 +472,6 @@ export default function ViewHistory() {
   const formatTimeRange = (time) => {
     var range = new Date() - new Date(time)
     range = maxHourCanChange * 3600000 - range
-    var rs = ''
     let hour = Math.floor(range / 3600000)
     range = range - hour * 3600000
     let min = Math.floor(range / 60000)
@@ -653,7 +582,9 @@ export default function ViewHistory() {
         closable={false}
       >
         <span>
-          <p>Are you sure you want to cancel this slot?</p>
+          <p>Are you sure you want to cancel this slot? You'll gain
+            <span> {formatNumber(formState.cancelAmount)}đ</span>
+          </p>
           <p className='warning'>THIS CANNOT BE UNDONE!</p>
           <div className='right-align-btn'>
             <button className='view-history-button-small view-history-cancel-btn'
@@ -663,6 +594,37 @@ export default function ViewHistory() {
               onClick={handleCancel}
             >Return</button>
           </div>
+        </span>
+      </Modal>
+      <Modal title='Choose payment type'
+        open={chooseTypeModal}
+        footer={null}
+        centered={true}
+        closable={false}
+      >
+        <span>
+          <p>
+            Since your balance isn't enough...
+          </p>
+          <div className='right-align-btn'>
+            <button className='view-history-button-small'
+              onClick={() => {
+                window.location.assign(formState.payUrl)
+              }}
+            >Pay by banking
+            </button>
+            <button className='view-history-button-small'
+              onClick={() => {
+                window.location.assign('/buyTime')
+              }}
+            >Buy Balance
+            </button>
+            <button className='view-history-button-small view-history-cancel-btn'
+              onClick={() => { setChooseTypeModal(false) }}
+            >Cancel change
+            </button>
+          </div>
+          <p>Reminder: we'll use your balance to lessen the fee if possible (new price - balance is at least 10.000đ)</p>
         </span>
       </Modal>
       <div className='view-history-header'>
