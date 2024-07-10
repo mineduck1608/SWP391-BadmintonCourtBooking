@@ -387,8 +387,11 @@ namespace BadmintonCourtAPI.Controllers
 					if (!branchId.IsNullOrEmpty())
 						return BadRequest(new { msg = "Only staffs can contain working place" });
 			}
-			user.BranchId = branchId;
-			if (balence != null)
+			if (!branchId.IsNullOrEmpty())
+			{
+                user.BranchId = branchId;
+            }
+            if (balence != null)
 			{
 				if (balence >= 0)
 					user.Balance = balence;

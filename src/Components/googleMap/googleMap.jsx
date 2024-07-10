@@ -18,24 +18,8 @@ const GoogleMap = () => {
         fetch('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
             .then(data => {
-                const parsedData = data
-                    .filter(branch => branch.branchStatus !== 0) // Filter out branches with branchStatus of 0
-                    .map(branch => {
-                        let imgURL = '';
-                        if (branch.branchImg && branch.branchImg.length > 0) {
-                            const urlString = branch.branchImg[0];
-                            const parts = urlString.split(': ');
-                            if (parts.length > 1) {
-                                imgURL = parts[1].trim();
-                            }
-                        }
-                        return {
-                            ...branch,
-                            branchImg: imgURL
-                        };
-                    });
-                setBranches(parsedData);
-                setSelectedBranch(parsedData[0]); // Select the first branch by default
+                setBranches(data);
+                setSelectedBranch(data); // Select the first branch by default
             })
             .catch(error => console.error('Error fetching branches:', error));
     }, []);

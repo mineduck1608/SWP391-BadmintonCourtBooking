@@ -52,8 +52,8 @@ const ViewCourtInfo = () => {
                 const slotData = await slotResponse.json();
 
                 console.log('Fetched court data:', courtData); // Log court data to console
-                console.log('Fetched court data:', branchData);
-                console.log('Fetched court data:', slotData);
+                console.log('Fetched branch data:', branchData);
+                console.log('Fetched slot data:', slotData);
 
                 const params = new URLSearchParams(location.search);
                 const courtId = params.get('courtId');
@@ -111,7 +111,7 @@ const ViewCourtInfo = () => {
 
     const handleNextImage = () => {
         if (mainCourt?.courtImg?.length > 0) {
-            setCurrentImageIndex((prev) => Math.min(prev + 1, mainCourt.courtImg.length - 1));
+            setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1));
         }
     };
 
@@ -158,11 +158,12 @@ const ViewCourtInfo = () => {
 
     // Function to extract image URLs from the courtImg string
     const extractImageUrls = (courtImg) => {
-        const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+        if (!courtImg) return [];
+        const regex = /([^|]+)/g;
         let matches;
         const urls = [];
         while ((matches = regex.exec(courtImg)) !== null) {
-            urls.push(matches[1]);
+            urls.push(matches[0]);
         }
         return urls;
     }
@@ -182,14 +183,22 @@ const ViewCourtInfo = () => {
                                         <button className="arrow-left" onClick={handlePrevImage}>
                                             <FaArrowLeft />
                                         </button>
-                                        <img className="viewcourtinfo-img" src={images[currentImageIndex].trim()} alt={`Court ${currentImageIndex}`} />
+                                        <img className="viewcourtinfo-img" src={images[currentImageIndex]?.trim() || ''} alt={`Court ${currentImageIndex}`} />
                                         <button className="arrow-right" onClick={handleNextImage}>
                                             <FaArrowRight />
                                         </button>
                                     </div>
                                 )}
+                                <div className="indicator-wrapper">
+                                            {images.map((_, index) => (
+                                                <span
+                                                    key={index}
+                                                    className={`indicator ${currentImageIndex === index ? 'active' : ''}`}
+                                                ></span>
+                                            ))}
+                                        </div>
                                 <div className="viewcourtinfo-info-status">
-                                    <div className="viewcourtinfo-info">
+                                    <div className="viewcourtinfo-info">                                 
                                         <p className='viewcourt-title'>Address: {branch?.location}</p>
                                         <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
                                         <p className='viewcourt-title'>Price: {mainCourt?.price}VND</p>
@@ -281,7 +290,7 @@ const ViewCourtInfo = () => {
                         <div className="viewcourtinfo-othercourts-content">
                             {recommendedCourts.map((court, index) => (
                                 <div key={index} className="viewcourtinfo-other-pic">
-                                    <img className="viewcourtinfo-other-img" src={extractImageUrls(court.courtImg)[0]?.trim()} alt="" />
+                                    <img className="viewcourtinfo-other-img" src={extractImageUrls(court.courtImg)[0]?.trim() || ''} alt="" />
                                     <div className="viewcourtinfo-other-info">
                                         <h2>Court Name: {court.courtName}</h2>
                                         <p>Address: {branch?.location}</p>

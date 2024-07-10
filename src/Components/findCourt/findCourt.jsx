@@ -113,11 +113,11 @@ const FindCourt = () => {
   });
 
   const extractImageUrls = (courtImg) => {
-    const regex = /Image \d+:(https?:\/\/[^\s,]+)/g;
+    const regex = /([^|]+)/g;
     let matches;
     const urls = [];
     while ((matches = regex.exec(courtImg)) !== null) {
-      urls.push(matches[1]);
+      urls.push(matches[0]);
     }
     return urls;
   };
