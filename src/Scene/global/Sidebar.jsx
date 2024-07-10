@@ -14,6 +14,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
