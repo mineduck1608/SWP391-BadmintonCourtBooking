@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { imageDb } from '../googleSignin/config';
 import { v4 } from 'uuid';
-import { listAll, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ref } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
@@ -62,7 +62,7 @@ export default function EditInfo() {
   const handleSave = () => {
     // Ensure userInfo.img is not empty
     const updatedUserInfo = userInfo;
-    fetchWithAuth(`https://localhost:7233/User/Update?id=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}`, {
+    fetchWithAuth(`https://localhost:7233/User/Update?userId=${updatedUserInfo.userId}&firstName=${updatedUserInfo.firstName}&lastName=${updatedUserInfo.lastName}&phone=${updatedUserInfo.phone}&email=${updatedUserInfo.email}&img=${updatedUserInfo.img}&actorId=${updatedUserInfo.userId}`, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,

@@ -9,6 +9,7 @@ import { ConfigProvider } from 'antd';
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
+import { jwtDecode } from 'jwt-decode';
 
 
 
@@ -23,6 +24,8 @@ const User = () => {
   const [addOpen, setAddOpen] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const decodedToken = jwtDecode(token); // Decode the JWT token to get user information
+  const tokenUserId = decodedToken.UserId; // Extract userId from the decoded token
 
   // Define initial state values
   const initialState = {
@@ -37,6 +40,8 @@ const User = () => {
     phone: '',
     role: ''
   };
+
+
 
   // Use a single state object to manage form fields
   const [formState, setFormState] = useState(initialState);
@@ -62,13 +67,14 @@ const User = () => {
 
   const handleOk = () => {
     const userData = formState;
+    console.log(userData)
 
     // If activeStatus is set to true, reset accessFail to 0
     if (userData.activeStatus === 'true') {
       userData.accessFail = 0;
     }
 
-    fetchWithAuth(`https://localhost:7233/User/Update?id=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance + "&accessFail=" + userData.accessFail, {
+    fetchWithAuth(`https://localhost:7233/User/Update?userId=` + userData.id + "&username=" + userData.username + "&password=" + userData.password + "&branchId=" + userData.branch + "&roleId=" + userData.role + "&firstName=" + userData.firstName + "&lastName=" + userData.lastName + "&phone=" + userData.phone + "&email=" + userData.email + "&status=" + userData.activeStatus + "&balance=" + userData.balance + "&accessFail=" + userData.accessFail + "&actorId=" + tokenUserId, {
       method: "PUT",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -148,7 +154,6 @@ const User = () => {
     }).then(response => response.json())
       .then((res) => {
         toast.success(res.msg);
-        console.log(res.msg)
       })
       .catch((error) => {
         toast.warning('Error adding user:', error);
