@@ -98,6 +98,18 @@
     transform: translateY(-2px);
 }
 
+.discount-table {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+}
+
+.discount-table th {
+    background-color: #4caf50;
+    color: white;
+}
+
+
 /* Nhỏ */
 @media (max-width: 600px) {
     .buyTime_bodyContainer {

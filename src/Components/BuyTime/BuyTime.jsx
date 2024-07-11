@@ -3,6 +3,7 @@ import './BuyTime.css'
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { Modal } from 'antd';
 
 const BuyTime = () => {
   const [userID, setUserID] = useState('');
@@ -11,7 +12,7 @@ const BuyTime = () => {
   const apiUrl = 'https://localhost:7233'
   var token = sessionStorage.getItem('token')
   const [discounts, setDiscounts] = useState([])
-  const [useDiscount, setUseDiscount] = useState({})
+  const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState(0)
   const minAmount = 10000
   const fetchDiscounts = async () => {
@@ -124,24 +125,38 @@ const BuyTime = () => {
     while (n > 0)
     return rs
   }
-  const calculateDiscount = (a) => {
-    let arr = discounts.sort((d1, d2) => d2.amount - d1.amount)
-    setUseDiscount({
-      proportion: 0,
-      threshold: 0
-    })
-    for (let i = 0; i < arr.length; i++) {
-      if (a >= arr[i].amount) {
-        setUseDiscount({
-          proportion: arr[i].proportion * a,
-          threshold: arr[i].amount
-        })
-        break
-      }
-    }
-  }
   return (
     <div className='buyTime'>
+      <Modal title='Here are our discounts'
+        open={open}
+        footer={null}
+        centered={true}
+        closable={false}
+      >
+        <span>
+          <table className='discount-table'>
+            <thead>
+              <tr>
+                <th>Amount</th>
+                <th>Proportion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                discounts.map(d => (
+                  <tr>
+                    <td>{formatNumber(d.amount)}</td>
+                    <td>{d.proportion}%</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+          <div className='right-align-btn'>
+            <button onClick={() => setOpen(false)}>Close</button>
+          </div>
+        </span>
+      </Modal>
       <div className='buyTime_bodyContainer'>
         <h1 className='buyTime_title'>Buy more flexible money</h1>
         <article className='buyTime_article'>
@@ -153,16 +168,12 @@ const BuyTime = () => {
                 let t = process(e.target.value)
                 setAmount(t)
                 validateAmount(t)
-                calculateDiscount(t)
               }} />
+
           </div>
           {!validAmount && (
             <p className='buyTime_err'>Input a valid number of money to buy!<br />Min: {formatNumber(minAmount)}đ</p>
           )}
-          {
-            useDiscount.proportion > 0 &&
-            <p>You'll get {formatNumber(useDiscount.proportion / 100)}đ after this transaction is completed!</p>
-          }
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>
             <option value={1}>VnPay</option>
@@ -173,6 +184,13 @@ const BuyTime = () => {
             <button className='buyTime_btn' onClick={() => {
               completeBooking()
             }}>Confirm</button>
+            <button
+              className='buyTime_btn'
+              onClick={() => {
+                setOpen(true)
+              }}>
+              View discounts
+            </button>
           </div>
         </article>
       </div>

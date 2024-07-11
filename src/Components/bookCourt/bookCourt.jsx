@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { toast } from "react-toastify";
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 import { HttpStatusCode } from "axios";
+import { Modal } from 'antd';
 
 const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
@@ -22,7 +23,7 @@ const BookCourt = () => {
     const [selectedBranch, setSelectedBranch] = useState({})
     const [user, setUser] = useState({})
     const [discounts, setDiscounts] = useState([])
-    const [useDiscount, setUseDiscount] = useState({})
+    const [open, setOpen] = useState(false)
     const fetchDiscounts = async () => {
         try {
             setDiscounts([])
@@ -233,7 +234,6 @@ const BookCourt = () => {
             let monthNum = t == null ? 1 : t.value
             let calculatedAmount = calcAmount(bookingType, courtInfo['price'], startTime, endTime, monthNum)
             setAmount(calculatedAmount)
-            calculateDiscount(calculatedAmount)
         }
         catch (err) {
             return 0
@@ -335,24 +335,38 @@ const BookCourt = () => {
         while (n > 0)
         return rs
     }
-    const calculateDiscount = (a) => {
-        let arr = discounts.sort((d1, d2) => d2.amount - d1.amount)
-        setUseDiscount({
-            proportion: 0,
-            threshold: 0
-        })
-        for (let i = 0; i < arr.length; i++) {
-            if (a >= arr[i].amount) {
-                setUseDiscount({
-                    proportion: arr[i].proportion * a / 100,
-                    threshold: arr[i].amount
-                })
-                break
-            }
-        }
-    }
     return (
         <div className="bookCourt-container">
+            <Modal title='Here are our discounts'
+                open={open}
+                footer={null}
+                centered={true}
+                closable={false}
+            >
+                <span>
+                    <table className='discount-table'>
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Proportion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                discounts.map(d => (
+                                    <tr>
+                                        <td>{formatNumber(d.amount)}</td>
+                                        <td>{d.proportion}%</td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                    <div className='right-align-btn'>
+                        <button onClick={() => setOpen(false)}>Close</button>
+                    </div>
+                </span>
+            </Modal>
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
             <div className="bookCourt-body">
                 <div className="bookCourt-section bookCourt-left-section">
@@ -495,23 +509,19 @@ const BookCourt = () => {
                         <h2 className="notes">
                             4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
                         <p>Price: <span className='priceSpan'>{formatNumber(amount)}</span></p>
-                        {
-                            useDiscount.proportion > 0 &&
-                            (
-                                <p>
-                                    You'll gain
-                                    <span className='priceSpan'> {formatNumber(useDiscount['proportion'])}đ </span>
-                                    as time balance when this booking is made.
-                                </p>
-                            )
-                        }
                         <p>
                             Your balance:
                             <span className='priceSpan'> {(Object.is(user, undefined) || Object.is(user['balance'], undefined) ? '_' : formatNumber(user['balance']))}
                             </span>
 
                         </p>
-
+                        <button
+                            className='buyTime_btn'
+                            onClick={() => {
+                                setOpen(true)
+                            }}>
+                            View discounts
+                        </button>
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
