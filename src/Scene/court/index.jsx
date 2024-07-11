@@ -124,8 +124,10 @@ const Court = () => {
 
     const handleSave = async () => {
         const { courtId, courtImg, price, courtStatus, description, branchName } = selectedCourt;
+        const encodedUrl = courtImg.split('|').map(url => encodeURIComponent(url)).join('|'); // Encode URLs when sending
+    
         try {
-            const response = await fetchWithAuth(`https://localhost:7233/Court/Update?courtImg=${courtImg}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
+            const response = await fetchWithAuth(`https://localhost:7233/Court/Update?courtImg=${encodedUrl}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -133,18 +135,18 @@ const Court = () => {
                 },
                 body: JSON.stringify({
                     courtId,
-                    courtImg,
+                    courtImg: encodedUrl,
                     price: parseFloat(price),
                     description,
                     activeStatus: courtStatus,
                     branchName,
                 }),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to update court');
             }
-
+    
             toast.success('Court updated successfully!');
             setModalVisible(false);
         } catch (error) {
@@ -152,28 +154,30 @@ const Court = () => {
             toast.error('Failed to update court');
         }
     };
-
+    
     const handleAddCourt = async () => {
         const { courtImg, branchId, price, description } = newCourtData;
+        const encodedUrl = courtImg.split('|').map(url => encodeURIComponent(url)).join('|'); // Encode URLs when sending
+    
         try {
-            const response = await fetchWithAuth(`https://localhost:7233/Court/Add?courtImg=${courtImg}&branchId=${branchId}&price=${price}&description=${description}`, {
+            const response = await fetchWithAuth(`https://localhost:7233/Court/Add?courtImg=${encodedUrl}&branchId=${branchId}&price=${price}&description=${description}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    courtImg,
+                    courtImg: encodedUrl,
                     branchId,
                     price: parseFloat(price),
                     description,
                 }),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to add court');
             }
-
+    
             toast.success('Court added successfully!');
             setAddModalVisible(false);
         } catch (error) {
@@ -181,6 +185,7 @@ const Court = () => {
             toast.error('Failed to add court');
         }
     };
+    
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -193,29 +198,30 @@ const Court = () => {
             toast.error('No images selected');
             return;
         }
-
+    
         const uploadedUrls = [];
         for (const img of imgs) {
             const imgRef = ref(imageDb, `files/${v4()}`);
             try {
                 await uploadBytes(imgRef, img);
                 const url = await getDownloadURL(imgRef);
-                uploadedUrls.push(encodeURIComponent(url));
+                uploadedUrls.push(url);  // Store the original URL
             } catch (error) {
                 console.error('Error uploading image:', error);
                 toast.error('Image upload failed');
                 return;
             }
         }
-
+    
         if (modalVisible) {
             setSelectedCourt((prevState) => ({ ...prevState, courtImg: uploadedUrls.join('|') }));
         } else {
             setNewCourtData((prevState) => ({ ...prevState, courtImg: uploadedUrls.join('|') }));
         }
-
+    
         toast.success('Images uploaded successfully');
     };
+    
 
     const columns = [
         {
