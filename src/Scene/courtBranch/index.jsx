@@ -111,21 +111,24 @@ const Branch = () => {
   const token = sessionStorage.getItem('token');
 
   const handleSave = async () => {
-    const { location, branchImg, branchName, branchPhone, branchStatus, branchId, mapUrl } = selectedBranch;  // Added mapUrl
-    const statusValue = branchStatus ? 1 : 0; // Convert boolean to 1 or 0
+    const { location, branchImg, branchName, branchPhone, branchStatus, branchId, mapUrl } = selectedBranch;
+    const statusValue = branchStatus ? 1 : 0;
+    const encodedUrl = encodeURIComponent(branchImg);
+    console.log(branchImg)
+  
     try {
-      const response = await fetchWithAuth(`https://localhost:7233/Branch/Update?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}&mapUrl=${mapUrl}`, {  // Added mapUrl
+      const response = await fetchWithAuth(`https://localhost:7233/Branch/Update?location=${location}&img=${encodedUrl}&name=${branchName}&phone=${branchPhone}&status=${statusValue}&id=${branchId}&mapUrl=${mapUrl}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to update branch');
       }
-
+  
       toast.success('Branch updated successfully!');
       setModalVisible(false);
     } catch (error) {
@@ -133,14 +136,17 @@ const Branch = () => {
       toast.error('Failed to update branch');
     }
   };
+  
 
   const [img, setImg] = useState(null);
 
 
   const handleAddBranch = async () => {
-    const { location, branchImg, branchName, branchPhone, mapUrl } = newBranch;  // Added mapUrl
+    const { location, branchImg, branchName, branchPhone, mapUrl } = newBranch;
+    const encodedUrl = encodeURIComponent(branchImg);
+  
     try {
-      const response = await fetchWithAuth(`https://localhost:7233/Branch/Add?location=${location}&img=${branchImg}&name=${branchName}&phone=${branchPhone}&mapUrl=${mapUrl}`, {  // Added mapUrl
+      const response = await fetchWithAuth(`https://localhost:7233/Branch/Add?location=${location}&img=${encodedUrl}&name=${branchName}&phone=${branchPhone}&mapUrl=${mapUrl}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,13 +154,13 @@ const Branch = () => {
         },
         body: JSON.stringify({
           location,
-          branchImg,
+          branchImg: encodedUrl,
           branchName,
           branchPhone,
-          mapUrl,  // Added mapUrl
+          mapUrl,
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to add branch');
       }
@@ -165,6 +171,7 @@ const Branch = () => {
       toast.error('Failed to add branch');
     }
   };
+  
 
   const columns = [
     { field: "branchId", headerName: "Branch ID", flex: 0.5, align: "center", headerAlign: "center" },
@@ -223,11 +230,10 @@ const Branch = () => {
     uploadBytes(imgRef, img)
       .then(() => getDownloadURL(imgRef))
       .then(url => {
-        const encodedUrl = encodeURIComponent(url);
         if (modalVisible) {
-          setSelectedBranch(branchImg => ({ ...branchImg, branchImg: encodedUrl }));
+          setSelectedBranch(branch => ({ ...branch, branchImg: url }));
         } else {
-          setNewBranch(branchImg => ({ ...branchImg, branchImg: encodedUrl }));
+          setNewBranch(branch => ({ ...branch, branchImg: url }));
         }
         toast.success('Image uploaded successfully');
       })
@@ -236,6 +242,7 @@ const Branch = () => {
         toast.error('Image upload failed');
       });
   };
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
