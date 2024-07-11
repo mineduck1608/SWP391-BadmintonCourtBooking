@@ -201,7 +201,7 @@ const Sidebar = () => {
                         >
                             Pages
                         </Typography>
-
+                        {role === 'Admin' && (
                         <Item className="menu-item"
                             title="Discount"
                             to="discount"
@@ -209,7 +209,7 @@ const Sidebar = () => {
                             selected={selected}
                             setSelected={setSelected}
                         />
-
+                        )}
                         <Item className="menu-item"
                             title="Time Slot"
                             to="timeSlot"
