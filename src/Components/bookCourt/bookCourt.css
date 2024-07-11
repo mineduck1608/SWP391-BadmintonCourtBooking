@@ -78,6 +78,7 @@
   margin-top: 7px;
   display: inline;
 }
+
 .tab1 {
   left: -40%;
 }
@@ -210,36 +211,45 @@ select {
   border: none;
   color: #fff;
   padding: 2%;
-  width:fit-content;
+  width: fit-content;
 }
-.buyTimeBtn:hover{
+
+.buyTimeBtn:hover {
   background-color: var(--PrimaryColor);
 }
-#datePicker{
+
+#datePicker {
   margin-left: 1%;
   display: block;
   width: 50%;
 }
-#dateError{
+
+#dateError {
   color: red;
 }
+
 .tab2 {
   /* position: relative; */
   margin-left: 7.5%;
 }
-#nowrap{
+
+#nowrap {
   white-space: nowrap;
 }
+
 .inputradioRight2 {
   display: flexbox;
   width: 10%;
 }
+
 .inputradioRight {
   display: none;
 }
-.inlineDiv{
+
+.inlineDiv {
   display: inline;
 }
+
 .bookCourt_span {
   position: relative;
   float: left;
@@ -251,12 +261,13 @@ select {
 }
 
 .bookCourt_span img {
-  width: 80%; 
+  width: 80%;
   object-fit: contain;
   display: flex;
 }
+
 .bookCourt_span.selected {
-  border: 2px solid #007bff; 
+  border: 2px solid #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   height: auto;
   /* width: 40%; */
@@ -265,23 +276,37 @@ select {
 .bookCourt_span::after {
   content: '✓';
   position: absolute;
-  top:0%;
-  right:0%;
+  top: 0%;
+  right: 0%;
   font-size: 120%;
-  color: #007bff; /* Change color as needed */
+  color: #007bff;
+  /* Change color as needed */
   display: none;
 }
 
 .bookCourt_span.selected::after {
   display: block;
 }
-.priceSpan{
+
+.priceSpan {
   font-weight: 600;
 }
+
 .occupied {
   color: red;
 }
 
 .free {
   color: green;
+}
+
+.centerDiv {
+  display: flex;
+  justify-content: center;
+}
+.centerDiv p{
+  margin: 1%;
+}
+.discount p{
+  color: red;
 }

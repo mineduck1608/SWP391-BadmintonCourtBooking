@@ -14,7 +14,7 @@ import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 const TimeSlotManagement = () => {
   const [rows, setRows] = useState([]);
   const token = sessionStorage.getItem('token');
-  const [setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [setSelectedRow] = useState(null);
   const [branches, setBranches] = useState([]);
@@ -177,7 +177,9 @@ const TimeSlotManagement = () => {
       start: addFormState.startValue,
       end: addFormState.endValue,
     };
-    fetchWithAuth(`https://localhost:7233/Slot/BookingByBalence?date=${slotData.date}&start=${slotData.start}&end=${slotData.end}&userId=${slotData.userId}&courtId=${slotData.courtId}`, {
+    console.log(addFormState);
+    console.log(slotData);
+    fetchWithAuth(`https://localhost:7233/Slot/BookingByBalance?date=${slotData.date}&start=${slotData.start}&end=${slotData.end}&userId=${slotData.userId}&courtId=${slotData.courtId}`, {
       method: "POST",
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -553,17 +555,18 @@ const TimeSlotManagement = () => {
       toast.error('All fields are required.');
       return;
     }
-  
+    var bookingId = slots.find(s => s.bookedSlotId === updateFormState.bookedSlotId).bookingId
     const updatedSlot = {
       slotId: updateFormState.bookedSlotId,
       courtId: updateFormState.courtId,
       date: updateFormState.date,
-      start: updateFormState.start,
+      start: updateFormState.startValue,
       end: updateFormState.end,
+      bookingId: bookingId
     };
   
-  
-    fetchWithAuth(`https://localhost:7233/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}`, {
+    console.log(updatedSlot);
+    fetchWithAuth(`https://localhost:7233/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}&bookingId=${updatedSlot.bookingId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -649,23 +652,25 @@ const TimeSlotManagement = () => {
   const hours = [...Array(24).keys()].map(i => i.toString().padStart(2, '0') + ':00');
 
   const handleStartChange = (e) => {
+    console.log(addFormState);
     const startValue = e.target.value;
     const startDisplay = startValue.padStart(2, '0') + ':00';
-    setAddFormState(prevState => ({
-      ...prevState,
+    setAddFormState(a =>({
+      ...a,
       start: startDisplay,
       startValue: parseInt(startValue)
     }));
   };
 
   const handleEndChange = (e) => {
+    console.log(addFormState);
     const endValue = e.target.value;
     const endDisplay = endValue.padStart(2, '0') + ':00';
-    setAddFormState(prevState => ({
-      ...prevState,
+    setAddFormState({
+      ...addFormState,
       end: endDisplay,
       endValue: parseInt(endValue)
-    }));
+    });
   };
 
   const handleUpdateStartChange = (e) => {
