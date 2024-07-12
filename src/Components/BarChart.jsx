@@ -23,13 +23,11 @@ const BarChart = ({ isDashboard = false }) => {
     const fetchAllData = async () => {
       try {
         const branches = await fetchData('https://localhost:7233/Branch/GetAll');
-        console.log("Branches:", branches);
 
         const courts = await fetchData('https://localhost:7233/Court/GetAll');
-        console.log("Courts", courts);
+
 
         const slots = await fetchData('https://localhost:7233/Slot/GetAll');
-        console.log("Slots:", slots)
 
         const token = sessionStorage.getItem('token');
         const payments = await fetchData('https://localhost:7233/Payment/GetAll', {
@@ -37,7 +35,6 @@ const BarChart = ({ isDashboard = false }) => {
             'Authorization': `Bearer ${token}`
           }
         });
-        console.log("Payments:", payments)
         
         // Process data to calculate total amount for each branch
         const branchAmounts = branches.map(branch => {

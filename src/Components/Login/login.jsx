@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './login.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import SignIn from '../googleSignin/signIn';
 import { jwtDecode } from 'jwt-decode';
 
@@ -35,28 +35,28 @@ const Login = () => {
             const status = decodedToken.Status
             if (roleToken == "Customer") {
               if (status == 'True') {
-                navigate('/home');
                 toast.success("Login successful!");
+                navigate('/home');
               } else {
-                navigate('/signin');
                 toast.warning('Banned. Please contact admin.')
+                navigate('/signin');
               }
             }
             if (roleToken == "Admin") {
               if (status == 'True') {
-                navigate('/admin');
                 toast.success("Login successful!");
+                navigate('/admin');
               }
             }
             if (roleToken == "Staff") {
               if (status == 'True') {
-                navigate('/staff');
                 toast.success("Login successful!");
+                navigate('/staff');
               }
             }
           } if(!resp.ok){
             toast.warning(resp.msg)
-          }
+           }
         }).catch((err) => {
           toast.error('Login failed. Please try again.');
           console.log(err);
@@ -99,7 +99,6 @@ const Login = () => {
       <div>
         <SignIn className='login-google' />
       </div>
-      <ToastContainer />
     </div>
   );
 }

@@ -14,7 +14,6 @@ const SignIn = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
-      console.log(token);
       const response = await fetch("https://localhost:7233/User/ExternalLogAuth?token=" + token, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },

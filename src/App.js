@@ -115,8 +115,9 @@ const logout = () => {
            {/* Route for CreateFeedbackModal */}
            <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />
         </Routes>
-        <ToastContainer theme='colored' />
+        
       </ThemeProvider>
+      <ToastContainer theme='colored' />
     </ColorModeContext.Provider>
   );
 };

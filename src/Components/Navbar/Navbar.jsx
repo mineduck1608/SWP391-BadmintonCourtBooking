@@ -4,6 +4,7 @@ import { MdSportsTennis } from "react-icons/md";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { TbGridDots } from "react-icons/tb";
 import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 
 const Navbar = () => {
@@ -74,6 +75,7 @@ const Navbar = () => {
 
                 </div>
             </div>
+            <ToastContainer theme='colored' />
         </section>
     )
 }

@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { jwtDecode } from 'jwt-decode'; // Import jwt-decode without curly braces
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { ToastContainer } from "react-toastify";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -67,13 +68,14 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        toast.success('Logout successful.');
+        toast.success('Logout success.');
         sessionStorage.clear();
         navigate('/'); // Redirect to home on logout
     };
 
     const toggleDropdown = () => {
         setDropdownOpen(prevState => !prevState);
+        console.log('Dropdown state:', !dropdownOpen);
     };
 
     return (
@@ -99,6 +101,7 @@ const Header = () => {
                     <a className="header-link time-balance" onClick={handleLogout}>Logout</a>
                 </div>
             </div>
+            <ToastContainer theme='colored' />
         </div>
     );
 }

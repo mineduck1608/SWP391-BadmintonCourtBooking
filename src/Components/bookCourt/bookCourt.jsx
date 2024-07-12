@@ -45,8 +45,10 @@ const BookCourt = () => {
                     }
                 })
             ).json()
-            for (let index = 0; index < discountData.length; index++) {
-                setDiscounts(t => [...t, discountData[index]])
+            const filteredData = discountData.filter(discount => !discount.isDelete);
+  
+            for (let index = 0; index < filteredData.length; index++) {
+              setDiscounts(t => [...t, filteredData[index]]);
             }
         }
         catch (err) {
@@ -333,7 +335,7 @@ const BookCourt = () => {
             return
         }
         const data = await res.json()
-        if (type !== flexible) {
+        if (type !== balance) {
             var payUrl = data['url']
             if (payUrl !== undefined) {
                 window.location.assign(payUrl)
@@ -400,7 +402,7 @@ const BookCourt = () => {
                         </tbody>
                     </table>
                     <div className='right-align-btn'>
-                        <button onClick={() => setOpen(false)}>Close</button>
+                        <button className='buyTime_btn' onClick={() => setOpen(false)}>Close</button>
                     </div>
                 </span>
             </Modal>

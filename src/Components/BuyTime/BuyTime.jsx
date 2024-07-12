@@ -17,22 +17,25 @@ const BuyTime = () => {
   const minAmount = 10000
   const fetchDiscounts = async () => {
     try {
-      setDiscounts([])
+      setDiscounts([]);
       const discountData = await (
         await fetch(`${apiUrl}/Discount/GetAll`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`
           }
         })
-      ).json()
-      for (let index = 0; index < discountData.length; index++) {
-        setDiscounts(t => [...t, discountData[index]])
+      ).json();
+  
+      const filteredData = discountData.filter(discount => !discount.isDelete);
+  
+      for (let index = 0; index < filteredData.length; index++) {
+        setDiscounts(t => [...t, filteredData[index]]);
       }
+    } catch (err) {
+      toast.error('Server error');
     }
-    catch (err) {
-      toast.error('Server error')
-    }
-  }
+  };
+  
   const process = (value) => {
     var r = value.replace('.', '').replace(/[^0-9]/g, '')
     return parseInt(r)
@@ -153,7 +156,7 @@ const BuyTime = () => {
             </tbody>
           </table>
           <div className='right-align-btn'>
-            <button onClick={() => setOpen(false)}>Close</button>
+            <button onClick={() => setOpen(false)} className='buyTime_btn'>Close</button>
           </div>
         </span>
       </Modal>
