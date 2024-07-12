@@ -187,7 +187,6 @@ export default function ViewHistory() {
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
     let booking = bookings.find(b => b.bookingId === slot.bookingId)
-
     setFormState({
       date: slot.date,
       start: slot.start,
