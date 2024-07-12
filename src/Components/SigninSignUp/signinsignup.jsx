@@ -4,6 +4,7 @@ import Register from "../Register/register";
 import './signinsignup.css'
 import { MdSportsTennis } from "react-icons/md";
 import { Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
  
 const SignInSignUp = ({ defaultLoginVisible }) => {
     const [isLoginVisible, setIsLoginVisible] = useState(defaultLoginVisible);
@@ -65,6 +66,7 @@ const SignInSignUp = ({ defaultLoginVisible }) => {
 
                 </div>
             </div>
+            <ToastContainer theme='colored' />
         </div>
 
     );

@@ -45,8 +45,10 @@ const BookCourt = () => {
                     }
                 })
             ).json()
-            for (let index = 0; index < discountData.length; index++) {
-                setDiscounts(t => [...t, discountData[index]])
+            const filteredData = discountData.filter(discount => !discount.isDelete);
+  
+            for (let index = 0; index < filteredData.length; index++) {
+              setDiscounts(t => [...t, filteredData[index]]);
             }
         }
         catch (err) {
