@@ -99,7 +99,7 @@ namespace BadmintonCourtAPI.Controllers
 			Dictionary<string, string> result = new Dictionary<string, string>();
 			int tail = components.Length - 2;
 			for (int i = 0; i < components.Length - 1; i++)
-            {	
+			{
 				string key = "";
 				string value = "";
 				string tmp = components[i].Trim();
@@ -213,7 +213,7 @@ namespace BadmintonCourtAPI.Controllers
 				{
 					string bookingId = "BK" + (_bookingService.GetAllBookings().Count + 1).ToString("D7");
 					_bookingService.AddBooking(new Booking { BookingId = bookingId, Amount = amount, BookingType = 1, UserId = userId, BookingDate = DateTime.Now, ChangeLog = 0 });
-					_service.AddSlot(new BookedSlot { SlotId = "S" + (_service.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate,  });
+					_service.AddSlot(new BookedSlot { SlotId = "S" + (_service.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate, });
 					user.Balance -= amount;
 					_userService.UpdateUser(user, userId);
 					return Ok(new { msg = "Success" });
@@ -255,39 +255,35 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> UpdateSlotByStaff(string? date, int? start, int? end, string slotId, string? courtId, string bookingId)
 		{
+
 			if (!IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
-		
+
 
 			Booking booking = _bookingService.GetBookingByBookingId(bookingId);
-			if (booking.ChangeLog < 2)
+			BookedSlot slot = _service.GetSlotById(slotId);
+			DateTime startDate = new();
+			DateTime endDate = new();
+			List<BookedSlot> tmpStorage = new();
+			ExtractSlotAndTime(date, start.Value, end.Value, courtId, out startDate, out endDate, out tmpStorage);
+			if (courtId == slot.CourtId) // Cũng là sân cũ
 			{
-				BookedSlot slot = _service.GetSlotById(slotId);
-				DateTime startDate = new();
-				DateTime endDate = new();
-				List<BookedSlot> tmpStorage = new();
-				ExtractSlotAndTime(date, start.Value, end.Value, courtId, out startDate, out endDate, out tmpStorage);
-				if (courtId == slot.CourtId) // Cũng là sân cũ
-				{
-					tmpStorage.Remove(slot); // Bỏ slot gốc để tránh quét phải
-				}
-				if (tmpStorage.Count > 0) // Khung giờ đấy của sân mới đã kẹt
-					return BadRequest(new { msg = $"Court {courtId} between {startDate} to {endDate} has been booked" });
-
-				double refund;
-				double tmpBalance;
-				double newAmount;
-				ExtractAmountToValidateCondition(slot, booking, startDate, endDate, courtId, out refund, out tmpBalance, out newAmount);
-				User user = _userService.GetUserById(booking.UserId);
-				if (tmpBalance >= newAmount)
-				{
-					SupportUpdateSlotEnoughBalnce(tmpBalance, newAmount, refund, courtId, startDate, endDate, booking, slot, user);
-					return Ok(new { msg = "Success" });
-				}
-				return BadRequest(new { msg = "Balance not enough" });
-
+				tmpStorage.Remove(slot); // Bỏ slot gốc để tránh quét phải
 			}
-			return BadRequest(new { msg = "Can't change" });
+			if (tmpStorage.Count > 0) // Khung giờ đấy của sân mới đã kẹt
+				return BadRequest(new { msg = $"Court {courtId} between {startDate} to {endDate} has been booked" });
+
+			double refund;
+			double tmpBalance;
+			double newAmount;
+			ExtractAmountToValidateCondition(slot, booking, startDate, endDate, courtId, out refund, out tmpBalance, out newAmount);
+			User user = _userService.GetUserById(booking.UserId);
+			if (tmpBalance >= newAmount)
+			{
+				SupportUpdateSlotEnoughBalnce(tmpBalance, newAmount, refund, courtId, startDate, endDate, booking, slot, user);
+				return Ok(new { msg = "Success" });
+			}
+			return BadRequest(new { msg = "Balance not enough" });
 		}
 
 		[HttpPut]
@@ -444,9 +440,9 @@ namespace BadmintonCourtAPI.Controllers
 			bool status = UpdateNewSlotToDB("00", result.VnPayResponseCode, result.Description, result.TransactionId, result.Amount, result.Date, 1);
 			if (status)
 				ExecuteSendUpdateMail(result.Description);
-            return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
+			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
-		
+
 
 		[HttpGet]
 		[Route("Slot/UpdateResultProcessMomo")]
@@ -455,7 +451,7 @@ namespace BadmintonCourtAPI.Controllers
 			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), DateTime.Parse(result.ResponseTime.Split(' ')[0]), 2);
 			if (status)
 				ExecuteSendUpdateMail(result.OrderInfo);
-            return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
+			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
 		}
 
 		private bool UpdateNewSlotToDB(string expected, string actual, string content, string transactionId, double amount, DateTime transactionPeriod, int method)

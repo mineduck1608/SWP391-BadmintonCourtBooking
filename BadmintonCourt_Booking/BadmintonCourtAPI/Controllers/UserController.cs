@@ -189,9 +189,6 @@ namespace BadmintonCourtAPI.Controllers
 			// Nhập đúng username + pass
 			if (user != null)
 			{
-				if (user.RoleId == "R001")
-					return Ok(new { token = Util.GenerateToken(user.UserId, true, username, "Admin", 1) });
-
 				if (user.Token != null || user.ActionPeriod != null)
 					ResetFailAction(user);
 				//-------------------------------------------------------------------------
@@ -294,7 +291,7 @@ namespace BadmintonCourtAPI.Controllers
 					if (user != null)  // Đảm bảo id real, ko fake url
 					{
 						// user.Password = Util.ToHashString(password); // Hash pass
-						user.Password = password;
+						user.Password = Util.ToHashString(password);
 						user.ActiveStatus = true;
 						user.AccessFail = 0;
 						user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
@@ -365,13 +362,23 @@ namespace BadmintonCourtAPI.Controllers
 					user.UserName = username;
 				else return BadRequest(new { msg = "Username existed" });
 			}
-			if (!password.IsNullOrEmpty()) 
-				if (!Util.IsPasswordSecure(password))
-					if (user.Password != Util.ToHashString(password)) // hash pass
-							user.Password = Util.ToHashString(password); // Lay lai pass cu
-																		//user.Password = password;
+			// ko nhập trả về a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+			// password ko rỗng
+			// chuỗi ở db: a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+			// abcxyz
+			if (!password.IsNullOrEmpty()) // a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+			{
+				if (password != user.Password)
+				{
+					if (Util.IsPasswordSecure(password))
+					{
+						user.Password = Util.ToHashString(password);
+					}
+					else return BadRequest(new { msg = "Password is not secure enough" });
+				}		
+			}
 
-            if (accessFail != null)
+			if (accessFail != null)
 			{
 				if (accessFail == 0)
 					user.LastFail = new DateTime(1900, 1, 1, 0, 0, 0);
@@ -413,9 +420,10 @@ namespace BadmintonCourtAPI.Controllers
 			
 			if (isAdmin == true || userId == actorId)
 			{
-				phone = phone.Trim();
 				if (!phone.IsNullOrEmpty())
 				{
+					phone = phone.Trim();
+
 					if (Util.IsPhoneFormatted(phone))
 					{
 						if (info.Phone == phone)
@@ -439,13 +447,12 @@ namespace BadmintonCourtAPI.Controllers
 
 				if (!string.IsNullOrEmpty(email))
 				{
-					if (info.Email.ToLower() == email.ToLower())
-						info.Email = email;
-					else
+					email = email.Trim().ToLower();
+					if (info.Email.ToLower() != email)
 					{
 						if (Util.IsMailFormatted(email))
 						{
-							if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == email.ToLower()) == null)
+							if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == email) == null)
 							{
 								if (!isAdmin)
 								{
