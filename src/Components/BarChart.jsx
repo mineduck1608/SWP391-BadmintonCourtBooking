@@ -23,23 +23,32 @@ const BarChart = ({ isDashboard = false }) => {
     const fetchAllData = async () => {
       try {
         const branches = await fetchData('https://localhost:7233/Branch/GetAll');
+        console.log("Branches:", branches);
+
         const courts = await fetchData('https://localhost:7233/Court/GetAll');
+        console.log("Courts", courts);
+
         const slots = await fetchData('https://localhost:7233/Slot/GetAll');
+        console.log("Slots:", slots)
+
         const token = sessionStorage.getItem('token');
-        const bookings = await fetchData('https://localhost:7233/Booking/GetAll', {
+        const payments = await fetchData('https://localhost:7233/Payment/GetAll', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+        console.log("Payments:", payments)
         
         // Process data to calculate total amount for each branch
         const branchAmounts = branches.map(branch => {
           const branchCourts = courts.filter(court => court.branchId === branch.branchId);
-          const branchBookings = branchCourts.flatMap(court => 
-            slots.filter(slot => slot.courtId === court.courtId)
-                 .map(slot => bookings.find(booking => booking.bookingId === slot.bookingId)?.amount || 0)
+          const branchSlots = slots.filter(slot => 
+            branchCourts.some(court => court.courtId === slot.courtId)
           );
-          const totalAmount = branchBookings.reduce((sum, amount) => sum + amount, 0);
+          const branchPayments = payments.filter(payment => 
+            branchSlots.some(slot => slot.bookingId === payment.bookingId)
+          );
+          const totalAmount = branchPayments.reduce((sum, payment) => sum + payment.amount, 0);
           return { branchName: branch.branchName, totalAmount };
         });
         
