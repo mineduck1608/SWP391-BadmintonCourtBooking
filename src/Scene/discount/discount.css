@@ -33,3 +33,6 @@
     margin-top: 10px;
     background-color: back;
 }
+.discount-status{
+    display: flex;
+}

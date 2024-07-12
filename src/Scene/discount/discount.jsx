@@ -8,10 +8,6 @@ import { Modal, Spin, ConfigProvider } from 'antd';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './discount.css';
-import { v4 } from 'uuid';
-import { uploadBytes, getDownloadURL } from 'firebase/storage';
-import { ref } from 'firebase/storage';
-import { imageDb } from '../../Components/googleSignin/config.js';
 import { jwtDecode } from 'jwt-decode';
 import { fetchWithAuth } from '../../Components/fetchWithAuth/fetchWithAuth.jsx';
 
@@ -40,10 +36,8 @@ const Discount = () => {
         }
         const discountData = await discountResponse.json();
 
-        let token;
-        token = sessionStorage.getItem('token');
-        let decodedToken;
-        decodedToken = jwtDecode(token);
+        let token = sessionStorage.getItem('token');
+        let decodedToken = jwtDecode(token);
 
         setUserRole(decodedToken.Role);
 
@@ -71,9 +65,26 @@ const Discount = () => {
     setModalVisible(true);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete row with id: ${id}`);
-    // Implement the logic for deleting a row here
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetchWithAuth(`https://localhost:7233/Discount/Delete?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete discount');
+      }
+
+      toast.success('Discount deleted successfully!');
+      setData(data.filter((item) => item.discountId !== id));
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to delete discount');
+    }
   };
 
   const handleInputChange = (e) => {
@@ -84,6 +95,14 @@ const Discount = () => {
     });
   };
 
+  const handleRadioChange = (e) => {
+    const { value } = e.target;
+    setSelectedDiscount({
+      ...selectedDiscount,
+      isDelete: value === 'None',
+    });
+  };
+
   const handleAddInputChange = (e) => {
     const { name, value } = e.target;
     setNewDiscount({
@@ -91,12 +110,14 @@ const Discount = () => {
       [name]: value,
     });
   };
+
   const token = sessionStorage.getItem('token');
 
   const handleSave = async () => {
-    const { amount, proportion, discountId } = selectedDiscount;
+    const { amount, proportion, discountId, isDelete } = selectedDiscount;
+    console.log(selectedDiscount)
     try {
-      const response = await fetchWithAuth(`https://localhost:7233/Discount/Update?amount=${amount}&proportion=${proportion}&id=${discountId}`, {
+      const response = await fetchWithAuth(`https://localhost:7233/Discount/Update?amount=${amount}&proportion=${proportion}&id=${discountId}&isDelete=${isDelete}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -147,6 +168,17 @@ const Discount = () => {
     { field: "amount", headerName: "Amount", align: "center", headerAlign: "center" },
     { field: "proportion", headerName: "Proportion", flex: 1, cellClassName: "name-column--cell", align: "center", headerAlign: "center" },
     {
+      field: "isDelete",
+      headerName: "Status",
+      flex: 1,
+      cellClassName: "name-column--cell",
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        params.value === null ? 'Active' : 'None'
+      ),
+    },
+    {
       field: "actions",
       headerName: "Actions",
       flex: 1,
@@ -160,6 +192,13 @@ const Discount = () => {
             onClick={() => handleViewInfo(params.row.discountId)}
           >
             Edit Info
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#b22222', color: 'white' }}
+            onClick={() => handleDelete(params.row.discountId)}
+          >
+            Delete
           </Button>
         </Box>
       )
@@ -187,10 +226,10 @@ const Discount = () => {
       <Box m="20px">
         <Head title="DISCOUNTS" subtitle="List of Discounts for Future Reference" />
         <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="20px">
-        {userRole === 'Admin' && (
-          <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
-            Add Discount
-          </Button>
+          {userRole === 'Admin' && (
+            <Button variant="contained" color="primary" onClick={() => setAddModalVisible(true)}>
+              Add Discount
+            </Button>
           )}
         </Box>
         <Box
@@ -276,6 +315,19 @@ const Discount = () => {
                 fullWidth
                 margin="normal"
               />
+              <FormControl component="fieldset" margin="normal">
+                <FormLabel component="legend">Status</FormLabel>
+                <RadioGroup
+                  name="isDelete"
+                  value={selectedDiscount.isDelete ? 'true' : 'false'}
+                  onChange={handleRadioChange}
+                >
+                  <div className='discount-status'>
+                  <FormControlLabel value="false" control={<Radio />} label="Active" />
+                  <FormControlLabel value="true" control={<Radio style={{ color: '#b22222' }} />} label="None" />
+                  </div>
+                </RadioGroup>
+              </FormControl>
             </Box>
           ) : (
             <Spin />
