@@ -73,7 +73,7 @@ const Header = () => {
     };
 
     const toggleDropdown = () => {
-        setDropdownOpen(!dropdownOpen);
+        setDropdownOpen(prevState => !prevState);
     };
 
     return (
