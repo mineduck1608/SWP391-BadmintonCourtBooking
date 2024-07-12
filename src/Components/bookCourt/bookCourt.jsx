@@ -9,17 +9,28 @@ import { HttpStatusCode } from "axios";
 import { Modal } from 'antd';
 
 const BookCourt = () => {
+
+    const playOnce = 'playOnce'
+    const fixed = 'fixed'
+    const flexible = 'flexible'
+
+    const vnpay = 1
+    const momo = 2
+
+    const banking = 'banking'
+    const balance = 'balance'
+    const apiUrl = "https://localhost:7233"
+
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts if active
     const [paymentType, setPaymentType] = useState('') //banking or not
     const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
     const [timeError, setTimeError] = useState(0) //
-    const [transferMethod, setTransferMethod] = useState(1) //momo, vnpay
+    const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
     const [amount, setAmount] = useState(0)
-    const apiUrl = "https://localhost:7233"
     const [selectedBranch, setSelectedBranch] = useState({})
     const [user, setUser] = useState({})
     const [discounts, setDiscounts] = useState([])
@@ -202,14 +213,41 @@ const BookCourt = () => {
     }
 
     const validateBooking = () => {
-        var tmp = (validateDateTime() === 0)
-        if (!tmp) return false
+        var errorMsg
         try {
-            var checkBalance = (paymentType === 'flexible' ? user['balance'] >= amount : true)
-            if (!checkBalance) toast.error('Balance is not enough')
-            tmp = checkBalance && courtInfo['courtStatus'] && !isOccupied;
+            var tmp = (validateDateTime() === 0)
+            if (!tmp) {
+                errorMsg = 'Invalid date time'
+                throw new Error()
+            }
+            var checkBalance = (paymentType === balance ? user['balance'] >= amount : true)
+            if (!checkBalance) {
+                errorMsg = 'Balance not enough'
+                throw new Error()
+            }
+            //balance enough? court is active? the slot is occupied?
+            tmp = courtInfo['courtStatus'] && !isOccupied;
+            if (!tmp) {
+                errorMsg = "Can't book this court at the specified time"
+                throw new Error()
+            }
+            //booking and payment type specified?
+            tmp = bookingType !== '' && paymentType !== ''
+            if (!tmp) {
+                errorMsg = 'Booking type or payment type not specified'
+                throw new Error()
+            }
+            //If banking, is transfer method specified?
+            if (paymentType === banking) {
+                tmp = tmp && transferMethod !== ''
+                if (!tmp) {
+                    errorMsg = 'Transfer method not specified'
+                    throw new Error()
+                }
+            }
             return tmp
         } catch (error) {
+            toast.error(errorMsg)
             return false;
         }
     };
@@ -241,7 +279,7 @@ const BookCourt = () => {
     }
     const calcAmount = (bkType, price, start, end, month) => {
         var amount = price * (end - start)
-        if (bkType === 'fixed') amount *= (4 * month)
+        if (bkType === fixed) amount *= (4 * month)
         return amount
     }
     const pushBooking = async () => {
@@ -273,7 +311,7 @@ const BookCourt = () => {
             let t = document.getElementById('monthNum');
             let monthNum = t == null ? null : t.value
             let date = document.getElementById('datePicker').value
-            let url = paymentType === 'flexible' ? buildFlexibleUrl(date, startTime, endTime, courtInfo['courtId'], user['userId'])
+            let url = paymentType === balance ? buildFlexibleUrl(date, startTime, endTime, courtInfo['courtId'], user['userId'])
                 : buildTransferUrl(transferMethod, startTime, endTime, user['userId'], date, courtInfo['courtId'], bookingType, monthNum)
             var res = await fetchWithAuth(url,
                 {
@@ -295,7 +333,7 @@ const BookCourt = () => {
             return
         }
         const data = await res.json()
-        if (type !== 'flexible') {
+        if (type !== flexible) {
             var payUrl = data['url']
             if (payUrl !== undefined) {
                 window.location.assign(payUrl)
@@ -307,7 +345,6 @@ const BookCourt = () => {
             setTimeout(() => {
                 window.location.assign('/bookingHistory')
             }, 500);
-            return
         }
         const msg = data['msg']
         if (msg.includes('not enough')) {
@@ -383,8 +420,8 @@ const BookCourt = () => {
                     <h2 className="notes">1. SELECT A COURT</h2>
                     <div className="bookCourt-option1">
                         <label htmlFor="branch">BRANCH:</label>
-                        <select id="branch" name="branch" onChange={() => {
-                            setSelectedBranch(document.getElementById('branch').value)
+                        <select id="branch" name="branch" onChange={(e) => {
+                            setSelectedBranch(e.target.value)
                         }}>
                             <option value="" hidden selected>Choose a branch</option>
                             {
@@ -404,9 +441,10 @@ const BookCourt = () => {
                     <div className="bookCourt-option2">
                         <label htmlFor="court">COURT:</label>
 
-                        <select id="court" name="court" onChange={() => {
-                            loadCourtInfo(document.getElementById('court').value)
-                            checkAvailableSlot(document.getElementById('court').value)
+                        <select id="court" name="court" onChange={(e) => {
+                            var courtId = e.target.value
+                            loadCourtInfo(courtId)
+                            checkAvailableSlot(courtId)
                             handleCalcAmount()
                         }}>
                             {<option value="No" hidden selected>Choose a court</option>}
@@ -431,14 +469,14 @@ const BookCourt = () => {
                         <div className="bookCourt-form-group1">
                             <input className="inputradio" type="radio" id="fixed-time" name="booking-type"
                                 value="fixed-time" onChange={() => {
-                                    setBookingType('fixed')
+                                    setBookingType(fixed)
                                     setPaymentType('banking')
                                     handleCalcAmount()
                                 }}
-                                checked={bookingType === 'fixed'}
+                                checked={bookingType === fixed}
                             />
                             <label htmlFor="fixed-time">Fixed Time (reserves at the specified time for the entire months)</label>
-                            {bookingType === 'fixed' && (
+                            {bookingType === fixed && (
                                 <div className="bookCourt-form-subgroup">
                                     <label htmlFor="fixed-time-months">For:</label>
                                     <select id='monthNum' name="fixed-time-months" onChange={() => handleCalcAmount()}>
@@ -452,10 +490,10 @@ const BookCourt = () => {
                         </div>
                         <div className="bookCourt-form-group2">
                             <input className="inputradio" type="radio" id="once" name="booking-type" value="once" onChange={() => {
-                                setBookingType('playOnce')
+                                setBookingType(playOnce)
                                 handleCalcAmount()
                             }}
-                                checked={bookingType === 'playOnce'}
+                                checked={bookingType === playOnce}
                             />
                             <label htmlFor="once">Once (reserves at the specified time and date)</label>
                         </div>
@@ -529,27 +567,27 @@ const BookCourt = () => {
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
-                                onChange={() => { setPaymentType('banking') }}
-                                checked={paymentType === 'banking'}
+                                onChange={() => { setPaymentType(banking) }}
+                                checked={paymentType === banking}
                             />
                             <span>Banking</span>
                         </div>
                         {
-                            bookingType === 'playOnce' &&
+                            bookingType === playOnce &&
                             (
                                 <div className='inlineDiv'>
                                     <input type='radio' className="inputradioRight2" name='paymentType' value='timeBalance'
                                         onChange={() => {
-                                            setPaymentType('flexible')
+                                            setPaymentType(balance)
                                         }}
-                                        checked={paymentType === 'flexible'}
+                                        checked={paymentType === balance}
                                     />
                                     <span>Time balance</span>
                                 </div>
                             )
                         }
                         {
-                            amount > user['balance'] && paymentType === 'flexible' &&
+                            amount > user['balance'] && paymentType === flexible &&
                             <button className='buyTimeBtn' onClick={() => window.location.assign('/buyTime')}>Buy Balance</button>
                         }
                         {
@@ -562,12 +600,12 @@ const BookCourt = () => {
                                     name='transferMethod'
                                     value='vnpay'
                                     id="vnpayRadio"
-                                    onChange={() => setTransferMethod(1)}
-                                    checked={transferMethod === 1}
+                                    onChange={() => setTransferMethod(vnpay)}
+                                    checked={transferMethod === vnpay}
                                 />
                                 <label
                                     htmlFor="vnpayRadio"
-                                    className={`bookCourt_span ${transferMethod === 1 ? 'selected' : ''}`}
+                                    className={`bookCourt_span ${transferMethod === vnpay ? 'selected' : ''}`}
                                 >
                                     <img id='VnpayLogo' src={vnpayLogo} alt="Vnpay" />
                                 </label>
@@ -578,12 +616,12 @@ const BookCourt = () => {
                                     name='transferMethod'
                                     value='momo'
                                     id="momoRadio"
-                                    onChange={() => setTransferMethod(2)}
-                                    checked={transferMethod === 2}
+                                    onChange={() => setTransferMethod(momo)}
+                                    checked={transferMethod === momo}
                                 />
                                 <label
                                     htmlFor="momoRadio"
-                                    className={`bookCourt_span ${transferMethod === 2 ? 'selected' : ''}`}
+                                    className={`bookCourt_span ${transferMethod === momo ? 'selected' : ''}`}
                                 >
                                     <img id='MomoLogo' src={momoLogo} alt="Momo" />
                                 </label>
