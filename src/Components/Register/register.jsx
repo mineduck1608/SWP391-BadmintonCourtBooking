@@ -48,11 +48,7 @@ const Register = () => {
         body: JSON.stringify(regobj),
       }).then(response => response.json())
       .then((res) => {
-        if(res.ok){
-          toast.success(res.msg);
-          navigator('/');
-        }
-        toast.warning(res.msg);
+        toast(res.msg);
       }).catch((err) => {
         toast.error('Failed: ' + err.message);
       });
