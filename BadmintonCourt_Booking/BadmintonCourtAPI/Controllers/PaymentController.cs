@@ -43,9 +43,65 @@ namespace BadmintonCourtAPI.Controllers
 		private const string playonceBooking = "playOnce";
 		private const string fixedBooking = "fixed";
 		private const string buyTime = "buyTime";
+		private const string style = "style='padding: 8px; border: 1px solid #ddd;'";
 
-		private string GenerateMailBody(UserDetail info) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. You can now check your transaction information in the payment history section of your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
+
+		private string GenerateSlotTable(string orderInfo)
+		{
+			string courtId = orderInfo.Split(',')[3].Trim().Split(':')[1].Trim();
+			string date = orderInfo.Split(',')[4].Trim().Split(':')[1].Trim();
+			string start = orderInfo.Split(',')[5].Trim().Split(':')[1].Trim();
+			string end = orderInfo.Split(',')[6].Trim().Split(':')[1].Trim();
+			string table = $@"<table {style}>
+
+    <tr>
+        <td {style}>Court</td>
+        <td {style}>{courtId}</td>
+    </tr>
+    <tr>
+        <td {style}>Date</td>
+        <td {style}>{date}</td>
+    </tr>
+    <tr>
+        <td {style}>Start period</td>
+        <td {style}>{start}h</td>
+    </tr
+	<tr>
+        <td {style}>End period</td>
+        <td {style}>{end}h</td>
+    </tr>
+";
+			if (orderInfo.Contains("Number of months:"))
+			{
+				string n = orderInfo.Split(',')[7].Trim().Split(':')[1].Trim();
+				table += $"<tr {style}><td>Number of month(s)</td><td>{n}</td></tr>";
+			}
+			return table + "</table>";
+		}
+
+		private void ExecuteSendMail (string orderInfo, string amount)
+		{
+			string userId = orderInfo.Split(',')[1].Trim().Split(':')[1].Trim();
+			UserDetail info = _userDetailService.GetUserDetailById(userId);
+			string type = orderInfo.Split(',')[0].Trim().Split(':')[1].Trim();
+			//------------------------------------------------------------------
+			string content = "";
+			if (type == fixedBooking || type == playonceBooking)
+				content = GenerateSlotTable(orderInfo);
+
+			content += "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase</p><p>";
+
+			if (type == buyTime || type == flexibleBooking)
+				content += $"We have added to your balance {amount}";
+			else
+				content += "We have added new booked slot to your schedule";
+			//------------------------------------------------------------------
+			content += "</p><p> You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+
+			_mailService.SendMail(info.Email, content, "BMTC - Booking Notification");
+		}
+		// <p>You can now check your transaction information in the payment history section of your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>
 
 		/// <summary>
 		/// Create info for both methods. It will have the following format:
@@ -514,11 +570,7 @@ namespace BadmintonCourtAPI.Controllers
 			string actual = result.VnPayResponseCode;
 			bool success = SaveToDB(content, date, transId, amount, expected, actual, 1);
 			if (success)
-			{
-				string userId = result.Description.Split(',')[1].Trim().Split(':')[1].Trim();
-				UserDetail info = _userDetailService.GetUserDetailById(userId);
-				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
-			}
+				ExecuteSendMail(content, amount);
             return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
@@ -532,11 +584,7 @@ namespace BadmintonCourtAPI.Controllers
 
 			bool success = SaveToDB(result.OrderInfo, date, result.TransId, result.Amount, result.Message, "Success", 2);
 			if (success)
-			{
-				string userId = result.OrderInfo.Split('|')[1].Trim().Split(':')[1].Trim();
-				UserDetail info = _userDetailService.GetUserDetailById(userId);
-				_mailService.SendMail(info.Email, GenerateMailBody(info), "BMTC - Booking Notification");
-            }
+				ExecuteSendMail(result.OrderInfo, result.Amount);
             return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 

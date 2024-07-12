@@ -366,17 +366,11 @@ namespace BadmintonCourtAPI.Controllers
 				else return BadRequest(new { msg = "Username existed" });
 			}
 			if (!password.IsNullOrEmpty()) 
-				if (!Util.IsPasswordSecure(password.Trim()))
+				if (!Util.IsPasswordSecure(password))
 					if (user.Password != Util.ToHashString(password)) // hash pass
-							user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
+							user.Password = Util.ToHashString(password); // Lay lai pass cu
 																		//user.Password = password;
-			if (accessFail != null)
-			if(!password.IsNullOrEmpty()) { 
-			if (Util.IsPasswordSecure(password))
-				if (user.Password != Util.ToHashString(password)) // hash pass
-					user.Password = Util.ToHashString(password); // Lay lai pass cu
-                                                                     //user.Password = password;
-            }
+
             if (accessFail != null)
 			{
 				if (accessFail == 0)
