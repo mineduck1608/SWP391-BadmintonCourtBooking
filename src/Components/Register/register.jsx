@@ -2,7 +2,7 @@ import { isValidDateValue } from '@testing-library/user-event/dist/utils';
 import './register.css';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const Register = () => {
@@ -72,6 +72,7 @@ const Register = () => {
           <p className="login-link">You already have an account?<Link to={'/signin'}>Login</Link></p>
         </div>
       </form>
+      <ToastContainer/>
     </div>
   );
 }

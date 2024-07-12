@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './login.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import SignIn from '../googleSignin/signIn';
 import { jwtDecode } from 'jwt-decode';
 
@@ -99,6 +99,7 @@ const Login = () => {
       <div>
         <SignIn className='login-google' />
       </div>
+      <ToastContainer />
     </div>
   );
 }
