@@ -219,7 +219,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> UpdateSlotByStaff(string? date, int? start, int? end, string slotId, string? courtId, string bookingId)
 		{
-			if (IsTimeIntervalValid(date, start, end, courtId))
+			if (!IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
 		
 

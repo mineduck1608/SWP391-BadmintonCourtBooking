@@ -1867,3 +1867,4 @@ D:\CODING\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Deb
 D:\CODING\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.pdb
 D:\CODING\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\BadmintonCourtAPI.genruntimeconfig.cache
 D:\CODING\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\obj\Debug\net8.0\ref\BadmintonCourtAPI.dll
+D:\git\bmtc\badmintoncourtbooking\BadmintonCourt_Booking\BadmintonCourtAPI\bin\Debug\net8.0\BadmintonCourtAPI.staticwebassets.runtime.json

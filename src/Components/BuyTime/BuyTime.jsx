@@ -158,9 +158,19 @@ const BuyTime = () => {
         </span>
       </Modal>
       <div className='buyTime_bodyContainer'>
-        <h1 className='buyTime_title'>Buy more flexible money</h1>
+        <div className='buyTime_title'>
+          <h1 >Buy more flexible money</h1>
+          <button
+              className='buyTime_btn'
+              onClick={() => {
+                setOpen(true)
+              }}>
+              View discounts
+            </button>
+        </div>
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining money: {formatNumber(Math.floor(remainingTime))}</p>
+          
           <div className='buyTime_centerDiv'>
             <input className='buyTime_counter1' id='amount' type='text'
               value={formatNumber(amount)}
@@ -184,13 +194,7 @@ const BuyTime = () => {
             <button className='buyTime_btn' onClick={() => {
               completeBooking()
             }}>Confirm</button>
-            <button
-              className='buyTime_btn'
-              onClick={() => {
-                setOpen(true)
-              }}>
-              View discounts
-            </button>
+            
           </div>
         </article>
       </div>

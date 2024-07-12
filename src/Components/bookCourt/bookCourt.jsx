@@ -368,12 +368,21 @@ const BookCourt = () => {
                 </span>
             </Modal>
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
+            <div className="centerDiv discount">
+                <p>Enjoy exclusive discounts on badminton court bookings at our premier locations. Book now and elevate your game with unbeatable deals!</p>
+                <button
+                    className='buyTime_btn'
+                    onClick={() => {
+                        setOpen(true)
+                    }}>
+                    View discounts
+                </button>
+            </div>
             <div className="bookCourt-body">
                 <div className="bookCourt-section bookCourt-left-section">
                     <h2 className="notes">1. SELECT A COURT</h2>
                     <div className="bookCourt-option1">
                         <label htmlFor="branch">BRANCH:</label>
-
                         <select id="branch" name="branch" onChange={() => {
                             setSelectedBranch(document.getElementById('branch').value)
                         }}>
@@ -454,6 +463,7 @@ const BookCourt = () => {
                 </div>
                 <div className="bookCourt-section bookCourt-right-section">
                     <h2 className="notes">3. TIME AND DATE</h2>
+                    <p>Book more money to gain bonus balance!</p>
                     <div className="bookCourt-form-group4">
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
@@ -515,13 +525,7 @@ const BookCourt = () => {
                             </span>
 
                         </p>
-                        <button
-                            className='buyTime_btn'
-                            onClick={() => {
-                                setOpen(true)
-                            }}>
-                            View discounts
-                        </button>
+
                         <label htmlFor="paymentType">Payment type</label>
                         <div className='inlineDiv'>
                             <input type='radio' className="inputradioRight2" name='paymentType' value='banking'
