@@ -169,7 +169,7 @@ export const themeSettings = (mode) => {
 
 // context for color mode
 export const ColorModeContext = createContext({
-  toggleColorMode: () => {},
+  //toggleColorMode: () => {},
 });
 
 export const useMode = () => {
@@ -177,8 +177,8 @@ export const useMode = () => {
 
   const colorMode = useMemo(
     () => ({
-      toggleColorMode: () =>
-        setMode((prev) => (prev === "light" ? "dark" : "light")),
+      // toggleColorMode: () =>
+      //   setMode((prev) => (prev === "light" ? "dark" : "light")),
     }),
     []
   );
