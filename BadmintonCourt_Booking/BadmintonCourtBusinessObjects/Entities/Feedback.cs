@@ -1,4 +1,4 @@
-﻿F<<using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BadmintonCourtBusinessObjects.Entities;
