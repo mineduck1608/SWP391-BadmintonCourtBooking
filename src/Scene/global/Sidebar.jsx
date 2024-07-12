@@ -261,7 +261,7 @@ const Sidebar = () => {
                     </Box>
                 </Menu>
             </ProSidebar>
-            <ToastContainer />
+            <ToastContainer/>
         </Box>
     );
 };
