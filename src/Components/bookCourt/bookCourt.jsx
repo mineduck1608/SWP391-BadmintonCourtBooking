@@ -333,7 +333,7 @@ const BookCourt = () => {
             return
         }
         const data = await res.json()
-        if (type !== flexible) {
+        if (type !== balance) {
             var payUrl = data['url']
             if (payUrl !== undefined) {
                 window.location.assign(payUrl)

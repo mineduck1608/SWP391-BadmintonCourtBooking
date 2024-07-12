@@ -47,12 +47,18 @@ const TimeSlotManagement = () => {
     slotId: '',
     bookedSlotId: ''
   });
-
+  const convertToMDY = (date) => {
+    //assume date is in dd-mm-yyyy
+    var t = date.split('-');
+    return `${t[1]}-${t[0]}-${t[2]}`
+  }
   const openUpdateModal = (row) => {
+    //row.date is treated as mm-dd instead of dd-mm, so this must be done
+    var normalize = convertToMDY(row.date)
     setUpdateFormState({
       branchId: row.branchId,
       courtId: row.courtId,
-      date: dayjs(row.date).format('YYYY-MM-DD'), // Ensure date is in correct format
+      date: dayjs(normalize).format('YYYY-MM-DD'), // Ensure date is in correct format
       start: row.start,
       startValue: row.start,
       end: row.end,
@@ -549,6 +555,14 @@ const TimeSlotManagement = () => {
   };
 
   const handleUpdateOk = () => {
+    if(updateFormState.date === 'Invalid Date'){
+      toast.error('Date is not in correct format');
+      return;
+    }
+    if(Date.parse(updateFormState.date) < Date.parse(new Date())){
+      toast.error('Can\'t change to a date in the past')
+      return
+    }
     if (!updateFormState.courtId || !updateFormState.date || !updateFormState.start || !updateFormState.end || !updateFormState.bookedSlotId) {
       toast.error('All fields are required.');
       return;
@@ -967,7 +981,10 @@ const TimeSlotManagement = () => {
                       type="date"
                       id="updateDate"
                       value={updateFormState.date}
-                      onChange={(e) => setUpdateFormState({ ...updateFormState, date: e.target.value })}
+                      onChange={(e) => {
+                        setUpdateFormState({ ...updateFormState, date: e.target.value })
+                        console.log(e.target.value);
+                      }}
                       className="managetimeslot-update-slot-input"
                       required
                     />
