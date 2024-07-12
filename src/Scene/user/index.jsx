@@ -129,17 +129,17 @@ const User = () => {
   };
 
   const handleAddOk = () => {
-    isValidate();
+    //isValidate();
     if (!isValidate()) {
       return;
     }
 
-     // Create a temporary role variable
-  let role = formState.role;
+    // Create a temporary role variable
+    let role = formState.role;
 
-  if (tokenRole !== 'admin') {
-    role = 'R003';
-  }
+    if (tokenRole !== 'admin') {
+      role = 'R003';
+    }
 
     // Construct the data for the new user
     const newUser = {
@@ -163,7 +163,7 @@ const User = () => {
       body: JSON.stringify(newUser)
     }).then(response => response.json())
       .then((res) => {
-          toast(res.msg);
+        toast(res.msg);
       })
       .catch((error) => {
         toast.warning('Error adding user:', error);
@@ -312,7 +312,7 @@ const User = () => {
         toast.error('Error banned user.');
       });
   };
-  
+
 
   const columns = [
     { field: "userId", headerName: "UserID", align: "center", headerAlign: "center" },
@@ -345,133 +345,149 @@ const User = () => {
             Edit Info
           </Button>
           <Modal
-  width={1000}
-  open={open}
-  title="User Information"
-  onOk={handleOk}
-  onCancel={handleCancel}
-  className="custom-modal"
-  footer={[
-    <Button key="back" onClick={handleCancel} className="button-hover-black">
-      Return
-    </Button>,
-    <Button key="submit" type="primary" loading={loading || undefined} onClick={handleOk} className="button-hover-black">
-      Submit
-    </Button>
-  ]}
-  centered
->
-  <form action="">
-    <div className="user-modal">
-      <div className="user-modal-left">
-        <div className="user-modal-item">
-          <div className="user-modal-item-text1">
-            <p>Username:</p>
-            <p>First Name:</p>
-            <p>Email:</p>
-            <p>Role:</p>
-            <p>Active Status:</p>
-          </div>
-          <div className="user-modal-item-value">
-            <input
-              value={formState.username}
-              placeholder={selectedRow ? selectedRow.userName : ''}
-              onChange={e => setFormState({ ...formState, username: e.target.value })}
-              className="input-box-modal"
-              type="text"
-            />
-            <input
-              value={formState.firstName}
-              placeholder={selectedRow ? selectedRow.firstName : ''}
-              onChange={e => setFormState({ ...formState, firstName: e.target.value })}
-              className="input-box-modal"
-              type="text"
-            />
-            <input
-              value={formState.email}
-              placeholder={selectedRow ? selectedRow.email : ''}
-              onChange={e => setFormState({ ...formState, email: e.target.value })}
-              className="input-box-modal"
-              type="text"
-            />
-            <select
-              value={formState.role}
-              onChange={(e) => setFormState({ ...formState, role: e.target.value })}
-              className="input-box-modal"
-            >
-              <option value="" disabled hidden>{selectedRow ? selectedRow.role : 'Select role'}</option>
-              {roles.map(role => (
-                <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
-              ))}
-            </select>
-            <select
-              value={formState.activeStatus}
-              onChange={e => setFormState({ ...formState, activeStatus: e.target.value })}
-              className="input-box-modal"
-              type="text"
-            >
-              <option value="" disabled hidden>{selectedRow ? selectedRow.activeStatus.toString() : 'Select status'}</option>
-              <option value="true">Active</option>
-              <option value="false">Banned</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div className="user-modal-right">
-        <div className="user-modal-item">
-          <div className="user-modal-item-text2">
-            <p>Password:</p>
-            <p>Last Name:</p>
-            <p>Branch:</p>
-            <p>Phone:</p>
-            <p>Balance:</p>
-          </div>
-          <div className="user-modal-item-value">
-            <input
-              value={formState.password}
-              placeholder={selectedRow ? selectedRow.password : ''}
-              onChange={e => setFormState({ ...formState, password: e.target.value })}
-              className="input-box-modal"
-              type="password"
-            />
-            <input
-              value={formState.lastName}
-              placeholder={selectedRow ? selectedRow.lastName : ''}
-              onChange={e => setFormState({ ...formState, lastName: e.target.value })}
-              className="input-box-modal"
-              type="text"
-            />
-            <select
-              value={formState.branch}
-              onChange={(e) => setFormState({ ...formState, branch: e.target.value })}
-              className="input-box-modal"
-            >
-              <option value="" disabled hidden>{selectedRow ? selectedRow.branchName : 'Select branch'}</option>
-              {branches.map(branch => (
-                <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
-              ))}
-            </select>
-            <input
-              value={formState.phone}
-              placeholder={selectedRow ? selectedRow.phone : ''}
-              onChange={e => setFormState({ ...formState, phone: e.target.value })}
-              className="input-box-modal"
-              type="text"
-            />
-            <input
-              value={formState.balance}
-              placeholder={selectedRow ? selectedRow.balance : ''}
-              onChange={e => setFormState({ ...formState, balance: e.target.value })}
-              className="input-box-modal"
-              type="number"
-              min="0"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
-</Modal>
+            width={1000}
+            open={open}
+            title="User Information"
+            onOk={handleOk}
+            onCancel={handleCancel}
+            className="custom-modal"
+            footer={[
+              <Button key="back" onClick={handleCancel} className="button-hover-black">
+                Return
+              </Button>,
+              <Button key="submit" type="primary" loading={loading || undefined} onClick={handleOk} className="button-hover-black">
+                Submit
+              </Button>
+            ]}
+            centered
+          >
+            <form action="">
+              <div className="user-modal">
+                <div className="user-modal-left">
+                  <div className="user-modal-item">
+                    <div className="user-modal-item-text1">
+                      <p>Username:</p>
+                      <p>First Name:</p>
+                      <p>Email:</p>
+                      {tokenRole === 'admin' && (
+                        <>
+                          <p>Role:</p>
+                        </>
+                      )}
+                      <p>Active Status:</p>
+                    </div>
+                    <div className="user-modal-item-value">
+                      <input
+                        value={formState.username}
+                        placeholder={selectedRow ? selectedRow.userName : ''}
+                        onChange={e => setFormState({ ...formState, username: e.target.value })}
+                        className="input-box-modal"
+                        type="text"
+                      />
+                      <input
+                        value={formState.firstName}
+                        placeholder={selectedRow ? selectedRow.firstName : ''}
+                        onChange={e => setFormState({ ...formState, firstName: e.target.value })}
+                        className="input-box-modal"
+                        type="text"
+                      />
+                      <input
+                        value={formState.email}
+                        placeholder={selectedRow ? selectedRow.email : ''}
+                        onChange={e => setFormState({ ...formState, email: e.target.value })}
+                        className="input-box-modal"
+                        type="text"
+                      />
+                      {tokenRole === 'admin' && (
+                        <>
+                          <select
+                            value={formState.role}
+                            onChange={(e) => setFormState({ ...formState, role: e.target.value })}
+                            className="input-box-modal"
+                          >
+                            <option value="" disabled hidden>{selectedRow ? selectedRow.role : 'Select role'}</option>
+                            {roles.map(role => (
+                              <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                            ))}
+                          </select>
+                        </>
+                      )}
+                      <select
+                        value={formState.activeStatus}
+                        onChange={e => setFormState({ ...formState, activeStatus: e.target.value })}
+                        className="input-box-modal"
+                        type="text"
+                      >
+                        <option value="" disabled hidden>{selectedRow ? selectedRow.activeStatus.toString() : 'Select status'}</option>
+                        <option value="true">Active</option>
+                        <option value="false">Banned</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="user-modal-right">
+                  <div className="user-modal-item">
+                    <div className="user-modal-item-text2">
+                      <p>Password:</p>
+                      <p>Last Name:</p>
+                      {tokenRole === 'admin' && (
+                        <>
+                          <p>Branch:</p>
+                        </>
+                      )}
+                      <p>Phone:</p>
+                      <p>Balance:</p>
+                    </div>
+                    <div className="user-modal-item-value">
+                      <input
+                        value={formState.password}
+                        placeholder={selectedRow ? selectedRow.password : ''}
+                        onChange={e => setFormState({ ...formState, password: e.target.value })}
+                        className="input-box-modal"
+                        type="password"
+                      />
+                      <input
+                        value={formState.lastName}
+                        placeholder={selectedRow ? selectedRow.lastName : ''}
+                        onChange={e => setFormState({ ...formState, lastName: e.target.value })}
+                        className="input-box-modal"
+                        type="text"
+                      />
+                      {tokenRole === 'admin' && (
+                        <>
+                          <select
+                            value={formState.branch}
+                            onChange={(e) => setFormState({ ...formState, branch: e.target.value })}
+                            className="input-box-modal"
+                          >
+                            <option value="" disabled hidden>{selectedRow ? selectedRow.branchName : 'Select branch'}</option>
+                            {branches.map(branch => (
+                              <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
+                            ))}
+                          </select>
+                        </>
+                      )}
+                      <input
+                        value={formState.phone}
+                        placeholder={selectedRow ? selectedRow.phone : ''}
+                        onChange={e => setFormState({ ...formState, phone: e.target.value })}
+                        className="input-box-modal"
+                        type="text"
+                      />
+                      <input
+                        value={formState.balance}
+                        placeholder={selectedRow ? selectedRow.balance : ''}
+                        onChange={e => setFormState({ ...formState, balance: e.target.value })}
+                        className="input-box-modal"
+                        type="number"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </Modal>
           <Button
             variant="contained"
             size="small"
@@ -495,90 +511,90 @@ const User = () => {
         colorInfo: theme.palette.info.main,
       },
     }}>
-    <Box m="20px">
-      <Head title="User" subtitle="Managing the User Accounts" />
-      <Box>
-        <button className="button-adduser" type="primary" onClick={addUser} variant="contained" color="primary" size="small">
-          Add User
-        </button>
-        <Modal
-  width={1000}
-  open={addOpen}
-  title="Register New User"
-  onOk={handleAddOk}
-  onCancel={handleAddCancel}
-  className="custom-modal"
-  footer={[
-    <Button key="back" onClick={handleAddCancel} className="button-hover-black">
-      Return
-    </Button>,
-    <Button key="submit" type="primary" loading={loading || undefined} onClick={handleAddOk} className="button-hover-black">
-      Submit
-    </Button>
-  ]}
-  centered
->
-  <form>
-    <div className="user-modal">
-      <div className="user-modal-left">
-        <div className="user-modal-item">
-          <div className="user-modal-item-text1">
-            <p>Username:</p>
-            <p>Password:</p>
-            <p>First Name:</p>
-            <p>Last Name:</p>
-            {tokenRole === 'admin' && (
-              <>
-                <p>Role:</p>
-                <p>Branch:</p>
-              </>
-            )}
-            <p>Email:</p>
-            <p>Phone:</p>
-          </div>
-          <div className="user-modal-item-valu1">
-            <input value={formState.username} onChange={(e) => setFormState({ ...formState, username: e.target.value })} className="input-box-modal" type="text" required/>
-            <input value={formState.password} onChange={(e) => setFormState({ ...formState, password: e.target.value })} className="input-box-modal" type="password" required />
-            <input value={formState.firstName} onChange={(e) => setFormState({ ...formState, firstName: e.target.value })} className="input-box-modal" type="text" required />
-            <input value={formState.lastName} onChange={(e) => setFormState({ ...formState, lastName: e.target.value })} className="input-box-modal" type="text"  required/>
-            {tokenRole === 'admin' ? (
-              <>
-                <select 
-                  value={formState.role} 
-                  onChange={(e) => setFormState({ ...formState, role: e.target.value })} 
-                  className="input-box-modal" 
-                  required
-                >
-                  <option value="" hidden>Select role</option>
-                  {roles.map(role => (
-                    <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
-                  ))}
-                </select>
-                <select 
-                  value={formState.branch} 
-                  onChange={(e) => setFormState({ ...formState, branch: e.target.value })} 
-                  className="input-box-modal"
-                >
-                  <option disabled selected hidden value="">Please select branch</option>
-                  {branches.map(branch => (
-                    <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
-                  ))}
-                </select>
-              </>
-            ) : (
-              <input type="hidden" value="R001" name="role" />
-            )}
-            <input value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} className="input-box-modal" type="email" />
-            <input value={formState.phone} onChange={(e) => setFormState({ ...formState, phone: e.target.value })} className="input-box-modal" type="text" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
-</Modal>
+      <Box m="20px">
+        <Head title="User" subtitle="Managing the User Accounts" />
+        <Box>
+          <button className="button-adduser" type="primary" onClick={addUser} variant="contained" color="primary" size="small">
+            Add User
+          </button>
+          <Modal
+            width={1000}
+            open={addOpen}
+            title="Register New User"
+            onOk={handleAddOk}
+            onCancel={handleAddCancel}
+            className="custom-modal"
+            footer={[
+              <Button key="back" onClick={handleAddCancel} className="button-hover-black">
+                Return
+              </Button>,
+              <Button key="submit" type="primary" loading={loading || undefined} onClick={handleAddOk} className="button-hover-black">
+                Submit
+              </Button>
+            ]}
+            centered
+          >
+            <form>
+              <div className="user-modal">
+                <div className="user-modal-left">
+                  <div className="user-modal-item">
+                    <div className="user-modal-item-text1">
+                      <p>Username:</p>
+                      <p>Password:</p>
+                      <p>First Name:</p>
+                      <p>Last Name:</p>
+                      {tokenRole === 'admin' && (
+                        <>
+                          <p>Role:</p>
+                          <p>Branch:</p>
+                        </>
+                      )}
+                      <p>Email:</p>
+                      <p>Phone:</p>
+                    </div>
+                    <div className="user-modal-item-valu1">
+                      <input value={formState.username} onChange={(e) => setFormState({ ...formState, username: e.target.value })} className="input-box-modal" type="text" required />
+                      <input value={formState.password} onChange={(e) => setFormState({ ...formState, password: e.target.value })} className="input-box-modal" type="password" required />
+                      <input value={formState.firstName} onChange={(e) => setFormState({ ...formState, firstName: e.target.value })} className="input-box-modal" type="text" required />
+                      <input value={formState.lastName} onChange={(e) => setFormState({ ...formState, lastName: e.target.value })} className="input-box-modal" type="text" required />
+                      {tokenRole === 'admin' ? (
+                        <>
+                          <select
+                            value={formState.role}
+                            onChange={(e) => setFormState({ ...formState, role: e.target.value })}
+                            className="input-box-modal"
+                            required
+                          >
+                            <option value="" hidden>Select role</option>
+                            {roles.map(role => (
+                              <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={formState.branch}
+                            onChange={(e) => setFormState({ ...formState, branch: e.target.value })}
+                            className="input-box-modal"
+                          >
+                            <option disabled selected hidden value="">Please select branch</option>
+                            {branches.map(branch => (
+                              <option key={branch.branchId} value={branch.branchId}>{branch.branchName}</option>
+                            ))}
+                          </select>
+                        </>
+                      ) : (
+                        <input type="hidden" value="R001" name="role" />
+                      )}
+                      <input value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} className="input-box-modal" type="email" />
+                      <input value={formState.phone} onChange={(e) => setFormState({ ...formState, phone: e.target.value })} className="input-box-modal" type="text" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </Modal>
 
-      </Box>
-      <Box
+        </Box>
+        <Box
           m="40px 0 0 0"
           height="75vh"
           sx={{
@@ -610,14 +626,14 @@ const User = () => {
             },
           }}
         >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          getRowId={(row) => row.userId}
-        />
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            getRowId={(row) => row.userId}
+          />
+        </Box>
       </Box>
-    </Box>
-    <ToastContainer />
+      <ToastContainer />
     </ConfigProvider>
   );
 };

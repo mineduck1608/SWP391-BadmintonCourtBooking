@@ -17,9 +17,9 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from 'jwt-decode';  // Fixed import statement
 import DiscountIcon from '@mui/icons-material/Discount';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
     const theme = useTheme();
@@ -80,8 +80,8 @@ const Sidebar = () => {
 
     const handleLogout = () => {
         sessionStorage.clear();
-        toast.success('Logout successful.');
         navigate('/'); // Redirect to home on logout
+        toast.success('Logout success.')
     };
 
     return (
@@ -261,7 +261,7 @@ const Sidebar = () => {
                     </Box>
                 </Menu>
             </ProSidebar>
-            <ToastContainer/>
+            <ToastContainer />
         </Box>
     );
 };

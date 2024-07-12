@@ -170,6 +170,30 @@ const ViewCourtInfo = () => {
 
     const images = mainCourt ? extractImageUrls(mainCourt.courtImg) : [];
 
+    // Function to format the price
+    const formatPrice = (n) => {
+        function formatTo3Digits(n, stop) {
+            var rs = ''
+            if (!stop)
+              for (var i = 1; i <= 3; i++) {
+                rs = (n % 10) + rs
+                n = Math.floor(n / 10)
+              }
+            else rs = n + rs
+            return rs
+          }
+          if (Object.is(n, NaN)) return 0
+          n = Math.floor(n)
+          var rs = ''
+          do {
+            rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
+            n = Math.floor(n / 1000)
+            if (n > 0) rs = ',' + rs
+          }
+          while (n > 0)
+          return rs
+    };
+
     return (
         <div className="viewcourtinfo">
             <Header />
@@ -201,7 +225,7 @@ const ViewCourtInfo = () => {
                                     <div className="viewcourtinfo-info">                                 
                                         <p className='viewcourt-title'>Address: {branch?.location}</p>
                                         <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
-                                        <p className='viewcourt-title'>Price: {mainCourt?.price}VND</p>
+                                        <p className='viewcourt-title'>Price: {mainCourt ? formatPrice(mainCourt.price) : 'N/A'} VND</p>
                                     </div>
                                 </div>
                             </div>
@@ -295,7 +319,7 @@ const ViewCourtInfo = () => {
                                         <h2>Court Name: {court.courtName}</h2>
                                         <p>Address: {branch?.location}</p>
                                         <p>Branch: {branch?.branchName}</p>
-                                        <p>Price: {court.price}</p>
+                                        <p>Price: {formatPrice(court.price)} VND</p>
                                         <div className="viewcourtinfo-other-des">
                                             <h1 className='viewcourtinfo-other-des-h1'>Description:</h1>
                                             <p className='viewcourtinfo-other-des-p'>{court.description}</p>

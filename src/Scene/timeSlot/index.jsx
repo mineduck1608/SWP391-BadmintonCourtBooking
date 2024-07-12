@@ -191,7 +191,7 @@ const TimeSlotManagement = () => {
         setAddOpen(false);
       })
       .catch(error => {
-        toast.error('Failed to update slot' + error);
+        toast.error('User not exist');
         setAddOpen(false);
       });
       setLoading(true);
@@ -559,7 +559,7 @@ const TimeSlotManagement = () => {
       courtId: updateFormState.courtId,
       date: updateFormState.date,
       start: updateFormState.startValue,
-      end: updateFormState.end,
+      end: updateFormState.endValue,
       bookingId: bookingId
     };
   
@@ -588,7 +588,7 @@ const TimeSlotManagement = () => {
         });
       })
       .catch(error => {
-        toast.error(error);
+        toast.error("Update fail");
         setUpdateOpen(false);
       });
   

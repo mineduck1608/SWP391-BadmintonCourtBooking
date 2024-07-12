@@ -67,8 +67,8 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        sessionStorage.clear();
         toast.success('Logout successful.');
+        sessionStorage.clear();
         navigate('/'); // Redirect to home on logout
     };
 
