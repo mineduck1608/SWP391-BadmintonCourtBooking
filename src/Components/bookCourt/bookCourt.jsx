@@ -400,7 +400,7 @@ const BookCourt = () => {
                         </tbody>
                     </table>
                     <div className='right-align-btn'>
-                        <button onClick={() => setOpen(false)}>Close</button>
+                        <button className='buyTime_btn' onClick={() => setOpen(false)}>Close</button>
                     </div>
                 </span>
             </Modal>
