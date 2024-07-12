@@ -19,7 +19,9 @@ const GoogleMap = () => {
             .then(response => response.json())
             .then(data => {
                 setBranches(data);
-                setSelectedBranch(data); // Select the first branch by default
+                if (data.length > 0) {
+                    setSelectedBranch(data[0]); // Select the first branch by default
+                }
             })
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
