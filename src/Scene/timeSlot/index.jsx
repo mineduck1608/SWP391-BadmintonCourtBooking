@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Head from "../../Components/Head";
 import { Modal } from 'antd';
 import './managetimeslot.css'; // Import the custom CSS
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { ConfigProvider } from 'antd';
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
@@ -16,7 +16,6 @@ const TimeSlotManagement = () => {
   const token = sessionStorage.getItem('token');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [setSelectedRow] = useState(null);
   const [branches, setBranches] = useState([]);
   const [courts, setCourts] = useState([]);
   const [filteredCourts, setFilteredCourts] = useState([]); // New state for filtered courts
@@ -147,8 +146,6 @@ const TimeSlotManagement = () => {
 
       const userDetailsData = await userDetailsRes.json();
       const userDetail = userDetailsData.find(detail => detail.userId === userData.userId);
-
-      setSelectedRow(row);
       setFormState({
         firstName: userDetail.firstName || '',
         lastName: userDetail.lastName || '',
@@ -159,8 +156,8 @@ const TimeSlotManagement = () => {
       });
       setOpen(true);
     } catch (error) {
-      console.error('Error fetching booking or user data:', error);
       toast.error('Failed to fetch booking or user data');
+      console.log(error)
     }
   };
 
@@ -189,7 +186,7 @@ const TimeSlotManagement = () => {
     })
       .then(response => response.json())
       .then(data => {
-        toast.success(data.msg);
+        toast(data.msg);
         fetchData();
         setAddOpen(false);
       })
@@ -334,59 +331,63 @@ const TimeSlotManagement = () => {
 
   const handleBranchChange = (value) => {
     setFormState((prevState) => ({
-      ...prevState,
-      branchId: value,
-      courtId: ''
+        ...prevState,
+        branchId: value,
+        courtId: ''
     }));
 
     if (value === "all") {
-      setFilteredCourts(courts); // Reset to all courts
-      const formattedData = slots.map((row, index) => {
-        const court = courts.find(court => court.courtId === row.courtId);
-        const branch = branches.find(branch => branch.branchId === court.branchId);
-        const booking = bookings.find(booking => booking.slotId === row.slotId);
+        setFilteredCourts(courts); // Reset to all courts
 
-        return {
-          id: index + 1, // Assign a sequential ID
-          ...row,
-          branchName: branch ? branch.branchName : 'Unknown',
-          courtName: court ? court.courtName : 'Unknown',
-          date: dayjs(row.date).format('DD-MM-YYYY'),
-          timeRange: `${row.start}:00 - ${row.end}:00`,
-          totalPrice: booking ? booking.amount : 'N/A',
-          bookingId: booking ? booking.bookingId : 'N/A',
-          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
-        };
-      });
-      setRows(formattedData);
+        const formattedData = slots.map((row, index) => {
+            const court = courts.find(court => court.courtId === row.courtId);
+            const branch = court ? branches.find(branch => branch.branchId === court.branchId) : null;
+            const booking = bookings.find(booking => booking.bookingId === row.bookingId);
+
+            return {
+                id: index + 1, // Assign a sequential ID
+                ...row,
+                branchName: branch ? branch.branchName : 'Unknown',
+                courtName: court ? court.courtName : 'Unknown',
+                date: dayjs(row.date).format('DD-MM-YYYY'),
+                timeRange: `${row.start}:00 - ${row.end}:00`,
+                totalPrice: booking ? booking.amount : 'N/A',
+                bookingId: booking ? booking.bookingId : 'N/A',
+            };
+        });
+        setRows(formattedData);
     } else {
-      const filteredCourts = courts.filter(court => court.branchId === value);
-      setFilteredCourts(filteredCourts);
-      const filteredSlots = slots.filter(slot => {
-        const court = filteredCourts.find(court => court.courtId === slot.courtId);
-        return court && court.branchId === value;
-      });
+        const filteredCourts = courts.filter(court => court.branchId === value);
+        setFilteredCourts(filteredCourts);
 
-      const selectedBranch = branches.find(branch => branch.branchId === value);
+        const filteredSlots = slots.filter(slot => {
+            const court = filteredCourts.find(court => court.courtId === slot.courtId);
+            return court && court.branchId === value;
+        });
 
-      const formattedData = filteredSlots.map((row, index) => {
-        const booking = bookings.find(booking => booking.slotId === row.slotId);
-        return {
-          id: index + 1,
-          ...row,
-          branchName: selectedBranch ? selectedBranch.branchName : 'Unknown',
-          courtName: filteredCourts.find(court => court.courtId === row.courtId)?.courtName || 'Unknown',
-          date: dayjs(row.date).format('DD-MM-YYYY'),
-          timeRange: `${row.start}:00 - ${row.end}:00`,
-          totalPrice: booking ? booking.amount : 'N/A',
-          bookingId: booking ? booking.bookingId : 'N/A',
-          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
-        };
-      });
+        const selectedBranch = branches.find(branch => branch.branchId === value);
 
-      setRows(formattedData);
+        const formattedData = filteredSlots.map((row, index) => {
+            const court = filteredCourts.find(court => court.courtId === row.courtId);
+            const booking = bookings.find(booking => booking.bookingId === row.bookingId);
+
+
+            return {
+                id: index + 1,
+                ...row,
+                branchName: selectedBranch ? selectedBranch.branchName : 'Unknown',
+                courtName: court ? court.courtName : 'Unknown',
+                date: dayjs(row.date).format('DD-MM-YYYY'),
+                timeRange: `${row.start}:00 - ${row.end}:00`,
+                totalPrice: booking ? booking.amount : 'N/A',
+                bookingId: booking ? booking.bookingId : 'N/A',
+            };
+        });
+
+        setRows(formattedData);
     }
-  };
+};
+
 
   const handleCourtChange = (value) => {
     setFormState((prevState) => ({
@@ -405,7 +406,7 @@ const TimeSlotManagement = () => {
       const formattedData = filteredSlots.map((row, index) => {
         const court = filteredCourts.find(court => court.courtId === row.courtId);
         const branch = branches.find(branch => branch.branchId === court.branchId);
-        const booking = bookings.find(booking => booking.slotId === row.slotId);
+        const booking = bookings.find(booking => booking.bookingId === row.bookingId);
 
         return {
           id: index + 1,
@@ -416,7 +417,6 @@ const TimeSlotManagement = () => {
           timeRange: `${row.start}:00 - ${row.end}:00`,
           totalPrice: booking ? booking.amount : 'N/A',
           bookingId: booking ? booking.bookingId : 'N/A',
-          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
       });
 
@@ -427,7 +427,7 @@ const TimeSlotManagement = () => {
       const formattedData = filteredSlots.map((row, index) => {
         const court = filteredCourts.find(court => court.courtId === row.courtId);
         const branch = branches.find(branch => branch.branchId === court.branchId);
-        const booking = bookings.find(booking => booking.slotId === row.slotId);
+        const booking = bookings.find(booking => booking.bookingId === row.bookingId);
         return {
           id: index + 1,
           ...row,
@@ -437,7 +437,6 @@ const TimeSlotManagement = () => {
           timeRange: `${row.start}:00 - ${row.end}:00`,
           totalPrice: booking ? booking.amount : 'N/A',
           bookingId: booking ? booking.bookingId : 'N/A',
-          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
       });
 
@@ -517,7 +516,7 @@ const TimeSlotManagement = () => {
       const formattedData = filteredSlots.map((row, index) => {
         const court = courtsData.find(court => court.courtId === row.courtId);
         const branch = branchesData.find(branch => branch.branchId === court.branchId);
-        const booking = bookingsData.find(booking => booking.slotId === row.slotId);
+        const booking = bookingsData.find(booking => booking.bookingId === row.bookingId);
 
         return {
           id: index + 1,
@@ -528,7 +527,6 @@ const TimeSlotManagement = () => {
           timeRange: `${row.start}:00 - ${row.end}:00`,
           totalPrice: booking ? booking.amount : 'N/A',
           bookingId: booking ? booking.bookingId : 'N/A',
-          bookedSlotId: booking ? booking.bookedSlotId : 'N/A'
         };
       });
 
@@ -565,7 +563,6 @@ const TimeSlotManagement = () => {
       bookingId: bookingId
     };
   
-    console.log(updatedSlot);
     fetchWithAuth(`https://localhost:7233/Slot/UpdateByStaff?date=${updatedSlot.date}&start=${updatedSlot.start}&end=${updatedSlot.end}&slotId=${updatedSlot.slotId}&courtId=${updatedSlot.courtId}&bookingId=${updatedSlot.bookingId}`, {
       method: 'PUT',
       headers: {
@@ -574,14 +571,9 @@ const TimeSlotManagement = () => {
       },
       body: JSON.stringify(updatedSlot)
     })
-      .then(response => {
-        if (!response.ok) {
-          toast.error(response.msg);
-        }
-        return response.json();
-      })
-      .then(data => {
-        toast.success(data.msg);
+      .then(response => response.json())
+      .then( data => {
+        toast(data.msg);
         fetchData();
         setUpdateOpen(false);
         setUpdateFormState({
@@ -596,7 +588,7 @@ const TimeSlotManagement = () => {
         });
       })
       .catch(error => {
-        toast.error(error.msg);
+        toast.error(error);
         setUpdateOpen(false);
       });
   
@@ -1013,11 +1005,11 @@ const TimeSlotManagement = () => {
                     </div>
                   </div>
                   <div className="updatetimeslot-footer-flex">
-                    <button key="submit" onClick={handleUpdateOk} className="managetimeslot-button-hover-black">
-                      Update
-                    </button>
                     <button key="back" onClick={() => setUpdateOpen(false)} className="managetimeslot-button-hover-black">
                       Cancel
+                    </button>
+                    <button key="submit" onClick={handleUpdateOk} className="managetimeslot-button-hover-black">
+                      Update
                     </button>
                   </div>
                 </div>
@@ -1061,6 +1053,7 @@ const TimeSlotManagement = () => {
           <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id} />
         </Box>
       </Box>
+      <ToastContainer />
     </ConfigProvider>
   );
 };
