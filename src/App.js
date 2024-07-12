@@ -106,7 +106,6 @@ const logout = () => {
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="user" element={<User />} />
-            <Route path="branch" element={<Branch />} />
             <Route path="court" element={<Court />} />
             <Route path="timeSlot" element={<SlotManagement />} />
             <Route path="payment" element={<Payment />} />

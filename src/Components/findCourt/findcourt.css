@@ -358,6 +358,16 @@ button {
     transition: background-color 0.3s ease;
   }
 
+  .find-court-edit-feedback-btn:hover:not(:disabled) {
+    background-color: #c82333;
+  }
+
+  .find-court-edit-feedback-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;  
+}
+
   .find-court-delete-feedback-btn:hover:not(:disabled) {
     background-color: #c82333;
   }
@@ -369,16 +379,14 @@ button {
   }
   
   .find-court-edit-feedback-btn {
-    background-color: hsl(26, 93%, 50%);
     color: white;
-    border: none;
-    border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
-  }
-  
-  .find-court-edit-feedback-btn:hover {
-    background-color: hsl(26, 90%, 42%);
+    background-color: hsl(26, 93%, 50%);
+    width: 90px;
+    border: #ebe7e7;
+    border-radius: 5px;
+    margin-left: 5px;
   }
 
 .findcourt-user-image {
@@ -392,14 +400,6 @@ button {
 .stars {
     color: #ffcc00; /* Gold color for stars */
     font-size: 20px; /* Adjust size as needed */
-}
-
-.find-court-edit-feedback-btn{
-    background-color: hsl(26, 93%, 50%);
-    width: 50px;
-    border: #ebe7e7;
-    border-radius: 10%;
-    color:  white;
 }
 
 .findcourt-modal-title {

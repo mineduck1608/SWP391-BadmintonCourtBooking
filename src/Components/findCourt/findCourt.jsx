@@ -8,7 +8,6 @@ import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
 import { jwtDecode } from 'jwt-decode';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
-import { SettingsSuggestOutlined } from '@mui/icons-material';
 
 const { RangePicker } = TimePicker;
 const { TextArea } = Input;
@@ -56,48 +55,7 @@ const FindCourt = () => {
     setSelectedCourt(courtId);
   };
 
-  const handleDelete = async (feedbackId, feedbackUserId) => {
-    const token = sessionStorage.getItem('token');
-    let decodedToken;
-    try {
-      decodedToken = jwtDecode(token);
-    } catch (error) {
-      sessionStorage.clear();
-      navigate('/');
-      return;
-    }
 
-    const currentUserId = decodedToken.UserId;
-
-    if (currentUserId !== feedbackUserId) {
-      alert("You don't have permission to delete this feedback.");
-      return;
-    }
-
-    try {
-      const response = await fetchWithAuth(
-        `https://localhost:7233/Feedback/Delete?id=${feedbackId}&userID=${currentUserId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to delete feedback');
-      }
-
-      // Remove the deleted feedback from the state
-      setFeedback(prevFeedback => prevFeedback.filter(fb => fb.feedbackId !== feedbackId));
-      alert('Feedback deleted successfully');
-    } catch (error) {
-      console.error('Error deleting feedback:', error);
-      alert('Failed to delete feedback. Please try again.');
-    }
-  };
 
   const filteredCourts = courts.filter((court) => {
     return (
@@ -108,7 +66,7 @@ const FindCourt = () => {
 
   const filteredFeedback = feedback.filter((fb) => {
     return (
-      selectedBranch === '' || fb.branchId === selectedBranch
+      fb.isDelete !== true && (selectedBranch === '' || fb.branchId === selectedBranch)
     );
   });
 
@@ -259,10 +217,104 @@ const FindCourt = () => {
     );
   };
 
-  const handleEdit = (feedbackId, rating, content) => {
-    setSelectedFeedback({ feedbackId, rating, content });
-    setNewRating(rating);
-    setNewContent(content);
+  const handleDelete = async (feedbackId, feedbackUserId) => {
+    const token = sessionStorage.getItem('token');
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(token);
+    } catch (error) {
+      sessionStorage.clear();
+      navigate('/');
+      return;
+    }
+
+
+    const currentUserId = decodedToken.UserId;
+
+    if (currentUserId !== feedbackUserId) {
+      alert("You don't have permission to delete this feedback.");
+      return;
+    }
+
+    try {
+      const response = await fetchWithAuth(
+        `https://localhost:7233/Feedback/Delete?id=${feedbackId}&userID=${currentUserId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete feedback');
+      }
+
+      // Remove the deleted feedback from the state
+      setFeedback(prevFeedback => prevFeedback.filter(fb => fb.feedbackId !== feedbackId));
+      alert('Feedback deleted successfully');
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      alert('Failed to delete feedback. Please try again.');
+    }
+  };
+
+  const handleEdit = async (feedbackId, rating, content, userId) => {
+    const token = sessionStorage.getItem('token');
+    let decodedToken;
+    try{
+      decodedToken = jwtDecode(token);
+    } catch (error) {
+      sessionStorage.clear();
+      navigate('/');
+      return;
+    }
+
+    const currentUserId = decodedToken.UserId;
+
+    if (currentUserId !== userId) {
+      alert("You don't have permission to edit this feedback.");
+      return;
+    }
+
+    try{
+      const url= `https://localhost:7233/Feedback/Update?rate=${rating}&content=${encodeURIComponent(content)}&id=${feedbackId}&userId=${currentUserId}`;
+      const response = await fetchWithAuth(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if(!response.ok) {
+        throw new Error(`Failed to update feedback: ${response.statusText}`);
+      }
+
+      const updatedFeedback = await response.json();
+      setFeedback((prevFeedback) =>
+        prevFeedback.map((fb) => 
+          fb.feedbackId === feedbackId? updatedFeedback: fb
+        )
+      );
+
+      setIsModalVisible(false);
+      setSelectedFeedback(null);
+      setNewRating(0);
+      setNewContent('');
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      setErrorFeedback('Failed to update feedback');
+    }
+  };
+
+  const handleEditButtonClick = (fb) => {
+    setSelectedFeedback(fb);
+    setNewRating(fb.rating);
+    setNewContent(fb.content);
     setIsModalVisible(true);
   };
 
@@ -315,32 +367,6 @@ const FindCourt = () => {
     setSelectedFeedback(null);
     setNewRating(0);
     setNewContent('');
-  };
-
-  const sendFeedback = async (feedback) => {
-    const url = `https://localhost:7233/Feedback/Update/${feedback.feedbackId}`;
-    const token = sessionStorage.getItem('token');
-
-    try {
-      const response = await fetchWithAuth(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(feedback),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update feedback: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error(error);
-      setErrorFeedback(`Failed to update feedback: ${error.message}`);
-    }
   };
 
   return (
@@ -426,7 +452,6 @@ const FindCourt = () => {
 
                     return (
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
-
                         <div className="findcourt-feedbackInfo">
                           <div className="findcourt-user-info">
                             <img src={user ? user.image || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
@@ -438,7 +463,6 @@ const FindCourt = () => {
                           {selectedBranch && <p>Branch: {branches.find(branch => branch.branchId === fb.branchId)?.branchName}</p>}
                           <p>Feedback: {fb.content}</p>
                           <p className='feedback-datetime'>{fb.formattedDateTime}</p>
-
                         </div>
                         <div className="feedback-actions">
                           <button
@@ -447,6 +471,13 @@ const FindCourt = () => {
                             disabled={userIdToken !== fb.userId}
                           >
                             Delete
+                          </button>
+                          <button
+                            className='find-court-edit-feedback-btn'
+                            onClick={() => handleEditButtonClick(fb)}
+                            disabled={userIdToken !== fb.userId}
+                          >
+                            Edit
                           </button>
                         </div>
                       </div>

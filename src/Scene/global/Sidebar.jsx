@@ -17,7 +17,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from 'jwt-decode';  // Fixed import statement
 import DiscountIcon from '@mui/icons-material/Discount';
 
@@ -179,6 +179,7 @@ const Sidebar = () => {
                             selected={selected}
                             setSelected={setSelected}
                         />
+                        {role === 'Admin' && (
                         <Item className="menu-item"
                             title="Court Branch"
                             to="branch"
@@ -186,6 +187,7 @@ const Sidebar = () => {
                             selected={selected}
                             setSelected={setSelected}
                         />
+                        )}
                         <Item className="menu-item"
                             title="Court"
                             to="court"
@@ -201,7 +203,7 @@ const Sidebar = () => {
                         >
                             Pages
                         </Typography>
-
+                        {role === 'Admin' && (
                         <Item className="menu-item"
                             title="Discount"
                             to="discount"
@@ -209,7 +211,7 @@ const Sidebar = () => {
                             selected={selected}
                             setSelected={setSelected}
                         />
-
+                        )}
                         <Item className="menu-item"
                             title="Time Slot"
                             to="timeSlot"
@@ -259,6 +261,7 @@ const Sidebar = () => {
                     </Box>
                 </Menu>
             </ProSidebar>
+            <ToastContainer/>
         </Box>
     );
 };
