@@ -95,6 +95,7 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok(new { msg = "Success"});
 		}
 
+
 		[HttpPut]
 		[Route("Court/Update")]
 		[Authorize(Roles = "Admin,Staff")]
@@ -120,5 +121,16 @@ namespace BadmintonCourtAPI.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
+
+
+		[HttpDelete]
+		[Authorize(Roles = "Admin")]
+		[Route("Court/Inactivate")]
+		public async Task<IActionResult> InactivateCourt(string id)
+		{
+			_service.DeleteCourt(id);
+			return Ok(new { msg = "Success" });
+		}
+
 	}
 }

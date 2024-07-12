@@ -119,6 +119,11 @@ namespace BadmintonCourtAPI.Controllers
 
 		private string GenerateMailBody(UserDetail info) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. Your slot has been updated. You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
+
+		private string CancelNotification(UserDetail info, string slotId, float refund) => $"Dear {info.FirstName} {info.LastName}, you have successfully canceled slot {slotId}. We have refunfed to your balance {refund} as half of the recent canceled slot amount.  You can now check it on your account.<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+
+
+
 		[HttpGet]
 		[Route("Slot/GetAll")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.GetAllSlots()));
@@ -393,6 +398,8 @@ namespace BadmintonCourtAPI.Controllers
 				_bookingService.UpdatBooking(booking, booking.BookingId);
 				user.Balance += refund / 2;
 				_userService.UpdateUser(user, user.UserId);
+				UserDetail info = _userDetailService.GetUserDetailById(user.UserId);
+				_mailService.SendMail(info.Email, CancelNotification(info, slotId, refund / 2), "BMTC - Cancel Slot Notification");
 				return Ok(new { msg = "Success" });
 			}
 			return BadRequest(new { msg = "Can't change" });

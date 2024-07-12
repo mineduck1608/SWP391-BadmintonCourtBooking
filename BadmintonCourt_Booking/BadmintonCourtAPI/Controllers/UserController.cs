@@ -63,6 +63,7 @@ namespace BadmintonCourtAPI.Controllers
 			return result;
 		}
 
+
 		private List<UserDetail> GetUserDetailListFromFilterFailAccount(List<User> uList)
 		{
 			List<UserDetail> result = new List<UserDetail>();
@@ -70,6 +71,7 @@ namespace BadmintonCourtAPI.Controllers
 				result.Add(_infoService.GetUserDetailById(item.UserId));
 			return result;
 		}
+
 
 		private string GenerateMailBody(int type) => "<p>" + (type == 1 ? registerMsg : (type == 2 ? resetPassMsg : emailUpdateMsg)) + "please ignore this email or contact us for support.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vitnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
@@ -106,7 +108,7 @@ namespace BadmintonCourtAPI.Controllers
 			if (info == null) // Chua co acc
 			{
 				string userId = "U" + (_service.GetAllUsers().Count() + 1).ToString("D7");
-				_service.AddUser(new User { UserId = userId, UserName = "", Password = "", LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null, RoleId = "R003" });
+				_service.AddUser(new User { UserId = userId, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, RoleId = "R003" });
 
 
 				_infoService.AddUserDetail(new UserDetail { UserId = userId, Email = email, FirstName = "", LastName = "", Phone = "" });
@@ -181,6 +183,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<IActionResult> LoginAuth(string? username, string? password) // Thử nghiệm lại chạy thử nếu ko ổn hoặc văng lỗi thì xài lại hàm đã cmt ở trên
 		{
 			//User user = service.userService.GetUserByLogin(username, password);
+			password = Util.ToHashString(password);
 			User user = GetUserListFromFilterFailAccount().FirstOrDefault(x => x.UserName == username && x.Password == password);
 
 			// Nhập đúng username + pass
@@ -369,9 +372,9 @@ namespace BadmintonCourtAPI.Controllers
 																		//user.Password = password;
 			if (accessFail != null)
 			if(!password.IsNullOrEmpty()) { 
-			if (Util.IsPasswordSecure(password.Trim()))
+			if (Util.IsPasswordSecure(password))
 				if (user.Password != Util.ToHashString(password)) // hash pass
-					user.Password = Util.ToHashString(password.Trim()); // Lay lai pass cu
+					user.Password = Util.ToHashString(password); // Lay lai pass cu
                                                                      //user.Password = password;
             }
             if (accessFail != null)
@@ -416,6 +419,7 @@ namespace BadmintonCourtAPI.Controllers
 			
 			if (isAdmin == true || userId == actorId)
 			{
+				phone = phone.Trim();
 				if (!phone.IsNullOrEmpty())
 				{
 					if (Util.IsPhoneFormatted(phone))
@@ -522,8 +526,8 @@ namespace BadmintonCourtAPI.Controllers
 				Balance = 0,
 				ActiveStatus = false,
 				UserName = username.Trim(),
-				//Password = Util.ToHashString(password.Trim()),   // Hash pass
-				Password = password.Trim(),
+				Password = Util.ToHashString(password),   // Hash pass
+				//Password = password.Trim(),
 				RoleId = "R003",
 				Token = token,
 				ActionPeriod = DateTime.Now
