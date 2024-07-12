@@ -42,14 +42,17 @@ const Register = () => {
     let regobj = { id, password, firstName, lastName, email, phone };
     //console.log(regobj);
     if (isValidate()) {
-      fetchWithAuth("https://localhost:7233/User/Register?username=" + id + "&password=" + password + "&firstName=" + firstName + "&lastName=" + lastName + "&email=" + email + "&phone=" + phone, {
+      fetch("https://localhost:7233/User/Register?username=" + id + "&password=" + password + "&firstName=" + firstName + "&lastName=" + lastName + "&email=" + email + "&phone=" + phone, {
         method: "POST",
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(regobj),
       }).then(response => response.json())
       .then((res) => {
-        toast(res.msg);
-        usenavigate('/signin');
+        if(res.ok){
+          toast.success(res.msg);
+          navigator('/');
+        }
+        toast.warning(res.msg);
       }).catch((err) => {
         toast.error('Failed: ' + err.message);
       });
