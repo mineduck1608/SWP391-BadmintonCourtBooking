@@ -25,6 +25,11 @@ export const fetchWithAuth = async (url, options = {}) => {
         return Promise.reject(new Error('Unauthorized'));
     }
 
+    const logout = () => {
+        localStorage.removeItem('token');
+        window.location.href = '/signin';  // Hoặc sử dụng useHistory() của React Router nếu dùng React
+    };
+
     return response;
 };
 
