@@ -9,7 +9,7 @@ const VerifyAccount = () => {
 
   const handleSendResetLink = async () => {
     try {
-      const response = await fetchWithAuth(`https://localhost:7233/User/VerifyBeforeReset?mail=${email}`, {
+      const response = await fetch(`https://localhost:7233/User/VerifyBeforeReset?mail=${email}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

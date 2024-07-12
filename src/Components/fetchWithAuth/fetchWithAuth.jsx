@@ -28,7 +28,3 @@ export const fetchWithAuth = async (url, options = {}) => {
     return response;
 };
 
-const logout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/signin';  // Hoặc sử dụng useHistory() của React Router nếu dùng React
-};

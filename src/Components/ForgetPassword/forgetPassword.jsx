@@ -25,7 +25,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await fetchWithAuth(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
+      const response = await fetch(`https://localhost:7233/User/ForgotPassReset?id=${userId}&password=${newPassword}&confirmPassword=${confirmPassword}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -35,6 +35,9 @@ const ResetPassword = () => {
 
       if (response.ok) {
         setMessage('Password updated successfully. You can now log in with your new password.');
+        setTimeout(() => {
+          window.location.href = '/signin';
+        }, 2000);
       } else {
         const responseData = await response.json();
         setMessage(responseData.msg);
