@@ -77,7 +77,6 @@ const Header = () => {
 
     const toggleDropdown = () => {
         setDropdownOpen(prevState => !prevState);
-        console.log('Dropdown state:', !dropdownOpen);
     };
 
     return (

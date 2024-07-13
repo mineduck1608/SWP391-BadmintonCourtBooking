@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './navbar.css'
 import { MdSportsTennis } from "react-icons/md";
 import { AiFillCloseCircle } from "react-icons/ai";
-import { TbGridDots } from "react-icons/tb";
+//import { TbGridDots } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -71,7 +71,7 @@ const Navbar = () => {
                 </div>
 
                 <div onClick={showNav} className="toggleNavbar">
-                    <TbGridDots className="icon" />
+                    {/* <TbGridDots className="icon" /> */}
 
                 </div>
             </div>
