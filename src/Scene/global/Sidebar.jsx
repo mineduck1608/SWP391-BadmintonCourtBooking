@@ -80,13 +80,10 @@ const Sidebar = () => {
 
     const handleLogout = () => {
         navigate('/');
-        setTimeout(() => {
             toast.success('Logout success.');
             sessionStorage.clear();
-        })
         
-         // Redirect to home on logout
-        
+         // Redirect to home on logout  
     };
 
     return (

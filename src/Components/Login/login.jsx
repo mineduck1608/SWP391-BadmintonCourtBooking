@@ -36,33 +36,22 @@ const Login = () => {
             if (roleToken == "Customer") {
               if (status == 'True') {
                 navigate('/home');             
-                setTimeout(() => {
-                  toast.success("Login successful!");
-                }, 100);
-                
+                  toast.success("Login successful!");     
               } else {
                 navigate('/signin');
-                setTimeout(() => {
                   toast.warning('Banned. Please contact admin.')
-                }, 100);
               }
             }
             if (roleToken == "Admin") {
               if (status == 'True') {
                 navigate('/admin');
-                setTimeout(() => {
                   toast.success("Login successful!");
-                },100);
               }
             }
             if (roleToken == "Staff") {
               if (status == 'True') {
                 navigate('/staff');
-                setTimeout(() => {
-                  toast.success("Login successful!");
-                },100);
-                
-                
+                  toast.success("Login successful!");        
               }
             }
           } if(!resp.ok){
