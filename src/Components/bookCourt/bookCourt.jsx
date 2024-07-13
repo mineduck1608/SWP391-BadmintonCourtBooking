@@ -515,7 +515,7 @@ const BookCourt = () => {
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00:00</option>
+                                    <option value={t}>{t}:00</option>
                                 ))
                             }
                         </select>
@@ -529,7 +529,7 @@ const BookCourt = () => {
                             <option value="" hidden>Select Time</option>
                             {
                                 timeBound.map(t => (
-                                    <option value={t}>{t}:00:00</option>
+                                    <option value={t}>{t}:00</option>
                                 ))
                             }
                         </select>

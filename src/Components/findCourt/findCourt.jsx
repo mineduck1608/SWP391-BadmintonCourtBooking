@@ -8,6 +8,7 @@ import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
 import { jwtDecode } from 'jwt-decode';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { toast } from 'react-toastify';
 
 const { RangePicker } = TimePicker;
 const { TextArea } = Input;
@@ -254,7 +255,7 @@ const FindCourt = () => {
 
       // Remove the deleted feedback from the state
       setFeedback(prevFeedback => prevFeedback.filter(fb => fb.feedbackId !== feedbackId));
-      alert('Feedback deleted successfully');
+      toast.success('Feedback deleted success');
     } catch (error) {
       console.error('Error deleting feedback:', error);
       alert('Failed to delete feedback. Please try again.');

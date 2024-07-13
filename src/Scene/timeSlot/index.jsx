@@ -21,6 +21,7 @@ const TimeSlotManagement = () => {
   const [filteredCourts, setFilteredCourts] = useState([]); // New state for filtered courts
   const [slots, setSlots] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [timeBound, setTimeBound] = useState([])
   const [addFormState, setAddFormState] = useState({
     branchId: '',
     courtId: '',
@@ -47,6 +48,29 @@ const TimeSlotManagement = () => {
     slotId: '',
     bookedSlotId: ''
   });
+
+  const loadTimeFrame = async () => {
+    const fetchTime = async () => {
+        var res = await fetchWithAuth(`https://localhost:7233/Slot/GetAll`)
+        var data = await res.json()
+        return data
+    }
+
+    try {
+        var data = await fetchTime()
+        setTimeBound([])
+        var primitive = data.find(d => d['bookedSlotId'] === 'S1')
+        var start = primitive.start
+        var end = primitive.end
+        for (let i = start; i <= end; i++) {
+            setTimeBound(t => [...t, i])
+        }
+    }
+    catch (err) {
+        toast.error('Server error')
+    }
+}
+
   const convertToMDY = (date) => {
     //assume date is in dd-mm-yyyy
     var t = date.split('-');
@@ -192,7 +216,7 @@ const TimeSlotManagement = () => {
     })
       .then(response => response.json())
       .then(data => {
-        toast(data.msg);
+        toast.info(data.msg);
         fetchData();
         setAddOpen(false);
       })
@@ -327,10 +351,13 @@ const TimeSlotManagement = () => {
   };
 
   useEffect(() => {
+    
     if (!token) {
       console.error('Token not found. Please log in.');
       return;
     }
+ 
+    loadTimeFrame()
     fetchData();
     fetchUserDetails();
   }, [token]);
@@ -587,7 +614,7 @@ const TimeSlotManagement = () => {
     })
       .then(response => response.json())
       .then( data => {
-        toast(data.msg);
+        toast.info(data.msg);
         fetchData();
         setUpdateOpen(false);
         setUpdateFormState({
@@ -654,8 +681,6 @@ const TimeSlotManagement = () => {
       )
     }
   ];
-
-  const hours = [...Array(24).keys()].map(i => i.toString().padStart(2, '0') + ':00');
 
   const handleStartChange = (e) => {
     console.log(addFormState);
@@ -813,11 +838,11 @@ const TimeSlotManagement = () => {
             onCancel={handleAddCancel}
             className="managetimeslot-custom-modal"
             footer={[
-              <button key="submit" onClick={handleAddOk} className="managetimeslot-button-hover-black-addslot">
-                Add
-              </button>,
               <button key="back" onClick={handleAddCancel} className="managetimeslot-button-hover-black-addslot">
                 Cancel
+              </button>,
+              <button key="submit" onClick={handleAddOk} className="managetimeslot-button-hover-black-addslot">
+                Add
               </button>
             ]}
             centered
@@ -888,9 +913,11 @@ const TimeSlotManagement = () => {
                       required
                     >
                       <option disabled selected hidden value="">Select start time</option>
-                      {hours.map((hour, index) => (
-                        <option key={index} value={index}>{hour}</option>
-                      ))}
+                      {
+                                timeBound.map(t => (
+                                    <option value={t}>{t}:00</option>
+                                ))
+                            }
                     </select>
                   </div>
                   <div className="time-input">
@@ -903,9 +930,11 @@ const TimeSlotManagement = () => {
                       required
                     >
                       <option disabled selected hidden value="">Select end time</option>
-                      {hours.map((hour, index) => (
-                        <option key={index} value={index}>{hour}</option>
-                      ))}
+                      {
+                                timeBound.map(t => (
+                                    <option value={t}>{t}:00</option>
+                                ))
+                            }
                     </select>
                   </div>
                 </div>
@@ -1000,9 +1029,11 @@ const TimeSlotManagement = () => {
                         required
                       >
                         <option disabled selected hidden value="">Select start time</option>
-                        {hours.map((hour, index) => (
-                          <option key={index} value={index}>{hour}</option>
-                        ))}
+                        {
+                                timeBound.map(t => (
+                                    <option value={t}>{t}:00</option>
+                                ))
+                            }
                       </select>
                     </div>
                     <div className="time-input">
@@ -1015,9 +1046,11 @@ const TimeSlotManagement = () => {
                         required
                       >
                         <option disabled selected hidden value="">Select end time</option>
-                        {hours.map((hour, index) => (
-                          <option key={index} value={index}>{hour}</option>
-                        ))}
+                        {
+                                timeBound.map(t => (
+                                    <option value={t}>{t}:00</option>
+                                ))
+                            }
                       </select>
                     </div>
                   </div>

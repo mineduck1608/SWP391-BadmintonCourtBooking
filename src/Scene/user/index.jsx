@@ -83,9 +83,9 @@ const User = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(userData)
-    })
-      .then((response) => {
-        toast(response.msg);
+    }).then(response => response.json())
+      .then((res) => {
+        toast.success(res.msg);
       })
       .catch((error) => {
         console.error('Error updating user:', error);
