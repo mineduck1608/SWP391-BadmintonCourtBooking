@@ -198,8 +198,6 @@ namespace BadmintonCourtAPI.Controllers
 			if (!IsTimeIntervalValid(date, start, end, courtId))
 				return BadRequest(new { msg = "Invalid time" });
 
-
-
 			DateTime startDate = new();
 			DateTime endDate = new();
 			List<BookedSlot> tmpStorage = new();
@@ -213,9 +211,12 @@ namespace BadmintonCourtAPI.Controllers
 				{
 					string bookingId = "BK" + (_bookingService.GetAllBookings().Count + 1).ToString("D7");
 					_bookingService.AddBooking(new Booking { BookingId = bookingId, Amount = amount, BookingType = 1, UserId = userId, BookingDate = DateTime.Now, ChangeLog = 0 });
-					_service.AddSlot(new BookedSlot { SlotId = "S" + (_service.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate, });
+					BookedSlot slot = new BookedSlot { SlotId = "S" + (_service.GetAllSlots().Count + 1).ToString("D7"), BookingId = bookingId, CourtId = courtId, StartTime = startDate, EndTime = endDate };
+					_service.AddSlot(slot);
 					user.Balance -= amount;
 					_userService.UpdateUser(user, userId);
+					UserDetail info = _userDetailService.GetUserDetailById(userId);
+					_mailService.SendMail(info.Email, GenerateMailBody(info, slot), "BMTC - Booking Notification");
 					return Ok(new { msg = "Success" });
 				}
 				return BadRequest(new { msg = "Balance not enough" });

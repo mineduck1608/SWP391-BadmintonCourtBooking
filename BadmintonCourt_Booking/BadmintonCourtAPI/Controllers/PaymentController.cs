@@ -49,35 +49,27 @@ namespace BadmintonCourtAPI.Controllers
 
 		private string GenerateSlotTable(string orderInfo)
 		{
-			string courtId = orderInfo.Split(',')[3].Trim().Split(':')[1].Trim();
-			string date = orderInfo.Split(',')[4].Trim().Split(':')[1].Trim();
-			string start = orderInfo.Split(',')[5].Trim().Split(':')[1].Trim();
-			string end = orderInfo.Split(',')[6].Trim().Split(':')[1].Trim();
-			string table = $@"<table {style}>
+			int index = 3;
+			int tail = orderInfo.Split(',').Length;
+			List<string> detail = new List<string>();
+			for (int i = index; i < tail; i++)
+				detail.Add(orderInfo.Split(',')[i].Trim().Split(':')[1].Trim());
 
+            string table = $@"<table {style}>
     <tr>
-        <td {style}>Court</td>
-        <td {style}>{courtId}</td>
-    </tr>
-    <tr>
-        <td {style}>Date</td>
-        <td {style}>{date}</td>
-    </tr>
-    <tr>
-        <td {style}>Start period</td>
-        <td {style}>{start}h</td>
-    </tr
-	<tr>
-        <td {style}>End period</td>
-        <td {style}>{end}h</td>
-    </tr>
+        <th {style}>Court</th>
+        <th {style}>Date</th>
+        <th {style}>Start period</th>
+        <th {style}>End period</th>
 ";
+
 			if (orderInfo.Contains("Number of months:"))
-			{
-				string n = orderInfo.Split(',')[7].Trim().Split(':')[1].Trim();
-				table += $"<tr {style}><td>Number of month(s)</td><td>{n}</td></tr>";
-			}
-			return table + "</table>";
+				table += $@"<th {style}>Number of month(s)</th>";
+			table += @"</tr><tr>";
+			foreach (var item in detail)
+				table += $@"<td {style}>{item}</td>";
+			   
+            return table + " </tr></table>";
 		}
 
 		private void ExecuteSendMail (string orderInfo, string amount)
