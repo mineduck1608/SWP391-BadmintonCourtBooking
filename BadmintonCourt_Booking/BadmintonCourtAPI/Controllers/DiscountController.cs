@@ -49,6 +49,16 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok(new { msg = "Success" });
 		}
 
+		[HttpPut]
+		[Route("Discount/Recover")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> RecoverDiscount(string id)
+		{
+			Discount discount = _service.GetDiscountById(id);
+			discount.IsDelete = null;
+			_service.UpdateDiscount(discount, id);
+			return Ok(new { msg = "Sucess" });
+		}
 
 		[HttpDelete]
 		[Route("Discount/Delete")]
