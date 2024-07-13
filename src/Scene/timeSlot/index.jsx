@@ -1070,7 +1070,7 @@ const TimeSlotManagement = () => {
           <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id} />
         </Box>
       </Box>
-      <ToastContainer />
+      <ToastContainer theme='colored' />
     </ConfigProvider>
   );
 };

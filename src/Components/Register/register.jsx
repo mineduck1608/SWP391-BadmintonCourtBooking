@@ -2,7 +2,7 @@
 import './register.css';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const [id, idChange] = useState("");
@@ -70,7 +70,6 @@ const Register = () => {
           <p className="login-link">You already have an account?<Link to={'/signin'}>Login</Link></p>
         </div>
       </form>
-      <ToastContainer theme='colored' />
     </div>
   );
 }

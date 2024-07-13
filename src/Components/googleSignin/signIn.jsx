@@ -3,7 +3,7 @@ import { auth, provider } from "./config"; // Ensure this path is correct to you
 import { signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const [value, setValue] = useState('');
@@ -51,7 +51,6 @@ const SignIn = () => {
           <FcGoogle className='icon' />
         </div>
       )}
-      <ToastContainer />
       </div>
   );
 };

@@ -459,7 +459,7 @@ const Branch = () => {
           </Box>
         </Modal>
 
-        <ToastContainer />
+        <ToastContainer theme='colored' />
       </Box>
     </ConfigProvider>
   );

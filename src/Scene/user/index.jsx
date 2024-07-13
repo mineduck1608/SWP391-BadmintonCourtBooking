@@ -633,7 +633,7 @@ const User = () => {
           />
         </Box>
       </Box>
-      <ToastContainer />
+      <ToastContainer theme='colored' />
     </ConfigProvider>
   );
 };

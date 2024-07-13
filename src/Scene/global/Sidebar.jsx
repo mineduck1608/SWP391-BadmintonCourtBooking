@@ -266,7 +266,7 @@ const Sidebar = () => {
                     </Box>
                 </Menu>
             </ProSidebar>
-            <ToastContainer/>
+            <ToastContainer theme='colored'/>
         </Box>
     );
 };
