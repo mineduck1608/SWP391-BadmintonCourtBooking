@@ -68,9 +68,11 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        toast.success('Logout success.');
-        sessionStorage.clear();
-        navigate('/'); // Redirect to home on logout
+        navigate('/')
+        setTimeout(() => {
+            toast.success('Logout success.');
+            sessionStorage.clear();
+        },100) // Redirect to home on logout
     };
 
     const toggleDropdown = () => {

@@ -183,9 +183,6 @@ export const useMode = () => {
       //toggleColorMode: () =>
         //setMode((prev) => (prev === "light" ? "dark" : "light")),
 
-      // toggleColorMode: () =>
-      //   setMode((prev) => (prev === "light" ? "dark" : "light")),
-
     }),
     []
   );

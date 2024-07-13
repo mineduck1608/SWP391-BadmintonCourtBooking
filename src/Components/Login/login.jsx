@@ -35,23 +35,34 @@ const Login = () => {
             const status = decodedToken.Status
             if (roleToken == "Customer") {
               if (status == 'True') {
-                toast.success("Login successful!");
-                navigate('/home');
+                navigate('/home');             
+                setTimeout(() => {
+                  toast.success("Login successful!");
+                }, 100);
+                
               } else {
-                toast.warning('Banned. Please contact admin.')
                 navigate('/signin');
+                setTimeout(() => {
+                  toast.warning('Banned. Please contact admin.')
+                }, 100);
               }
             }
             if (roleToken == "Admin") {
               if (status == 'True') {
-                toast.success("Login successful!");
                 navigate('/admin');
+                setTimeout(() => {
+                  toast.success("Login successful!");
+                },100);
               }
             }
             if (roleToken == "Staff") {
               if (status == 'True') {
-                toast.success("Login successful!");
                 navigate('/staff');
+                setTimeout(() => {
+                  toast.success("Login successful!");
+                },100);
+                
+                
               }
             }
           } if(!resp.ok){

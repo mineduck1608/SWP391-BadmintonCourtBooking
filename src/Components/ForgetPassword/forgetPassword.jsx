@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './forgetpassword.css';
 import Navbar from '../Navbar/Navbar';
-import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 
 const ResetPassword = () => {

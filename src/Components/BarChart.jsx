@@ -61,7 +61,7 @@ const BarChart = ({ isDashboard = false }) => {
   return (
     <ResponsiveBar
       data={branchAmounts}
-      keys={['totalAmount']}
+      keys={['Total Amount']}
       indexBy="branchName"
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       padding={0.3}
