@@ -36,6 +36,7 @@ namespace BadmintonCourtDAOs
 			{
 				tmp.Proportion = newDiscount.Proportion;
 				tmp.Amount = newDiscount.Amount;
+				tmp.IsDelete = newDiscount.IsDelete;
 				_dbContext.Discounts.Update(tmp);
 				_dbContext.SaveChanges();
 			}

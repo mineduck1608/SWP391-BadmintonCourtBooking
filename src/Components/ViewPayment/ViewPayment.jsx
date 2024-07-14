@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import './viewpayment.css';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Fix import
 import { toast } from 'react-toastify';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
@@ -34,8 +34,8 @@ export default function ViewPayment() {
         const paymentsData = await paymentsResponse.json();
         console.log('Fetched Payment Data', paymentsData);
 
-        // Sort payments by date in descending order
-        paymentsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort payments by date and time in descending order
+        paymentsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         setPayments(paymentsData);
         setLoading(false);
