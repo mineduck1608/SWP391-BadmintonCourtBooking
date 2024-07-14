@@ -69,7 +69,7 @@ const Header = () => {
 
     const handleLogout = () => {
             navigate('/')
-            toast.success('Logout success.');
+            toast.success('Logout successfully.');
             sessionStorage.clear();
     };
 
