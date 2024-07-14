@@ -82,7 +82,7 @@ export default function ViewPayment() {
                                   <th>PAYMENT ID</th>
                                   <th>DATE</th>
                                   <th>TIME</th>
-                                  <th>BOOKING ID</th>
+                                  <th>TYPE</th>
                                   <th>METHOD</th>
                                   <th>AMOUNT</th>
                                 </tr>
