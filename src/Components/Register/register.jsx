@@ -47,7 +47,7 @@ const Register = () => {
         body: JSON.stringify(regobj),
       }).then(response => response.json())
       .then((res) => {
-        toast(res.msg);
+        toast.info(res.msg);
       }).catch((err) => {
         toast.error('Failed: ' + err.message);
       });
