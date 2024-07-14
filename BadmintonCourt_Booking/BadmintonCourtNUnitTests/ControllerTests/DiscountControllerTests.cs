@@ -141,7 +141,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 		{
 			float amount = new Random().Next(10000, 100000);
 			float proportion = new Random().Next(0, 100);
-			var actual = await _controller.UpdateDiscount(existedId, amount, proportion);
+			var actual = await _controller.UpdateDiscount(existedId, amount, proportion, null);
 			var ok = actual as OkObjectResult;
 			var jsonOptions = new JsonSerializerOptions
 			{
@@ -161,7 +161,7 @@ namespace BadmintonCourtNUnitTests.ControllerTests
 		public async Task UpdateDiscount_InputEmptyAndNegative_ResultOfNoChangeInData_ResultOfOk_ReturnsTrue()
 		{
 			Discount origin = _list.FirstOrDefault(x => x.DiscountId == existedId);
-			var actual = await _controller.UpdateDiscount(existedId, null, -1);
+			var actual = await _controller.UpdateDiscount(existedId, null, -1, null);
 			var ok = actual as OkObjectResult;
 			var jsonOptions = new JsonSerializerOptions
 			{
