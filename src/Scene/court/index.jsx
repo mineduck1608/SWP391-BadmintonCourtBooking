@@ -46,41 +46,42 @@ const Court = () => {
 
     const [form] = Form.useForm();
     let token;
-                token = sessionStorage.getItem('token');
+    token = sessionStorage.getItem('token');
 
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [courtResponse, branchResponse] = await Promise.all([
+                let token;
+                token = sessionStorage.getItem('token');
+                let decodedToken;
+                decodedToken = jwtDecode(token);
+                const [courtResponse, branchResponse, user] = await Promise.all([
                     fetchWithAuth('https://localhost:7233/Court/GetAll'),
-                    fetchWithAuth('https://localhost:7233/Branch/GetAll')
+                    fetchWithAuth('https://localhost:7233/Branch/GetAll'),
+                    fetchWithAuth(`https://localhost:7233/User/GetById?id=${decodedToken.UserId}`)
                 ]);
 
                 if (!courtResponse.ok || !branchResponse.ok) {
                     throw new Error('Failed to fetch data');
                 }
-
-                const courts = await courtResponse.json();
-                const branches = await branchResponse.json();
-
+                var branchId = (await user.json()).branchId
+                const courts = (await courtResponse.json()).filter(c => c.branchId === branchId);
+                const branches = (await branchResponse.json()).filter(b => b.branchId === branchId);
                 const branchMap = branches.reduce((acc, branch) => {
                     acc[branch.branchId] = branch.branchName;
                     return acc;
                 }, {});
+                //Select courts where they are
 
                 const newData = courts.map((court, index) => ({
                     ...court,
                     id: index + 1,
                     branchName: branchMap[court.branchId]
                 }));
-
-                let token;
-                token = sessionStorage.getItem('token');
-                let decodedToken;
-                decodedToken = jwtDecode(token);
                 
+
                 setUserRole(decodedToken.Role);
                 setData(newData);
                 setBranches(branches);
@@ -125,7 +126,7 @@ const Court = () => {
     const handleSave = async () => {
         const { courtId, courtImg, price, courtStatus, description, branchName } = selectedCourt;
         const encodedUrl = courtImg.split('|').map(url => encodeURIComponent(url)).join('|'); // Encode URLs when sending
-    
+
         try {
             const response = await fetchWithAuth(`https://localhost:7233/Court/Update?courtImg=${encodedUrl}&description=${description}&id=${courtId}&activeStatus=${courtStatus}&price=${price}`, {
                 method: 'PUT',
@@ -142,11 +143,11 @@ const Court = () => {
                     branchName,
                 }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to update court');
             }
-    
+
             toast.success('Court updated successfully!');
             setModalVisible(false);
         } catch (error) {
@@ -154,11 +155,11 @@ const Court = () => {
             toast.error('Failed to update court');
         }
     };
-    
+
     const handleAddCourt = async () => {
         const { courtImg, branchId, price, description } = newCourtData;
         const encodedUrl = courtImg.split('|').map(url => encodeURIComponent(url)).join('|'); // Encode URLs when sending
-    
+
         try {
             const response = await fetchWithAuth(`https://localhost:7233/Court/Add?courtImg=${encodedUrl}&branchId=${branchId}&price=${price}&description=${description}`, {
                 method: 'POST',
@@ -173,11 +174,11 @@ const Court = () => {
                     description,
                 }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to add court');
             }
-    
+
             toast.success('Court added successfully!');
             setAddModalVisible(false);
         } catch (error) {
@@ -185,7 +186,7 @@ const Court = () => {
             toast.error('Failed to add court');
         }
     };
-    
+
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -198,7 +199,7 @@ const Court = () => {
             toast.error('No images selected');
             return;
         }
-    
+
         const uploadedUrls = [];
         for (const img of imgs) {
             const imgRef = ref(imageDb, `files/${v4()}`);
@@ -212,16 +213,16 @@ const Court = () => {
                 return;
             }
         }
-    
+
         if (modalVisible) {
             setSelectedCourt((prevState) => ({ ...prevState, courtImg: uploadedUrls.join('|') }));
         } else {
             setNewCourtData((prevState) => ({ ...prevState, courtImg: uploadedUrls.join('|') }));
         }
-    
+
         toast.success('Images uploaded successfully');
     };
-    
+
 
     const columns = [
         {
