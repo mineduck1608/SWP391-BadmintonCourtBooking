@@ -3,6 +3,7 @@ using BadmintonCourtServices.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BadmintonCourtAPI.Controllers
 {
@@ -38,13 +39,15 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpPut]
 		[Route("Discount/Update")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> UpdateDiscount(string id, float? amount, float? proportion)
+		public async Task<IActionResult> UpdateDiscount(string id, float? amount, float? proportion, string? isDelete)
 		{
 			Discount discount = _service.GetDiscountById(id);
 			if (amount.HasValue && amount > 0)
 				discount.Amount = amount.Value;
 			if (proportion.HasValue && proportion > 0)
 				discount.Proportion = proportion.Value;
+			if (!isDelete.IsNullOrEmpty()) 
+				discount.IsDelete = isDelete == "null" ? null : true;
 			_service.UpdateDiscount(discount, id);
 			return Ok(new { msg = "Success" });
 		}
