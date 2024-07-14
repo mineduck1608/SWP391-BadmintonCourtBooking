@@ -99,7 +99,7 @@ const Discount = () => {
     const { value } = e.target;
     setSelectedDiscount({
       ...selectedDiscount,
-      isDelete: value === 'None',
+      isDelete: value === 'true' ? true : null,
     });
   };
 
@@ -129,7 +129,7 @@ const Discount = () => {
         throw new Error('Failed to update discount');
       }
 
-      toast.success('Discount updated successfully!');
+      toast.success('Success');
       setModalVisible(false);
     } catch (error) {
       console.error('Error:', error);
@@ -321,12 +321,12 @@ const Discount = () => {
                 <FormLabel component="legend">Status</FormLabel>
                 <RadioGroup
                   name="isDelete"
-                  value={selectedDiscount.isDelete ? 'true' : 'false'}
+                  value={selectedDiscount.isDelete ? 'true' : 'null'}
                   onChange={handleRadioChange}
                 >
                   <div className='discount-status'>
-                  <FormControlLabel value="false" control={<Radio />} label="Active" />
-                  <FormControlLabel value="true" control={<Radio style={{ color: '#b22222' }} />} label="None" />
+                  <FormControlLabel value="null" control={<Radio />} label="Active" />
+                  <FormControlLabel value="true" control={<Radio style={{ color: '#b22222' }} />} label="Disable" />
                   </div>
                 </RadioGroup>
               </FormControl>
