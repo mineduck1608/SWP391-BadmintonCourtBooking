@@ -82,10 +82,34 @@ namespace BadmintonCourtAPI.Controllers
 			if (type == fixedBooking || type == playonceBooking)
 				content = GenerateSlotTable(orderInfo);
 
-			content += "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase</p><p>";
+			
 
+            content += "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase</p><p>";
+			//500,000
 			if (type == buyTime || type == flexibleBooking)
-				content += $"We have added to your balance {amount}";
+			{
+				int digitLength = amount.Length;
+				int index = 0;
+				string formatAmount = "";
+				if (digitLength % 3 == 1)
+				{
+					formatAmount += $"{amount[0]},";
+					index = 1;
+				}
+				else if (digitLength % 3 == 2)
+				{
+					formatAmount += $"{amount[0]}{amount[1]},";
+					index = 2;
+				}
+				for (int i = index; i < digitLength; i += 3)
+				{
+					formatAmount += $"{amount[i]}{amount[i + 1]}{amount[i + 2]}";
+					if (i + 3 != digitLength)
+						formatAmount += ",";
+				}
+
+				content += $"We have added to your balance {formatAmount}VND";
+			}
 			else
 				content += "We have added new booked slot to your schedule";
 			//------------------------------------------------------------------
