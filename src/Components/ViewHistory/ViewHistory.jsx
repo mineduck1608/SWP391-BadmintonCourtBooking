@@ -86,7 +86,7 @@ export default function ViewHistory() {
     do {
       rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
       n = Math.floor(n / 1000)
-      if (n > 0) rs = '.' + rs
+      if (n > 0) rs = ',' + rs
     }
     while (n > 0)
     return rs

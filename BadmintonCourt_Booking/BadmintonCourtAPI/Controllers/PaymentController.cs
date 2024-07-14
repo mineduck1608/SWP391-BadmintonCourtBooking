@@ -55,7 +55,7 @@ namespace BadmintonCourtAPI.Controllers
 			for (int i = index; i < tail; i++)
 				detail.Add(orderInfo.Split(',')[i].Trim().Split(':')[1].Trim());
 
-            string table = $@"<table {style}>
+			string table = $@"<table {style}>
     <tr>
         <th {style}>Court</th>
         <th {style}>Date</th>
@@ -68,11 +68,11 @@ namespace BadmintonCourtAPI.Controllers
 			table += @"</tr><tr>";
 			foreach (var item in detail)
 				table += $@"<td {style}>{item}</td>";
-			   
-            return table + " </tr></table>";
+
+			return table + " </tr></table>";
 		}
 
-		private void ExecuteSendMail (string orderInfo, string amount)
+		private void ExecuteSendMail(string orderInfo, string amount)
 		{
 			string userId = orderInfo.Split(',')[1].Trim().Split(':')[1].Trim();
 			UserDetail info = _userDetailService.GetUserDetailById(userId);
@@ -129,11 +129,11 @@ namespace BadmintonCourtAPI.Controllers
 		/// <returns></returns>
 		private string GenerateOrderInfo(TransactionDTO transactionDTO)
 		{
-			StringBuilder sb = new StringBuilder();			
+			StringBuilder sb = new StringBuilder();
 			string type = transactionDTO.Type;
 			string userId = transactionDTO.UserId;
 			string courtId = transactionDTO.CourtId;
-		
+
 			int? start = transactionDTO.Start;
 			int? end = transactionDTO.End;
 			int? numMonth = transactionDTO.NumMonth;
@@ -145,9 +145,9 @@ namespace BadmintonCourtAPI.Controllers
 			if (type != buyTime && type != flexibleBooking)
 			{
 				DateTime? date = transactionDTO.Date;
-				int year = date.Value.Year; 
-				int month = date.Value.Month; 
-				int day = date.Value.Day;	
+				int year = date.Value.Year;
+				int month = date.Value.Month;
+				int day = date.Value.Day;
 				string dateStr = $"{year}-{month}-{day}";
 				sb.Append($" , Court: {courtId}");
 				sb.Append($" , Date: {dateStr}");
@@ -180,10 +180,10 @@ namespace BadmintonCourtAPI.Controllers
 
 				if (dto.Start == null || dto.End == null || dto.Start > dto.End || dto.Date == null || dto.Start < primitive.StartTime.Hour || dto.End > primitive.EndTime.Hour)
 					return "Invalid time interval";
-				
+
 				DateTime startDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Month, dto.Date.Value.Day, dto.Start.Value, 0, 0);
 				DateTime endDate = new DateTime(dto.Date.Value.Year, dto.Date.Value.Month, dto.Date.Value.Day, dto.End.Value, 0, 0);
-				
+
 				if ((startDate - DateTime.Now).TotalMinutes <= 10)
 					return "Booking too close slot time";
 
@@ -211,7 +211,7 @@ namespace BadmintonCourtAPI.Controllers
 		}
 		private float CalculateAmount(TransactionDTO model)
 		{
-			if (model.Type == buyTime || model.Type == flexibleBooking) 
+			if (model.Type == buyTime || model.Type == flexibleBooking)
 				return (float)model.Amount; //Already caught if null
 
 			float courtPrice = _courtService.GetCourtByCourtId(model.CourtId).Price;
@@ -342,7 +342,7 @@ namespace BadmintonCourtAPI.Controllers
 			string msg = ValidateOrder(model);
 			if (msg != "Valid")
 				return BadRequest(new { msg = msg });
-			return Ok(new { url = GeneratePayUrl(model)});
+			return Ok(new { url = GeneratePayUrl(model) });
 		}
 
 
@@ -587,7 +587,7 @@ namespace BadmintonCourtAPI.Controllers
 			bool success = SaveToDB(content, date, transId, amount, expected, actual, 1);
 			if (success)
 				ExecuteSendMail(content, amount);
-            return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
+			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
 		[HttpGet]
@@ -596,12 +596,14 @@ namespace BadmintonCourtAPI.Controllers
 		{
 			var timeStr = result.ResponseTime;
 			var rawdate = timeStr.Split(' ')[0].Split('-');
-			DateTime date = new(int.Parse(rawdate[0]), int.Parse(rawdate[1]), int.Parse(rawdate[2]));
+			var rawTime = timeStr.Split(" ")[1].Split(':');
+			DateTime date = new(int.Parse(rawdate[0]), int.Parse(rawdate[1]), int.Parse(rawdate[2]),
+				int.Parse(rawTime[0]), int.Parse(rawTime[1]), int.Parse(rawTime[2]));
 
 			bool success = SaveToDB(result.OrderInfo, date, result.TransId, result.Amount, result.Message, "Success", 2);
 			if (success)
 				ExecuteSendMail(result.OrderInfo, result.Amount);
-            return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
+			return Redirect(resultRedirectUrl + "?msg=" + (success ? "Success" : "Fail"));
 		}
 
 		// Create info for both methods.It will have the following format:
@@ -611,7 +613,7 @@ namespace BadmintonCourtAPI.Controllers
 
 		public bool SaveToDB(string info, DateTime responseDate, string transId, string amountStr, string expected, string actual, int method)
 		{
-			if (expected != actual) 
+			if (expected != actual)
 				return false;
 
 			var map = TransformToDictionary(info, ',', ':');
