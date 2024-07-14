@@ -326,7 +326,7 @@ namespace BadmintonCourtAPI.Controllers
 		public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsBySearch(string? id, string? search) => Ok(_service.GetPaymentsBySearch(id, search));
 
 		[HttpPost]
-		//[Authorize]
+		[Authorize]
 		[Route("Booking/TransactionProcess")]
 		public async Task<IActionResult> Payment(TransactionDTO model)
 		{

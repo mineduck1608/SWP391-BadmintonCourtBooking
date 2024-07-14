@@ -12,8 +12,6 @@ import { tokens } from "../../theme";
 import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 import { jwtDecode } from 'jwt-decode';
 
-
-
 const User = () => {
   const [rows, setRows] = useState([]);
   const token = sessionStorage.getItem('token');
@@ -29,7 +27,6 @@ const User = () => {
   const tokenUserId = decodedToken.UserId; // Extract userId from the decoded token
   const tokenRole = decodedToken.Role;
 
-
   // Define initial state values
   const initialState = {
     username: '',
@@ -44,8 +41,6 @@ const User = () => {
     role: ''
   };
 
-
-
   // Use a single state object to manage form fields
   const [formState, setFormState] = useState(initialState);
 
@@ -56,7 +51,7 @@ const User = () => {
       id: row.userId,
       username: row.userName || '',
       password: row.password || '',
-      branch: row.branchName || '',
+      branch: row.branchId || '',
       balance: row.balance || '',
       activeStatus: row.activeStatus !== null ? row.activeStatus.toString() : '',
       firstName: row.firstName || '',
@@ -313,7 +308,6 @@ const User = () => {
       });
   };
 
-
   const columns = [
     { field: "userId", headerName: "UserID", align: "center", headerAlign: "center" },
     { field: "firstName", headerName: "First Name", flex: 1, align: "center", headerAlign: "center" },
@@ -344,6 +338,35 @@ const User = () => {
           >
             Edit Info
           </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => handleDelete(params.row.userId)}
+            style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
+          >
+            Ban
+          </Button>
+        </Box>
+      )
+    }
+  ];
+
+  return (
+    <ConfigProvider theme={{
+      token: {
+        colorPrimary: theme.palette.primary.main,
+        colorSuccess: theme.palette.success.main,
+        colorWarning: theme.palette.warning.main,
+        colorError: theme.palette.error.main,
+        colorInfo: theme.palette.info.main,
+      },
+    }}>
+      <Box m="20px">
+        <Head title="User" subtitle="Managing the User Accounts" />
+        <Box>
+          <button className="button-adduser" type="primary" onClick={addUser} variant="contained" color="primary" size="small">
+            Add User
+          </button>
           <Modal
             width={1000}
             open={open}
@@ -369,7 +392,7 @@ const User = () => {
                       <p>Username:</p>
                       <p>First Name:</p>
                       <p>Email:</p>
-                      {tokenRole === 'admin' && (
+                      {tokenRole === 'Admin' && (
                         <>
                           <p>Role:</p>
                         </>
@@ -398,7 +421,7 @@ const User = () => {
                         className="input-box-modal"
                         type="text"
                       />
-                      {tokenRole === 'admin' && (
+                      {tokenRole === 'Admin' && (
                         <>
                           <select
                             value={formState.role}
@@ -430,7 +453,7 @@ const User = () => {
                     <div className="user-modal-item-text2">
                       <p>Password:</p>
                       <p>Last Name:</p>
-                      {tokenRole === 'admin' && (
+                      {tokenRole === 'Admin' && (
                         <>
                           <p>Branch:</p>
                         </>
@@ -453,7 +476,7 @@ const User = () => {
                         className="input-box-modal"
                         type="text"
                       />
-                      {tokenRole === 'admin' && (
+                      {tokenRole === 'Admin' && (
                         <>
                           <select
                             value={formState.branch}
@@ -488,35 +511,6 @@ const User = () => {
               </div>
             </form>
           </Modal>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => handleDelete(params.row.userId)}
-            style={{ backgroundColor: '#b22222', color: 'white', marginLeft: 8 }}
-          >
-            Ban
-          </Button>
-        </Box>
-      )
-    }
-  ];
-
-  return (
-    <ConfigProvider theme={{
-      token: {
-        colorPrimary: theme.palette.primary.main,
-        colorSuccess: theme.palette.success.main,
-        colorWarning: theme.palette.warning.main,
-        colorError: theme.palette.error.main,
-        colorInfo: theme.palette.info.main,
-      },
-    }}>
-      <Box m="20px">
-        <Head title="User" subtitle="Managing the User Accounts" />
-        <Box>
-          <button className="button-adduser" type="primary" onClick={addUser} variant="contained" color="primary" size="small">
-            Add User
-          </button>
           <Modal
             width={1000}
             open={addOpen}
@@ -543,7 +537,7 @@ const User = () => {
                       <p>Password:</p>
                       <p>First Name:</p>
                       <p>Last Name:</p>
-                      {tokenRole === 'admin' && (
+                      {tokenRole === 'Admin' && (
                         <>
                           <p>Role:</p>
                           <p>Branch:</p>
@@ -552,12 +546,12 @@ const User = () => {
                       <p>Email:</p>
                       <p>Phone:</p>
                     </div>
-                    <div className="user-modal-item-valu1">
+                    <div className="user-modal-item-value">
                       <input value={formState.username} onChange={(e) => setFormState({ ...formState, username: e.target.value })} className="input-box-modal" type="text" required />
                       <input value={formState.password} onChange={(e) => setFormState({ ...formState, password: e.target.value })} className="input-box-modal" type="password" required />
                       <input value={formState.firstName} onChange={(e) => setFormState({ ...formState, firstName: e.target.value })} className="input-box-modal" type="text" required />
                       <input value={formState.lastName} onChange={(e) => setFormState({ ...formState, lastName: e.target.value })} className="input-box-modal" type="text" required />
-                      {tokenRole === 'admin' ? (
+                      {tokenRole === 'Admin' ? (
                         <>
                           <select
                             value={formState.role}
