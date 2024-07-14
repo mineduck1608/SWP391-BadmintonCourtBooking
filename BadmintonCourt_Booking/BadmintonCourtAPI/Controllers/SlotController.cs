@@ -121,7 +121,7 @@ namespace BadmintonCourtAPI.Controllers
 		private string GenerateMailBody(UserDetail info, BookedSlot slot) => GenerateUpdateSlotTable(slot) + "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. Your slot has been updated.</p><p> You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
 
-		private string GenerateCancelNotification(UserDetail info, string slotId, float refund) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + $",</p>\r\n<p>You have successfully canceled slot {slotId}.</p><p>We have refunded to your balance {refund} as half of the canceled slot amount. You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+		private string GenerateCancelNotification(UserDetail info, string slotId, float refund) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + $",</p>\r\n<p>You have successfully canceled slot {slotId}.</p><p>We have refunded to your balance {ReformatAmount(refund.ToString())}VND as half of the canceled slot amount. You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
 
 		private string GenerateUpdateSlotTable(BookedSlot slot) => $@"<table {style}>
     <tr>
@@ -145,6 +145,30 @@ namespace BadmintonCourtAPI.Controllers
         <td {style}>{slot.EndTime.Hour}h</td>
     </tr>
 </table>";
+
+		private string ReformatAmount(string amount)
+		{
+			int digitLength = amount.Length;
+			int index = 0;
+			string formatAmount = "";
+			if (digitLength % 3 == 1)
+			{
+				formatAmount += $"{amount[0]},";
+				index = 1;
+			}
+			else if (digitLength % 3 == 2)
+			{
+				formatAmount += $"{amount[0]}{amount[1]},";
+				index = 2;
+			}
+			for (int i = index; i < digitLength; i += 3)
+			{
+				formatAmount += $"{amount[i]}{amount[i + 1]}{amount[i + 2]}";
+				if (i + 3 != digitLength)
+					formatAmount += ",";
+			}
+			return formatAmount;
+		}
 
 		private void ExecuteSendUpdateMail(string content)
 		{
@@ -320,6 +344,8 @@ namespace BadmintonCourtAPI.Controllers
 				if (tmpBalance >= newAmount) // Check số dư sau khi hoàn đã đủ tiền thanh toán
 				{
 					SupportUpdateSlotEnoughBalnce(tmpBalance, newAmount, refund, courtId, startDate, endDate, booking, slot, user);
+					UserDetail info = _userDetailService.GetUserDetailById(userId);
+					_mailService.SendMail(info.Email, GenerateMailBody(info, slot), "BMTC - Update Notification");
 				}
 				//----------------------------------------------------
 				// Sau khi đã giả định số dư tổng sẽ có sau khi đc hoàn mà vẫn ko đủ thì tiến hành cho khách thực hiện giao dịch qua app bank / momo
