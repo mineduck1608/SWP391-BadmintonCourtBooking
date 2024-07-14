@@ -36,7 +36,7 @@ const Login = () => {
             if (roleToken == "Customer") {
               if (status == 'True') {
                 navigate('/home');             
-                  toast.success("Login successful!");     
+                  toast.success("Login successfully!");     
               } else {
                 navigate('/signin');
                   toast.warning('Banned. Please contact admin.')
@@ -45,13 +45,13 @@ const Login = () => {
             if (roleToken == "Admin") {
               if (status == 'True') {
                 navigate('/admin');
-                  toast.success("Login successful!");
+                  toast.success("Login successfully!");
               }
             }
             if (roleToken == "Staff") {
               if (status == 'True') {
                 navigate('/staff');
-                  toast.success("Login successful!");        
+                  toast.success("Login successfully!");        
               }
             }
           } if(!resp.ok){
