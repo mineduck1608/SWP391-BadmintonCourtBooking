@@ -175,8 +175,10 @@ const Discount = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => (
-        params.value === null ? 'Active' : 'None'
-      ),
+        <Box color={params.value ? 'red' : 'green'}>
+            {params.value ? 'Disable' : 'Active'}
+        </Box>
+    )
     },
     {
       field: "actions",
