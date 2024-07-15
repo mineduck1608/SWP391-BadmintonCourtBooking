@@ -192,6 +192,9 @@ const FindCourt = () => {
           };
         });
 
+        //Sort feedback by date in descending order
+        feedbackWithUserDetails.sort((a, b) => new Date(b.period).getTime() - new Date(a.period).getTime());
+
         setFeedback(feedbackWithUserDetails);
         setUsers(userData);
       } catch (error) {

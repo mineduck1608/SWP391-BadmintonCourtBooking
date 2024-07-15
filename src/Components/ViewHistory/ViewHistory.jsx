@@ -67,6 +67,7 @@ export default function ViewHistory() {
       }
     }
     catch (err) {
+      console.log(err);
       toast.error('Server error')
     }
   }
@@ -238,6 +239,7 @@ export default function ViewHistory() {
         return payment
       }
       catch (err) {
+        console.log(err);
         toast.error('Server error')
       }
     }
@@ -341,6 +343,7 @@ export default function ViewHistory() {
       }, 500);
     }
     catch (err) {
+      console.log(err);
       toast.error(err)
     }
   }
