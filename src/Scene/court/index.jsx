@@ -67,8 +67,12 @@ const Court = () => {
                     throw new Error('Failed to fetch data');
                 }
                 var branchId = (await user.json()).branchId
-                const courts = (await courtResponse.json()).filter(c => c.branchId === branchId);
-                const branches = (await branchResponse.json()).filter(b => b.branchId === branchId);
+                let courts = await courtResponse.json();
+                let branches = await branchResponse.json();
+                //Filter court for staff
+                if(decodedToken.Role === 'Staff'){
+                    courts = courts.filter(c => c.branchId === branchId)
+                }
                 const branchMap = branches.reduce((acc, branch) => {
                     acc[branch.branchId] = branch.branchName;
                     return acc;
