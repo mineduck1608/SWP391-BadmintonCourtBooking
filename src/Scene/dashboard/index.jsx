@@ -92,18 +92,6 @@ const Dashboard = () => {
           title="DASHBOARD" 
           subtitle="Welcome to your dashboard" 
         />
-
-        <Box>
-          <Button className="download-button"
-            sx={{
-              backgroundColor: colors.blueAccent[700],
-              color: colors.grey[100],
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
-        </Box>
       </Box>
 
       {/* GRID & CHARTS */}
