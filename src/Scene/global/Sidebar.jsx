@@ -199,6 +199,26 @@ const Sidebar = () => {
                             setSelected={setSelected}
                         />
 
+                        {role === 'Admin' && (
+                        <Item className="menu-item"
+                            title="Feed Back"
+                            to="feedback"
+                            icon={<FeedbackOutlinedIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+                        )}
+
+                        {role === 'Staff' && (
+                        <Item className="menu-item"
+                            title="Feed Back"
+                            to="staffFeedback"
+                            icon={<FeedbackOutlinedIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+                        )}
+
                         <Typography
                             className='sidebar-section-title2'
                             color={colors.grey[300]}
