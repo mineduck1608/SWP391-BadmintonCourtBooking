@@ -56,10 +56,17 @@ const Branch = () => {
           return acc;
         }, {});
 
+        const courtRequests = branchData.map(branch => 
+          fetchWithAuth(`https://localhost:7233/Court/GetByBranch?id=${branch.branchId}`)
+        );
+
+        const courtResponses = await Promise.all(courtRequests);
+        const courtData = await Promise.all(courtResponses.map(res => res.json()));
+
         const combinedData = branchData.map((branch, index) => ({
           ...branch,
           id: index + 1,
-          feedbacks: feedbackMap[branch.branchId] ? feedbackMap[branch.branchId].join(', ') : 'No feedbacks'
+          numberOfCourts: courtData[index].length // Assuming the API returns an array of courts
         }));
 
         let token;
@@ -180,6 +187,7 @@ const Branch = () => {
     { field: "branchPhone", headerName: "Phone", type: "number", headerAlign: "center", align: "center", flex: 1 },
     { field: "branchImg", headerName: "Image", flex: 1, align: "center", headerAlign: "center" },
     { field: "mapUrl", headerName: "Map URL", flex: 1, align: "center", headerAlign: "center" },  // Added mapUrl column
+    { field: "numberOfCourts", headerName: "Number of Courts", flex: 1, align: "center", headerAlign: "center" }, // Added Number of Courts column
     {
       field: "branchStatus",
       headerName: "Status",
@@ -192,7 +200,6 @@ const Branch = () => {
         </Box>
       )
     },
-    { field: "feedbacks", headerName: "Feedbacks", flex: 1, align: "center", headerAlign: "center" },
     {
       field: "actions",
       headerName: "Actions",
