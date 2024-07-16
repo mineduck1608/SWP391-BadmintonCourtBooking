@@ -3,11 +3,11 @@ import './findcourt.css';
 import { TimePicker, Modal, Button, Rate, Input } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../Header/header';
+import Navbar from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
 import image2 from '../../Assets/image2.jpg';
 import userImg from '../../Assets/user.jpg';
 import { jwtDecode } from 'jwt-decode';
-import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 import { toast } from 'react-toastify';
 
 const { RangePicker } = TimePicker;
@@ -29,6 +29,7 @@ const FindCourt = () => {
   const [newRating, setNewRating] = useState(0);
   const [newContent, setNewContent] = useState('');
   const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const token = sessionStorage.getItem("token");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,8 +56,6 @@ const FindCourt = () => {
     const courtId = event.target.value;
     setSelectedCourt(courtId);
   };
-
-
 
   const filteredCourts = courts.filter((court) => {
     return (
@@ -103,8 +102,8 @@ const FindCourt = () => {
       try {
         setLoading(true);
         const [branchResponse, courtResponse] = await Promise.all([
-          fetchWithAuth(branchUrl),
-          fetchWithAuth(courtUrl),
+          fetch(branchUrl),
+          fetch(courtUrl),
         ]);
 
         if (!branchResponse.ok) {
@@ -142,8 +141,6 @@ const FindCourt = () => {
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      const token = sessionStorage.getItem('token');
-
       const feedbackUrl = 'https://localhost:7233/Feedback/GetAll';
       const userUrl = 'https://localhost:7233/User/GetAll';
       const userDetailsUrl = 'https://localhost:7233/UserDetail/GetAll';
@@ -151,15 +148,9 @@ const FindCourt = () => {
       setLoadingFeedback(true);
       try {
         const [feedbackResponse, userResponse, userDetailsResponse] = await Promise.all([
-          fetchWithAuth(feedbackUrl),
-          fetchWithAuth(userUrl, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }),
-          fetchWithAuth(userDetailsUrl)
+          fetch(feedbackUrl),
+          fetch(userUrl),
+          fetch(userDetailsUrl)
         ]);
 
         if (!feedbackResponse.ok) {
@@ -223,6 +214,11 @@ const FindCourt = () => {
 
   const handleDelete = async (feedbackId, feedbackUserId) => {
     const token = sessionStorage.getItem('token');
+    if (!token) {
+      alert("You need to log in to delete feedback.");
+      return;
+    }
+
     let decodedToken;
     try {
       decodedToken = jwtDecode(token);
@@ -232,7 +228,6 @@ const FindCourt = () => {
       return;
     }
 
-
     const currentUserId = decodedToken.UserId;
 
     if (currentUserId !== feedbackUserId) {
@@ -241,7 +236,7 @@ const FindCourt = () => {
     }
 
     try {
-      const response = await fetchWithAuth(
+      const response = await fetch(
         `https://localhost:7233/Feedback/Delete?id=${feedbackId}&userID=${currentUserId}`,
         {
           method: 'DELETE',
@@ -267,8 +262,13 @@ const FindCourt = () => {
 
   const handleEdit = async (feedbackId, rating, content, userId) => {
     const token = sessionStorage.getItem('token');
+    if (!token) {
+      alert("You need to log in to edit feedback.");
+      return;
+    }
+
     let decodedToken;
-    try{
+    try {
       decodedToken = jwtDecode(token);
     } catch (error) {
       sessionStorage.clear();
@@ -283,9 +283,9 @@ const FindCourt = () => {
       return;
     }
 
-    try{
+    try {
       const url= `https://localhost:7233/Feedback/Update?rate=${rating}&content=${encodeURIComponent(content)}&id=${feedbackId}&userId=${currentUserId}`;
-      const response = await fetchWithAuth(url, {
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -324,6 +324,11 @@ const FindCourt = () => {
 
   const handleModalOk = async () => {
     const token = sessionStorage.getItem('token');
+    if (!token) {
+      alert("You need to log in to edit feedback.");
+      return;
+    }
+
     const decodedToken = jwtDecode(token);
     const userIdToken = decodedToken.UserId;
 
@@ -336,7 +341,7 @@ const FindCourt = () => {
 
     try {
       const url = `https://localhost:7233/Feedback/Update?rate=${feedbackData.rating}&content=${feedbackData.content}&id=${feedbackData.feedbackId}&userId=${feedbackData.userId}`;
-      const response = await fetchWithAuth(url, {
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -398,9 +403,14 @@ const FindCourt = () => {
 
   return (
     <div className="findCourt">
-      <div className="findCourtHeader">
+      {token != null && (
+        <div className="findCourtHeader">
         <Header />
       </div>
+      )}
+      {token == null && (
+        <Navbar />
+      )}
       <div className="findCourt-wrapper">
         <div className="background">
           <div>
@@ -474,15 +484,26 @@ const FindCourt = () => {
                   {filteredFeedback.map((fb) => {
                     const user = fb.user;
                     const token = sessionStorage.getItem('token');
-                    const decodedToken = jwtDecode(token);
-                    const userIdToken = decodedToken.UserId;
+                    let userIdToken;
+
+                    if (token) {
+                      try {
+                        const decodedToken = jwtDecode(token);
+                        userIdToken = decodedToken.UserId;
+                      } catch (error) {
+                        console.error('Invalid token', error);
+                        sessionStorage.clear();
+                        navigate('/');
+                        return null;
+                      }
+                    }
 
                     return (
                       <div key={fb.feedbackId} className="findcourt-feedbackCard">
                         <div className="findcourt-feedbackInfo">
                           <div className="findcourt-user-info">
                             <img src={user ? user.image || userImg : userImg} alt={`User ${user ? user.userName : 'Unknown User'}`} className="findcourt-user-image" />
-                            <div className="findourt-user-details">
+                            <div className="findcourt-user-details">
                               <p className="findcourt-user-name"><strong>{user ? user.firstName + " " + user.lastName : 'Anonymous'}</strong></p>
                               <p className="findcourt-user-rating"><span className="stars">{renderStars(fb.rating)}</span></p>
                             </div>
@@ -491,22 +512,22 @@ const FindCourt = () => {
                           <p>Feedback: {fb.content}</p>
                           <p className='feedback-datetime'>{fb.formattedDateTime}</p>
                         </div>
-                        <div className="feedback-actions">
-                          <button
-                            className="find-court-delete-feedback-btn"
-                            onClick={() => handleDelete(fb.feedbackId, fb.userId)}
-                            disabled={userIdToken !== fb.userId}
-                          >
-                            Delete
-                          </button>
-                          <button
-                            className='find-court-edit-feedback-btn'
-                            onClick={() => handleEditButtonClick(fb)}
-                            disabled={userIdToken !== fb.userId}
-                          >
-                            Edit
-                          </button>
-                        </div>
+                        {token && userIdToken === fb.userId && (
+                          <div className="feedback-actions">
+                            <button
+                              className="find-court-delete-feedback-btn"
+                              onClick={() => handleDelete(fb.feedbackId, fb.userId)}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              className='find-court-edit-feedback-btn'
+                              onClick={() => handleEditButtonClick(fb)}
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

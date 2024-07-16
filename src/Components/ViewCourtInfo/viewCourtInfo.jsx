@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Header from "../Header/header";
+import Navbar from "../Navbar/Navbar";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -32,9 +32,9 @@ const ViewCourtInfo = () => {
             try {
                 setLoading(true);
                 const [branchResponse, courtResponse, slotResponse] = await Promise.all([
-                    fetchWithAuth(branchUrl),
-                    fetchWithAuth(courtUrl),
-                    fetchWithAuth(slotUrl),
+                    fetch(branchUrl),
+                    fetch(courtUrl),
+                    fetch(slotUrl),
                 ]);
 
                 if (!branchResponse.ok) {
@@ -50,10 +50,6 @@ const ViewCourtInfo = () => {
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
                 const slotData = await slotResponse.json();
-
-                console.log('Fetched court data:', courtData); // Log court data to console
-                console.log('Fetched branch data:', branchData);
-                console.log('Fetched slot data:', slotData);
 
                 const params = new URLSearchParams(location.search);
                 const courtId = params.get('courtId');
@@ -193,10 +189,17 @@ const ViewCourtInfo = () => {
           while (n > 0)
           return rs
     };
-
+    const token = sessionStorage.getItem("token");
     return (
         <div className="viewcourtinfo">
-            <Header />
+            {token != null && (
+        <div className="findCourtHeader">
+        <Header />
+      </div>
+      )}
+      {token == null && (
+        <Navbar />
+      )}
             <div className="viewCourtInfo-wrapper">
                 <div className="background">
                     <div className="viewcourtinfo-body">

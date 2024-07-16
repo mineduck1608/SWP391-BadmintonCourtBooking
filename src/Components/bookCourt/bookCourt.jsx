@@ -39,7 +39,7 @@ const BookCourt = () => {
         try {
             setDiscounts([])
             const discountData = await (
-                await fetch(`${apiUrl}/Discount/GetAll`, {
+                await fetchWithAuth(`${apiUrl}/Discount/GetAll`, {
                     headers: {
                         Authorization: `Bearer ${sessionStorage.getItem('token')}`
                     }
@@ -52,7 +52,7 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            toast.error('Server error')
+           
         }
     }
     const fetchBranches = async () => {
@@ -72,7 +72,7 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            toast.error('Server error')
+        
         }
     }
     const fetchCourts = async () => {
@@ -94,7 +94,6 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            toast.error('Server error')
         }
     }
     const loadTimeFrame = async () => {
@@ -115,7 +114,7 @@ const BookCourt = () => {
             }
         }
         catch (err) {
-            toast.error('Server error')
+          
         }
     }
     useEffect(() => {
