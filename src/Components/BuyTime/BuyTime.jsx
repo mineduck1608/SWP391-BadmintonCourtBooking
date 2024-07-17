@@ -15,33 +15,15 @@ const BuyTime = () => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState(0)
   const minAmount = 10000
-  const fetchDiscounts = async () => {
-    try {
-      setDiscounts([]);
-      const discountData = await (
-        await fetch(`${apiUrl}/Discount/GetAll`, {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('token')}`
-          }
-        })
-      ).json();
-  
-      const filteredData = discountData.filter(discount => !discount.isDelete);
-  
-      for (let index = 0; index < filteredData.length; index++) {
-        setDiscounts(t => [...t, filteredData[index]]);
-      }
-    } catch (err) {
-      toast.error('Server error');
-    }
-  };
-  
+  const maxAmount = 9999999
+
+
   const process = (value) => {
-    var r = value.replace('.', '').replace(/[^0-9]/g, '')
+    var r = value.replace(/[^0-9]/g, '')
     return parseInt(r)
   }
   const validateAmount = (amount) => {
-    let r = amount >= minAmount
+    let r = amount >= minAmount && amount <= maxAmount
     setValidAmount(r)
     return r
   }
@@ -76,9 +58,8 @@ const BuyTime = () => {
       }
     }
   }
-  //Get the userID
   useEffect(() => {
-    async function fetchUserBalance() {
+    const fetchUserBalance = async () => {
       try {
         var decodedToken = jwtDecode(token)
         setUserID(u => decodedToken.UserId)
@@ -102,6 +83,26 @@ const BuyTime = () => {
       }
 
     }
+    const fetchDiscounts = async () => {
+      try {
+        setDiscounts([]);
+        const discountData = await (
+          await fetch(`${apiUrl}/Discount/GetAll`, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            }
+          })
+        ).json();
+
+        const filteredData = discountData.filter(discount => !discount.isDelete);
+
+        for (let index = 0; index < filteredData.length; index++) {
+          setDiscounts(t => [...t, filteredData[index]]);
+        }
+      } catch (err) {
+        toast.error('Server error');
+      }
+    };
     fetchUserBalance()
     fetchDiscounts()
   }, [])
@@ -164,16 +165,16 @@ const BuyTime = () => {
         <div className='buyTime_title'>
           <h1 >Buy more flexible money</h1>
           <button
-              className='buyTime_btn'
-              onClick={() => {
-                setOpen(true)
-              }}>
-              View discounts
-            </button>
+            className='buyTime_btn'
+            onClick={() => {
+              setOpen(true)
+            }}>
+            View discounts
+          </button>
         </div>
         <article className='buyTime_article'>
           <p className='buyTime_p'>Remaining money: {formatNumber(Math.floor(remainingTime))}</p>
-          
+
           <div className='buyTime_centerDiv'>
             <input className='buyTime_counter1' id='amount' type='text'
               value={formatNumber(amount)}
@@ -185,7 +186,9 @@ const BuyTime = () => {
 
           </div>
           {!validAmount && (
-            <p className='buyTime_err'>Input a valid number of money to buy!<br />Min: {formatNumber(minAmount)}đ</p>
+            <p className='buyTime_err'>Input a valid number of money to buy!<br />
+              Min: {formatNumber(minAmount)}đ
+            </p>
           )}
           <p className='buyTime_p' >Payment method</p>
           <select className='buyTime_select' id='method'>
@@ -197,7 +200,7 @@ const BuyTime = () => {
             <button className='buyTime_btn' onClick={() => {
               completeBooking()
             }}>Confirm</button>
-            
+
           </div>
         </article>
       </div>
