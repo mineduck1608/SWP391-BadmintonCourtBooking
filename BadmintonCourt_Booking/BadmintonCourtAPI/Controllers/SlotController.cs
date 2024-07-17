@@ -178,7 +178,7 @@ namespace BadmintonCourtAPI.Controllers
 			BookedSlot slot = _service.GetSlotById(slotId);
 			_mailService.SendMail(info.Email, GenerateMailBody(info, slot), "BMTC - Slot Update Notification");
 		}
-
+		//var primitive = data.find(d => d['bookedSlotId'] === 'S1');
 		[HttpGet]
 		[Route("Slot/GetAll")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.GetAllSlots()));

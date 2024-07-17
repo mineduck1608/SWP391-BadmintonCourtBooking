@@ -15,7 +15,9 @@ namespace BadmintonCourtAPI.Controllers
 	{
 
 		private readonly ICourtBranchService _service = null;
+		private readonly ICoordinateService _coordinateService = new CoordinateService();
 		private readonly ICourtService _courtService = new CourtService();
+		private readonly IFeedbackService _feedbackService = new FeedbackService();
 
 		public BranchController(ICourtBranchService service)
 		{
@@ -40,6 +42,42 @@ namespace BadmintonCourtAPI.Controllers
 				return Ok(new { msg = "Success" });
 			}
 			return BadRequest(new { msg = "Phone number is not properly formatted"});
+		}
+
+		[HttpGet]
+		[Route("Branch/GetNearby")]
+		public async Task<ActionResult<IEnumerable<CourtBranch>>> GetBranchesByGPS(double latitude, double longitude)
+		{
+			List<CourtBranch> branchList = _service.GetAllCourtBranches();
+			List<CourtBranch> tmpStorage = new List<CourtBranch>();
+			Dictionary<CourtBranch, double> rateStorage = new Dictionary<CourtBranch, double>();
+			List<CourtBranch> result = new List<CourtBranch>();
+            foreach (var item in branchList)
+            {
+				if (!item.MapUrl.IsNullOrEmpty())
+				{
+					Dictionary<string, double> tmp = _coordinateService.ExtractCoordinates(item.MapUrl);
+					if (tmp != null)
+					{
+						double distance = _coordinateService.CaculateDistance(latitude, longitude, tmp.ElementAt(0).Value, tmp.ElementAt(1).Value);
+						if (distance <= 5000) 
+							tmpStorage.Add(item);
+					}
+				}
+            }
+			foreach (var item in tmpStorage)
+			{
+				List<Feedback> feedbackStorage = _feedbackService.GetBranchFeedbacks(item.BranchId);
+				double rating = 0;
+				foreach (var feedback in feedbackStorage)
+					rating += feedback.Rating;
+				rating = rating / feedbackStorage.Count;
+				rateStorage.Add(item, rating);
+			}
+			rateStorage = rateStorage.OrderByDescending(x => x.Value).ToDictionary();
+			foreach (var item in rateStorage)
+				result.Add(item.Key);
+            return Ok(result);
 		}
 
 

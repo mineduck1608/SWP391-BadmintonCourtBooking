@@ -61,7 +61,7 @@ const TimeSlotManagement = () => {
     try {
       var data = await fetchTime();
       setTimeBound([]);
-      var primitive = data.find(d => d['bookedSlotId'] === 'S1');
+      var primitive = data.find(d => d.bookedSlotId === 'S1');
       var start = primitive.start;
       var end = primitive.end;
       for (let i = start; i <= end; i++) {

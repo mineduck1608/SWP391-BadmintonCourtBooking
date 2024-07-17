@@ -32,6 +32,7 @@ namespace BadmintonCourtAPI
 			builder.Services.AddScoped<IMailService, MailService>();
 			builder.Services.AddScoped<IMoMoService, MoMoService>();
 			builder.Services.AddScoped<IVnPayService, VnPayService>();
+            builder.Services.AddScoped<ICoordinateService, CoordinateService>();
 
 
 			builder.Services.AddControllers();

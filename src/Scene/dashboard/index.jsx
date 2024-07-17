@@ -116,7 +116,7 @@ const Dashboard = () => {
               <MenuItem value="year">Year</MenuItem>
               <MenuItem value="month">Month</MenuItem>
               <MenuItem value="week">Week</MenuItem>
-            </Select>
+            </Select>s
           </FormControl>
           <TextField
             label="Year"
@@ -142,15 +142,18 @@ const Dashboard = () => {
             </FormControl>
           ) : null}
           {filterType === "month" ? (
-            <TextField
-              label="Number of Months"
-              type="number"
+            <FormControl className="filter-input" fullWidth>
+            <InputLabel>Number of Months</InputLabel>
+            <Select
               value={numberOfMonths}
               onChange={(e) => setNumberOfMonths(e.target.value)}
-              className="filter-input"
-              fullWidth
-              margin="normal"
-            />
+              label="Number of Months" 
+            >
+              {Array.from({ length: 3 }, (_, i) => i + 1).map(numberOfMonths => (
+                <MenuItem key={numberOfMonths} value={numberOfMonths}>{numberOfMonths}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           ) : null}
           {filterType === "week" ? (
             <FormControl className="filter-input" fullWidth>
