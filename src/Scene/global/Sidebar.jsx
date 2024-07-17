@@ -241,7 +241,7 @@ const Sidebar = () => {
 
                         {role === 'Admin' && (
                         <Item className="menu-item"
-                            title="Feed Back"
+                            title="Feedback"
                             to="feedback"
                             icon={<FeedbackOutlinedIcon />}
                             selected={selected}
@@ -251,7 +251,7 @@ const Sidebar = () => {
 
                         {role === 'Staff' && (
                         <Item className="menu-item"
-                            title="Feed Back"
+                            title="Feedback"
                             to="staffFeedback"
                             icon={<FeedbackOutlinedIcon />}
                             selected={selected}
