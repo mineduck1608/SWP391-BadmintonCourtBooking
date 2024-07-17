@@ -12,11 +12,11 @@ namespace BadmintonCourtServices
 	{
 
 		private double ToRadians(double x) => x * Math.PI / 180;
-		public double CaculateDistance(double orgLatitude, double orgLongitude, double desLatitude, double desLongtitude)
+		public double CaculateDistance(double orgLatitude, double orgLongitude, double desLatitude, double desLongitude)
 		{
 			const double r = 6371; // Radius of Earth in kilometers
 			double latDistance = ToRadians(orgLatitude - desLatitude);
-			double lonDistance = ToRadians(orgLongitude - desLongtitude);
+			double lonDistance = ToRadians(orgLongitude - desLongitude);
 			double a = Math.Sin(latDistance / 2) * Math.Sin(latDistance / 2) +
 					   Math.Cos(ToRadians(orgLatitude)) * Math.Cos(ToRadians(desLatitude)) *
 					   Math.Sin(lonDistance / 2) * Math.Sin(lonDistance / 2);
