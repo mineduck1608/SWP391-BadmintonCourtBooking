@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Header from "../Header/header";
+import Navbar from "../Navbar/Navbar";
 import './viewCourtInfo.css';
 import Footer from "../Footer/Footer";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
 
 const ViewCourtInfo = () => {
     const [mainCourt, setMainCourt] = useState(null);
@@ -19,6 +19,7 @@ const ViewCourtInfo = () => {
     const [slots, setSlots] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const maxVisibleHours = 5;
+    const [timeBound, setTimeBound] = useState([]); // 0:00 to 23:00
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -32,9 +33,9 @@ const ViewCourtInfo = () => {
             try {
                 setLoading(true);
                 const [branchResponse, courtResponse, slotResponse] = await Promise.all([
-                    fetchWithAuth(branchUrl),
-                    fetchWithAuth(courtUrl),
-                    fetchWithAuth(slotUrl),
+                    fetch(branchUrl),
+                    fetch(courtUrl),
+                    fetch(slotUrl),
                 ]);
 
                 if (!branchResponse.ok) {
@@ -50,10 +51,6 @@ const ViewCourtInfo = () => {
                 const branchData = await branchResponse.json();
                 const courtData = await courtResponse.json();
                 const slotData = await slotResponse.json();
-
-                console.log('Fetched court data:', courtData); // Log court data to console
-                console.log('Fetched branch data:', branchData);
-                console.log('Fetched slot data:', slotData);
 
                 const params = new URLSearchParams(location.search);
                 const courtId = params.get('courtId');
@@ -74,6 +71,7 @@ const ViewCourtInfo = () => {
         };
 
         fetchData();
+        loadTimeFrame();
     }, [location.search]);
 
     const handleBookCourt = (courtId) => {
@@ -102,7 +100,7 @@ const ViewCourtInfo = () => {
     };
 
     const handleNextHour = () => {
-        setCurrentHourIndex((prev) => Math.min(prev + 1, 24 - maxVisibleHours));
+        setCurrentHourIndex((prev) => Math.min(prev + 1, timeBound.length - maxVisibleHours));
     };
 
     const handlePrevImage = () => {
@@ -129,11 +127,13 @@ const ViewCourtInfo = () => {
         return dates;
     };
 
-    const generateHourTimeline = (startHour, date) => {
+    const generateHourTimeline = (startHourIndex, date) => {
         const hours = [];
-        for (let i = startHour; i < startHour + maxVisibleHours; i++) {
-            const hourStart = i % 24;
-            const hourEnd = (i + 1) % 24;
+        const availableHours = timeBound.slice(startHourIndex, startHourIndex + maxVisibleHours);
+
+        availableHours.forEach((hour, index) => {
+            const hourStart = hour;
+            const hourEnd = (hour + 1) % 24;
             
             const isBooked = slots.some(slot => 
                 slot.courtId === mainCourt?.courtId &&
@@ -149,9 +149,31 @@ const ViewCourtInfo = () => {
                 end: hourEnd.toString().padStart(2, '0') + ':00',
                 status
             });
-        }
+        });
+
         return hours;
     };
+
+    const loadTimeFrame = async () => {
+        const fetchTime = async () => {
+            const res = await fetch(`https://localhost:7233/Slot/GetAll`)
+            const data = await res.json()
+            return data
+        }
+
+        try {
+            const data = await fetchTime()
+            setTimeBound([])
+            const primitive = data.find(d => d['bookedSlotId'] === 'S1')
+            const start = primitive.start
+            const end = primitive.end
+            for (let i = start; i <= end; i++) {
+                setTimeBound(t => [...t, i])
+            }
+        } catch (err) {
+            // handle error
+        }
+    }
 
     const weekDates = generateWeekDates(currentWeekStart);
     const hours = generateHourTimeline(currentHourIndex, selectedDate);
@@ -173,30 +195,36 @@ const ViewCourtInfo = () => {
     // Function to format the price
     const formatPrice = (n) => {
         function formatTo3Digits(n, stop) {
-            var rs = ''
+            let rs = ''
             if (!stop)
-              for (var i = 1; i <= 3; i++) {
-                rs = (n % 10) + rs
-                n = Math.floor(n / 10)
-              }
+                for (let i = 1; i <= 3; i++) {
+                    rs = (n % 10) + rs
+                    n = Math.floor(n / 10)
+                }
             else rs = n + rs
             return rs
-          }
-          if (Object.is(n, NaN)) return 0
-          n = Math.floor(n)
-          var rs = ''
-          do {
+        }
+        if (Object.is(n, NaN)) return 0
+        n = Math.floor(n)
+        let rs = ''
+        do {
             rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
             n = Math.floor(n / 1000)
             if (n > 0) rs = ',' + rs
-          }
-          while (n > 0)
-          return rs
+        } while (n > 0)
+        return rs
     };
-
+    const token = sessionStorage.getItem("token");
     return (
         <div className="viewcourtinfo">
-            <Header />
+            {token != null && (
+                <div className="findCourtHeader">
+                    <Header />
+                </div>
+            )}
+            {token == null && (
+                <Navbar />
+            )}
             <div className="viewCourtInfo-wrapper">
                 <div className="background">
                     <div className="viewcourtinfo-body">
@@ -214,15 +242,15 @@ const ViewCourtInfo = () => {
                                     </div>
                                 )}
                                 <div className="indicator-wrapper">
-                                            {images.map((_, index) => (
-                                                <span
-                                                    key={index}
-                                                    className={`indicator ${currentImageIndex === index ? 'active' : ''}`}
-                                                ></span>
-                                            ))}
-                                        </div>
+                                    {images.map((_, index) => (
+                                        <span
+                                            key={index}
+                                            className={`indicator ${currentImageIndex === index ? 'active' : ''}`}
+                                        ></span>
+                                    ))}
+                                </div>
                                 <div className="viewcourtinfo-info-status">
-                                    <div className="viewcourtinfo-info">                                 
+                                    <div className="viewcourtinfo-info">
                                         <p className='viewcourt-title'>Address: {branch?.location}</p>
                                         <p className='viewcourt-title'>Branch: {branch?.branchName}</p>
                                         <p className='viewcourt-title'>Price: {mainCourt ? formatPrice(mainCourt.price) : 'N/A'} VND</p>
@@ -295,11 +323,11 @@ const ViewCourtInfo = () => {
                                             <div className="legend-item">
                                                 <div className="legend-color maintenance"></div>
                                                 <div className="legend-text">Maintenance</div>
-                                            </div>                                         
+                                            </div>
                                         </div>
-                                        <button 
-                                            className='timeline-viewCourt' 
-                                            onClick={() => handleBookCourtOption(mainCourt?.courtId)} 
+                                        <button
+                                            className='timeline-viewCourt'
+                                            onClick={() => handleBookCourtOption(mainCourt?.courtId)}
                                             disabled={!mainCourt?.courtStatus}
                                         >
                                             Book
@@ -325,8 +353,8 @@ const ViewCourtInfo = () => {
                                             <p className='viewcourtinfo-other-des-p'>{court.description}</p>
                                         </div>
                                         <div className="other-court-button">
-                                            <button 
-                                                className='viewCourt' 
+                                            <button
+                                                className='viewCourt'
                                                 onClick={() => handleBookCourt(court.courtId)}
                                                 disabled={!court.courtStatus}
                                             >

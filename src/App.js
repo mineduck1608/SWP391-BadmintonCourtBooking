@@ -37,6 +37,8 @@ import CreateFeedbackModal from './Components/CreateFeedbackModal/CreateFeedback
 import PaymentHistory from './Components/ViewPayment/ViewPayment';
 import { jwtDecode } from 'jwt-decode';
 import Discount from './Scene/discount/discount';
+import Feedback from './Scene/feedback/feedback';
+import StaffFeedback from './Scene/feedback/staffFeedback';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -98,6 +100,7 @@ const logout = () => {
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
             <Route path="line" element={<Line />} />
+            <Route path="feedback" element={<Feedback />} />
           </Route>
 
           <Route path="/staff/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
@@ -109,9 +112,9 @@ const logout = () => {
             <Route path="payment" element={<Payment />} />
             <Route path="bar" element={<Bar />} />
             <Route path="line" element={<Line />} />
+            <Route path="staffFeedback" element={<StaffFeedback />} />
           </Route>
-           {/* Route for CreateFeedbackModal */}
-           <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />
+            <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />
         </Routes>
         
       </ThemeProvider>
