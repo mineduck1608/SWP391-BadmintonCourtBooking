@@ -535,6 +535,7 @@ namespace BadmintonCourtAPI.Controllers
 			//---------------------------------------------------------------------
 			_userService.UpdateUser(user, userId);
 			//---------------------------------------------------------------------
+			booking.ChangeLog += 1;
 			_bookingService.UpdatBooking(booking, bookingId);
 			//---------------------------------------------------------------------
 			slot.CourtId = courtId;
