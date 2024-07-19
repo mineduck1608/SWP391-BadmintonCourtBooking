@@ -39,6 +39,7 @@ import { jwtDecode } from 'jwt-decode';
 import Discount from './Scene/discount/discount';
 import Feedback from './Scene/feedback/feedback';
 import StaffFeedback from './Scene/feedback/staffFeedback';
+import AnimatedIcons from './Components/AnimatedIcons/animatedIcons';
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -69,24 +70,24 @@ const logout = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
-          <Route path="/" element={<div><Navbar /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><Footer /></div>} />
-          <Route path="/home" element={<div><Header /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><Footer /></div>} />
+          <Route path="/" element={<div><Navbar /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><AnimatedIcons/><Footer /></div>} />
+          <Route path="/home" element={<div><Header /><Home setSearchCriteria={setSearchCriteria} /><Popular searchCriteria={searchCriteria} /><AnimatedIcons/><Footer /></div>} />
           <Route path="/signin" element={<SignInSignUp defaultLoginVisible={true} />} />
           <Route path="/signup" element={<SignInSignUp defaultLoginVisible={false} />} />
-          <Route path="/viewCourtInfo" element={<ViewCourtInfo />} />
-          <Route path="/editInfo" element={<EditInfo />} />
-          <Route path="/viewInfo" element={<ViewInfo />} />
-          <Route path="/findCourt" element={<FindCourt />} />
-          <Route path="/ResetPassword" element={<ForgetPassword />} />
-          <Route path="/verifyAccount" element={<VerifyAccount />} />
-          <Route path="/bookCourt" element={<div><Header /><BookCourt /></div>} />
-          <Route path="/buyTime" element={<div><Header /><BuyTime /><Footer /></div>} />
+          <Route path="/viewCourtInfo" element={<><ViewCourtInfo /><AnimatedIcons/></>} />
+          <Route path="/editInfo" element={<><EditInfo /><AnimatedIcons/></>} />
+          <Route path="/viewInfo" element={<><ViewInfo /><AnimatedIcons/></>} />
+          <Route path="/findCourt" element={<><FindCourt /><AnimatedIcons/></>} />
+          <Route path="/ResetPassword" element={<><ForgetPassword /></>} />
+          <Route path="/verifyAccount" element={<><VerifyAccount /></>} />
+          <Route path="/bookCourt" element={<div><Header /><BookCourt /><AnimatedIcons/></div>} />
+          <Route path="/buyTime" element={<div><Header /><BuyTime /><Footer /><AnimatedIcons/></div>} />
           <Route path="/paySuccess" element={<div><Header /><PaySuccess /><Footer /></div>} />
           <Route path="/payFail" element={<div><Header /><BuyFail /><Footer /></div>} />
-          <Route path="/bookingHistory" element={<BookingHistory />} />
-          <Route path="/paymentHistory" element={<PaymentHistory/>} /> 
-          <Route path="/googleMap" element={<div><Header /><GoogleMap /><Footer /></div>} />
-          <Route path="/contacts" element={<div><Navbar /><GoogleMap /><Footer /></div>} />
+          <Route path="/bookingHistory" element={<><BookingHistory /><AnimatedIcons/></>} />
+          <Route path="/paymentHistory" element={<><PaymentHistory/><AnimatedIcons/></>} /> 
+          <Route path="/googleMap" element={<div><Header /><GoogleMap /><Footer /><AnimatedIcons/></div>} />
+          <Route path="/contacts" element={<div><Navbar /><GoogleMap /><Footer /><AnimatedIcons/></div>} />
 
           <Route path="/admin/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
             <Route path="" element={<Navigate to="dashboard" />} /> {/* Default to Dashboard */}
