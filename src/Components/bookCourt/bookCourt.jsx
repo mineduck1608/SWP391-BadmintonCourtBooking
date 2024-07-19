@@ -457,7 +457,6 @@ const BookCourt = () => {
 
                         <select id="court" name="court" onChange={(e) => {
                             var courtId = e.target.value
-                            console.log(courtId);
                             loadCourtInfo(courtId)
                             reloadCourt()
                         }}>

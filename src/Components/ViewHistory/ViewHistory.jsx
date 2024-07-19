@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CreateFeedbackModal from '../CreateFeedbackModal/CreateFeedbackModal';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { padStart } from '@fullcalendar/core/internal';
 
 export default function ViewHistory() {
   const numOfChanges = 2
@@ -51,6 +52,7 @@ export default function ViewHistory() {
 
   const currentDate = new Date();
   const currentDateString = currentDate.toDateString();
+  const [currentTime, setCurrentTime] = useState(new Date())
 
   const formatNumber = (n) => {
     function formatTo3Digits(n, stop) {
@@ -217,6 +219,7 @@ export default function ViewHistory() {
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
     let cancelAmount = (slot.end - slot.start) * court.price * 0.5
+    let booking = bookings.find(b => b.bookingId === slot.bookingId)
     setFormState({
       date: slot.date,
       start: slot.start,
@@ -225,7 +228,8 @@ export default function ViewHistory() {
       bookingId: slot.bookingId,
       branchId: branchId,
       slotId: slot.bookedSlotId,
-      cancelAmount: cancelAmount
+      cancelAmount: cancelAmount,
+      bookingDate: booking.bookingDate
     })
   }
   const formatTime = (time) => {
@@ -413,8 +417,7 @@ export default function ViewHistory() {
   const isEditable = (booking) => {
     var bookingDateNum = Date.parse(new Date(booking.bookingDate))
     var currentTime = Date.parse(new Date())
-    return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 &&
-      booking['changeLog'] < numOfChanges
+    return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 && booking['changeLog'] < numOfChanges
   }
   function convertDateAndHour(date, hour) {
     return new Date(date).setHours(hour)
@@ -491,15 +494,27 @@ export default function ViewHistory() {
     let endTime = convertDateAndHour(date, end)
     return (startTime < endTime) && (startTime > now)
   }
-  const formatTimeRange = (time) => {
-    var range = new Date() - new Date(time)
+  //Tick down every 1s
+  useEffect(() => {
+    setTimeout(() => {
+      setCurrentTime(new Date())
+    }, 1000);
+  })
+  const calculateTimeLeft = (time) => {
+    var range = currentTime - new Date(time)
     range = maxHourCanChange * 3600000 - range
-    let hour = Math.floor(range / 3600000)
-    range = range - hour * 3600000
-    let min = Math.floor(range / 60000)
-    range = range - min * 60000
-    let sec = Math.floor(range / 1000)
-    return `${hour}h${min}m${sec}s`
+    if(range <=0) {
+      handleCancel()
+    }
+    return range
+  }
+  const formatHMS = (time) => {
+    let hour = Math.floor(time / 3600000)
+    time = time - hour * 3600000
+    let min = Math.floor(time / 60000)
+    time = time - min * 60000
+    let sec = Math.floor(time / 1000)
+    return `${padStart(hour, 2)}h${padStart(min, 2)}m${padStart(sec, 2)}s`
   }
   return (
     <div className='view-history'>
@@ -515,7 +530,7 @@ export default function ViewHistory() {
             You can only change a booking up to {numOfChanges} times, and must not be more than {maxHourCanChange} hour(s) since booking time.</p>
           <p>
             Currently <span className='warning'>{numOfChanges - formState.changeLog}</span> changes left,
-            and <span className='warning'>{formatTimeRange(formState.bookingDate)}</span> left.
+            and <span className='warning'>{formatHMS(calculateTimeLeft(formState.bookingDate))}</span> left.
           </p>
           <p>Date:</p>
           <input type="date" id="datePicker" value={formState.date}
@@ -608,6 +623,7 @@ export default function ViewHistory() {
             <span> {formatNumber(formState.cancelAmount)}đ</span>
           </p>
           <p className='warning'>THIS CANNOT BE UNDONE!</p>
+          <p>You have <span className='warning'>{formatHMS(calculateTimeLeft(formState.bookingDate))}</span> left</p>
           <div className='right-align-btn'>
             <button className='view-history-button-small view-history-cancel-btn'
               onClick={cancelSlot}
