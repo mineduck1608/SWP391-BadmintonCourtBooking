@@ -1,0 +1,56 @@
+.icon-container {
+  position: absolute;
+  top: 750px; /* Adjust as needed */
+  right: 20px; /* Adjust as needed */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+/* Facebook Icon Styling */
+.facebook-icon {
+  display: inline-block;
+  width: 60px; /* Ensure width and height are equal */
+  height: 60px; /* Ensure width and height are equal */
+  overflow: hidden;
+  border-radius: 50%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.facebook-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure the image fits within the container without distortion */
+  border-radius: 50%; /* Maintain the circular shape */
+  transition: transform 0.3s ease;
+}
+
+.facebook-icon:hover .facebook-image {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Messenger Icon Styling */
+.messenger-icon {
+  display: inline-block;
+  width: 80px; /* Ensure width and height are equal */
+  height: 70px; /* Ensure width and height are equal */
+  overflow: hidden;
+  border-radius: 50%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.messenger-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure the image fits within the container without distortion */
+  border-radius: 50%; /* Maintain the circular shape */
+  transition: transform 0.3s ease;
+}
+
+.messenger-icon:hover .messenger-image {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
