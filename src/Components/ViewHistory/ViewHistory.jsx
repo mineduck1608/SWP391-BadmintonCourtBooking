@@ -11,8 +11,15 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CreateFeedbackModal from '../CreateFeedbackModal/CreateFeedbackModal';
 import { fetchWithAuth } from '../fetchWithAuth/fetchWithAuth';
+import { padStart } from '@fullcalendar/core/internal';
 
 export default function ViewHistory() {
+  const numOfChanges = 2
+  const todayLabel = 'today'
+  const upcomingLabel = 'upcoming'
+  const pastLabel = 'past'
+  const maxHourCanChange = 1
+  const errorFetching = 'An error occured'
   const [bookings, setBookings] = useState([]);
   const [slots, setSlots] = useState([]);
   const [courts, setCourts] = useState([]);
@@ -39,38 +46,14 @@ export default function ViewHistory() {
     changeLog: 0,
     bookingDate: '',
   };
+  const [user, setUser] = useState({})
   const [formState, setFormState] = useState(initialState)
   const [chooseTypeModal, setChooseTypeModal] = useState(false)
-  const numOfChanges = 2
-  const navigate = useNavigate();
-  const todayLabel = 'today'
-  const upcomingLabel = 'upcoming'
-  const pastLabel = 'past'
-  const maxHourCanChange = 1
+
   const currentDate = new Date();
   const currentDateString = currentDate.toDateString();
-  const loadTimeFrame = async () => {
-    const fetchTime = async () => {
-      var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
-      var data = await res.json()
-      return data
-    }
+  const [currentTime, setCurrentTime] = useState(new Date())
 
-    try {
-      var data = await fetchTime()
-      setTimeBound([])
-      var primitive = data.find(d => d['bookedSlotId'] === 'S1')
-      var start = primitive.start
-      var end = primitive.end
-      for (let i = start; i <= end; i++) {
-        setTimeBound(t => [...t, i])
-      }
-    }
-    catch (err) {
-      console.log(err);
-      toast.error('Server error')
-    }
-  }
   const formatNumber = (n) => {
     function formatTo3Digits(n, stop) {
       var rs = ''
@@ -105,7 +88,7 @@ export default function ViewHistory() {
         const decodedToken = jwtDecode(token);
         const userIdToken = decodedToken.UserId;
 
-        const bookingsResponse = await fetchWithAuth(`https://localhost:7233/Booking/GetByUser?id=${userIdToken}`, {
+        const bookingsResponse = await fetchWithAuth(`${apiUrl}/Booking/GetByUser?id=${userIdToken}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -164,9 +147,41 @@ export default function ViewHistory() {
         setLoading(false);
       }
     };
+    const loadTimeFrame = async () => {
+      const fetchTime = async () => {
+        var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
+        var data = await res.json()
+        return data
+      }
 
-    fetchData();
-    loadTimeFrame()
+      try {
+        var data = await fetchTime()
+        setTimeBound([])
+        var primitive = data.find(d => d['bookedSlotId'] === 'S1')
+        var start = primitive.start
+        var end = primitive.end
+        for (let i = start; i <= end; i++) {
+          setTimeBound(t => [...t, i])
+        }
+      }
+      catch (err) {
+        console.log(err);
+        toast.error(errorFetching)
+      }
+    }
+    const getUserData = async (id) => {
+      const res = await fetchWithAuth(`${apiUrl}/User/GetById?id=${id}`)
+      const data = await res.json()
+      setUser(data)
+    }
+    try {
+      fetchData()
+      loadTimeFrame()
+      getUserData(jwtDecode(sessionStorage.getItem('token'))['UserId'])
+    }
+    catch (err) {
+      toast(errorFetching)
+    }
   }, []);
   const calculateAmount = (courtId, start, end) => {
     var c = courts.find(c => c['courtId'] === courtId)
@@ -184,7 +199,6 @@ export default function ViewHistory() {
     setCurrentAmount(t)
     setAmount(t)
     setOpen(true)
-    loadTimeFrame()
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
     let booking = bookings.find(b => b.bookingId === slot.bookingId)
@@ -205,6 +219,7 @@ export default function ViewHistory() {
     let court = courts.find(c => c.courtId === slot.courtId)
     let branchId = court.branchId
     let cancelAmount = (slot.end - slot.start) * court.price * 0.5
+    let booking = bookings.find(b => b.bookingId === slot.bookingId)
     setFormState({
       date: slot.date,
       start: slot.start,
@@ -213,40 +228,17 @@ export default function ViewHistory() {
       bookingId: slot.bookingId,
       branchId: branchId,
       slotId: slot.bookedSlotId,
-      cancelAmount: cancelAmount
+      cancelAmount: cancelAmount,
+      bookingDate: booking.bookingDate
     })
   }
   const formatTime = (time) => {
     const hours = time.toString().padStart(2, '0');
     return `${hours}:00:00`;
   };
-  function getUserId(token) {
-    var decodedToken = jwtDecode(token)
-    return decodedToken.UserId
-  }
-  const getPayment = async (bookingID) => {
-    async function fetchPayment(bookingID) {
-      try {
-        var res = await fetchWithAuth(`${apiUrl}/Payment/GetByUser?id=${getUserId(token)}`,
-          {
-            method: 'get',
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          })
-        var data = await res.json()
-        var payment = data.find(d => d.bookingId === bookingID)
-        return payment
-      }
-      catch (err) {
-        console.log(err);
-        toast.error('Server error')
-      }
-    }
-    return await fetchPayment(bookingID)
-  }
-  const handleOk = async () => {
-    const update = async (start, end, date, userId, courtId, slotId, paymentMethod, bookingId) => {
+
+  const sendUpdateRequestWrapper = async (paymentMethod) => {
+    const sendUpdateRequest = async (start, end, date, userId, courtId, slotId, paymentMethod, bookingId) => {
       var res = await fetchWithAuth(`${apiUrl}/Slot/UpdateByUser?`
         + `start=${start}&`
         + `end=${end}&`
@@ -262,27 +254,31 @@ export default function ViewHistory() {
             'Authorization': `Bearer ${token}`
           }
         })
-      handleResult(res)
+      return res
     }
+    try {
+      return await sendUpdateRequest(formState.start, formState.end, formState.date, user.userId,
+        formState.courtId, formState.slotId, paymentMethod, formState.bookingId
+      )
+    }
+    catch (err) {
+
+    }
+  }
+  const saveResult = async (paymentMethod) => {
     const handleResult = async (res) => {
       if (res.ok) {
-        var data = await res.json()
-        if (Object.is(data['url'], undefined)) {
-          toast.success('Saved changes!')
-          setTimeout(() => {
-            window.location.reload()
-          }, 500);
-        }
-        else {
-          setFormState({ ...formState, payUrl: data['url'] })
-          setChooseTypeModal(true)
-        }
+        toast.success('Saved changes!')
+        setTimeout(() => {
+          window.location.reload()
+        }, 500);
       }
       if (res.status === HttpStatusCode.BadRequest) {
         var data = await res.json()
         toast.error(data['msg'])
       }
     }
+
     let t = validateTime(formState.date, formState.start, formState.end)
     try {
       if (!t) {
@@ -290,27 +286,55 @@ export default function ViewHistory() {
         return;
       }
       setOpen(false)
-      let payment = await getPayment(formState.bookingId)
-      await update(formState.start, formState.end, formState.date, getUserId(token),
-        formState.courtId, formState.slotId, payment ? payment.method : 1, formState.bookingId
-      )
+      var tmp = await sendUpdateRequestWrapper(paymentMethod)
+      handleResult(tmp)
       setFormState(initialState)
     }
     catch (err) {
       console.log(err);
-      toast.error('Server error')
+      toast.error(errorFetching)
     }
   }
-
+  const handleUpdate = async (amount, current) => {
+    if (user.balance < amount - current) {
+      setChooseTypeModal(true)
+      setOpen(false)
+      return
+    }
+    //proceed as usual. Use null since it won't use payment method
+    try {
+      await saveResult(null)
+    }
+    catch (err) {
+      toast.error(errorFetching)
+    }
+  }
   const createOnEditActionComment = (amount, current) => {
+    if (!validateTime(formState.date, formState.start, formState.end)) {
+      return 'Invalid time'
+    }
     let delta = amount - current
     var comment = ''
-    if (validateTime(formState.date, formState.start, formState.end)) {
-      if (delta > 0) comment = `You\'ll need to pay ${formatNumber(delta)}đ to change this booking`
-      if (delta < 0) comment = `You\'ll gain ${formatNumber(Math.abs(delta))}đ as time balance when this change is made`
+    if (delta === 0) {
+      return ''
+    }
+    if (delta < 0) {
+      return `${formatNumber(delta * (-1))}đ will be added to your balance`
+    }
+    if (user.balance >= delta) {
+      comment = `${formatNumber(delta)}đ will be subtracted from your balance`
     }
     else {
-      comment = 'Invalid time'
+      //newPrice - (balance + current) >= 10000?
+      var tmp = amount - (user.balance + current)
+      if (tmp < 10000) {
+        //Pay the whole thing
+        comment = `You\'ll need to pay ${formatNumber(amount)}đ to change this booking`
+      }
+      else {
+        //Use balance to lessen
+        comment = `You\'ll need to pay ${formatNumber(tmp)}đ to change this booking`
+      }
     }
     return comment
   }
@@ -393,8 +417,7 @@ export default function ViewHistory() {
   const isEditable = (booking) => {
     var bookingDateNum = Date.parse(new Date(booking.bookingDate))
     var currentTime = Date.parse(new Date())
-    return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 &&
-      booking['changeLog'] < numOfChanges
+    return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 && booking['changeLog'] < numOfChanges
   }
   function convertDateAndHour(date, hour) {
     return new Date(date).setHours(hour)
@@ -471,15 +494,27 @@ export default function ViewHistory() {
     let endTime = convertDateAndHour(date, end)
     return (startTime < endTime) && (startTime > now)
   }
-  const formatTimeRange = (time) => {
-    var range = new Date() - new Date(time)
+  //Tick down every 1s
+  useEffect(() => {
+    setTimeout(() => {
+      setCurrentTime(new Date())
+    }, 1000);
+  })
+  const calculateTimeLeft = (time) => {
+    var range = currentTime - new Date(time)
     range = maxHourCanChange * 3600000 - range
-    let hour = Math.floor(range / 3600000)
-    range = range - hour * 3600000
-    let min = Math.floor(range / 60000)
-    range = range - min * 60000
-    let sec = Math.floor(range / 1000)
-    return `${hour}h${min}m${sec}s`
+    if (range <= 0) {
+      handleCancel()
+    }
+    return range
+  }
+  const formatHMS = (time) => {
+    let hour = Math.floor(time / 3600000)
+    time = time - hour * 3600000
+    let min = Math.floor(time / 60000)
+    time = time - min * 60000
+    let sec = Math.floor(time / 1000)
+    return `${padStart(hour, 2)}h${padStart(min, 2)}m${padStart(sec, 2)}s`
   }
   return (
     <div className='view-history'>
@@ -495,81 +530,89 @@ export default function ViewHistory() {
             You can only change a booking up to {numOfChanges} times, and must not be more than {maxHourCanChange} hour(s) since booking time.</p>
           <p>
             Currently <span className='warning'>{numOfChanges - formState.changeLog}</span> changes left,
-            and <span className='warning'>{formatTimeRange(formState.bookingDate)}</span> left.
+            and <span className='warning'>{formatHMS(calculateTimeLeft(formState.bookingDate))}</span> left.
           </p>
-          <p>Date:</p>
-          <input type="date" id="datePicker" value={formState.date}
-            onChange={() => {
+          <section className='dateSection'>
+            <span htmlFor='vhDatePicker'>Date:</span>
+            <input type="date" id="vhDatePicker" value={formState.date}
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  date: document.getElementById('vhDatePicker').value
+                })
+                handleCalculateAmount()
+              }}
+            />
+          </section>
+          <section className='timeSection'>
+            <span>Time: </span>
+            <select id='startingTime'
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  start: parseInt(document.getElementById('startingTime').value)
+                })
+                handleCalculateAmount()
+              }}
+            >
+              {timeBound.map(t => (
+                <option value={t} selected={t === formState.start}>{t}:00</option>
+              ))}
+            </select>
+            <span> To </span>
+            <select id='endingTime'
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  end: parseInt(document.getElementById('endingTime').value)
+                })
+                handleCalculateAmount()
+              }}
+            >
+              {timeBound.map(t => (
+                <option value={t} selected={t === formState.end}>{t}:00</option>
+              ))}
+            </select>
+          </section>
+          <section className='branchSection'>
+            <p>Branch:</p>
+            <select id='branch'
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  branchId: document.getElementById('branch').value
+                })
+              }}
+            >
+              {branches.map((b, i) => (
+                b.branchStatus === 1 &&
+                <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
+              ))}
+            </select>
+          </section>
+          <section className='courtSection'>
+            <p>Court:</p>
+            <select id='court' onChange={() => {
               setFormState({
                 ...formState,
-                date: document.getElementById('datePicker').value
+                courtId: document.getElementById('court').value
               })
               handleCalculateAmount()
             }}
-          />
-          <p>Starting time:</p>
-          <select id='startingTime'
-            onChange={() => {
-              setFormState({
-                ...formState,
-                start: parseInt(document.getElementById('startingTime').value)
-              })
-              handleCalculateAmount()
-            }}
-          >
-            {timeBound.map(t => (
-              <option value={t} selected={t === formState.start}>{t}:00:00</option>
-            ))}
-          </select>
-          <p>Ending time:</p>
-          <select id='endingTime'
-            onChange={() => {
-              setFormState({
-                ...formState,
-                end: parseInt(document.getElementById('endingTime').value)
-              })
-              handleCalculateAmount()
-            }}
-          >
-            {timeBound.map(t => (
-              <option value={t} selected={t === formState.end}>{t}:00:00</option>
-            ))}
-          </select>
-          <p>Branch:</p>
-          <select id='branch'
-            onChange={() => {
-              setFormState({
-                ...formState,
-                branchId: document.getElementById('branch').value
-              })
-            }}
-          >
-            {branches.map((b, i) => (
-              b.branchStatus === 1 &&
-              <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
-            ))}
-          </select>
-          <p>Court:</p>
-          <select id='court' onChange={() => {
-            setFormState({
-              ...formState,
-              courtId: document.getElementById('court').value
-            })
-            handleCalculateAmount()
-          }}
-          >
-            {courts.map(c => (
-              c.courtStatus && c.branchId === formState.branchId
-              &&
-              (
-                <option value={c.courtId} selected={c.courtId === formState.courtId}>{c.courtName}</option>
-              )
-            ))}
-          </select>
+            >
+              {courts.map(c => (
+                c.courtStatus && c.branchId === formState.branchId
+                &&
+                (
+                  <option value={c.courtId} selected={c.courtId === formState.courtId}>{c.courtName}</option>
+                )
+              ))}
+            </select>
+          </section>
           <h4>{createOnEditActionComment(amount, currentAmount)}</h4>
           <div className='right-align-btn'>
             <button className='view-history-button-small'
-              onClick={handleOk}
+              onClick={() => handleUpdate(amount, currentAmount)}
             >Change slot</button>
             <button className='view-history-button-small view-history-cancel-btn'
               onClick={handleCancel}
@@ -588,6 +631,7 @@ export default function ViewHistory() {
             <span> {formatNumber(formState.cancelAmount)}đ</span>
           </p>
           <p className='warning'>THIS CANNOT BE UNDONE!</p>
+          <p>You have <span className='warning'>{formatHMS(calculateTimeLeft(formState.bookingDate))}</span> left</p>
           <div className='right-align-btn'>
             <button className='view-history-button-small view-history-cancel-btn'
               onClick={cancelSlot}
@@ -608,10 +652,20 @@ export default function ViewHistory() {
           <p>
             Since your balance isn't enough...
           </p>
+          <select id='paymentMethod'>
+            <option value={1}>VnPay</option>
+            <option value={2}>MoMo</option>
+          </select>
           <div className='right-align-btn'>
+
             <button className='view-history-button-small'
               onClick={() => {
-                window.location.assign(formState.payUrl)
+                const sendAndAssign = async () => {
+                  var t = await sendUpdateRequestWrapper(document.getElementById('paymentMethod').value)
+                  var data = await t.json()
+                  window.location.assign(data['url'])
+                }
+                sendAndAssign()
               }}
             >Pay by banking
             </button>

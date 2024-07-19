@@ -15,6 +15,7 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import PieChartOutlineIcon from '@mui/icons-material/PieChartOutline';
 import './sidebar.css';
 import { MdSportsTennis } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -278,6 +279,13 @@ const Sidebar = () => {
                             title="Line Chart"
                             to="line"
                             icon={<TimelineOutlinedIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+                        <Item className="menu-item"
+                            title="Pie Chart"
+                            to="pie"
+                            icon={<PieChartOutlineIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />

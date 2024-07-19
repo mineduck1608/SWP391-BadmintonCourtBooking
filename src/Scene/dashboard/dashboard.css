@@ -1,5 +1,3 @@
-/* dashboard.css */
-
 :root {
   --PrimaryColor: hsl(26, 93%, 50%);
   --HoverColor: hsl(26, 90%, 42%);
@@ -10,53 +8,58 @@
   --greyBg: hsl(0, 0%, 96%);
   --greyText: rgb(190, 190, 190);
   --inputColor: hsl(330, 12%, 97%);
+  --blueColor: #3f51b5;
+  --orangeColor: #ff9800;
+  --greenColor: #4caf50;
+  --redColor: #f44336;
+  --blackColorBox: #000000;
 }
 
 .download-button {
-font-size: 15px !important;
-font-weight: bold !important;
-display: flex;
-padding: 10px 80px !important;
-align-items: center !important;
+  font-size: 15px !important;
+  font-weight: bold !important;
+  display: flex;
+  padding: 10px 80px !important;
+  align-items: center !important;
 }
 
 .filter-container {
-width: 100%;
-border-radius: 1rem;
-padding: 2rem;
-background: var(--whiteColor);
-display: flex;
-justify-content: center;
-box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
-align-items: center;
-gap: 1rem;
+  width: 100%;
+  border-radius: 1rem;
+  padding: 2rem;
+  background: var(--whiteColor);
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 2px 8px 4px rgba(178, 178, 178, 0.45);
+  align-items: center;
+  gap: 1rem;
 }
 
 .filter-input {
-flex: 1;
-margin: 0 10px;
-min-width: 150px;
-padding: 10px;
-font-size: 13px;
-font-weight: 500;
-border: none;
+  flex: 1;
+  margin: 0 10px;
+  min-width: 150px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
 }
 
 .filter-input select, .filter-input input {
-width: 100%;
-border: none;
-padding: 10px;
-font-size: 13px;
-font-weight: 500;
+  width: 100%;
+  border: none;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .filter-input select:focus, .filter-input input:focus {
-outline: none;
+  outline: none;
 }
 
 .filter-input select, .filter-input input {
-height: 55.97px; /* Set a fixed height to match the select field */
-box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+  height: 55.97px; /* Set a fixed height to match the select field */
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 /* Typography overrides */
@@ -70,15 +73,14 @@ box-sizing: border-box; /* Ensure padding and border are included in the element
   margin-top: 8px !important;
 }
 
-.css-1rfvgyr-MuiButtonBase-root-MuiButton-root{
+.css-1rfvgyr-MuiButtonBase-root-MuiButton-root {
   margin-top: 1px !important;
 }
-
 
 /* Typography overrides */
 .css-1di55by-MuiTypography-root,
 .css-1wsdv8m-MuiTypography-root {
-font-size: 32px !important;
+  font-size: 32px !important;
 }
 
 .css-b1sixc-MuiTypography-root,
@@ -86,10 +88,11 @@ font-size: 32px !important;
 .css-18bglcv-MuiTypography-root,
 .css-12oq9v-MuiTypography-root,
 .css-q6y2iz-MuiTypography-root {
-font-size: 16px !important;
+  font-size: 16px !important;
 }
 
 .css-1gwnvns-MuiTypography-root,
 .css-4hb1nt-MuiTypography-root {
-font-size: 20px !important;
+  font-size: 20px !important;
 }
+
