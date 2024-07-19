@@ -13,6 +13,7 @@ const GoogleMap = () => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         fetch('https://localhost:7233/Branch/GetAll')
@@ -25,6 +26,55 @@ const GoogleMap = () => {
             })
             .catch(error => console.error('Error fetching branches:', error));
     }, []);
+
+    const findNearbyBranches = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            setError("Geolocation is not supported by this browser.");
+        }
+    };
+
+    const showPosition = (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Call your API with the latitude and longitude
+        fetch(`https://localhost:7233/Branch/GetNearby?latitude=${latitude}&longitude=${longitude}`)
+            .then(response => response.json())
+            .then(data => {
+                setBranches(data);
+                setCurrentPage(0); // Reset to the first page
+                if (data.length > 0) {
+                    setSelectedBranch(data[0]); // Select the first branch by default
+                }
+                setError('');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setError('Failed to fetch branches.');
+            });
+    };
+
+    const showError = (error) => {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                setError("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                setError("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                setError("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                setError("An unknown error occurred.");
+                break;
+            default:
+                setError("An unknown error occurred.");
+                break;
+        }
+    };
 
     const handleNextPage = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, Math.ceil(branches.length / ITEMS_PER_PAGE) - 1));
@@ -46,6 +96,10 @@ const GoogleMap = () => {
                 <Typography variant="h4" gutterBottom className="googlemap-title">
                     Badminton Court Booking System
                 </Typography>
+                <Button variant="contained" color="primary" onClick={findNearbyBranches}>
+                    Find Nearby Branches
+                </Button>
+                {error && <p>{error}</p>}
                 <div className="googlemap-branch-grid">
                     {displayedBranches.map((branch, index) => (
                         <div className="googlemap-branch-card" key={index}>
