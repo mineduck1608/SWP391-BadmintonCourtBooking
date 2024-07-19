@@ -375,7 +375,7 @@ namespace BadmintonCourtAPI.Controllers
 					}
 					else
 					{
-						var reqdata = _moMoService.CreateRequestData(content, (transactionAmount * 1000).ToString(), updateResultMomoCallBack);
+						var reqdata = _moMoService.CreateRequestData(content, transactionAmount.ToString(), updateResultMomoCallBack);
 						var response = _moMoService.SendMoMoRequest(reqdata);
 						paymentUrl = response.Result.PayUrl;
 					}
@@ -475,7 +475,12 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("Slot/UpdateResultProcessMomo")]
 		public async Task<IActionResult> ProcessResultMomo(MoMoRedirectResult result)
 		{
-			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), DateTime.Parse(result.ResponseTime.Split(' ')[0]), 2);
+			var timeStr = result.ResponseTime;
+			var rawdate = timeStr.Split(' ')[0].Split('-');
+			var rawTime = timeStr.Split(" ")[1].Split(':');
+			DateTime date = new(int.Parse(rawdate[0]), int.Parse(rawdate[1]), int.Parse(rawdate[2]),
+				int.Parse(rawTime[0]), int.Parse(rawTime[1]), int.Parse(rawTime[2]));
+			bool status = UpdateNewSlotToDB("Success", result.Message, result.OrderInfo, result.TransId, double.Parse(result.Amount), date, 2);
 			if (status)
 				ExecuteSendUpdateMail(result.OrderInfo);
 			return Redirect(resultRedirectUrl + "?msg=" + (status ? "Success" : "Fail"));
@@ -535,6 +540,7 @@ namespace BadmintonCourtAPI.Controllers
 			//---------------------------------------------------------------------
 			_userService.UpdateUser(user, userId);
 			//---------------------------------------------------------------------
+			booking.ChangeLog += 1;
 			_bookingService.UpdatBooking(booking, bookingId);
 			//---------------------------------------------------------------------
 			slot.CourtId = courtId;

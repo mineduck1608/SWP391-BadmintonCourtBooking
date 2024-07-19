@@ -223,37 +223,36 @@ const BookCourt = () => {
     const validateBooking = () => {
         var errorMsg
         try {
-            var tmp = validateDateTime()
-            if (!tmp) {
+            if (!validateDateTime()) {
                 errorMsg = 'Invalid date time'
                 throw new Error()
             }
-            var checkBalance = (paymentType === balance ? user['balance'] >= amount : true)
-            if (!checkBalance) {
+            if (paymentType === balance && user['balance'] < amount) {
                 errorMsg = 'Balance not enough'
                 throw new Error()
             }
-            //balance enough? court is active? the slot is occupied?
-            tmp = courtInfo['courtStatus'] && !isOccupied;
-            if (!tmp) {
+            if(Object.is(courtInfo, undefined)){
+                errorMsg = 'Court not specified'
+                throw new Error()
+            }
+            //court is active? the slot is occupied?
+            if (!(courtInfo['courtStatus'] && !isOccupied)) {
                 errorMsg = "Can't book this court at the specified time"
                 throw new Error()
             }
             //booking and payment type specified?
-            tmp = bookingType !== '' && paymentType !== ''
-            if (!tmp) {
+            if (bookingType === '' || paymentType === '') {
                 errorMsg = 'Booking type or payment type not specified'
                 throw new Error()
             }
             //If banking, is transfer method specified?
             if (paymentType === banking) {
-                tmp = tmp && transferMethod !== ''
-                if (!tmp) {
+                if (transferMethod === '') {
                     errorMsg = 'Transfer method not specified'
                     throw new Error()
                 }
             }
-            return tmp
+            return true
         } catch (error) {
             toast.error(errorMsg)
             return false;
@@ -436,8 +435,9 @@ const BookCourt = () => {
                         <label htmlFor="branch">BRANCH:</label>
                         <select id="branch" name="branch" onChange={(e) => {
                             setSelectedBranch(e.target.value)
+                            loadCourtInfo(null)
                         }}>
-                            <option value="" hidden selected>Choose a branch</option>
+                            <option value={null} hidden selected>Choose a branch</option>
                             {
                                 branches.map(b =>
                                 (
@@ -460,7 +460,7 @@ const BookCourt = () => {
                             loadCourtInfo(courtId)
                             reloadCourt()
                         }}>
-                            {<option value="No" hidden selected>Choose a court</option>}
+                            {<option value={null} hidden selected>Choose a court</option>}
                             {
                                 courts.map((c, i) => (
                                     c['branchId'] === selectedBranch &&
