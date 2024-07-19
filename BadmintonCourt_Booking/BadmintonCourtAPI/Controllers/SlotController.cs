@@ -27,7 +27,7 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly IPaymentService _paymentService = new PaymentService();
 
 
-		private const string resultRedirectUrl = "http:/localhost:3000/paySuccess";
+		private const string resultRedirectUrl = "http://localhost:3000/paySuccess";
 		private const string style = "style='padding: 8px; border: 1px solid #ddd;'";
 		private const string updateResultMomoCallBack = "https://localhost:7233/Slot/UpdateResultProcessMomo";
 		private const string updateResultVnPayCallBack = "https://localhost:7233/Slot/UpdateResultProcessVnPay";
@@ -118,10 +118,10 @@ namespace BadmintonCourtAPI.Controllers
 			return result;
 		}
 
-		private string GenerateMailBody(UserDetail info, BookedSlot slot) => GenerateUpdateSlotTable(slot) + "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. Your slot has been updated.</p><p> You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+		private string GenerateMailBody(UserDetail info, BookedSlot slot) => GenerateUpdateSlotTable(slot) + "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + ",</p>\r\n<p>Thank you for your purchase. Your slot has been updated.</p><p> You can now check it on your account.</p>" + Util.GetOwnerMail();
 
 
-		private string GenerateCancelNotification(UserDetail info, string slotId, float refund) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + $",</p>\r\n<p>You have successfully canceled slot {slotId}.</p><p>We have refunded to your balance {ReformatAmount(refund.ToString())}VND as half of the canceled slot amount. You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+		private string GenerateCancelNotification(UserDetail info, string slotId, float refund) => "<p>Dear " + ((info.FirstName.IsNullOrEmpty() && info.LastName.IsNullOrEmpty()) ? $"{info.Email}" : $"{info.FirstName} {info.LastName}") + $",</p>\r\n<p>You have successfully canceled slot {slotId}.</p><p>We have refunded to your balance {ReformatAmount(refund.ToString())}VND as half of the canceled slot amount. You can now check it on your account.</p>" + Util.GetOwnerMail();
 
 		private string GenerateUpdateSlotTable(BookedSlot slot) => $@"<table {style}>
     <tr>
@@ -178,7 +178,7 @@ namespace BadmintonCourtAPI.Controllers
 			BookedSlot slot = _service.GetSlotById(slotId);
 			_mailService.SendMail(info.Email, GenerateMailBody(info, slot), "BMTC - Slot Update Notification");
 		}
-		//var primitive = data.find(d => d['bookedSlotId'] === 'S1');
+
 		[HttpGet]
 		[Route("Slot/GetAll")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.GetAllSlots()));

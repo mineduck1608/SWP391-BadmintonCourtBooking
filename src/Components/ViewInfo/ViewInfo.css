@@ -96,7 +96,7 @@ html, body {
 }
 
 .info-item {
-  flex: 1 1 calc(50% - 20px);
+  flex: 2 1 calc(100% - 20px);
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
@@ -109,7 +109,7 @@ html, body {
 }
 
 .info-item div {
-  padding: 10px;
+  padding: 2px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;

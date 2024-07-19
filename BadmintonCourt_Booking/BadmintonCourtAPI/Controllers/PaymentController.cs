@@ -69,7 +69,7 @@ namespace BadmintonCourtAPI.Controllers
 			foreach (var item in detail)
 				table += $@"<td {style}>{item}</td>";
 
-			return table + " </tr></table>";
+			return table + "</tr></table>";
 		}
 
 		private void ExecuteSendMail(string orderInfo, string amount)
@@ -113,7 +113,7 @@ namespace BadmintonCourtAPI.Controllers
 			else
 				content += "We have added new booked slot to your schedule";
 			//------------------------------------------------------------------
-			content += "</p><p> You can now check it on your account.</p>\r\n<p>If you have any questions or need further assistance, please contact us.</p>\r\n<p>Best regards,<br>\r\nBadmintonCourtBooking BMTC</p>\r\n<p>Contact Information:<br>\r\nPhone: 0977300916<br>\r\nAddress: 123 Badminton St, Hanoi, Vietnam<br>\r\nEmail: externalauthdemo1234@gmail.com</p>";
+			content += "</p><p> You can now check it on your account.</p>" + Util.GetOwnerMail();
 
 			_mailService.SendMail(info.Email, content, "BMTC - Booking Notification");
 		}

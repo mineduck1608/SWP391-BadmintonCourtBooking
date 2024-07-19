@@ -163,7 +163,7 @@ public partial class BadmintonCourtContext : DbContext
 				.HasColumnName("branchPhone");
 			entity.Property(e => e.BranchStatus).HasColumnName("branchStatus");
 			entity.Property(e => e.Location)
-				.HasMaxLength(50)
+				.HasMaxLength(500)
 				.HasColumnName("location");
 			entity.Property(e => e.MapUrl)
 				.HasMaxLength(500)

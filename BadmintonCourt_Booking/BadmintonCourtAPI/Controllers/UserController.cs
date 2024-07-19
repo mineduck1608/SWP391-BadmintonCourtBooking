@@ -36,15 +36,6 @@ namespace BadmintonCourtAPI.Controllers
 		public const string emailUpdateMsg = "If you did not request an email update, ";
 		public const string resetPassMsg = "If you did not request a password reset, ";
 
-		//public UserController(IConfiguration config)
-		//{
-		//	if (_service == null)
-		//	{
-		//		_service = new BadmintonCourtService(_config);
-		//	}
-		//	_config = config;
-		//}
-
 		public UserController(IUserService service)
 		{
 			_service = service;
@@ -311,7 +302,6 @@ namespace BadmintonCourtAPI.Controllers
 		[Route("User/VerifyBeforeReset")]
 		public async Task<IActionResult> VerifyBeforeReset(string? mail)
 		{
-			//UserDetail info = _service.UserDetailService.GetUserDetailByMail(mail);
 			UserDetail info = _infoService.GetUserDetailByMail(mail);
 			if (info != null) // Có tồn tại acc này
 			{
@@ -451,7 +441,7 @@ namespace BadmintonCourtAPI.Controllers
 					{
 						if (Util.IsMailFormatted(email))
 						{
-							if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == email) == null)
+							if (infoStorage.FirstOrDefault(x => x.Email == email) == null)
 							{
 								if (!isAdmin)
 								{
@@ -493,7 +483,8 @@ namespace BadmintonCourtAPI.Controllers
 				return BadRequest(new { msg = "Username can't be empty" });
 			if (email.IsNullOrEmpty())
 				return BadRequest(new { msg = "Email can't be empty" });
-			if (!Util.IsMailFormatted(email.Trim()))
+			email = email.ToLower().Trim();
+			if (!Util.IsMailFormatted(email))
 				return BadRequest(new { msg = "Email is not properly formatted" });
 			if (firstName.IsNullOrEmpty() || lastName.IsNullOrEmpty())
 				return BadRequest(new { msg = "Name can't be empty" });
@@ -513,7 +504,7 @@ namespace BadmintonCourtAPI.Controllers
 				return BadRequest(new { msg = "Username existed" });
 			if (infoCheckStorage.FirstOrDefault(x => x.Phone == phone) != null)
 				return BadRequest(new { msg = "Phone number registered" });
-			if (infoCheckStorage.FirstOrDefault(x => x.Email.ToLower() == email.ToLower()) != null)
+			if (infoCheckStorage.FirstOrDefault(x => x.Email.ToLower() == email) != null)
 				return BadRequest(new { msg = "Email registered" });
 
 			string userId = "U" + (_service.GetAllUsers().Count() + 1).ToString("D7");
@@ -536,7 +527,7 @@ namespace BadmintonCourtAPI.Controllers
 			_infoService.AddUserDetail(new UserDetail
 			{
 				UserId = userId,
-				Email = email.Trim(),
+				Email = email,
 				FirstName = firstName.Trim(),
 				LastName = lastName.Trim(),
 				Phone = phone.Trim(),
@@ -624,7 +615,8 @@ namespace BadmintonCourtAPI.Controllers
 					return BadRequest(new { msg = "Username registered" });
 			if (!account.Email.IsNullOrEmpty())
 			{
-				if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == account.Email.Trim().ToLower()) != null)
+				account.Email = account.Email.Trim().ToLower();
+				if (infoStorage.FirstOrDefault(x => x.Email.ToLower() == account.Email) != null)
 					return BadRequest(new { msg = "Email registered" });
 			}
 			else return BadRequest(new { msg = "At least email can't be empty" });
