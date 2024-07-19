@@ -11,6 +11,11 @@
   --inputColor: hsl(330, 12%, 97%);
 }
 
+.pro-sidebar .pro-menu{
+  padding-top: 0px !important;
+  height: 100vh !important;
+}
+
 
 .sidebar {
   height: 100vh !important;
@@ -29,6 +34,8 @@
 p.MuiTypography-root.MuiTypography-body1.css-ahj2mt-MuiTypography-root{
   margin-top: 4.3px;
 }
+
+
 
 .adminName {
   font-size: 32px !important;
@@ -76,6 +83,10 @@ p.MuiTypography-root.MuiTypography-body1.css-ahj2mt-MuiTypography-root{
 .css-ahj2mt-MuiTypography-root,
 .css-ahj2mt-MuiTypography-root :hover {
   color: var(--textColorHover);
+}
+
+svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.info-icon.css-i4bv87-MuiSvgIcon-root {
+  font-size: 40px;
 }
 
 .sidebar-section-title{

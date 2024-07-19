@@ -5,6 +5,7 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import Head from "../../Components/Head";
 import LineChart from "../../Components/LineChart";
 import BarChart from "../../Components/BarChart";
+import PieChart from '../../Components/PieChart';
 import './dashboard.css';
 import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 
@@ -25,21 +26,41 @@ const Dashboard = () => {
   const [weekOfMonth, setWeekOfMonth] = useState(1);
 
   const [paymentStatistics, setPaymentStatistics] = useState([]);
+  const [branchAmounts, setBranchAmounts] = useState([]);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchAllData = async () => {
       try {
         setLoading(true);
 
-        const paymentResponse = await fetchWithAuth('https://localhost:7233/Payment/GetAll', {
-          method: 'GET'
+        const branches = await fetchData('https://localhost:7233/Branch/GetAll');
+        const courts = await fetchData('https://localhost:7233/Court/GetAll');
+        const slots = await fetchData('https://localhost:7233/Slot/GetAll');
+        const payments = await fetchData('https://localhost:7233/Payment/GetAll');
+        
+        // Process data for BarChart and PieChart
+        const branchAmountsData = branches.map(branch => {
+          const branchCourts = courts.filter(court => court.branchId === branch.branchId);
+          const branchSlots = slots.filter(slot => 
+            branchCourts.some(court => court.courtId === slot.courtId)
+          );
+          const branchPayments = payments.filter(payment => 
+            branchSlots.some(slot => slot.bookingId === payment.bookingId)
+          );
+          const totalAmount = branchPayments.reduce((sum, payment) => sum + payment.amount, 0);
+          return { 
+            id: branch.branchName,
+            label: branch.branchName,
+            value: totalAmount,
+            branchName: branch.branchName,
+            totalAmount: totalAmount
+          };
         });
         
-        const paymentsData = await paymentResponse.json();
-        setPayments(paymentsData);
+        setBranchAmounts(branchAmountsData);
 
         // Calculate the total revenue
-        const total = paymentsData.reduce((sum, payment) => sum + payment.amount, 0);
+        const total = payments.reduce((sum, payment) => sum + payment.amount, 0);
         setTotalRevenue(total);
 
         // Fetch initial statistics
@@ -49,10 +70,6 @@ const Dashboard = () => {
         const statisticsData = await statisticsResponse.json();
         setPaymentStatistics(statisticsData);
 
-        // Calculate the total revenue from the fetched statistics
-        const initialTotal = statisticsData.reduce((sum, payment) => sum + payment.amount, 0);
-        setTotalRevenue(initialTotal);
-
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
@@ -60,7 +77,7 @@ const Dashboard = () => {
       }
     };
 
-    fetchInitialData();
+    fetchAllData();
   }, []);
 
   const handleFilterChange = (event) => {
@@ -84,6 +101,16 @@ const Dashboard = () => {
     }
   };
 
+  const fetchData = async (url, options = {}) => {
+    const response = await fetchWithAuth(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  };
+
+  const filteredBranchAmounts = branchAmounts.filter(branch => branch.value > 0);
+
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -98,7 +125,7 @@ const Dashboard = () => {
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
+        gridAutoRows="150px"
         gap="17px"
       >
         {/* FILTER ROW */}
@@ -176,7 +203,7 @@ const Dashboard = () => {
           </Button>
         </Box>
 
-        {/* ROW 2 */}
+        {/* CHARTS */}
         {loading ? (
           <Box gridColumn="span 12" display="flex" justifyContent="center" alignItems="center" height="100%">
             <Typography variant="h6" color={colors.grey[100]}>
@@ -186,7 +213,7 @@ const Dashboard = () => {
         ) : (
           <>
             <Box
-              gridColumn="span 12"
+              gridColumn="span 6"
               gridRow="span 2"
               backgroundColor={colors.primary[400]}
             >
@@ -210,7 +237,7 @@ const Dashboard = () => {
                     fontWeight="bold"
                     color={colors.greenAccent[500]}
                   >
-                    {totalRevenue.toLocaleString()}VND
+                    {totalRevenue.toLocaleString()} VND
                   </Typography>
                 </Box>
                 <Box>
@@ -226,7 +253,23 @@ const Dashboard = () => {
               </Box>
             </Box>
             
-            {/* ROW 3 */}
+            <Box
+              gridColumn="span 6"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+            >
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                sx={{ padding: "30px 30px 0 30px" }}
+              >
+                Revenue Comparison
+              </Typography>
+              <Box height="250px" mt="-20px">
+                <PieChart data={filteredBranchAmounts} />
+              </Box>
+            </Box>
+            
             <Box
               gridColumn="span 12"
               gridRow="span 2"
@@ -240,7 +283,7 @@ const Dashboard = () => {
                 Sales Quantity
               </Typography>
               <Box height="250px" mt="-20px">
-                <BarChart isDashboard={true} />
+                <BarChart isDashboard={true} data={filteredBranchAmounts} />
               </Box>
             </Box>
           </>

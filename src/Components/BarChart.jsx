@@ -26,7 +26,6 @@ const BarChart = ({ isDashboard = false }) => {
 
         const courts = await fetchData('https://localhost:7233/Court/GetAll');
 
-
         const slots = await fetchData('https://localhost:7233/Slot/GetAll');
 
         const token = sessionStorage.getItem('token');

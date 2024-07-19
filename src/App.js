@@ -39,6 +39,7 @@ import { jwtDecode } from 'jwt-decode';
 import Discount from './Scene/discount/discount';
 import Feedback from './Scene/feedback/feedback';
 import StaffFeedback from './Scene/feedback/staffFeedback';
+import Pie from './Scene/pie'
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -101,6 +102,8 @@ const logout = () => {
             <Route path="bar" element={<Bar />} />
             <Route path="line" element={<Line />} />
             <Route path="feedback" element={<Feedback />} />
+            <Route path="pie" element={<Pie />} />
+
           </Route>
 
           <Route path="/staff/*" element={<AdminLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}>
@@ -113,6 +116,7 @@ const logout = () => {
             <Route path="bar" element={<Bar />} />
             <Route path="line" element={<Line />} />
             <Route path="staffFeedback" element={<StaffFeedback />} />
+            <Route path="pie" element={<Pie />} />
           </Route>
             <Route path="/createFeedbackModal" element={<CreateFeedbackModal />} />
         </Routes>
