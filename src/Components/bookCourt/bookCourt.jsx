@@ -25,8 +25,11 @@ const BookCourt = () => {
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts if active
     const [paymentType, setPaymentType] = useState('') //banking or not
-    const [timeBound, setTimeBound] = useState([]) //0:00 to 23:00
-    const [timeError, setTimeError] = useState(0) //
+    const [timeBound, setTimeBound] = useState([])
+    const [timeError, setTimeError] = useState({
+        timeRangeError: false,
+        pastBooking: false
+    })
     const [transferMethod, setTransferMethod] = useState('') //momo, vnpay
     const [courtInfo, setCourtInfo] = useState({})
     const [isOccupied, setIsOccupied] = useState(true)
@@ -35,90 +38,91 @@ const BookCourt = () => {
     const [user, setUser] = useState({})
     const [discounts, setDiscounts] = useState([])
     const [open, setOpen] = useState(false)
-    const fetchDiscounts = async () => {
-        try {
-            setDiscounts([])
-            const discountData = await (
-                await fetchWithAuth(`${apiUrl}/Discount/GetAll`, {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
-                    }
-                })
-            ).json()
-            const filteredData = discountData.filter(discount => !discount.isDelete);
-  
-            for (let index = 0; index < filteredData.length; index++) {
-              setDiscounts(t => [...t, filteredData[index]]);
-            }
-        }
-        catch (err) {
-           
-        }
-    }
-    const fetchBranches = async () => {
-        try {
-            setBranches(b => [])
-            const branchData = await (
-                await fetchWithAuth(`${apiUrl}/Branch/GetAll`, {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
-                    }
-                })
-            ).json()
-            for (let index = 0; index < branchData.length; index++) {
-                if ((branchData[index])["branchStatus"] === 1) {
-                    setBranches(b => [...b, branchData[index]])
-                }
-            }
-        }
-        catch (err) {
-        
-        }
-    }
-    const fetchCourts = async () => {
-        try {
-            var queryStr = window.location.search
-            var params = new URLSearchParams(queryStr)
-            setCourts([])
-            const courtData = await (
-                await fetchWithAuth(`${apiUrl}/Court/GetAll`)
-            ).json()
-            for (let index = 0; index < courtData.length; index++) {
-                if ((courtData[index])["courtStatus"] === true) {
-                    setCourts(c => [...c, courtData[index]])
-                    if (params.has('courtId') && courtData[index].courtId === params.get('courtId')) {
-                        setCourtInfo(courtData[index])
-                        setSelectedBranch(courtData[index].branchId)
-                    }
-                }
-            }
-        }
-        catch (err) {
-        }
-    }
-    const loadTimeFrame = async () => {
-        const fetchTime = async () => {
-            var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
-            var data = await res.json()
-            return data
-        }
 
-        try {
-            var data = await fetchTime()
-            setTimeBound([])
-            var primitive = data.find(d => d['bookedSlotId'] === 'S1')
-            var start = primitive.start
-            var end = primitive.end
-            for (let i = start; i <= end; i++) {
-                setTimeBound(t => [...t, i])
+    useEffect(() => {
+        const fetchDiscounts = async () => {
+            try {
+                setDiscounts([])
+                const discountData = await (
+                    await fetchWithAuth(`${apiUrl}/Discount/GetAll`, {
+                        headers: {
+                            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+                        }
+                    })
+                ).json()
+                const filteredData = discountData.filter(discount => !discount.isDelete);
+
+                for (let index = 0; index < filteredData.length; index++) {
+                    setDiscounts(t => [...t, filteredData[index]]);
+                }
+            }
+            catch (err) {
+
             }
         }
-        catch (err) {
-          
+        const fetchBranches = async () => {
+            try {
+                setBranches(b => [])
+                const branchData = await (
+                    await fetchWithAuth(`${apiUrl}/Branch/GetAll`, {
+                        headers: {
+                            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+                        }
+                    })
+                ).json()
+                for (let index = 0; index < branchData.length; index++) {
+                    if ((branchData[index])["branchStatus"] === 1) {
+                        setBranches(b => [...b, branchData[index]])
+                    }
+                }
+            }
+            catch (err) {
+
+            }
         }
-    }
-    useEffect(() => {
-        async function getUser() {
+        const fetchCourts = async () => {
+            try {
+                var queryStr = window.location.search
+                var params = new URLSearchParams(queryStr)
+                setCourts([])
+                const courtData = await (
+                    await fetchWithAuth(`${apiUrl}/Court/GetAll`)
+                ).json()
+                for (let index = 0; index < courtData.length; index++) {
+                    if ((courtData[index])["courtStatus"] === true) {
+                        setCourts(c => [...c, courtData[index]])
+                        if (params.has('courtId') && courtData[index].courtId === params.get('courtId')) {
+                            setCourtInfo(courtData[index])
+                            setSelectedBranch(courtData[index].branchId)
+                        }
+                    }
+                }
+            }
+            catch (err) {
+            }
+        }
+        const loadTimeFrame = async () => {
+            const fetchTime = async () => {
+                var res = await fetchWithAuth(`${apiUrl}/Slot/GetAll`)
+                var data = await res.json()
+                return data
+            }
+
+            try {
+                var data = await fetchTime()
+                setTimeBound([])
+                var primitive = data.find(d => d['bookedSlotId'] === 'S1')
+                var start = primitive.start
+                var end = primitive.end
+                for (let i = start; i <= end; i++) {
+                    setTimeBound(t => [...t, i])
+                }
+            }
+            catch (err) {
+
+            }
+        }
+        const getUser = async () => {
             var token = sessionStorage.getItem('token')
             if (!token) return;
             try {
@@ -151,27 +155,26 @@ const BookCourt = () => {
     }, [])
     const checkAvailableSlot = async (courtId) => {
         try {
-            if (validateDateTime() === 0) {
-                var bookingDate = document.getElementById("datePicker").value
-                var t1 = parseInt(document.getElementById("time-start").value)
-                var t2 = parseInt(document.getElementById("time-end").value)
+            if (!validateDateTime()) return
+            var bookingDate = document.getElementById("datePicker").value
+            var t1 = parseInt(document.getElementById("time-start").value)
+            var t2 = parseInt(document.getElementById("time-end").value)
 
-                let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
-                let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
+            let startTime = bookingDate + "T" + (t1 >= 10 ? t1 : ("0" + t1)) + ":00:00"
+            let endTime = bookingDate + "T" + (t2 >= 10 ? t2 : ("0" + t2)) + ":00:00"
 
-                const res = await fetchWithAuth(`${apiUrl}/Slot/GetSlotCourtInInterval?`
-                    + `startTime=${startTime}&`
-                    + `endTime=${endTime}&`
-                    + `id=${courtId}`, {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${sessionStorage.getItem('token')}`
-                    }
-                })
-                const data = await res.json()
-                setIsOccupied(data.length > 0)
-            }
+            const res = await fetchWithAuth(`${apiUrl}/Slot/GetSlotCourtInInterval?`
+                + `startTime=${startTime}&`
+                + `endTime=${endTime}&`
+                + `id=${courtId}`, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('token')}`
+                }
+            })
+            const data = await res.json()
+            setIsOccupied(data.length > 0)
         } catch (err) {
             toast.error('Server error')
         }
@@ -190,63 +193,66 @@ const BookCourt = () => {
             toast.error('Server error')
         }
     }
+
     const check = (date, start, end) => {
         date = date + ' 00:00:00'
         let dateNum = Date.parse(date)
         let startTime = dateNum + start * 3600000
         let endTime = dateNum + end * 3600000
-        let r = 0
-        if (startTime >= endTime) r = 1
-        if (startTime <= Date.parse(new Date())) r = 2
-        setTimeError(r)
-        return r
+        let timeRange = startTime >= endTime
+        let past = startTime <= Date.parse(new Date())
+        setTimeError({
+            ...timeError,
+            timeRangeError: timeRange,
+            pastBooking: past
+        })
+        var t = !(past || timeRange)
+        return t
     }
     const validateDateTime = () => {
-        // console.log('Validate time');
-        var selectedDate = document.getElementById("datePicker").value.replace(/-/g, "/")
+        var selectedDate = document.getElementById("datePicker").value
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
 
-        if (selectedDate === '' || Object.is(t1, NaN) || Object.is(t2, NaN)) {
-            return 2
-        }
-        return check(selectedDate, t1, t2)
+        var localDateError = (selectedDate === '')
+        var timeRangeError = Object.is(t1, NaN) || Object.is(t2, NaN)
+        var basicCheck = !(localDateError || timeRangeError)
+        return basicCheck ? check(selectedDate, t1, t2) : false
     }
 
     const validateBooking = () => {
         var errorMsg
         try {
-            var tmp = (validateDateTime() === 0)
-            if (!tmp) {
+            if (!validateDateTime()) {
                 errorMsg = 'Invalid date time'
                 throw new Error()
             }
-            var checkBalance = (paymentType === balance ? user['balance'] >= amount : true)
-            if (!checkBalance) {
+            if (paymentType === balance && user['balance'] < amount) {
                 errorMsg = 'Balance not enough'
                 throw new Error()
             }
-            //balance enough? court is active? the slot is occupied?
-            tmp = courtInfo['courtStatus'] && !isOccupied;
-            if (!tmp) {
+            if(Object.is(courtInfo, undefined)){
+                errorMsg = 'Court not specified'
+                throw new Error()
+            }
+            //court is active? the slot is occupied?
+            if (!(courtInfo['courtStatus'] && !isOccupied)) {
                 errorMsg = "Can't book this court at the specified time"
                 throw new Error()
             }
             //booking and payment type specified?
-            tmp = bookingType !== '' && paymentType !== ''
-            if (!tmp) {
+            if (bookingType === '' || paymentType === '') {
                 errorMsg = 'Booking type or payment type not specified'
                 throw new Error()
             }
             //If banking, is transfer method specified?
             if (paymentType === banking) {
-                tmp = tmp && transferMethod !== ''
-                if (!tmp) {
+                if (transferMethod === '') {
                     errorMsg = 'Transfer method not specified'
                     throw new Error()
                 }
             }
-            return tmp
+            return true
         } catch (error) {
             toast.error(errorMsg)
             return false;
@@ -373,6 +379,12 @@ const BookCourt = () => {
         while (n > 0)
         return rs
     }
+    const reloadCourt = () => {
+        if (validateDateTime()) {
+            checkAvailableSlot(document.getElementById('court').value)
+            handleCalcAmount()
+        }
+    }
     return (
         <div className="bookCourt-container">
             <Modal title='Here are our discounts'
@@ -423,8 +435,9 @@ const BookCourt = () => {
                         <label htmlFor="branch">BRANCH:</label>
                         <select id="branch" name="branch" onChange={(e) => {
                             setSelectedBranch(e.target.value)
+                            loadCourtInfo(null)
                         }}>
-                            <option value="" hidden selected>Choose a branch</option>
+                            <option value={null} hidden selected>Choose a branch</option>
                             {
                                 branches.map(b =>
                                 (
@@ -444,11 +457,11 @@ const BookCourt = () => {
 
                         <select id="court" name="court" onChange={(e) => {
                             var courtId = e.target.value
+                            console.log(courtId);
                             loadCourtInfo(courtId)
-                            checkAvailableSlot(courtId)
-                            handleCalcAmount()
+                            reloadCourt()
                         }}>
-                            {<option value="No" hidden selected>Choose a court</option>}
+                            {<option value={null} hidden selected>Choose a court</option>}
                             {
                                 courts.map((c, i) => (
                                     c['branchId'] === selectedBranch &&
@@ -506,10 +519,7 @@ const BookCourt = () => {
                     <div className="bookCourt-form-group4">
                         <label className="text" htmlFor="time-start">Time:</label>
                         <select id="time-start" name="time-start" onChange={() => {
-                            if (validateDateTime() === 0) {
-                                checkAvailableSlot(document.getElementById('court').value)
-                                handleCalcAmount()
-                            }
+                            reloadCourt()
                         }}>
                             <option value="" hidden>Select Time</option>
                             {
@@ -520,10 +530,7 @@ const BookCourt = () => {
                         </select>
                         <span className="text">to</span>
                         <select id="time-end" name="time-end" onChange={() => {
-                            if (validateDateTime() === 0) {
-                                checkAvailableSlot(document.getElementById('court').value)
-                                handleCalcAmount()
-                            }
+                            reloadCourt()
                         }}>
                             <option value="" hidden>Select Time</option>
                             {
@@ -534,26 +541,22 @@ const BookCourt = () => {
                         </select>
                     </div>
                     {
-                        (timeError === 1) && (
+                        (timeError.timeRangeError) && (
                             <p id="dateError">Invalid time range</p>
                         )
                     }
                     <div className="bookCourt-form-group5">
                         <label htmlFor="day">Day: </label>
                         <input type="date" id="datePicker" onChange={() => {
-                            if (validateDateTime() === 0) {
-                                checkAvailableSlot(document.getElementById('court').value)
-                                handleCalcAmount()
-                            }
+                            reloadCourt()
                         }} />
 
                     </div>
                     {
-                        (timeError === 2) && (
+                        (timeError.pastBooking) && (
                             <p id="dateError">Cannot create a booking for a date in the past</p>
                         )
                     }
-
                     <div className="bookcourt-status">
                         <h2 className="notes">
                             4. STATUS: <span className={isOccupied ? "occupied" : "free"}>{isOccupied ? "Occupied" : "Free"}</span></h2>
