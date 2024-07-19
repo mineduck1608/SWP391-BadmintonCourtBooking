@@ -503,7 +503,7 @@ export default function ViewHistory() {
   const calculateTimeLeft = (time) => {
     var range = currentTime - new Date(time)
     range = maxHourCanChange * 3600000 - range
-    if(range <=0) {
+    if (range <= 0) {
       handleCancel()
     }
     return range
@@ -532,75 +532,83 @@ export default function ViewHistory() {
             Currently <span className='warning'>{numOfChanges - formState.changeLog}</span> changes left,
             and <span className='warning'>{formatHMS(calculateTimeLeft(formState.bookingDate))}</span> left.
           </p>
-          <p>Date:</p>
-          <input type="date" id="datePicker" value={formState.date}
-            onChange={() => {
+          <section className='dateSection'>
+            <span htmlFor='vhDatePicker'>Date:</span>
+            <input type="date" id="vhDatePicker" value={formState.date}
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  date: document.getElementById('vhDatePicker').value
+                })
+                handleCalculateAmount()
+              }}
+            />
+          </section>
+          <section className='timeSection'>
+            <span>Time: </span>
+            <select id='startingTime'
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  start: parseInt(document.getElementById('startingTime').value)
+                })
+                handleCalculateAmount()
+              }}
+            >
+              {timeBound.map(t => (
+                <option value={t} selected={t === formState.start}>{t}:00</option>
+              ))}
+            </select>
+            <span> To </span>
+            <select id='endingTime'
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  end: parseInt(document.getElementById('endingTime').value)
+                })
+                handleCalculateAmount()
+              }}
+            >
+              {timeBound.map(t => (
+                <option value={t} selected={t === formState.end}>{t}:00</option>
+              ))}
+            </select>
+          </section>
+          <section className='branchSection'>
+            <p>Branch:</p>
+            <select id='branch'
+              onChange={() => {
+                setFormState({
+                  ...formState,
+                  branchId: document.getElementById('branch').value
+                })
+              }}
+            >
+              {branches.map((b, i) => (
+                b.branchStatus === 1 &&
+                <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
+              ))}
+            </select>
+          </section>
+          <section className='courtSection'>
+            <p>Court:</p>
+            <select id='court' onChange={() => {
               setFormState({
                 ...formState,
-                date: document.getElementById('datePicker').value
+                courtId: document.getElementById('court').value
               })
               handleCalculateAmount()
             }}
-          />
-          <p>Starting time:</p>
-          <select id='startingTime'
-            onChange={() => {
-              setFormState({
-                ...formState,
-                start: parseInt(document.getElementById('startingTime').value)
-              })
-              handleCalculateAmount()
-            }}
-          >
-            {timeBound.map(t => (
-              <option value={t} selected={t === formState.start}>{t}:00:00</option>
-            ))}
-          </select>
-          <p>Ending time:</p>
-          <select id='endingTime'
-            onChange={() => {
-              setFormState({
-                ...formState,
-                end: parseInt(document.getElementById('endingTime').value)
-              })
-              handleCalculateAmount()
-            }}
-          >
-            {timeBound.map(t => (
-              <option value={t} selected={t === formState.end}>{t}:00:00</option>
-            ))}
-          </select>
-          <p>Branch:</p>
-          <select id='branch'
-            onChange={() => {
-              setFormState({
-                ...formState,
-                branchId: document.getElementById('branch').value
-              })
-            }}
-          >
-            {branches.map((b, i) => (
-              b.branchStatus === 1 &&
-              <option value={b.branchId} selected={b.branchId === formState.branchId}>{b.branchName}</option>
-            ))}
-          </select>
-          <p>Court:</p>
-          <select id='court' onChange={() => {
-            setFormState({
-              ...formState,
-              courtId: document.getElementById('court').value
-            })
-            handleCalculateAmount()
-          }}
-          >
-            {courts.map(c => (
-              c.courtStatus && c.branchId === formState.branchId
-              &&
-              (
-                <option value={c.courtId} selected={c.courtId === formState.courtId}>{c.courtName}</option>
-              )
-            ))}
-          </select>
+            >
+              {courts.map(c => (
+                c.courtStatus && c.branchId === formState.branchId
+                &&
+                (
+                  <option value={c.courtId} selected={c.courtId === formState.courtId}>{c.courtName}</option>
+                )
+              ))}
+            </select>
+          </section>
           <h4>{createOnEditActionComment(amount, currentAmount)}</h4>
           <div className='right-align-btn'>
             <button className='view-history-button-small'

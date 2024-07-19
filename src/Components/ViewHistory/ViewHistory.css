@@ -208,3 +208,18 @@
   background-color: #aaaaaa;
   transform: translateY(0px);
 }
+.timeSection select{
+  width: 30%;
+  text-align: center;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.dateSection, .timeSection, .branchSection, .courtSection{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+#vhDatePicker{
+  display: inline;
+  width: 50%;
+  margin-left: 5%;
+}
