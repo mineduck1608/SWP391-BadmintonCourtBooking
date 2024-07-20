@@ -143,7 +143,7 @@ const Dashboard = () => {
               <MenuItem value="year">Year</MenuItem>
               <MenuItem value="month">Month</MenuItem>
               <MenuItem value="week">Week</MenuItem>
-            </Select>s
+            </Select>
           </FormControl>
           <TextField
             label="Year"
