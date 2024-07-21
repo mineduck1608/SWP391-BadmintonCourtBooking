@@ -174,3 +174,21 @@
     gap: 20px; /* Add some space between the buttons */
     margin-top: 20px;
 }
+.googlemap-branch-card-near {
+    width: 100%;
+    min-width: 29%;
+    max-width: 29%;
+    border: none; /* Remove default border */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow for emphasis */
+    background-color: #fff;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: inline-block;
+    margin: 2%;
+}
+
+.googlemap-branch-card-near:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}

@@ -6,15 +6,17 @@ import { Phone, LocationOn, CheckCircle, Cancel } from '@mui/icons-material';
 import './GoogleMap.css'; // Import the CSS file
 import { GrMapLocation } from "react-icons/gr";
 import { BsFillInfoCircleFill, BsPhoneVibrate } from "react-icons/bs";
+import { Modal } from 'antd';
 
 const ITEMS_PER_PAGE = 4;
 
 const GoogleMap = () => {
     const [branches, setBranches] = useState([]);
+    const [nearbyBranches, setNearbyBranches] = useState([])
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [error, setError] = useState('');
-
+    const [openModal, setOpenModal] = useState(false)
     useEffect(() => {
         fetch('https://localhost:7233/Branch/GetAll')
             .then(response => response.json())
@@ -38,17 +40,17 @@ const GoogleMap = () => {
     const showPosition = (position) => {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-
         // Call your API with the latitude and longitude
         fetch(`https://localhost:7233/Branch/GetNearby?latitude=${latitude}&longitude=${longitude}`)
             .then(response => response.json())
             .then(data => {
-                setBranches(data);
+                setNearbyBranches(data);
                 setCurrentPage(0); // Reset to the first page
                 if (data.length > 0) {
                     setSelectedBranch(data[0]); // Select the first branch by default
                 }
                 setError('');
+                setOpenModal(true)
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -92,6 +94,54 @@ const GoogleMap = () => {
 
     return (
         <>
+            <Modal title='Courts that are within 5km from you'
+                centered={true}
+                open={openModal}
+                footer={null}
+                onCancel={() => { setOpenModal(false) }}
+                width={800}
+            >
+                <div>
+                    {nearbyBranches.map((branch, index) => (
+                        <div className="googlemap-branch-card-near" key={index}>
+                            <img
+                                src={branch.branchImg}
+                                alt={branch.branchName}
+                                className="googlemap-branch-image"
+                            />
+                            <div className="googlemap-branch-content">
+                                <Typography gutterBottom variant="h5" component="div">
+                                    {branch.branchName}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    <LocationOn style={{ color: 'orange' }} /> <span>{branch.location}</span>
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    <Phone style={{ color: 'darkred' }} /> <span>{branch.branchPhone}</span>
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    {branch.branchStatus === 1 ? (
+                                        <CheckCircle className="googlemap-status-icon open" />
+                                    ) : (
+                                        <Cancel className="googlemap-status-icon closed" />
+                                    )}{" "}
+                                    <span>{branch.branchStatus === 1 ? 'Open' : 'Closed'}</span>
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => setSelectedBranch(branch)}
+                                >
+                                    View on Map
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                    {nearbyBranches.length === 0 &&
+                        <p>No branches that are within 5km from you</p>
+                    }
+                </div>
+            </Modal>
             <div className="googlemap-container">
                 <Typography variant="h4" gutterBottom className="googlemap-title">
                     Badminton Court Booking System
@@ -103,10 +153,10 @@ const GoogleMap = () => {
                 <div className="googlemap-branch-grid">
                     {displayedBranches.map((branch, index) => (
                         <div className="googlemap-branch-card" key={index}>
-                            <img 
-                                src={branch.branchImg} 
-                                alt={branch.branchName} 
-                                className="googlemap-branch-image" 
+                            <img
+                                src={branch.branchImg}
+                                alt={branch.branchName}
+                                className="googlemap-branch-image"
                             />
                             <div className="googlemap-branch-content">
                                 <Typography gutterBottom variant="h5" component="div">
