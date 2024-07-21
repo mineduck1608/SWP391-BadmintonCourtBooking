@@ -1,4 +1,5 @@
-﻿using BadmintonCourtAPI.Utils;
+﻿using Azure;
+using BadmintonCourtAPI.Utils;
 using BadmintonCourtBusinessObjects.Entities;
 using BadmintonCourtBusinessObjects.SupportEntities.Court;
 using BadmintonCourtServices;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 
 namespace BadmintonCourtAPI.Controllers
@@ -19,6 +22,7 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly ICourtService _courtService = new CourtService();
 		private readonly IFeedbackService _feedbackService = new FeedbackService();
 
+		private const string apiKey = "VM4Ty4GbE1LVEeTYAT4rgVyuDSRGit8PpZEdjw4ICXCvlO1AYTIQbeECObS6qkMc";
 		public BranchController(ICourtBranchService service)
 		{
 			_service = service;
@@ -59,12 +63,19 @@ namespace BadmintonCourtAPI.Controllers
 					Dictionary<string, double> tmp = _coordinateService.ExtractCoordinates(item.MapUrl);
 					if (tmp != null)
 					{
-						double distance = _coordinateService.CaculateDistance(latitude, longitude, tmp.ElementAt(0).Value, tmp.ElementAt(1).Value);
+						HttpClient client = new HttpClient();
+						string requestUrl = "https://api.distancematrix.ai/maps/api/distancematrix/json?";
+						requestUrl += $"origins={latitude},{longitude}&";
+						requestUrl += $"destinations={tmp.ElementAt(0).Value},{tmp.ElementAt(1).Value}&";
+						requestUrl += $"key={apiKey}";
+						var response = await client.GetStringAsync(requestUrl);
+						var json = JObject.Parse(response);
+						double distance = (double)json["rows"][0]["elements"][0]["distance"]["value"];
 						if (distance <= 5000) 
 							tmpStorage.Add(item);
 					}
 				}
-            }
+			}
 			foreach (var item in tmpStorage)
 			{
 				List<Feedback> feedbackStorage = _feedbackService.GetBranchFeedbacks(item.BranchId);
@@ -80,6 +91,15 @@ namespace BadmintonCourtAPI.Controllers
             return Ok(result);
 		}
 
+		//[HttpGet]
+		//[Route("Branch/TestDemo")]
+		//public async Task<IActionResult> Check()
+		//{
+		//	HttpClient client = new HttpClient();
+		//	var x = await client.GetStringAsync("https://api.distancematrix.ai/maps/api/distancematrix/json?origins=51.4822656,-0.1933769&destinations=51.4994794,-0.1269979&key=VM4Ty4GbE1LVEeTYAT4rgVyuDSRGit8PpZEdjw4ICXCvlO1AYTIQbeECObS6qkMc");
+		//	var json = JObject.Parse(x);
+		//	return Ok(json);
+		//} 
 
 		[HttpDelete]
 		[Route("Branch/Delete")]

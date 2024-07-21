@@ -14,12 +14,19 @@ namespace BadmintonCourtServices
 		private double ToRadians(double x) => x * Math.PI / 180;
 		public double CaculateDistance(double orgLatitude, double orgLongitude, double desLatitude, double desLongitude)
 		{
-			const double r = 6371 * 1000; // Radius of Earth in meters
-			double latDistance = ToRadians(orgLatitude - desLatitude);
-			double lonDistance = ToRadians(orgLongitude - desLongitude);
-			double a = Math.Sin(latDistance / 2) * Math.Sin(latDistance / 2) +
-					   Math.Cos(ToRadians(orgLatitude)) * Math.Cos(ToRadians(desLatitude)) *
-					   Math.Sin(lonDistance / 2) * Math.Sin(lonDistance / 2);
+			const double r = 6371; // Radius of Earth in meters
+								   //double latDistance = ToRadians(orgLatitude - desLatitude);
+								   //double lonDistance = ToRadians(orgLongitude - desLongitude);
+								   //double a = Math.Sin(latDistance / 2) * Math.Sin(latDistance / 2) +
+								   //		   Math.Cos(ToRadians(orgLatitude)) * Math.Cos(ToRadians(desLatitude)) *
+								   //		   Math.Sin(lonDistance / 2) * Math.Sin(lonDistance / 2);
+
+			double dLat = ToRadians(orgLatitude - desLatitude);
+			double dLon = ToRadians(orgLongitude - desLongitude);
+
+			double a = Math.Pow(Math.Sin(dLat / 2), 2) +
+				  Math.Cos(orgLatitude) * Math.Cos(desLatitude) *
+				  Math.Pow(Math.Sin(dLon / 2), 2);
 			double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 			return r * c * 1000; // meters
 		}
@@ -31,11 +38,12 @@ namespace BadmintonCourtServices
 			int lngIndex = url.IndexOf("!2d") + 3; // Start index of longitude
 
 			// Extract latitude and longitude values
-			string rawLatitude = url.Substring(latIndex, url.IndexOf('!', latIndex) - latIndex);
-			string rawLongitude = url.Substring(lngIndex, url.IndexOf('!', lngIndex) - lngIndex);
+			
 			Dictionary<string, double> result = new Dictionary<string, double>();
 			try
 			{
+				string rawLatitude = url.Substring(latIndex, url.IndexOf('!', latIndex) - latIndex);
+				string rawLongitude = url.Substring(lngIndex, url.IndexOf('!', lngIndex) - lngIndex);
 				double latitude = double.Parse(rawLatitude);
 				result.Add("Latitude", latitude);
 				double longitude = double.Parse(rawLongitude);
