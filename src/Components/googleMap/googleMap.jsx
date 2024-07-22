@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../Header/header';
 import Footer from '../Footer/Footer';
 import { Typography, Button } from '@mui/material';
-import { Phone, LocationOn, CheckCircle, Cancel } from '@mui/icons-material';
+import { Phone, LocationOn, CheckCircle, Cancel, Margin } from '@mui/icons-material';
 import './GoogleMap.css'; // Import the CSS file
 import { GrMapLocation } from "react-icons/gr";
 import { BsFillInfoCircleFill, BsPhoneVibrate } from "react-icons/bs";
@@ -146,7 +146,7 @@ const GoogleMap = () => {
                 <Typography variant="h4" gutterBottom className="googlemap-title">
                     Badminton Court Booking System
                 </Typography>
-                <Button variant="contained" color="primary" onClick={findNearbyBranches}>
+                <Button variant="contained" color="primary" onClick={findNearbyBranches} style={{ marginLeft: 800, marginTop: 20, marginBottom: 10 }}>
                     Find Nearby Branches
                 </Button>
                 {error && <p>{error}</p>}
