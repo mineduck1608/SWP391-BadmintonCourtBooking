@@ -171,7 +171,9 @@
   border: none;
   transition: background 0.3s, transform 0.3s;
 }
-
+.view-history-button-small{
+  padding: 2%;
+}
 .view-history-button:hover, .view-history-button-small:hover {
   background-color: #e68a00;
   transform: translateY(-2px);

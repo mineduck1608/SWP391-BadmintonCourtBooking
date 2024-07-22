@@ -24,8 +24,8 @@ const BookCourt = () => {
     const [bookingType, setBookingType] = useState('') //once, fixed, flexible
     const [branches, setBranches] = useState([]) //all active branches (status = 1)
     const [courts, setCourts] = useState([]) //all courts if active
-    const [paymentType, setPaymentType] = useState('') //banking or not
-    const [timeBound, setTimeBound] = useState([])
+    const [paymentType, setPaymentType] = useState('') //banking or balance
+    const [timeBound, setTimeBound] = useState([]) //Working hours
     const [timeError, setTimeError] = useState({
         timeRangeError: false,
         pastBooking: false
@@ -214,6 +214,7 @@ const BookCourt = () => {
         var t1 = parseInt(document.getElementById("time-start").value)
         var t2 = parseInt(document.getElementById("time-end").value)
 
+        //Check if data is missing
         var localDateError = (selectedDate === '')
         var timeRangeError = Object.is(t1, NaN) || Object.is(t2, NaN)
         var basicCheck = !(localDateError || timeRangeError)
@@ -231,7 +232,7 @@ const BookCourt = () => {
                 errorMsg = 'Balance not enough'
                 throw new Error()
             }
-            if(Object.is(courtInfo, undefined)){
+            if (Object.is(courtInfo, undefined)) {
                 errorMsg = 'Court not specified'
                 throw new Error()
             }
@@ -263,6 +264,7 @@ const BookCourt = () => {
         try {
             const result = validateBooking();
             if (result) {
+                toast.success('Please wait while we finish your booking')
                 document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
                 pushBooking()
             }
@@ -393,7 +395,7 @@ const BookCourt = () => {
                 centered={true}
                 closable={false}
             >
-                <span>
+                <div>
                     <table className='discount-table'>
                         <thead>
                             <tr>
@@ -412,10 +414,15 @@ const BookCourt = () => {
                             }
                         </tbody>
                     </table>
+                    <p>
+                        Booking for more than a certain amount will add a proportion of it back to your balance.<br />
+                        For example, the rate for a payment at 100,000đ is 5%, so making a booking at 120,000đ will add 120,000 * 5% = 6,000đ to your balance
+                    </p>
                     <div className='right-align-btn'>
                         <button className='buyTime_btn' onClick={() => setOpen(false)}>Close</button>
                     </div>
-                </span>
+                </div>
+
             </Modal>
             <h1 className="bookCourt-title">BOOKING A COURT</h1>
             <div className="centerDiv discount">
