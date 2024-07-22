@@ -1,14 +1,43 @@
 import { ResponsivePie } from "@nivo/pie";
 import { tokens } from "../theme";
 import { useTheme } from "@mui/material";
-import { mockPieData as data } from "../data/mockData";
 
-const PieChart = () => {
+const PieChart = (data) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  //data is wrapped in an object
+  const actualData = data.data
+  const longestBranchName = () => {
+    var r = actualData.map(e => {
+      return e.id
+    }).sort((a, b) => b.length - a.length)
+    return r[0]?.length
+  }
+  const formatNumber = (n) => {
+    function formatTo3Digits(n, stop) {
+      var rs = ''
+      if (!stop)
+        for (var i = 1; i <= 3; i++) {
+          rs = (n % 10) + rs
+          n = Math.floor(n / 10)
+        }
+      else rs = n + rs
+      return rs
+    }
+    n = Math.floor(n)
+    var rs = ''
+    do {
+      rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
+      n = Math.floor(n / 1000)
+      if (n > 0) rs = ',' + rs
+    }
+    while (n > 0)
+    return rs
+  }
+  const maxBranchLength = longestBranchName()
   return (
     <ResponsivePie
-      data={data}
+      data={actualData}
       theme={{
         axis: {
           domain: {
@@ -57,51 +86,31 @@ const PieChart = () => {
         from: "color",
         modifiers: [["darker", 2]],
       }}
-      defs={[
-        {
-          id: "dots",
-          type: "patternDots",
-          background: "inherit",
-          color: "rgba(255, 255, 255, 0.3)",
-          size: 4,
-          padding: 1,
-          stagger: true,
-        },
-        {
-          id: "lines",
-          type: "patternLines",
-          background: "inherit",
-          color: "rgba(255, 255, 255, 0.3)",
-          rotation: -45,
-          lineWidth: 6,
-          spacing: 10,
-        },
-      ]}
-      legends={[
-        {
-          anchor: "bottom",
-          direction: "row",
-          justify: false,
-          translateX: 0,
-          translateY: 56,
-          itemsSpacing: 0,
-          itemWidth: 100,
-          itemHeight: 18,
-          itemTextColor: "#999",
-          itemDirection: "left-to-right",
-          itemOpacity: 1,
-          symbolSize: 18,
-          symbolShape: "circle",
-          effects: [
-            {
-              on: "hover",
-              style: {
-                itemTextColor: "#000",
-              },
+      legends={[{
+        anchor: "bottom",
+        direction: "row",
+        justify: false,
+        translateX: 0,
+        translateY: 56,
+        itemsSpacing: 10,
+        itemWidth: maxBranchLength * 7,
+        itemHeight: 18,
+        itemTextColor: "#999",
+        itemDirection: "left-to-right",
+        itemOpacity: 1,
+        symbolSize: 18,
+        symbolShape: "circle",
+        effects: [
+          {
+            on: "hover",
+            style: {
+              itemTextColor: "#000",
             },
-          ],
-        },
-      ]}
+          },
+        ],
+      }]
+      }
+      
     />
   );
 };
