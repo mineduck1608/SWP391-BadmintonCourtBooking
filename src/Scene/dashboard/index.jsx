@@ -55,6 +55,11 @@ const Dashboard = () => {
         const slots = await fetchData('https://localhost:7233/Slot/GetAll');
         const payments = await fetchData('https://localhost:7233/Payment/GetAll');
 
+        const branchIdToNameMap = {};
+        branches.forEach(branch => {
+          branchIdToNameMap[branch.branchId] = branch.branchName;
+        });
+
         // Process data for BarChart and PieChart
         const branchAmountsData = branches.map(branch => {
           const branchCourts = courts.filter(court => court.branchId === branch.branchId);
@@ -87,7 +92,7 @@ const Dashboard = () => {
         const statisticsData = await statisticsResponse.json();
         setPaymentStatistics(statisticsData);
 
-        const bookingTypes = await fetchWithAuth(`https://localhost:7233/Booking/TypeStatistic?year=${currentYear}`, {
+        const branchAmountsResponse = await fetchWithAuth(`https://localhost:7233/Slot/SlotStatistic?year=${year}`, {
           method: 'GET'
         });
         const branchAmountsRawData = await branchAmountsResponse.json();
@@ -307,7 +312,7 @@ const Dashboard = () => {
                 fontWeight="600"
                 sx={{ padding: "30px 30px 0 30px" }}
               >
-                Revenue Comparison
+                Number of booking
               </Typography>
               <Box height="250px" mt="-20px">
                 <PieChart data={filteredBranchAmounts} />
