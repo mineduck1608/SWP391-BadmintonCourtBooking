@@ -268,9 +268,9 @@ namespace BadmintonCourtAPI.Utils
 			List<CancelSlotStatisicResponseDTO> result = new List<CancelSlotStatisicResponseDTO>();
             for (int i = 1; i <= 12; i++)
             {
-                int cancelCount = cancelStorage.Where(x => x.StartTime.Month == i).Count();
-				int totalCount = totalStorage.Where(x => x.StartTime.Month == i).Count();
-				double proportion = cancelCount / totalCount * 100;
+                int? cancelCount = cancelStorage.Where(x => x.StartTime.Month == i).ToList().Count();
+				int? totalCount = totalStorage.Where(x => x.StartTime.Month == i).ToList().Count();
+				double? proportion = cancelCount == 0 || totalCount == 0 ? 0 : cancelCount / totalCount * 100;
 				result.Add(new CancelSlotStatisicResponseDTO() { Month = i, Proportion = proportion});
             }
 			return result;

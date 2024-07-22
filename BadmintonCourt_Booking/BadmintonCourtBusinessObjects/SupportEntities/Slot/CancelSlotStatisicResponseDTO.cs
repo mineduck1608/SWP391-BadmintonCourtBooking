@@ -8,7 +8,7 @@ namespace BadmintonCourtBusinessObjects.SupportEntities.Slot
 {
 	public class CancelSlotStatisicResponseDTO
 	{
-		public double Proportion { get; set; }
+		public double? Proportion { get; set; }
 		public int Month { get; set; }
 	}
 }
