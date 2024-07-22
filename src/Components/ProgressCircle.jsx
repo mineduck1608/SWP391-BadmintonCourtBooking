@@ -6,7 +6,7 @@ import { fetchWithAuth } from "./fetchWithAuth/fetchWithAuth";
 const ProgressCircle = ({ size = 40 }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState();
   const token = sessionStorage.getItem('token');
   
   useEffect(() => {
@@ -16,24 +16,23 @@ const ProgressCircle = ({ size = 40 }) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // Thay YOUR_AUTH_TOKEN bằng mã thông báo thực tế của bạn
+            "Authorization": `Bearer ${token}`
           }
         });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        // Giả sử giá trị progress bạn nhận được từ API là `data.progress`
-        setProgress(data.progress); // Cập nhật giá trị progress
+        // Assuming the progress value you get from the API is `data.progress`
+        setProgress(data.progress); // Update the progress state
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []);
-
-  const angle = progress * 360;
+  }, [token]);
+  const angle = 0.01 * 360;
 
   return (
     <Box
