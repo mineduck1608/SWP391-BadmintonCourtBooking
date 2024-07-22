@@ -8,6 +8,8 @@ import BarChart from "../../Components/BarChart";
 import PieChart from '../../Components/PieChart';
 import './dashboard.css';
 import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
+import StatBox from "../../Components/StatBox";
+import { MdFreeCancellation } from "react-icons/md";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -288,6 +290,22 @@ const Dashboard = () => {
               <Box height="250px" mt="-20px">
                 <BarChart isDashboard={true} data={filteredBranchAmounts} />
               </Box>
+            </Box>
+
+            <Box
+              gridColumn="span 3"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              backgroundColor={colors.primary[400]}
+            >
+                <StatBox isDashboard={true}
+                  title="Cancel Amount"
+                  subtitle="Year"
+                  progress="0.75"
+                  increase="+14%"
+                  icon= { <MdFreeCancellation style={{ color: "#70D8BD", fontSize: '40px' }}/>}
+                 />
             </Box>
           </>
         )}

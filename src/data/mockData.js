@@ -337,7 +337,7 @@ export const mockPieData = [
   {
     id: "hack",
     label: "hack",
-    value: 239,
+    value: 500,
     color: "hsl(104, 70%, 50%)",
   },
   {
@@ -360,6 +360,12 @@ export const mockPieData = [
   },
   {
     id: "scala",
+    label: "scala",
+    value: 584,
+    color: "hsl(344, 70%, 50%)",
+  },
+  {
+    id: "scal23223a",
     label: "scala",
     value: 584,
     color: "hsl(344, 70%, 50%)",
