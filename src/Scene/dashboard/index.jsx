@@ -40,7 +40,13 @@ const Dashboard = () => {
         const courts = await fetchData('https://localhost:7233/Court/GetAll');
         const slots = await fetchData('https://localhost:7233/Slot/GetAll');
         const payments = await fetchData('https://localhost:7233/Payment/GetAll');
-        
+
+        // Create a mapping of branch IDs to branch names
+        const branchIdToNameMap = {};
+        branches.forEach(branch => {
+          branchIdToNameMap[branch.branchId] = branch.branchName;
+        });
+
         // Process data for BarChart and PieChart
         const branchAmountsData = branches.map(branch => {
           const branchCourts = courts.filter(court => court.branchId === branch.branchId);
@@ -59,8 +65,6 @@ const Dashboard = () => {
             totalAmount: totalAmount
           };
         });
-        
-        setBranchAmounts(branchAmountsData);
 
         // Calculate the total revenue
         const total = payments.reduce((sum, payment) => sum + payment.amount, 0);
@@ -72,6 +76,18 @@ const Dashboard = () => {
         });
         const statisticsData = await statisticsResponse.json();
         setPaymentStatistics(statisticsData);
+
+        // Fetch branchAmounts with authentication
+        const branchAmountsResponse = await fetchWithAuth(`https://localhost:7233/Slot/SlotStatistic?year=${currentYear}`, {
+          method: 'GET'
+        });
+        const branchAmountsRawData = await branchAmountsResponse.json();
+        const branchAmountsDataTransformed = branchAmountsRawData.map(item => ({
+          id: branchIdToNameMap[item.branch],
+          value: item.amount
+        }));
+
+        setBranchAmounts(branchAmountsDataTransformed);
 
       } catch (error) {
         console.error("Error fetching data", error);
@@ -113,6 +129,7 @@ const Dashboard = () => {
   };
 
   const filteredBranchAmounts = branchAmounts.filter(branch => branch.value > 0);
+  console.log(branchAmounts)
 
   return (
     <Box m="20px">
@@ -269,7 +286,7 @@ const Dashboard = () => {
                 fontWeight="600"
                 sx={{ padding: "30px 30px 0 30px" }}
               >
-                Revenue Comparison
+                Number of booking
               </Typography>
               <Box height="250px" mt="-20px">
                 <PieChart data={filteredBranchAmounts} />
