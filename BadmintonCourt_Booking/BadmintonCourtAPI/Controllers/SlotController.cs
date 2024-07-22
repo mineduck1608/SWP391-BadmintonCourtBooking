@@ -238,7 +238,7 @@ namespace BadmintonCourtAPI.Controllers
 				int count = 0;
 				foreach (var court in courtList)
 				{
-					List<BookedSlot> tmpStorage = _service.GetSlotsByCourt(court.CourtId);
+					List<BookedSlot> tmpStorage = _service.GetAllSlots().Where(x => x.CourtId == court.CourtId && x.StartTime.Year == year).ToList();
 					count += tmpStorage.Count;
                 }
 				result.Add(new SlotStatisticResponseDTO { Branch = branch.BranchId, Amount = count });
