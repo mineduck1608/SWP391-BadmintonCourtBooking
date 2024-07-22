@@ -1,4 +1,5 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
+using BadmintonCourtBusinessObjects.SupportEntities.Booking;
 using BadmintonCourtBusinessObjects.SupportEntities.Court;
 using BadmintonCourtBusinessObjects.SupportEntities.Slot;
 using BadmintonCourtBusinessObjects.SupportEntities.Statistic;
@@ -261,6 +262,19 @@ namespace BadmintonCourtAPI.Utils
 			}
 			return result;
 		}
+
+		public static List<CancelSlotStatisicResponseDTO> GenerateCancelProportion(List<BookedSlot> cancelStorage, List<BookedSlot> totalStorage)
+		{
+			List<CancelSlotStatisicResponseDTO> result = new List<CancelSlotStatisicResponseDTO>();
+            for (int i = 1; i <= 12; i++)
+            {
+                int cancelCount = cancelStorage.Where(x => x.StartTime.Month == i).Count();
+				int totalCount = totalStorage.Where(x => x.StartTime.Month == i).Count();
+				double proportion = cancelCount / totalCount * 100;
+				result.Add(new CancelSlotStatisicResponseDTO() { Month = i, Proportion = proportion});
+            }
+			return result;
+        }
 
 	}
 }

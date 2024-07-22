@@ -25,6 +25,7 @@ namespace BadmintonCourtAPI.Controllers
 		private readonly IVnPayService _vnPayService = new VnPayService();
 		private readonly IMailService _mailService = new MailService();
 		private readonly IPaymentService _paymentService = new PaymentService();
+		private readonly ICourtBranchService _courtBranchService = new CourtBranchService();
 
 
 		private const string resultRedirectUrl = "http://localhost:3000/paySuccess";
@@ -182,6 +183,44 @@ namespace BadmintonCourtAPI.Controllers
 		[HttpGet]
 		[Route("Slot/GetAll")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetAllSlots() => Ok(Util.FormatSlotList(_service.GetAllSlots()));
+
+
+		[HttpGet]
+		[Route("Slot/CancelStatistic")]
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<IEnumerable<CancelSlotStatisicResponseDTO>>> GetCancelProportion(string? id, int? year)
+		{
+			List<CourtBranch> branchList = new List<CourtBranch>();
+			if (id.IsNullOrEmpty() || id == "0")
+				branchList = _courtBranchService.GetAllCourtBranches();
+			else branchList.Add(_courtBranchService.GetBranchById(id));
+			//--------------------------------------------------------
+			year = year == null ? DateTime.Now.Year : year.Value;
+			//--------------------------------------------------------
+			List<CancelSlotStatisicResponseDTO> result = new List<CancelSlotStatisicResponseDTO>();
+			List<BookedSlot> slotList = new List<BookedSlot>();
+			List<BookedSlot> totalSlots = new List<BookedSlot>();
+			foreach (var branch in branchList)
+            {
+				List<Court> courtList = _courtService.GetCourtsByBranchId(branch.BranchId);
+				foreach (var court in courtList)
+                {
+					// Canceled slots
+					List<BookedSlot> tmpSlotStorage = _service.GetSlotsByCourt(court.CourtId).Where(x => x.StartTime.Year == year && x.IsDeleted == true).ToList();
+					// Total slots
+					List<BookedSlot> tmpTotalStorage = _service.GetSlotsByCourt(court.CourtId).Where(x => x.StartTime.Year == year).ToList();
+                    for (int i = 0; i < tmpTotalStorage.Count; i++)
+                    {
+                        if (i < tmpSlotStorage.Count)
+							slotList.Add(tmpSlotStorage[i]);
+						totalSlots.Add(tmpTotalStorage[i]);
+                    }
+                }
+            }
+			result = Util.GenerateCancelProportion(slotList, totalSlots);
+            return Ok(result);
+		}
+
 
 		[HttpGet]
 		[Route("Slot/GetByDemand")]

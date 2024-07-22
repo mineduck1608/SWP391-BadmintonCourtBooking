@@ -1,4 +1,5 @@
 ﻿using BadmintonCourtBusinessObjects.Entities;
+using BadmintonCourtBusinessObjects.SupportEntities.Booking;
 using BadmintonCourtServices;
 using BadmintonCourtServices.IService;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,7 @@ namespace BadmintonCourtAPI.Controllers
 		[Authorize]
 		public async Task<ActionResult<Booking>> GetBookingById(string id) => Ok(_service.GetBookingByBookingId(id));
 
+
 		[HttpGet]
 		[Route("Booking/GetByUser")]
 		[Authorize]
@@ -49,6 +51,23 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok(new { msg = "Success" });
 		}
 
+		[HttpGet]
+		[Route("Booking/TypeStatistic")]
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<IEnumerable<PieChartBookingResponseDTO>>> GetBookingsOnTypeForStatistic(int? year)
+		{
+			year = year == null ? DateTime.Now.Year : year.Value;
+			List<PieChartBookingResponseDTO> result = new List<PieChartBookingResponseDTO>();
+			List<Booking> onceType = _service.GetBookingsByType(1).Where(x => x.BookingDate.Year == year.Value).ToList();
+			List<Booking> fixedType = _service.GetBookingsByType(2).Where(x => x.BookingDate.Year == year.Value).ToList();
+			//-----------------------------------------------
+			PieChartBookingResponseDTO onceResponse = new PieChartBookingResponseDTO() { Amount = onceType.Count, Type = "Once"};
+			PieChartBookingResponseDTO fixedResponse = new PieChartBookingResponseDTO() { Amount = fixedType.Count, Type = "Fixed"};
+			//------------------------------------------------
+			result.Add(onceResponse);
+			result.Add(fixedResponse);
+			return Ok(result);
+		}
 
 
 		[HttpPut]
