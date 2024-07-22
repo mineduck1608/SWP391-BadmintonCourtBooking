@@ -103,6 +103,13 @@ const Dashboard = () => {
 
         setBranchAmounts(branchAmountsDataTransformed);
 
+        // Fetch booking type statistics
+        const bookingTypeResponse = await fetchWithAuth(`https://localhost:7233/Booking/TypeStatistic?year=${year}`, {
+          method: 'GET'
+        });
+        const bookingTypeData = await bookingTypeResponse.json();
+        setBookingTypeStats(convertBookingType(bookingTypeData));
+
         // Fetch cancelled booking statistics
         const cancelledBookingResponse = await fetchWithAuth(`https://localhost:7233/Slot/CancelSlotStatisticV2?year=${year}`, {
           method: 'GET'
