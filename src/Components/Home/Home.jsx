@@ -46,7 +46,7 @@ const Home = ({ setSearchCriteria }) => {
                         Experience the pinnacle of badminton amidst the finest court available.
                     </p>
                     <button className='btn'>
-                        <Link to={'/findCourt'}>Book Now!</Link>
+                        <Link to={'/findCourt?branch=B001'}>Book Now!</Link>
                     </button>
                 </div>
                 <div className="homeCard grid">
