@@ -13,27 +13,6 @@ const PieChart = (data) => {
     }).sort((a, b) => b.length - a.length)
     return r[0]?.length
   }
-  const formatNumber = (n) => {
-    function formatTo3Digits(n, stop) {
-      var rs = ''
-      if (!stop)
-        for (var i = 1; i <= 3; i++) {
-          rs = (n % 10) + rs
-          n = Math.floor(n / 10)
-        }
-      else rs = n + rs
-      return rs
-    }
-    n = Math.floor(n)
-    var rs = ''
-    do {
-      rs = formatTo3Digits(n % 1000, Math.floor(n / 1000) === 0) + rs
-      n = Math.floor(n / 1000)
-      if (n > 0) rs = ',' + rs
-    }
-    while (n > 0)
-    return rs
-  }
   const maxBranchLength = longestBranchName()
   return (
     <ResponsivePie
