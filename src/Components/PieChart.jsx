@@ -7,13 +7,13 @@ const PieChart = (data) => {
   const colors = tokens(theme.palette.mode);
   //data is wrapped in an object
   const actualData = data.data
-  const longestBranchName = () => {
+  const findLongestIdLength = () => {
     var r = actualData.map(e => {
       return e.id
     }).sort((a, b) => b.length - a.length)
     return r[0]?.length
   }
-  const maxBranchLength = longestBranchName()
+  const longestIdLength = findLongestIdLength()
   return (
     <ResponsivePie
       data={actualData}
@@ -72,7 +72,7 @@ const PieChart = (data) => {
         translateX: 0,
         translateY: 56,
         itemsSpacing: 10,
-        itemWidth: maxBranchLength * 7,
+        itemWidth: Math.max(50, longestIdLength * 7),
         itemHeight: 18,
         itemTextColor: "#999",
         itemDirection: "left-to-right",

@@ -31,7 +31,18 @@ const Dashboard = () => {
   const [paymentStatistics, setPaymentStatistics] = useState([]);
   const [branchAmounts, setBranchAmounts] = useState([]);
 
+  const [bookingTypeStats, setBookingTypeStats] = useState([])
   useEffect(() => {
+    const convertBookingType = (bookingTypeData) => {
+      var rs = bookingTypeData.map(b => {
+        return {
+          id: b['type'],
+          label: b['type'],
+          value: b['amount']
+        }
+      })
+      return rs
+    }
     const fetchAllData = async () => {
       try {
         setLoading(true);
@@ -50,14 +61,14 @@ const Dashboard = () => {
         // Process data for BarChart and PieChart
         const branchAmountsData = branches.map(branch => {
           const branchCourts = courts.filter(court => court.branchId === branch.branchId);
-          const branchSlots = slots.filter(slot => 
+          const branchSlots = slots.filter(slot =>
             branchCourts.some(court => court.courtId === slot.courtId)
           );
-          const branchPayments = payments.filter(payment => 
+          const branchPayments = payments.filter(payment =>
             branchSlots.some(slot => slot.bookingId === payment.bookingId)
           );
           const totalAmount = branchPayments.reduce((sum, payment) => sum + payment.amount, 0);
-          return { 
+          return {
             id: branch.branchName,
             label: branch.branchName,
             value: totalAmount,
@@ -135,9 +146,9 @@ const Dashboard = () => {
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Head 
-          title="DASHBOARD" 
-          subtitle="Welcome to your dashboard" 
+        <Head
+          title="DASHBOARD"
+          subtitle="Welcome to your dashboard"
         />
       </Box>
 
@@ -190,17 +201,17 @@ const Dashboard = () => {
           ) : null}
           {filterType === "month" ? (
             <FormControl className="filter-input" fullWidth>
-            <InputLabel>Number of Months</InputLabel>
-            <Select
-              value={numberOfMonths}
-              onChange={(e) => setNumberOfMonths(e.target.value)}
-              label="Number of Months" 
-            >
-              {Array.from({ length: 3 }, (_, i) => i + 1).map(numberOfMonths => (
-                <MenuItem key={numberOfMonths} value={numberOfMonths}>{numberOfMonths}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <InputLabel>Number of Months</InputLabel>
+              <Select
+                value={numberOfMonths}
+                onChange={(e) => setNumberOfMonths(e.target.value)}
+                label="Number of Months"
+              >
+                {Array.from({ length: 3 }, (_, i) => i + 1).map(numberOfMonths => (
+                  <MenuItem key={numberOfMonths} value={numberOfMonths}>{numberOfMonths}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           ) : null}
           {filterType === "week" ? (
             <FormControl className="filter-input" fullWidth>
@@ -275,7 +286,7 @@ const Dashboard = () => {
                 <LineChart data={paymentStatistics} isDashboard={true} />
               </Box>
             </Box>
-            
+
             <Box
               gridColumn="span 6"
               gridRow="span 2"
@@ -292,7 +303,7 @@ const Dashboard = () => {
                 <PieChart data={filteredBranchAmounts} />
               </Box>
             </Box>
-            
+
             <Box
               gridColumn="span 12"
               gridRow="span 2"
@@ -311,31 +322,48 @@ const Dashboard = () => {
             </Box>
 
             <Box
-          gridColumn="span 6"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            Cancel
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
+              gridColumn="span 6"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+              p="30px"
             >
-              {year}
-            </Typography>
-            <Typography>Number of cancelled booking</Typography>
-          </Box>
-        </Box>
+              <Typography variant="h5" fontWeight="600">
+                Cancel
+              </Typography>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                mt="25px"
+              >
+                <ProgressCircle size="125" />
+                <Typography
+                  variant="h5"
+                  color={colors.greenAccent[500]}
+                  sx={{ mt: "15px" }}
+                >
+                  {year}
+                </Typography>
+                <Typography>Number of cancelled booking</Typography>
+              </Box>
+            </Box>
+
+            <Box
+              gridColumn="span 6"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+            >
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                sx={{ padding: "30px 30px 0 30px" }}
+              >
+                Types of bookings
+              </Typography>
+              <Box height="250px" mt="-20px">
+                <PieChart data={bookingTypeStats} />
+              </Box>
+            </Box>
           </>
         )}
       </Box>
