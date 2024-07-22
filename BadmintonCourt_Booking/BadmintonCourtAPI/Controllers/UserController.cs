@@ -114,28 +114,6 @@ namespace BadmintonCourtAPI.Controllers
 		}
 
 
-		//[HttpPost]
-		//[Route("User/ExternalLogAuth")]
-		//public async Task<IActionResult> ExternalAuth(string email)
-		//{
-		//	UserDetail info = _service.UserDetailService.GetUserDetailByMail(email);
-
-		//	if (info == null) // Chua co acc
-		//	{
-		//		List<User> list = _service.UserService.GetAllUsers();
-		//		_service.UserService.AddUser(new User { UserId = "S" + (_service.UserService.GetAllUsers().Count + 1).ToString("D7"), LastFail = new DateTime(1900, 1, 1, 0, 0, 0), ActiveStatus = true, Balance = 0, AccessFail = 0, BranchId = null, RoleId = "R003" });
-		//		string id = _service.UserService.GetRecentAddedUser().UserId;
-
-		//		_service.UserDetailService.AddUserDetail(new UserDetail { UserId = id, Email = email });
-		//		return Ok(new { token = Util.GenerateToken(id, "", "", "Customer", _config) });
-		//	}
-
-		//	// Co acc
-		//	User user = _service.UserService.GetUserById(info.UserId);
-		//	return Ok(new { token = Util.GenerateToken(info.UserId, info.LastName, user.UserName, _service.RoleService.GetRoleById(user.RoleId).RoleName, _config) });
-		//}
-
-
 		private string ResetUserStatus(User user)
 		{
 			user.AccessFail = 0;
@@ -355,7 +333,7 @@ namespace BadmintonCourtAPI.Controllers
 			// password ko rỗng
 			// chuỗi ở db: a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
 			// abcxyz
-			if (!password.IsNullOrEmpty()) // a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+			if (!password.IsNullOrEmpty()) 
 			{
 				if (password != user.Password)
 				{
@@ -636,9 +614,8 @@ namespace BadmintonCourtAPI.Controllers
 					return BadRequest(new { msg = "Only staffs can contatin working place" });
 
 
-
 			string id = "U" + (_service.GetAllUsers().Count + 1).ToString("D7");
-			_service.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = account.Password, Balance = account.Balance == null || account.Balance < 0 ? 0 : account.Balance.Value, BranchId = account.BranchId, RoleId = account.RoleId });
+			_service.AddUser(new User { UserId = id, AccessFail = 0, ActiveStatus = true, LastFail = new DateTime(1900, 1, 1, 0, 0, 0), UserName = account.UserName, Password = Util.ToHashString(account.Password), Balance = account.Balance == null || account.Balance < 0 ? 0 : account.Balance.Value, BranchId = account.BranchId, RoleId = account.RoleId });
 			//_service.UserDetailService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = Util.IsPhoneFormatted(account.Phone) ? account.Phone : null, UserId = id, Img = account.Img });
 
 			_infoService.AddUserDetail(new UserDetail { Email = account.Email, Facebook = account.Facebook, FirstName = account.FirstName, LastName = account.LastName, Phone = Util.IsPhoneFormatted(account.Phone) ? account.Phone : null, UserId = id, Img = account.Img });
