@@ -223,6 +223,29 @@ namespace BadmintonCourtAPI.Controllers
 
 
 		[HttpGet]
+		[Route("Slot/SlotStatistic")]
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<IEnumerable<SlotStatisticResponseDTO>>> GetSlotsInYear(int? year)
+		{
+			List<CourtBranch> branchList = _courtBranchService.GetAllCourtBranches();
+			year = year == null ? DateTime.Now.Year : year.Value;
+			//--------------------------------------------------------
+			List<SlotStatisticResponseDTO> result = new List<SlotStatisticResponseDTO>();
+			foreach (var branch in branchList)
+			{
+				List<Court> courtList = _courtService.GetCourtsByBranchId(branch.BranchId);
+				int count = 0;
+				foreach (var court in courtList)
+				{
+					List<BookedSlot> tmpStorage = _service.GetSlotsByCourt(court.CourtId);
+					count += tmpStorage.Count;
+                }
+				result.Add(new SlotStatisticResponseDTO { Branch = branch.BranchId, Amount = count });
+			}
+			return Ok(result);
+		}
+
+		[HttpGet]
 		[Route("Slot/GetByDemand")]
 		public async Task<ActionResult<IEnumerable<BookedSlotSchema>>> GetSlotsByDemand(string? branchId, string? courtId, DateOnly? startDate, DateOnly? endDate)
 		{

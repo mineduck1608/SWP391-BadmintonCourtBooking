@@ -70,6 +70,7 @@ namespace BadmintonCourtAPI.Controllers
 		}
 
 
+
 		[HttpPut]
 		[Route("Booking/Update")]
 		[Authorize]
