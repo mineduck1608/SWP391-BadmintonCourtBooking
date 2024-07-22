@@ -30,8 +30,10 @@ const Dashboard = () => {
 
   const [paymentStatistics, setPaymentStatistics] = useState([]);
   const [branchAmounts, setBranchAmounts] = useState([]);
+  const [bookingTypeStats, setBookingTypeStats] = useState([]);
 
-  const [bookingTypeStats, setBookingTypeStats] = useState([])
+  const [cancelledBookingStats, setCancelledBookingStats] = useState({ proportion: 0 });
+
   useEffect(() => {
     const convertBookingType = (bookingTypeData) => {
       var rs = bookingTypeData.map(b => {
@@ -40,9 +42,10 @@ const Dashboard = () => {
           label: b['type'],
           value: b['amount']
         }
-      })
-      return rs
-    }
+      });
+      return rs;
+    };
+
     const fetchAllData = async () => {
       try {
         setLoading(true);
@@ -100,6 +103,13 @@ const Dashboard = () => {
 
         setBranchAmounts(branchAmountsDataTransformed);
 
+        // Fetch cancelled booking statistics
+        const cancelledBookingResponse = await fetchWithAuth(`https://localhost:7233/Slot/CancelSlotStatisticV2?year=${year}`, {
+          method: 'GET'
+        });
+        const cancelledBookingData = await cancelledBookingResponse.json();
+        setCancelledBookingStats(cancelledBookingData);
+
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
@@ -108,7 +118,7 @@ const Dashboard = () => {
     };
 
     fetchAllData();
-  }, []);
+  }, [year]); // Re-fetch data when year changes
 
   const handleFilterChange = (event) => {
     setFilterType(event.target.value);
@@ -343,7 +353,13 @@ const Dashboard = () => {
               gridRow="span 2"
               backgroundColor={colors.primary[400]}
               p="30px"
+              position="relative" // Add relative positioning here
             >
+              <FormControl
+                variant="outlined"
+                sx={{ position: 'absolute', top: 0, right: 0 }}
+              >
+              </FormControl>
               <Typography variant="h5" fontWeight="600">
                 Cancel
               </Typography>
@@ -353,7 +369,7 @@ const Dashboard = () => {
                 alignItems="center"
                 mt="25px"
               >
-                <ProgressCircle size="125" />
+                <ProgressCircle size="125" progress={cancelledBookingStats.proportion} />
                 <Typography
                   variant="h5"
                   color={colors.greenAccent[500]}
@@ -364,7 +380,6 @@ const Dashboard = () => {
                 <Typography>Number of cancelled booking</Typography>
               </Box>
             </Box>
-
             
           </>
         )}

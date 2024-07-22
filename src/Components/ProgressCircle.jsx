@@ -1,38 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Box, useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import { fetchWithAuth } from "./fetchWithAuth/fetchWithAuth";
 
-const ProgressCircle = ({ size = 40 }) => {
+const ProgressCircle = ({ size = 40, progress }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [progress, setProgress] = useState();
-  const token = sessionStorage.getItem('token');
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchWithAuth("https://localhost:7233/Slot/CancelStatistic?id=0&year=2024", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        // Assuming the progress value you get from the API is `data.progress`
-        setProgress(data.progress); // Update the progress state
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [token]);
-  const angle = 0.01 * 360;
+  const angle = progress * 360;
 
   return (
     <Box
