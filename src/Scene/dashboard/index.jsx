@@ -10,6 +10,7 @@ import './dashboard.css';
 import { fetchWithAuth } from "../../Components/fetchWithAuth/fetchWithAuth";
 import StatBox from "../../Components/StatBox";
 import { MdFreeCancellation } from "react-icons/md";
+import ProgressCircle from "../../Components/ProgressCircle";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -293,20 +294,31 @@ const Dashboard = () => {
             </Box>
 
             <Box
-              gridColumn="span 3"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              backgroundColor={colors.primary[400]}
+          gridColumn="span 6"
+          gridRow="span 2"
+          backgroundColor={colors.primary[400]}
+          p="30px"
+        >
+          <Typography variant="h5" fontWeight="600">
+            Cancel
+          </Typography>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            mt="25px"
+          >
+            <ProgressCircle size="125" />
+            <Typography
+              variant="h5"
+              color={colors.greenAccent[500]}
+              sx={{ mt: "15px" }}
             >
-                <StatBox isDashboard={true}
-                  title="Cancel Amount"
-                  subtitle="Year"
-                  progress="0.75"
-                  increase="+14%"
-                  icon= { <MdFreeCancellation style={{ color: "#70D8BD", fontSize: '40px' }}/>}
-                 />
-            </Box>
+              {year}
+            </Typography>
+            <Typography>Number of cancelled booking</Typography>
+          </Box>
+        </Box>
           </>
         )}
       </Box>
