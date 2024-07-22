@@ -1,4 +1,3 @@
-/* Sidebar.css */
 :root {
   --PrimaryColor: hsl(26, 93%, 50%);
   --HoverColor: hsl(26, 90%, 42%);
@@ -11,15 +10,20 @@
   --inputColor: hsl(330, 12%, 97%);
 }
 
-.pro-sidebar .pro-menu{
+.pro-sidebar .pro-menu {
   padding-top: 0px !important;
   height: 100vh !important;
 }
 
-
 .sidebar {
-  height: 100vh !important;
-  /* Full height of the viewport */
+  height: 100vh !important; /* Full height of the viewport */
+  position: fixed !important; /* Ensure it stays fixed */
+  left: 0 !important;
+  top: 0 !important;
+  width: 250px; /* Adjust width as needed */
+  background-color: var(--greyBg); /* Background color */
+  overflow: hidden !important; /* Ensure no overflow */
+  z-index: 1000; /* Ensure it's above other content */
 }
 
 .webNameAdmin {
@@ -28,14 +32,13 @@
   margin-left: 5px !important;
 }
 
-.css-i4bv87-MuiSvgIcon-root{
+.css-i4bv87-MuiSvgIcon-root {
   margin-top: 8px;
 }
-p.MuiTypography-root.MuiTypography-body1.css-ahj2mt-MuiTypography-root{
+
+p.MuiTypography-root.MuiTypography-body1.css-ahj2mt-MuiTypography-root {
   margin-top: 4.3px;
 }
-
-
 
 .adminName {
   font-size: 32px !important;
@@ -70,18 +73,7 @@ p.MuiTypography-root.MuiTypography-body1.css-ahj2mt-MuiTypography-root{
   background-color: hsl(26, 93%, 50%);
 }
 
-
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root,
-.css-ahj2mt-MuiTypography-root :hover {
+.css-ahj2mt-MuiTypography-root:hover {
   color: var(--textColorHover);
 }
 
@@ -89,7 +81,7 @@ svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.info-icon.css-i4bv87-MuiSvgIcon-ro
   font-size: 40px;
 }
 
-.sidebar-section-title{
+.sidebar-section-title {
   font-size: 1rem !important;
   color: var(--greyText) !important;
   margin: 15px 0 5px 16px !important;
@@ -98,7 +90,7 @@ svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.info-icon.css-i4bv87-MuiSvgIcon-ro
   text-overflow: ellipsis;
 }
 
-.sidebar-section-title2{
+.sidebar-section-title2 {
   font-size: 1rem !important;
   color: var(--greyText) !important;
   margin: 15px 0 5px 16px !important;
@@ -106,10 +98,16 @@ svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.info-icon.css-i4bv87-MuiSvgIcon-ro
   overflow: hidden;
 }
 
-.sidebar-section-title3{
+.sidebar-section-title3 {
   font-size: 1rem !important;
   color: var(--greyText) !important;
   margin: 15px 0 5px 13px !important;
   white-space: nowrap;
   overflow: hidden;
+}
+
+/* Ensure the main content has appropriate margin to not overlap the sidebar */
+.content {
+  overflow-y: auto;
+  height: 100vh; /* Ensure it takes full height */
 }
