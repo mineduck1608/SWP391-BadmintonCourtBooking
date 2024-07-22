@@ -81,11 +81,14 @@ const Sidebar = () => {
     }, [navigate]);
 
     const handleLogout = () => {
-            navigate('/');
+        navigate('/');
+        setTimeout(() => {
             toast.success('Logout successfully!');
             sessionStorage.clear();
-        
-         // Redirect to home on logout  
+        })
+
+
+        // Redirect to home on logout  
     };
 
     return (
@@ -125,7 +128,7 @@ const Sidebar = () => {
                                 ml="15px"
                             >
                                 <Link className="logo" to="/">
-                                    <MdSportsTennis className="iconSidebar"/>
+                                    <MdSportsTennis className="iconSidebar" />
                                 </Link>
                                 <Typography className="webNameAdmin" variant="h4" color={colors.grey[100]}>
                                     BMTC
@@ -184,13 +187,13 @@ const Sidebar = () => {
                             setSelected={setSelected}
                         />
                         {role === 'Admin' && (
-                        <Item className="menu-item"
-                            title="Court Branch"
-                            to="branch"
-                            icon={<ContactsOutlinedIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
+                            <Item className="menu-item"
+                                title="Court Branch"
+                                to="branch"
+                                icon={<ContactsOutlinedIcon />}
+                                selected={selected}
+                                setSelected={setSelected}
+                            />
                         )}
                         <Item className="menu-item"
                             title="Court"
@@ -208,13 +211,13 @@ const Sidebar = () => {
                             Pages
                         </Typography>
                         {role === 'Admin' && (
-                        <Item className="menu-item"
-                            title="Discount"
-                            to="discount"
-                            icon={<DiscountIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
+                            <Item className="menu-item"
+                                title="Discount"
+                                to="discount"
+                                icon={<DiscountIcon />}
+                                selected={selected}
+                                setSelected={setSelected}
+                            />
                         )}
                         <Item className="menu-item"
                             title="Time Slot"
@@ -241,23 +244,23 @@ const Sidebar = () => {
                         />
 
                         {role === 'Admin' && (
-                        <Item className="menu-item"
-                            title="Feedback"
-                            to="feedback"
-                            icon={<FeedbackOutlinedIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
+                            <Item className="menu-item"
+                                title="Feedback"
+                                to="feedback"
+                                icon={<FeedbackOutlinedIcon />}
+                                selected={selected}
+                                setSelected={setSelected}
+                            />
                         )}
 
                         {role === 'Staff' && (
-                        <Item className="menu-item"
-                            title="Feedback"
-                            to="staffFeedback"
-                            icon={<FeedbackOutlinedIcon />}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />
+                            <Item className="menu-item"
+                                title="Feedback"
+                                to="staffFeedback"
+                                icon={<FeedbackOutlinedIcon />}
+                                selected={selected}
+                                setSelected={setSelected}
+                            />
                         )}
 
                         <Typography
@@ -292,7 +295,7 @@ const Sidebar = () => {
                     </Box>
                 </Menu>
             </ProSidebar>
-            <ToastContainer theme='colored'/>
+            <ToastContainer theme='colored' />
         </Box>
     );
 };
