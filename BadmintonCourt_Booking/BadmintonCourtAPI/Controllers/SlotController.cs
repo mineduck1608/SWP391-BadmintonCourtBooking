@@ -11,6 +11,7 @@ using BadmintonCourtBusinessObjects.ExternalServiceEntities.ExternalPayment.Momo
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Primitives;
 using BadmintonCourtServices.IService;
+using System.Diagnostics;
 namespace BadmintonCourtAPI.Controllers
 {
 	public class SlotController : Controller
@@ -206,9 +207,9 @@ namespace BadmintonCourtAPI.Controllers
 				foreach (var court in courtList)
                 {
 					// Canceled slots
-					List<BookedSlot> tmpSlotStorage = _service.GetSlotsByCourt(court.CourtId).Where(x => x.StartTime.Year == year && x.IsDeleted == true).ToList();
+					List<BookedSlot> tmpSlotStorage = _service.GetAllSlots().Where(x => x.StartTime.Year == year && x.IsDeleted == true && x.CourtId == court.CourtId).ToList();
 					// Total slots
-					List<BookedSlot> tmpTotalStorage = _service.GetSlotsByCourt(court.CourtId).Where(x => x.StartTime.Year == year).ToList();
+					List<BookedSlot> tmpTotalStorage = _service.GetAllSlots().Where(x => x.StartTime.Year == year && x.CourtId == court.CourtId).ToList();
                     for (int i = 0; i < tmpTotalStorage.Count; i++)
                     {
                         if (i < tmpSlotStorage.Count)
@@ -275,6 +276,19 @@ namespace BadmintonCourtAPI.Controllers
 			return Ok(Util.FormatSlotList(_service.GetA_CourtSlotsInTimeInterval(start, end, courtId)));
 		}
 
+		[HttpGet]
+		[Route("Slot/CancelSlotStatisticV2")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetCancelStatisticV2(int? year)
+		{
+			year = year == null ? DateTime.Now.Year : year.Value;
+			int totalCount = _service.GetAllSlots().Where(x => x.StartTime.Year == year).Count();
+			int cancelCount = _service.GetAllSlots().Where(x => x.StartTime.Year == year && x.IsDeleted == true).Count();
+			double proportion = 0;
+			if (totalCount > 0)
+				proportion = (double) cancelCount / totalCount;
+			return Ok(new { Proportion = proportion });	
+		}
 
 		[HttpPost]
 		[Route("Slot/BookingByBalance")]
