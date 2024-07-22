@@ -29,7 +29,7 @@ const BuyTime = () => {
   }
   const completeBooking = async () => {
     if (validateAmount(amount)) {
-      //Create a cookie
+      
       document.cookie = `token=${sessionStorage.getItem('token')}; path=/paySuccess`
       try {
         let method = document.getElementById('method').value
@@ -137,7 +137,7 @@ const BuyTime = () => {
         centered={true}
         closable={false}
       >
-        <span>
+        <div>
           <table className='discount-table'>
             <thead>
               <tr>
@@ -156,10 +156,14 @@ const BuyTime = () => {
               }
             </tbody>
           </table>
+          <p>
+            Booking for more than a certain amount will add a proportion of it back to your balance.<br />
+            For example, the rate for a payment at 100,000đ is 5%, so making a booking at 120,000đ will add 120,000 * 5% = 6,000đ to your balance
+          </p>
           <div className='right-align-btn'>
             <button onClick={() => setOpen(false)} className='buyTime_btn'>Close</button>
           </div>
-        </span>
+        </div>
       </Modal>
       <div className='buyTime_bodyContainer'>
         <div className='buyTime_title'>

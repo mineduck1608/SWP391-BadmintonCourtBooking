@@ -53,6 +53,7 @@ export default function ViewHistory() {
   const currentDate = new Date();
   const currentDateString = currentDate.toDateString();
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [hasBeenChanged, setHasBeenChanged] = useState(false) //Check if booking has been changed
 
   const formatNumber = (n) => {
     function formatTo3Digits(n, stop) {
@@ -262,7 +263,7 @@ export default function ViewHistory() {
       )
     }
     catch (err) {
-
+      toast(err)
     }
   }
   const saveResult = async (paymentMethod) => {
@@ -278,13 +279,7 @@ export default function ViewHistory() {
         toast.error(data['msg'])
       }
     }
-
-    let t = validateTime(formState.date, formState.start, formState.end)
     try {
-      if (!t) {
-        toast.error('Invalid time')
-        return;
-      }
       setOpen(false)
       var tmp = await sendUpdateRequestWrapper(paymentMethod)
       handleResult(tmp)
@@ -296,13 +291,20 @@ export default function ViewHistory() {
     }
   }
   const handleUpdate = async (amount, current) => {
+    if (!hasBeenChanged) return;
     if (user.balance < amount - current) {
       setChooseTypeModal(true)
       setOpen(false)
       return
     }
+    let t = validateTime(formState.date, formState.start, formState.end)
+    if (!t) {
+      toast.error('Invalid time')
+      return;
+    }
     //proceed as usual. Use null since it won't use payment method
     try {
+      toast('Please wait while we save your changes')
       await saveResult(null)
     }
     catch (err) {
@@ -339,7 +341,7 @@ export default function ViewHistory() {
     return comment
   }
   const cancelSlot = async () => {
-    async function cancel(slotId, bookingId) {
+    const cancel = async (slotId, bookingId) => {
       return res = await fetchWithAuth(`${apiUrl}/Slot/Cancel?`
         + `slotId=${slotId}&`
         + `bookingId=${bookingId}`
@@ -351,6 +353,7 @@ export default function ViewHistory() {
         })
     }
     try {
+      toast('Please wait while we cancel your booking')
       var res = await cancel(formState.slotId, formState.bookingId)
       if (res.status === HttpStatusCode.BadRequest) {
         var data = await res.json()
@@ -419,7 +422,7 @@ export default function ViewHistory() {
     var currentTime = Date.parse(new Date())
     return (currentTime - bookingDateNum) <= maxHourCanChange * 3600000 && booking['changeLog'] < numOfChanges
   }
-  function convertDateAndHour(date, hour) {
+  const convertDateAndHour = (date, hour) => {
     return new Date(date).setHours(hour)
   }
   const renderSlotsType = (type) => {
@@ -536,6 +539,7 @@ export default function ViewHistory() {
             <span htmlFor='vhDatePicker'>Date:</span>
             <input type="date" id="vhDatePicker" value={formState.date}
               onChange={() => {
+                setHasBeenChanged(true)
                 setFormState({
                   ...formState,
                   date: document.getElementById('vhDatePicker').value
@@ -548,6 +552,7 @@ export default function ViewHistory() {
             <span>Time: </span>
             <select id='startingTime'
               onChange={() => {
+                setHasBeenChanged(true)
                 setFormState({
                   ...formState,
                   start: parseInt(document.getElementById('startingTime').value)
@@ -562,6 +567,7 @@ export default function ViewHistory() {
             <span> To </span>
             <select id='endingTime'
               onChange={() => {
+                setHasBeenChanged(true)
                 setFormState({
                   ...formState,
                   end: parseInt(document.getElementById('endingTime').value)
@@ -578,6 +584,7 @@ export default function ViewHistory() {
             <p>Branch:</p>
             <select id='branch'
               onChange={() => {
+                setHasBeenChanged(true)
                 setFormState({
                   ...formState,
                   branchId: document.getElementById('branch').value
@@ -593,6 +600,7 @@ export default function ViewHistory() {
           <section className='courtSection'>
             <p>Court:</p>
             <select id='court' onChange={() => {
+              setHasBeenChanged(true)
               setFormState({
                 ...formState,
                 courtId: document.getElementById('court').value
