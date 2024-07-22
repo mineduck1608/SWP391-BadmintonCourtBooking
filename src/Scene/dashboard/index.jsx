@@ -325,6 +325,23 @@ const Dashboard = () => {
               gridColumn="span 6"
               gridRow="span 2"
               backgroundColor={colors.primary[400]}
+            >
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                sx={{ padding: "30px 30px 0 30px" }}
+              >
+                Types of bookings
+              </Typography>
+              <Box height="250px" mt="-20px">
+                <PieChart data={bookingTypeStats} />
+              </Box>
+            </Box>
+
+            <Box
+              gridColumn="span 6"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
               p="30px"
             >
               <Typography variant="h5" fontWeight="600">
@@ -348,22 +365,7 @@ const Dashboard = () => {
               </Box>
             </Box>
 
-            <Box
-              gridColumn="span 6"
-              gridRow="span 2"
-              backgroundColor={colors.primary[400]}
-            >
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                sx={{ padding: "30px 30px 0 30px" }}
-              >
-                Types of bookings
-              </Typography>
-              <Box height="250px" mt="-20px">
-                <PieChart data={bookingTypeStats} />
-              </Box>
-            </Box>
+            
           </>
         )}
       </Box>
