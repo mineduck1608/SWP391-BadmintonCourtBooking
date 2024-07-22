@@ -32,7 +32,7 @@ const ProgressCircle = ({ size = 40 }) => {
 
     fetchData();
   }, [token]);
-  const angle = progress * 360;
+  const angle = 0.01 * 360;
 
   return (
     <Box
